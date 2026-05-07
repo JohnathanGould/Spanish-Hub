@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Volume2, CheckCircle2, Mic, MicOff } from 'lucide-react';
 import { speak, levenshtein } from '../utils/helpers';
+import WordImage from './WordImage';
 
 const TYPE_LABELS = {
   noun: 'Noun', verb: 'Verb', adj: 'Adjective', adv: 'Adverb',
@@ -44,14 +45,20 @@ export default function WordDetail({ word, progress, onClose }) {
       style={{ background: 'rgba(0,0,0,0.55)' }}>
       <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         onClick={e => e.stopPropagation()}
-        className="rounded-3xl w-full max-w-md shadow-2xl overflow-hidden"
-        style={{ background: 'hsl(var(--card))' }}>
+        className="rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col"
+        style={{ background: 'hsl(var(--card))', maxHeight: '90vh' }}>
+        <div className="overflow-y-auto">
         <div className="p-6 pb-4 relative" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)/0.08), hsl(47 91% 53% / 0.12))' }}>
           <button data-testid="word-detail-close" onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-black/5 transition-colors"
+            className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-black/5 transition-colors z-10"
             style={{ color: 'hsl(var(--muted-foreground))' }}>
             <X size={18} />
           </button>
+          {(word.type === 'noun' || word.type === 'phrase') && (
+            <div className="mb-4">
+              <WordImage word={word} variant="modal" />
+            </div>
+          )}
           <div className="text-xs uppercase tracking-wider font-bold mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
             {TYPE_LABELS[word.type] || 'Word'}{word.group && word.group !== 'Core' && ` · ${word.group}`}
           </div>
@@ -73,15 +80,13 @@ export default function WordDetail({ word, progress, onClose }) {
             <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
               Example
             </div>
-            <div className="flex items-start gap-2 mb-1">
-              <p className="flex-1 font-semibold text-base" style={{ color: 'hsl(var(--foreground))' }}>{word.sentence.es}</p>
-              <button data-testid="word-detail-sentence-speak" onClick={() => speak(word.sentence.es, 'es')}
-                className="p-1.5 rounded-full transition-colors hover:bg-black/5 flex-shrink-0"
-                style={{ color: 'hsl(var(--primary))' }}>
-                <Volume2 size={14} />
-              </button>
-            </div>
-            <p className="text-sm italic" style={{ color: 'hsl(var(--muted-foreground))' }}>{word.sentence.en}</p>
+            <p className="font-semibold text-base mb-1" style={{ color: 'hsl(var(--foreground))' }}>{word.sentence.es}</p>
+            <p className="text-sm italic mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>{word.sentence.en}</p>
+            <button data-testid="word-detail-sentence-speak" onClick={() => speak(word.sentence.es, 'es')}
+              className="w-full py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border-2 transition-all hover:-translate-y-0.5"
+              style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--primary))', color: 'hsl(var(--primary))' }}>
+              <Volume2 size={14} /> Hear example sentence
+            </button>
           </div>
         )}
 
@@ -126,6 +131,7 @@ export default function WordDetail({ word, progress, onClose }) {
             <Stat label="Wrong" value={p.w || 0} color="#DC2626" />
             <Stat label="Accuracy" value={`${acc}%`} color="#D97706" />
           </div>
+        </div>
         </div>
       </motion.div>
     </div>

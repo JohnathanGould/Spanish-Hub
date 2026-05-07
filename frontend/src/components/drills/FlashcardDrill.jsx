@@ -1,12 +1,14 @@
 import React, { useState, useMemo } from 'react';
-import { Volume2, Check, X } from 'lucide-react';
+import { Volume2, Check, X, Image as ImageIcon } from 'lucide-react';
 import DrillShell from '../DrillShell';
+import WordImage from '../WordImage';
 import { spacedRepetitionSort, speak } from '../../utils/helpers';
 
 export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBack }) {
   const queue = useMemo(() => spacedRepetitionSort(words, progress).slice(0, 12), [words, progress]);
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   const [correct, setCorrect] = useState(0);
 
   if (queue.length === 0) {
@@ -17,6 +19,7 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
 
   const word = queue[idx];
   const article = word.gender === 'm' ? 'el ' : word.gender === 'f' ? 'la ' : '';
+  const canHint = word.type === 'noun' || word.type === 'phrase';
 
   const next = (knew) => {
     onAnswer(word.es, knew);
@@ -26,6 +29,7 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
     } else {
       setIdx(idx + 1);
       setFlipped(false);
+      setShowHint(false);
     }
   };
 
@@ -42,6 +46,11 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
             <div className="font-serif text-4xl font-black mb-3" style={{ color: 'hsl(var(--foreground))' }} data-testid="flashcard-front">
               {article}{word.es}
             </div>
+            {showHint && canHint && (
+              <div className="w-3/4 max-w-[220px] mt-3" onClick={e => e.stopPropagation()} data-testid="flashcard-hint-image">
+                <WordImage word={word} variant="card" />
+              </div>
+            )}
             <div className="text-xs mt-4" style={{ color: 'hsl(var(--muted-foreground))' }}>tap card to flip</div>
           </div>
           <div className="flip-back rounded-3xl p-6 flex flex-col items-center justify-center text-center cursor-pointer"
@@ -59,10 +68,23 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
         </div>
       </div>
 
-      <button data-testid="flashcard-speak" onClick={() => speak(word.es, 'es')}
-        className="speak-btn mx-auto block mb-5">
-        <Volume2 size={12} /> Hear Spanish
-      </button>
+      <div className="flex items-center justify-center gap-2 mb-5">
+        <button data-testid="flashcard-speak" onClick={() => speak(word.es, 'es')}
+          className="speak-btn">
+          <Volume2 size={12} /> Hear Spanish
+        </button>
+        {canHint && !flipped && (
+          <button data-testid="flashcard-hint-btn" onClick={() => setShowHint(s => !s)}
+            className="speak-btn"
+            style={{
+              background: showHint ? 'hsl(47 91% 95%)' : undefined,
+              borderColor: showHint ? 'hsl(47 91% 60%)' : undefined,
+              color: showHint ? '#78350F' : undefined,
+            }}>
+            <ImageIcon size={12} /> {showHint ? 'Hide hint' : 'Show hint'}
+          </button>
+        )}
+      </div>
 
       <div className="grid grid-cols-2 gap-3">
         <button data-testid="flashcard-still-learning" onClick={() => next(false)}
