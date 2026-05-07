@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Volume2, LogOut, ChevronDown } from 'lucide-react';
+import SpanishFlag from './SpanishFlag';
 
 export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onSignOut, onGoalClick }) {
   const [showMenu, setShowMenu] = useState(false);
@@ -18,10 +19,10 @@ export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onS
       <div className="flex items-center justify-between pt-1">
         {/* LEFT: Logo */}
         <div className="flex items-center gap-2">
-          <span className="text-2xl">🇪🇸</span>
+          <SpanishFlag size={28} />
           <div>
             <div className="font-serif font-bold text-base leading-tight" style={{ color: 'hsl(var(--foreground))' }}>
-              Spanish Hub
+              My Spanish Hub
             </div>
             <div className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
               Vocabulary &amp; drills

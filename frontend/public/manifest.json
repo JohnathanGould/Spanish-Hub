@@ -1,7 +1,7 @@
 {
-  "short_name": "Spanish Hub",
-  "name": "Spanish Hub — Vocabulary & Grammar Drills",
-  "description": "Learn Spanish with 15 drills, 14 lessons, and 300+ words. Works offline.",
+  "short_name": "My Spanish Hub",
+  "name": "My Spanish Hub — Vocabulary & Grammar Drills",
+  "description": "Learn Spanish with 15 drills, 14 lessons, and 300 words. Works offline.",
   "icons": [
     {
       "src": "icon.svg",

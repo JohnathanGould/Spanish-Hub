@@ -46,6 +46,9 @@ import Certificate from './components/Certificate';
 import SharedPacks from './components/SharedPacks';
 import Plaza from './components/Plaza';
 import Translator from './components/Translator';
+import SpanishFlag from './components/SpanishFlag';
+
+function SpanishFlagPulse() { return <SpanishFlag size={88} />; }
 
 const DEFAULT_DATA = {
   displayName: '',
@@ -386,8 +389,12 @@ export default function SpanishHub() {
   if (loading) return (
     <div className="app-outer">
       <div className="app-container flex items-center justify-center">
-        <div className="text-center"><div className="text-5xl mb-4" style={{ animation: 'pulse 1.5s infinite' }}>🇪🇸</div>
-          <p style={{ color: 'hsl(var(--muted-foreground))' }}>Loading…</p></div>
+        <div className="text-center">
+          <div className="mb-4 flex justify-center" style={{ animation: 'pulse 1.5s infinite' }}>
+            <SpanishFlagPulse />
+          </div>
+          <p style={{ color: 'hsl(var(--muted-foreground))' }}>Loading…</p>
+        </div>
       </div>
     </div>
   );

@@ -32,21 +32,41 @@ function drawCertificate(canvas, name, completedAt, xp, streakCount) {
   ctx.lineWidth = 2;
   ctx.strokeRect(56, 66, W - 112, H - 122);
 
-  // Flag emoji
-  ctx.font = 'bold 64px serif';
-  ctx.textAlign = 'center';
-  ctx.fillStyle = '#000';
-  ctx.fillText('🇪🇸', W / 2, 150);
+  // Spanish flag (drawn as rectangles for cross-platform consistency)
+  const flagW = 110, flagH = 73;
+  const flagX = (W - flagW) / 2;
+  const flagY = 80;
+  // Rounded clip
+  ctx.save();
+  if (ctx.roundRect) {
+    ctx.beginPath();
+    ctx.roundRect(flagX, flagY, flagW, flagH, 8);
+    ctx.clip();
+  }
+  ctx.fillStyle = '#C60B1E';
+  ctx.fillRect(flagX, flagY, flagW, flagH);
+  ctx.fillStyle = '#F5C518';
+  ctx.fillRect(flagX, flagY + flagH * 0.25, flagW, flagH * 0.5);
+  // Tiny crest dot
+  ctx.fillStyle = '#C60B1E';
+  ctx.beginPath();
+  ctx.arc(flagX + flagW * 0.36, flagY + flagH / 2, 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(flagX, flagY, flagW, flagH);
 
   // Title
   ctx.font = 'bold italic 48px Georgia, serif';
   ctx.fillStyle = '#2C1A14';
+  ctx.textAlign = 'center';
   ctx.fillText('Certificate of Mastery', W / 2, 220);
 
   // Subtitle
   ctx.font = '20px Georgia, serif';
   ctx.fillStyle = '#8B7366';
-  ctx.fillText('Spanish Hub · The Spanish Course', W / 2, 252);
+  ctx.fillText('My Spanish Hub · The Spanish Course', W / 2, 252);
 
   // Awarded line
   ctx.font = 'italic 18px Georgia, serif';
@@ -99,7 +119,7 @@ function drawCertificate(canvas, name, completedAt, xp, streakCount) {
   // Footer
   ctx.font = '13px Georgia, serif';
   ctx.fillStyle = '#8B7366';
-  ctx.fillText('¡Felicidades! Now go speak with a real human. 🇪🇸', W / 2, H - 70);
+  ctx.fillText('¡Felicidades! Now go speak with a real human.', W / 2, H - 70);
 }
 
 export default function Certificate({ name, xp, streakCount, completedDate, onClose }) {
@@ -129,7 +149,7 @@ export default function Certificate({ name, xp, streakCount, completedDate, onCl
     });
   };
 
-  const shareText = `I just finished all 14 levels of The Spanish Course on Spanish Hub! 🇪🇸 ${xp} XP · ${streakCount}-day streak.`;
+  const shareText = `I just finished all 14 levels of The Spanish Course on My Spanish Hub! ${xp} XP · ${streakCount}-day streak.`;
 
   const copyShare = async () => {
     try { await navigator.clipboard.writeText(shareText); } catch (e) { console.error(e); }

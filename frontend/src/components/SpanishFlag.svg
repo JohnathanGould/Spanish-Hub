@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 40" aria-label="Spanish flag">
+  <rect width="60" height="40" rx="3" ry="3" fill="#C60B1E"/>
+  <rect y="10" width="60" height="20" fill="#F5C518"/>
+  <circle cx="22" cy="20" r="2" fill="#C60B1E"/>
+</svg>

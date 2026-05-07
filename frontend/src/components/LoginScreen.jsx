@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
+import SpanishFlag from './SpanishFlag';
 
 export default function LoginScreen({ onGuest }) {
   const [loading, setLoading] = useState(false);
@@ -15,9 +16,9 @@ export default function LoginScreen({ onGuest }) {
     <div className="app-outer">
       <div className="app-container flex items-center justify-center p-6">
         <div className="login-glass p-10 max-w-sm w-full text-center">
-          <div className="text-6xl mb-4">🇪🇸</div>
+          <div className="mb-4 flex justify-center"><SpanishFlag size={96} /></div>
           <h1 className="font-serif text-3xl font-bold mb-2" style={{ color: 'hsl(var(--foreground))' }}>
-            Spanish Hub
+            My Spanish Hub
           </h1>
           <p className="text-sm mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
             Vocabulary &amp; grammar drills
