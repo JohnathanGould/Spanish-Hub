@@ -1,0 +1,30 @@
+{
+  "summary": "Frontend-only smoke + integration test of Spanish Hub guest mode. Login -> guest -> home -> all 15 drill cards launched and exercised, My Words search/category modal/word-detail/add+delete custom word, Leaderboard tabs + guest banner, Daily goal modal save, mode filters, sign-out -> back to login. All requested data-testids found and interactive. Matching game completes successfully (6/6) when paired sequentially. Flashcard, Type ES->EN, Listen & Type drills all reach done screen. Spanish flag bar, terracotta plaster background, 660px centered container, Playfair Display serif headings, and glass-morphism card all render correctly.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Header tabs (My Words / Leaderboard inactive states)", "issues": ["Inactive tab labels appear in light gray on light/white background — slightly low contrast vs WCAG AA. Active 'Drills' tab is fine."]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "(Optional) Add data-testid=\"word-item-{es}\" to clickable word rows in WordList.jsx (noun groups, phrases, custom rows, search results) so word-row clicks can be addressed deterministically by future tests. Currently only the word-detail modal exposes testids.",
+    "(Optional) Slightly darken inactive tab text color for better contrast on the soft cream background."
+  ],
+  "critical_code_review_comments": [
+    "AddWordForm.handleAdd lowercases es/en before saving (WordList.jsx:41). The delete testid is delete-word-${w.es}, so any test/automation creating words must use lowercase ids. Documented behavior — not a bug, but worth noting in the test plan.",
+    "MatchingDrill renders matched tiles as disabled (good UX), but they remain in the DOM. Tests using [data-testid^=\"match-es-\"] should filter on :not([disabled]). Game completes correctly to done screen.",
+    "SpanishHub.jsx is 419 lines — within limit but trending toward needing a split (auth/state/routing concerns mixed). Not urgent.",
+    "Firestore writes will silently fail in guest mode by design — leaderboard reads still execute and return network calls; ensure no console error spam in production (verified: minor warnings only, no errors)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (frontend-only)", "frontend": "100% of requested flows passed"},
+  "test_credentials": "None required — guest mode used for all flows.",
+  "seed_data_creation": "Created and immediately deleted custom word 'testpalabra' as part of add-word flow verification.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All 15 drill data-testids verified live: drill-card-{flashcard,es-en,en-es,type-es-en,type-en-es,conjugation,past-tense,gender,matching,word-sort,en-word-sort,hear-choose,listen-type,sent-build,fill-blank}. Drills that loop infinitely without correct answers (es-en, conj, past-tense, gender, hear-choose, word-sort) will not reach done unless answers are correct — that's expected behavior, not a bug. To complete matching deterministically, click match-es-{w} then match-en-{w} sequentially; matched tiles remain disabled in DOM. Add-word lowercases input before saving. Word rows lack individual data-testids; click via text or div selector if testing detail modal.",
+  "rca of the issue": "No bugs requiring RCA. App functions end-to-end in guest mode."
+}

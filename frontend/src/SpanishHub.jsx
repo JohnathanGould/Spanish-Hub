@@ -2,6 +2,29 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { auth, db, googleProvider } from './firebase';
 import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+
+function getWeekStartStr() {
+  const d = new Date();
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.setDate(diff)).toDateString();
+}
+
+async function syncLeaderboard(user, data) {
+  if (!user) return;
+  try {
+    const ws = getWeekStartStr();
+    const weeklyXP = data.weekStart === ws ? (data.weeklyXP || 0) : 0;
+    await setDoc(doc(db, 'leaderboard', user.uid), {
+      displayName: user.displayName || data.displayName || 'Anonymous',
+      photoURL: user.photoURL || null,
+      xp: data.xp || 0,
+      weeklyXP,
+      weekStart: ws,
+      updatedAt: Date.now(),
+    });
+  } catch (e) { console.error('LB sync error', e); }
+}
 import { MASTER, DEFAULT_CATEGORIES } from './data/words';
 import { masteryLevel, getStats, initVoice } from './utils/helpers';
 import Header from './components/Header';
@@ -19,6 +42,8 @@ const DEFAULT_DATA = {
   customWords: [],
   progress: {},
   xp: 0,
+  weeklyXP: 0,
+  weekStart: null,
   streak: { count: 0, lastDate: null },
   dailyGoal: 20,
   dailyProgress: { count: 0, date: null },
@@ -26,7 +51,7 @@ const DEFAULT_DATA = {
   categoryEnabled: { ...DEFAULT_CATEGORIES },
 };
 
-function LoginScreen() {
+function LoginScreen({ onGuest }) {
   const [loading, setLoading] = useState(false);
   const handleSignIn = async () => {
     setLoading(true);
@@ -51,10 +76,18 @@ function LoginScreen() {
             data-testid="google-signin-btn"
             onClick={handleSignIn}
             disabled={loading}
-            className="w-full py-3 px-6 rounded-xl font-semibold text-base transition-all duration-200"
+            className="w-full py-3 px-6 rounded-xl font-semibold text-base transition-all duration-200 mb-3"
             style={{ background: 'hsl(var(--primary))', color: 'white', boxShadow: '0 4px 14px rgba(198,11,30,0.35)' }}
           >
             {loading ? 'Signing in…' : 'Sign in with Google'}
+          </button>
+          <button
+            data-testid="guest-continue-btn"
+            onClick={onGuest}
+            className="w-full py-2.5 px-6 rounded-xl font-medium text-sm transition-all border"
+            style={{ background: 'transparent', color: 'hsl(var(--muted-foreground))', borderColor: 'hsl(var(--border))' }}
+          >
+            Continue as guest
           </button>
           <p className="text-xs mt-4" style={{ color: 'hsl(var(--muted-foreground))' }}>
             15 drills · 200+ words · mastery tracking
@@ -99,6 +132,7 @@ function GoalModal({ goal, onSave, onClose }) {
 
 export default function SpanishHub() {
   const [user, setUser] = useState(null);
+  const [isGuest, setIsGuest] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(DEFAULT_DATA);
   const [view, setView] = useState({ page: 'home' });
@@ -114,11 +148,27 @@ export default function SpanishHub() {
     initVoice();
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
-      if (u) await loadUserData(u);
+      if (u) { setIsGuest(false); await loadUserData(u); }
       setLoading(false);
     });
     return unsub;
   }, []);
+
+  const startGuest = () => {
+    setIsGuest(true);
+    try {
+      const raw = localStorage.getItem('spanish-hub-guest');
+      if (raw) {
+        const data = JSON.parse(raw);
+        setUserData({
+          ...DEFAULT_DATA, ...data,
+          categoryEnabled: { ...DEFAULT_DATA.categoryEnabled, ...(data.categoryEnabled || {}) },
+        });
+      } else {
+        setUserData({ ...DEFAULT_DATA, displayName: 'Guest' });
+      }
+    } catch (e) { console.error(e); }
+  };
 
   const loadUserData = async (u) => {
     try {
@@ -138,12 +188,17 @@ export default function SpanishHub() {
   };
 
   const persistData = useCallback((data) => {
+    if (isGuest) {
+      try { localStorage.setItem('spanish-hub-guest', JSON.stringify(data)); } catch (e) { console.error(e); }
+      return;
+    }
     if (!user) return;
     clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
       setDoc(doc(db, 'users', user.uid), data).catch(console.error);
+      syncLeaderboard(user, data);
     }, 1500);
-  }, [user]);
+  }, [user, isGuest]);
 
   const recordAnswer = useCallback((wordEs, isCorrect) => {
     setUserData(prev => {
@@ -155,10 +210,14 @@ export default function SpanishHub() {
       const today = new Date().toDateString();
       const dp = prev.dailyProgress || { count: 0, date: null };
       const dailyCount = (dp.date === today ? dp.count : 0) + (isCorrect ? 1 : 0);
+      const ws = getWeekStartStr();
+      const sameWeek = prev.weekStart === ws;
       const newData = {
         ...prev,
         progress: { ...prev.progress, [wordEs]: p },
         xp: (prev.xp || 0) + xpGain,
+        weeklyXP: (sameWeek ? (prev.weeklyXP || 0) : 0) + xpGain,
+        weekStart: ws,
         dailyProgress: { count: dailyCount, date: today },
       };
       persistData(newData);
@@ -175,12 +234,26 @@ export default function SpanishHub() {
       const newStreakCount = streak.lastDate === today ? streak.count
         : streak.lastDate === yesterday ? streak.count + 1 : 1;
       const sessions = [{ drillId, correct, total, date: today, ts: Date.now() }, ...(prev.sessions || []).slice(0, 49)];
-      const newData = { ...prev, xp: (prev.xp || 0) + xpBonus, streak: { count: newStreakCount, lastDate: today }, sessions };
-      if (user) setDoc(doc(db, 'users', user.uid), newData).catch(console.error);
+      const ws = getWeekStartStr();
+      const sameWeek = prev.weekStart === ws;
+      const newData = {
+        ...prev,
+        xp: (prev.xp || 0) + xpBonus,
+        weeklyXP: (sameWeek ? (prev.weeklyXP || 0) : 0) + xpBonus,
+        weekStart: ws,
+        streak: { count: newStreakCount, lastDate: today },
+        sessions,
+      };
+      if (isGuest) {
+        try { localStorage.setItem('spanish-hub-guest', JSON.stringify(newData)); } catch (e) { console.error(e); }
+      } else if (user) {
+        setDoc(doc(db, 'users', user.uid), newData).catch(console.error);
+        syncLeaderboard(user, newData);
+      }
       return newData;
     });
     setView({ page: 'done', drillId, correct, total });
-  }, [user]);
+  }, [user, isGuest]);
 
   const startDrill = useCallback((drillId) => setView({ page: 'drill', drillId }), []);
   const goHome = useCallback(() => setView({ page: 'home' }), []);
@@ -228,6 +301,12 @@ export default function SpanishHub() {
   }, [persistData]);
 
   const handleSignOut = async () => {
+    if (isGuest) {
+      setIsGuest(false);
+      setUserData(DEFAULT_DATA);
+      setView({ page: 'home' });
+      return;
+    }
     await signOut(auth);
     setUser(null);
     setUserData(DEFAULT_DATA);
@@ -243,7 +322,9 @@ export default function SpanishHub() {
     </div>
   );
 
-  if (!user) return <LoginScreen />;
+  if (!user && !isGuest) return <LoginScreen onGuest={startGuest} />;
+
+  const effectiveUser = user || { uid: 'guest', displayName: 'Guest', photoURL: null };
 
   const activeWords = getActiveWords();
   const stats = getStats(activeWords, userData.progress);
@@ -286,7 +367,7 @@ export default function SpanishHub() {
     <div className="app-outer">
       <div className="app-container">
         <Header
-          user={user}
+          user={effectiveUser}
           streak={userData.streak}
           xp={userData.xp}
           dailyGoal={userData.dailyGoal}
@@ -316,7 +397,7 @@ export default function SpanishHub() {
             />
           )}
           {tab === 'leaderboard' && (
-            <Leaderboard currentUserId={user.uid} currentXP={userData.xp} sessions={userData.sessions} />
+            <Leaderboard currentUserId={effectiveUser.uid} currentXP={userData.xp} sessions={userData.sessions} isGuest={isGuest} />
           )}
         </div>
 
