@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Upload, Download, Globe, Trash2, Check } from 'lucide-react';
-import { collection, query, orderBy, limit, getDocs, addDoc, deleteDoc, doc, where } from 'firebase/firestore';
+import { collection, query, orderBy, limit, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase';
 
 export default function SharedPacks({ user, isGuest, customWords, onImport, onClose }) {

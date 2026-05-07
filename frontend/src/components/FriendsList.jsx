@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Copy, Check, UserPlus, Trash2 } from 'lucide-react';
-import { collection, query, where, getDocs, doc, setDoc, getDoc } from 'firebase/firestore';
+import { collection, query, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
 function genFriendCode(uid) {
