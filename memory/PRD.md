@@ -1,123 +1,88 @@
 # Spanish Hub — Product Requirements Document
 
 ## Original Problem Statement
-Migrate and enhance a monolithic vanilla JS/HTML Spanish learning app into a modern React app. Add features for spaced repetition, more drills (gender, preterite, matching), engagement (streaks/XP/daily goals), social (leaderboard), audio for sentences, themed packs, search/filter, word details, category toggles, and PWA offline support — all in a beautiful Spanish-centric design.
+Migrate and enhance a monolithic vanilla JS/HTML Spanish learning app into a modern React app. Add features for spaced repetition, more drills (gender, preterite, matching), engagement (streaks/XP/daily goals/daily challenges), social (leaderboard), audio for sentences, themed packs, search/filter, word details, category toggles, **a hand-authored multi-level Spanish course**, and PWA offline support — all in a beautiful Spanish-centric design. Zero per-user cost (no LLM API calls baked into the runtime).
 
 ## User Personas
 - **Beginner / casual learner** wanting bite-sized Spanish drills with progress tracking.
 - **Returning learner** needing focused review of weak words via spaced repetition.
-- **Competitive learner** motivated by XP, streaks, and a global leaderboard.
+- **Competitive learner** motivated by XP, streaks, daily challenges, and a global leaderboard.
+- **Self-taught learner** wanting structured lessons with grammar explanations and tips.
 
 ## Tech Stack
-- **Frontend**: React 19, Tailwind CSS, Shadcn UI primitives, Framer Motion, lucide-react icons.
-- **Auth & DB**: Firebase Google Auth + Firestore (collections: `users`, `leaderboard`).
-- **Audio**: Web Speech API (`speechSynthesis`).
+- **Frontend**: React 19, Tailwind, Shadcn UI, Framer Motion, lucide-react.
+- **Auth & DB**: Firebase Google Auth + Firestore (`users`, `leaderboard`).
+- **Audio**: Web Speech API.
 - **Guest mode**: localStorage persistence (no Firestore).
 
-## Implemented (Feb 2026 — initial MVP)
+## Implemented (Feb 2026)
 
-### Auth
-- Firebase Google Auth + **Continue as guest** mode (localStorage-backed).
-- Sign-out works for both authenticated and guest users.
+### Iteration 1 — MVP
+- Firebase Google Auth + **guest mode** (localStorage)
+- All **15 drills**: Flashcards, Sp↔En (MC + typing), Conjugation present, **Preterite**, **Gender**, **Matching (tap-to-pair)**, Word Sort EN/ES, Hear & Choose, Listen & Type, Sentence Builder, Fill in the Blank
+- Spaced-repetition word selection in every drill
+- Engagement: daily streak, XP, customizable daily goal w/ animated progress ring, session history
+- Search/filter, custom words, word detail modal w/ audio + sentence
+- Category toggles (13 packs)
+- Leaderboard: All-time + Weekly tabs (Firestore)
+- Spanish flag bar, terracotta plaster background, Playfair Display, glass-morphism, 660px container
 
-### Drills (all 15)
-1. Flashcards (tap-to-flip, "knew it"/"still learning")
-2. Spanish → English (multiple choice)
-3. English → Spanish (multiple choice)
-4. Type Sp → En (levenshtein-tolerant)
-5. Type En → Sp (levenshtein-tolerant)
-6. Conjugation — Present tense
-7. **Past tense (Preterite)** — separate drill from #6 ✅
-8. **Gender Drill** (el / la) ✅
-9. **Matching Game** — tap-to-pair, 6 pairs ✅
-10. Word Sort — Spanish (noun/verb/adj/adv/pronoun)
-11. Word Sort — English (sentence-context)
-12. Hear & Choose (audio prompt → English meaning)
-13. Listen & Type (audio prompt → spell back)
-14. Sentence Builder (drag-tap word tiles)
-15. Fill in the Blank
+### Iteration 2 — Course + Daily Challenges + Polish
+- **300+ word vocabulary** (302 total) — added 75 words across existing categories + new **Weather**, **Animals**, **Clothing** packs.
+- **The Spanish Course** — 12 hand-authored levels building progressively:
+  1. Greetings & Politeness · 2. Articles & Gender · 3. Subject Pronouns · 4. Present -AR Verbs · 5. Present -ER/-IR Verbs · 6. Ser vs Estar · 7. Asking Questions · 8. Numbers, Days & Time · 9. Travel Survival Phrases · 10. Preterite Past Tense · 11. Connectors & Sounding Fluent · 12. Tips for Real Mastery
+  - Each lesson has explanations, audio examples, "Pro tip" callouts, and a one-tap "Practice these words" flashcard drill.
+  - Completion gives 15 XP bonus and unlocks the next level visually.
+- **Two Daily Challenges** (per-calendar-day):
+  - 🔥 **5 weakest words** — multiple choice, 2× XP
+  - ✨ **Theme of the Day** (rotates by weekday: Family Sun · Travel Mon · Food Tue · Places Wed · Body Thu · Time Fri · Adjectives Sat) — flashcard sprint, 1.5× XP
+- **Session History tab** — full filterable timeline of every drill (last 50)
+- **Quick Preset Packs** in category modal — Everything · Travel · Restaurant · Survival 101 · Beginner
+- 5-tab navigation: Drills · Learn · Words · Top · History
 
-All drills use **spaced repetition** sort to prioritize weak words.
+### Testing
+- Iteration 1: 100% frontend pass (all 15 drills + tabs + modals)
+- Iteration 2: 100% frontend pass (all new features verified — 12 lessons, 2 daily challenges with multipliers, presets, history, 5-tab nav)
 
-### Engagement
-- Daily streak counter (gold flame, resets on missed day)
-- XP system (1 XP per correct + 10 XP bonus on mastery + drill-completion bonus)
-- Daily goal — customizable in goal modal, animated progress ring in header
-- Session history (last 50 sessions, recent shown in DoneScreen)
-- Weekly XP tracked separately for leaderboard
+## Backlog
 
-### Usability
-- Search/filter in My Words
-- Category toggles (13 packs: Food, Family, Travel, Places, Numbers, Days, Months, Colours, Body, Adjectives, Time, Questions, Connectors)
-- Word detail modal with example sentence + audio playback + mastery stats
-- Mode filters: All / Weak only / Mastered only
-
-### Content
-- 200+ master words with example sentences (most have audio-ready Spanish sentence)
-- Add custom words (Spanish, English, type, gender)
-- Verb conjugation tables (present + preterite, 12+ verbs)
-
-### Social
-- Leaderboard: All-time + Weekly tabs (top 20)
-- Crown/medal icons for top 3, current user highlighted
-
-### Design
-- 660px max-width centered glass container
-- Spanish flag bar (red/gold/red) at top of header
-- Terracotta plaster wall background (light) / Spanish flag geometric (dark)
-- Playfair Display serif headings + Inter body
-- Earthy/warm palette (terracotta, cream, ivory, gold accents)
-- Framer Motion stagger animation on drill grid
-
-## Backlog (Not Yet Implemented)
-
-### P1 — Engagement & UX
-- [ ] Detailed session history view (full list, filterable)
-- [ ] Themed preset word packs (e.g., "Travel only", "Restaurant pack") — preset bundles of category toggles
-- [ ] More common phrases (greetings, restaurant, emergencies)
-
-### P2 — Social & Offline
-- [ ] Curated/shared community word packs
+### P2 — Quality & Reach
 - [ ] PWA + Service Worker for offline support
-- [ ] Friend system (optional)
-- [ ] Push notifications for daily goal reminders
-
-### P2 — Quality / Refactor
-- [ ] Split SpanishHub.jsx (419 lines) into auth/state/routing modules
-- [ ] Add data-testid to individual word rows in WordList for deterministic testing
-- [ ] Add automated unit tests for spacedRepetitionSort, levenshtein, masteryLevel
+- [ ] Curated/shared community word packs (Firestore)
+- [ ] Friend system + push notifications for streaks
+- [ ] Refactor SpanishHub.jsx (~530 lines): extract LoginScreen + GoalModal
+- [ ] Add data-testids to individual word rows for deterministic testing
+- [ ] Imperfect past tense lesson + drill (Lesson 13)
+- [ ] Future tense lesson + drill (Lesson 14)
+- [ ] Audio recording for pronunciation comparison
 
 ## Architecture
 ```
 /app/frontend/src/
-├── App.js                    # mounts SpanishHub
-├── SpanishHub.jsx            # main orchestrator (auth, state, routing)
-├── firebase.js               # Firebase init
+├── App.js
+├── SpanishHub.jsx              # main orchestrator
+├── firebase.js
 ├── data/
-│   ├── words.js              # MASTER list, NOUN_GROUPS, VERB_TABLE, TOGGLEABLE_CATEGORIES
-│   └── drillData.js          # DRILLS, CONJ, PRETERITE, SENT_POOL, FITB_POOL, EN_POOL
+│   ├── words.js                # MASTER (302), NOUN_GROUPS, PRESET_PACKS, TOGGLEABLE_CATEGORIES
+│   ├── drillData.js            # DRILLS, CONJ, PRETERITE, SENT_POOL, FITB_POOL, EN_POOL
+│   └── lessons.js              # LESSONS (12), DAILY_THEMES (7-day rotation)
 ├── utils/
-│   └── helpers.js            # masteryLevel, spacedRepetitionSort, levenshtein, speak
+│   └── helpers.js              # masteryLevel, spacedRepetitionSort, levenshtein, speak
 └── components/
-    ├── Header.jsx            # sticky header
-    ├── DrillsGrid.jsx        # 15-card grid with mode filters
-    ├── DrillRouter.jsx       # dispatches drillId
-    ├── DrillShell.jsx        # progress + back-button wrapper
-    ├── DoneScreen.jsx        # end-of-drill summary
-    ├── WordList.jsx          # search, custom add, category toggles
-    ├── WordDetail.jsx        # modal w/ sentence + audio
-    ├── CategoryToggles.jsx   # modal w/ 13 packs
-    ├── Leaderboard.jsx       # All-time + Weekly tabs
-    └── drills/
-        ├── FlashcardDrill.jsx
-        ├── ChoiceDrill.jsx        # es-en, en-es, hear-choose
-        ├── TypeDrill.jsx          # type-es-en, type-en-es, listen-type
-        ├── ConjugationDrill.jsx   # present + past
-        ├── GenderDrill.jsx
-        ├── MatchingDrill.jsx
-        ├── WordSortDrill.jsx      # ES + EN
-        ├── SentenceBuilderDrill.jsx
-        └── FillBlankDrill.jsx
+    ├── Header.jsx
+    ├── DrillsGrid.jsx
+    ├── DrillRouter.jsx
+    ├── DrillShell.jsx
+    ├── DoneScreen.jsx
+    ├── DailyChallenge.jsx      # 2 daily challenge cards on Drills tab
+    ├── LessonsList.jsx         # 12-lesson list with progress banner
+    ├── LessonView.jsx          # lesson body renderer (p/h/examples/rules/tip)
+    ├── SessionHistory.jsx      # full session timeline
+    ├── WordList.jsx
+    ├── WordDetail.jsx
+    ├── CategoryToggles.jsx     # presets + 16 categories
+    ├── Leaderboard.jsx
+    └── drills/                 # 9 drill components handling all 15 drill IDs
 ```
 
 ## Firestore Schema
@@ -125,13 +90,13 @@ All drills use **spaced repetition** sort to prioritize weak words.
 users/{uid}: {
   displayName, photoURL, customWords[], progress: { [es]: { c, w, s } },
   xp, weeklyXP, weekStart, streak: { count, lastDate },
-  dailyGoal, dailyProgress: { count, date }, sessions[], categoryEnabled
+  dailyGoal, dailyProgress: { count, date },
+  sessions[], categoryEnabled,
+  lessonsCompleted: string[],
+  dailyChallenges: { date, weakDone, themeDone }
 }
 
 leaderboard/{uid}: {
   displayName, photoURL, xp, weeklyXP, weekStart, updatedAt
 }
 ```
-
-## Testing
-- Iteration 1 (Feb 2026): 100% frontend integration pass via guest mode. All 15 drills, tabs, modals, search, custom words, leaderboard guest banner, daily goal, sign out flows verified.
