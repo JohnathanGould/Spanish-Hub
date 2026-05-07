@@ -1,12 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Lock, Clock, BookOpen } from 'lucide-react';
+import { CheckCircle2, Lock, Clock, BookOpen, Award } from 'lucide-react';
 import { LESSONS } from '../data/lessons';
 
-export default function LessonsList({ lessonsCompleted = [], onOpenLesson }) {
+export default function LessonsList({ lessonsCompleted = [], onOpenLesson, onShowCertificate }) {
   const completedSet = new Set(lessonsCompleted);
   const completedCount = LESSONS.filter(l => completedSet.has(l.id)).length;
   const pct = Math.round((completedCount / LESSONS.length) * 100);
+  const allDone = completedCount === LESSONS.length;
 
   return (
     <div data-testid="lessons-list">
@@ -26,6 +27,26 @@ export default function LessonsList({ lessonsCompleted = [], onOpenLesson }) {
           <div className="text-xs font-bold tabular-nums" data-testid="lessons-progress">{completedCount}/{LESSONS.length}</div>
         </div>
       </div>
+
+      {/* Mastery certificate banner */}
+      {allDone && onShowCertificate && (
+        <motion.button
+          data-testid="certificate-banner"
+          initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+          onClick={onShowCertificate}
+          className="w-full rounded-2xl p-4 mb-4 text-left flex items-center gap-3 transition-all hover:-translate-y-0.5"
+          style={{
+            background: 'linear-gradient(135deg,#F5C518,#FBBF24)',
+            color: '#451A03',
+            boxShadow: '0 8px 24px rgba(245,197,24,0.3)',
+          }}>
+          <Award size={28} className="flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <div className="font-serif text-base font-black">¡Felicidades! Course mastered.</div>
+            <div className="text-xs opacity-90">Tap to view & download your certificate</div>
+          </div>
+        </motion.button>
+      )}
 
       {/* Lesson cards */}
       <div className="space-y-2">

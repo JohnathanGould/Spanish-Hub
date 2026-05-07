@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Trophy, Crown, Medal } from 'lucide-react';
+import FriendsList from './FriendsList';
 
 function getWeekStart() {
   const d = new Date();
@@ -10,7 +11,7 @@ function getWeekStart() {
   return new Date(d.setDate(diff)).toDateString();
 }
 
-export default function Leaderboard({ currentUserId, currentXP, isGuest }) {
+export default function Leaderboard({ currentUserId, currentXP, isGuest, user, friends, onAddFriend, onRemoveFriend }) {
   const [tab, setTab] = useState('all');
   const [allTime, setAllTime] = useState([]);
   const [weekly, setWeekly] = useState([]);
@@ -58,7 +59,7 @@ export default function Leaderboard({ currentUserId, currentXP, isGuest }) {
       </div>
 
       <div className="flex gap-2 mb-4">
-        {[['all', 'All-time'], ['weekly', 'This week']].map(([id, label]) => (
+        {[['all', 'All-time'], ['weekly', 'This week'], ['friends', 'Friends']].map(([id, label]) => (
           <button key={id} data-testid={`leaderboard-tab-${id}`} onClick={() => setTab(id)}
             className="flex-1 py-2 px-3 rounded-xl text-xs font-semibold border transition-all"
             style={{
@@ -69,6 +70,11 @@ export default function Leaderboard({ currentUserId, currentXP, isGuest }) {
         ))}
       </div>
 
+      {tab === 'friends' ? (
+        <FriendsList user={user} friends={friends || []} isGuest={isGuest}
+          onAddFriend={onAddFriend} onRemoveFriend={onRemoveFriend} />
+      ) : (
+      <>
       {isGuest && (
         <div className="text-center py-6 px-4 rounded-xl text-sm border mb-3" data-testid="leaderboard-guest-msg"
           style={{ background: 'hsl(47 91% 95%)', color: '#78350F', borderColor: 'hsl(47 91% 60%)' }}>
@@ -131,6 +137,8 @@ export default function Leaderboard({ currentUserId, currentXP, isGuest }) {
           );
         })}
       </div>
+      </>
+      )}
     </div>
   );
 }

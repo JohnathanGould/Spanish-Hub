@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Volume2, CheckCircle2 } from 'lucide-react';
-import { speak } from '../utils/helpers';
+import { X, Volume2, CheckCircle2, Mic, MicOff } from 'lucide-react';
+import { speak, levenshtein } from '../utils/helpers';
 
 const TYPE_LABELS = {
   noun: 'Noun', verb: 'Verb', adj: 'Adjective', adv: 'Adverb',
@@ -13,6 +13,30 @@ export default function WordDetail({ word, progress, onClose }) {
   const total = (p.c || 0) + (p.w || 0);
   const acc = total > 0 ? Math.round((p.c / total) * 100) : 0;
   const article = word.gender === 'm' ? 'el ' : word.gender === 'f' ? 'la ' : '';
+
+  const [pronCheck, setPronCheck] = useState(null); // {ok, heard} | null
+  const [listening, setListening] = useState(false);
+  const SR = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
+
+  const startPronCheck = () => {
+    if (!SR) return;
+    setListening(true); setPronCheck(null);
+    const rec = new SR();
+    rec.lang = 'es-ES';
+    rec.continuous = false;
+    rec.interimResults = false;
+    rec.maxAlternatives = 3;
+    rec.onresult = (ev) => {
+      const heard = ev.results[0][0].transcript.trim().toLowerCase();
+      const target = word.es.toLowerCase();
+      const dist = levenshtein(heard, target);
+      const ok = dist <= Math.max(1, Math.floor(target.length / 5));
+      setPronCheck({ ok, heard });
+    };
+    rec.onerror = () => { setListening(false); setPronCheck({ ok: false, heard: '(no audio)' }); };
+    rec.onend = () => setListening(false);
+    try { rec.start(); } catch (e) { setListening(false); }
+  };
 
   return (
     <div data-testid="word-detail-modal" onClick={onClose}
@@ -60,6 +84,38 @@ export default function WordDetail({ word, progress, onClose }) {
             <p className="text-sm italic" style={{ color: 'hsl(var(--muted-foreground))' }}>{word.sentence.en}</p>
           </div>
         )}
+
+        <div className="px-6 py-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+          <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
+            Pronunciation practice
+          </div>
+          {SR ? (
+            <>
+              <button data-testid="word-detail-pron-btn" onClick={startPronCheck} disabled={listening}
+                className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border-2 transition-all"
+                style={{
+                  background: listening ? '#FEE2E2' : 'hsl(var(--card))',
+                  borderColor: listening ? '#FCA5A5' : 'hsl(var(--primary))',
+                  color: listening ? '#991B1B' : 'hsl(var(--primary))',
+                }}>
+                {listening ? <><MicOff size={14} /> Listening…</> : <><Mic size={14} /> Try saying "{word.es}"</>}
+              </button>
+              {pronCheck && (
+                <div className="mt-2 p-2.5 rounded-lg text-xs" data-testid="pron-result"
+                  style={{
+                    background: pronCheck.ok ? '#DCFCE7' : '#FEE2E2',
+                    color: pronCheck.ok ? '#14532D' : '#991B1B',
+                  }}>
+                  <strong>{pronCheck.ok ? '¡Bien dicho!' : 'Try again'}</strong> — heard: <em>"{pronCheck.heard}"</em>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-xs italic" style={{ color: 'hsl(var(--muted-foreground))' }}>
+              Pronunciation practice not supported in this browser. Try Chrome or Edge.
+            </div>
+          )}
+        </div>
 
         <div className="px-6 py-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
           <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>

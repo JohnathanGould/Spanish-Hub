@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Plus, Trash2, ChevronRight, Settings2 } from 'lucide-react';
+import { Search, Plus, Trash2, ChevronRight, Settings2, Globe } from 'lucide-react';
 import { VERB_TABLE, NOUN_GROUPS } from '../data/words';
 import { masteryLevel, dotColor, getStats } from '../utils/helpers';
 
@@ -75,7 +75,7 @@ function AddWordForm({ onAdd }) {
   );
 }
 
-export default function WordList({ words, progress, customWords, searchQuery, setSearchQuery, onAddWord, onDeleteWord, onWordClick, onCategoryClick, categoryEnabled }) {
+export default function WordList({ words, progress, customWords, searchQuery, setSearchQuery, onAddWord, onDeleteWord, onWordClick, onCategoryClick, onSharedPacksClick, categoryEnabled }) {
   const q = searchQuery.toLowerCase();
   const filtered = q ? words.filter(w => w.es.includes(q) || w.en.includes(q)) : null;
   const nouns = words.filter(w => w.type === 'noun' && w.group !== 'Core');
@@ -99,6 +99,13 @@ export default function WordList({ words, progress, customWords, searchQuery, se
           style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }}>
           <Settings2 size={13} /> Packs
         </button>
+        {onSharedPacksClick && (
+          <button data-testid="shared-packs-btn" onClick={onSharedPacksClick}
+            className="flex items-center gap-1 px-3 py-2 rounded-xl border text-xs font-medium"
+            style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }}>
+            <Globe size={13} /> Community
+          </button>
+        )}
       </div>
 
       <AddWordForm onAdd={onAddWord} />

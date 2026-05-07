@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { auth, db, googleProvider } from './firebase';
-import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth';
+import { auth, db } from './firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 function getWeekStartStr() {
@@ -40,6 +40,10 @@ import LessonsList from './components/LessonsList';
 import LessonView from './components/LessonView';
 import DailyChallenge from './components/DailyChallenge';
 import SessionHistory from './components/SessionHistory';
+import LoginScreen from './components/LoginScreen';
+import GoalModal from './components/GoalModal';
+import Certificate from './components/Certificate';
+import SharedPacks from './components/SharedPacks';
 
 const DEFAULT_DATA = {
   displayName: '',
@@ -56,85 +60,31 @@ const DEFAULT_DATA = {
   categoryEnabled: { ...DEFAULT_CATEGORIES },
   lessonsCompleted: [],
   dailyChallenges: { date: null, weakDone: false, themeDone: false },
+  friends: [],
+  reminderEnabled: false,
 };
 
-function LoginScreen({ onGuest }) {
-  const [loading, setLoading] = useState(false);
-  const handleSignIn = async () => {
-    setLoading(true);
-    try { await signInWithPopup(auth, googleProvider); }
-    catch (e) { console.error(e); setLoading(false); }
-  };
-  return (
-    <div className="app-outer">
-      <div className="app-container flex items-center justify-center p-6">
-        <div className="login-glass p-10 max-w-sm w-full text-center">
-          <div className="text-6xl mb-4">🇪🇸</div>
-          <h1 className="font-serif text-3xl font-bold mb-2" style={{ color: 'hsl(var(--foreground))' }}>
-            Spanish Hub
-          </h1>
-          <p className="text-sm mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
-            Vocabulary &amp; grammar drills
-          </p>
-          <p className="text-sm mb-8" style={{ color: 'hsl(var(--muted-foreground))' }}>
-            Sign in to track your mastery, unlock streaks, and save your progress.
-          </p>
-          <button
-            data-testid="google-signin-btn"
-            onClick={handleSignIn}
-            disabled={loading}
-            className="w-full py-3 px-6 rounded-xl font-semibold text-base transition-all duration-200 mb-3"
-            style={{ background: 'hsl(var(--primary))', color: 'white', boxShadow: '0 4px 14px rgba(198,11,30,0.35)' }}
-          >
-            {loading ? 'Signing in…' : 'Sign in with Google'}
-          </button>
-          <button
-            data-testid="guest-continue-btn"
-            onClick={onGuest}
-            className="w-full py-2.5 px-6 rounded-xl font-medium text-sm transition-all border"
-            style={{ background: 'transparent', color: 'hsl(var(--muted-foreground))', borderColor: 'hsl(var(--border))' }}
-          >
-            Continue as guest
-          </button>
-          <p className="text-xs mt-4" style={{ color: 'hsl(var(--muted-foreground))' }}>
-            15 drills · 200+ words · mastery tracking
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function GoalModal({ goal, onSave, onClose }) {
-  const [val, setVal] = useState(goal);
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.5)' }}>
-      <div className="rounded-2xl p-6 w-full max-w-xs shadow-2xl" style={{ background: 'hsl(var(--card))' }}>
-        <h3 className="font-serif text-lg font-bold mb-4">Set Daily Goal</h3>
-        <p className="text-sm mb-4" style={{ color: 'hsl(var(--muted-foreground))' }}>
-          How many correct answers do you want per day?
-        </p>
-        <input
-          data-testid="goal-input"
-          type="number" min="1" max="500" value={val}
-          onChange={e => setVal(Number(e.target.value))}
-          className="w-full p-3 rounded-xl border text-lg text-center mb-4 font-bold"
-          style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--muted))', color: 'hsl(var(--foreground))' }}
-        />
-        <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 py-2 rounded-xl border text-sm font-medium"
-            style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }}>
-            Cancel
-          </button>
-          <button data-testid="goal-save-btn" onClick={() => onSave(Math.max(1, val))}
-            className="flex-1 py-2 rounded-xl text-sm font-semibold text-white"
-            style={{ background: 'hsl(var(--primary))' }}>
-            Save
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+function maybeRunStreakReminder(data) {
+  try {
+    if (typeof window === 'undefined' || !('Notification' in window)) return;
+    if (!data?.reminderEnabled) return;
+    if (Notification.permission !== 'granted') return;
+    const today = new Date().toDateString();
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    const lastDate = data?.streak?.lastDate;
+    const dailyDate = data?.dailyProgress?.date;
+    // If user has done nothing today and had streak yesterday, prompt them
+    if (lastDate === yesterday && dailyDate !== today && (data.streak?.count || 0) > 0) {
+      // Avoid spamming — only fire once per session
+      if (window.__shStreakNotified) return;
+      window.__shStreakNotified = true;
+      new Notification('Keep your Spanish streak alive 🇪🇸🔥', {
+        body: `${data.streak.count}-day streak — finish a quick drill to keep it going.`,
+        icon: '/icon.svg',
+        tag: 'streak-reminder',
+      });
+    }
+  } catch (e) { console.error(e); }
 }
 
 export default function SpanishHub() {
@@ -149,6 +99,8 @@ export default function SpanishHub() {
   const [selectedWord, setSelectedWord] = useState(null);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showGoalModal, setShowGoalModal] = useState(false);
+  const [showCertificate, setShowCertificate] = useState(false);
+  const [showSharedPacks, setShowSharedPacks] = useState(false);
   const saveTimerRef = useRef(null);
 
   useEffect(() => {
@@ -167,10 +119,12 @@ export default function SpanishHub() {
       const raw = localStorage.getItem('spanish-hub-guest');
       if (raw) {
         const data = JSON.parse(raw);
-        setUserData({
+        const merged = {
           ...DEFAULT_DATA, ...data,
           categoryEnabled: { ...DEFAULT_DATA.categoryEnabled, ...(data.categoryEnabled || {}) },
-        });
+        };
+        setUserData(merged);
+        maybeRunStreakReminder(merged);
       } else {
         setUserData({ ...DEFAULT_DATA, displayName: 'Guest' });
       }
@@ -182,10 +136,12 @@ export default function SpanishHub() {
       const snap = await getDoc(doc(db, 'users', u.uid));
       if (snap.exists()) {
         const data = snap.data();
-        setUserData({
+        const merged = {
           ...DEFAULT_DATA, ...data,
           categoryEnabled: { ...DEFAULT_DATA.categoryEnabled, ...(data.categoryEnabled || {}) },
-        });
+        };
+        setUserData(merged);
+        maybeRunStreakReminder(merged);
       } else {
         const fresh = { ...DEFAULT_DATA, displayName: u.displayName || 'Learner', photoURL: u.photoURL || null };
         setUserData(fresh);
@@ -377,9 +333,36 @@ export default function SpanishHub() {
     });
   }, [persistData]);
 
-  const updateDailyGoal = useCallback((goal) => {
+  const updateDailyGoal = useCallback((goal, reminderEnabled) => {
     setUserData(prev => {
-      const newData = { ...prev, dailyGoal: goal };
+      const newData = { ...prev, dailyGoal: goal, reminderEnabled: !!reminderEnabled };
+      persistData(newData);
+      return newData;
+    });
+  }, [persistData]);
+
+  const addFriend = useCallback((fid) => {
+    setUserData(prev => {
+      if ((prev.friends || []).includes(fid)) return prev;
+      const newData = { ...prev, friends: [...(prev.friends || []), fid] };
+      persistData(newData);
+      return newData;
+    });
+  }, [persistData]);
+
+  const removeFriend = useCallback((fid) => {
+    setUserData(prev => {
+      const newData = { ...prev, friends: (prev.friends || []).filter(f => f !== fid) };
+      persistData(newData);
+      return newData;
+    });
+  }, [persistData]);
+
+  const importPackWords = useCallback((words) => {
+    setUserData(prev => {
+      const existing = new Set((prev.customWords || []).map(w => w.es));
+      const fresh = words.filter(w => !existing.has(w.es));
+      const newData = { ...prev, customWords: [...(prev.customWords || []), ...fresh] };
       persistData(newData);
       return newData;
     });
@@ -491,7 +474,9 @@ export default function SpanishHub() {
             </>
           )}
           {tab === 'learn' && (
-            <LessonsList lessonsCompleted={userData.lessonsCompleted || []} onOpenLesson={openLesson} />
+            <LessonsList lessonsCompleted={userData.lessonsCompleted || []}
+              onOpenLesson={openLesson}
+              onShowCertificate={() => setShowCertificate(true)} />
           )}
           {tab === 'words' && (
             <WordList
@@ -500,11 +485,15 @@ export default function SpanishHub() {
               searchQuery={searchQuery} setSearchQuery={setSearchQuery}
               onAddWord={addCustomWord} onDeleteWord={deleteCustomWord}
               onWordClick={setSelectedWord} onCategoryClick={() => setShowCategoryModal(true)}
+              onSharedPacksClick={() => setShowSharedPacks(true)}
               categoryEnabled={userData.categoryEnabled}
             />
           )}
           {tab === 'leaderboard' && (
-            <Leaderboard currentUserId={effectiveUser.uid} currentXP={userData.xp} sessions={userData.sessions} isGuest={isGuest} />
+            <Leaderboard currentUserId={effectiveUser.uid} currentXP={userData.xp}
+              sessions={userData.sessions} isGuest={isGuest}
+              user={user} friends={userData.friends || []}
+              onAddFriend={addFriend} onRemoveFriend={removeFriend} />
           )}
           {tab === 'history' && (
             <SessionHistory sessions={userData.sessions || []} />
@@ -521,8 +510,23 @@ export default function SpanishHub() {
         )}
         {showGoalModal && (
           <GoalModal goal={userData.dailyGoal}
-            onSave={(g) => { updateDailyGoal(g); setShowGoalModal(false); }}
+            reminderEnabled={userData.reminderEnabled}
+            onSave={(g, r) => { updateDailyGoal(g, r); setShowGoalModal(false); }}
             onClose={() => setShowGoalModal(false)} />
+        )}
+        {showCertificate && (
+          <Certificate
+            name={effectiveUser.displayName || userData.displayName || 'Spanish Learner'}
+            xp={userData.xp || 0}
+            streakCount={userData.streak?.count || 0}
+            completedDate={new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+            onClose={() => setShowCertificate(false)} />
+        )}
+        {showSharedPacks && (
+          <SharedPacks user={user} isGuest={isGuest}
+            customWords={userData.customWords || []}
+            onImport={importPackWords}
+            onClose={() => setShowSharedPacks(false)} />
         )}
       </div>
     </div>
