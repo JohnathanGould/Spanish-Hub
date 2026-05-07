@@ -25,8 +25,9 @@ async function syncLeaderboard(user, data) {
     });
   } catch (e) { console.error('LB sync error', e); }
 }
-import { MASTER, DEFAULT_CATEGORIES } from './data/words';
-import { masteryLevel, getStats, initVoice } from './utils/helpers';
+import { MASTER, DEFAULT_CATEGORIES, PRESET_PACKS } from './data/words';
+import { LESSONS, DAILY_THEMES } from './data/lessons';
+import { masteryLevel, getStats, initVoice, spacedRepetitionSort } from './utils/helpers';
 import Header from './components/Header';
 import WordList from './components/WordList';
 import DrillsGrid from './components/DrillsGrid';
@@ -35,6 +36,10 @@ import Leaderboard from './components/Leaderboard';
 import WordDetail from './components/WordDetail';
 import CategoryToggles from './components/CategoryToggles';
 import DrillRouter from './components/DrillRouter';
+import LessonsList from './components/LessonsList';
+import LessonView from './components/LessonView';
+import DailyChallenge from './components/DailyChallenge';
+import SessionHistory from './components/SessionHistory';
 
 const DEFAULT_DATA = {
   displayName: '',
@@ -49,6 +54,8 @@ const DEFAULT_DATA = {
   dailyProgress: { count: 0, date: null },
   sessions: [],
   categoryEnabled: { ...DEFAULT_CATEGORIES },
+  lessonsCompleted: [],
+  dailyChallenges: { date: null, weakDone: false, themeDone: false },
 };
 
 function LoginScreen({ onGuest }) {
@@ -226,16 +233,28 @@ export default function SpanishHub() {
   }, [persistData]);
 
   const onDrillDone = useCallback((drillId, correct, total) => {
-    const xpBonus = total > 0 ? Math.round((correct / total) * 5) : 0;
+    const dailyKind = view.dailyKind;
+    const xpMultiplier = view.xpMultiplier || 1;
+    const baseBonus = total > 0 ? Math.round((correct / total) * 5) : 0;
+    const xpBonus = Math.round(baseBonus * xpMultiplier);
     setUserData(prev => {
       const today = new Date().toDateString();
       const streak = prev.streak || { count: 0, lastDate: null };
       const yesterday = new Date(Date.now() - 86400000).toDateString();
       const newStreakCount = streak.lastDate === today ? streak.count
         : streak.lastDate === yesterday ? streak.count + 1 : 1;
-      const sessions = [{ drillId, correct, total, date: today, ts: Date.now() }, ...(prev.sessions || []).slice(0, 49)];
+      const sessionDrillId = dailyKind === 'weak' ? 'daily-weak' : dailyKind === 'theme' ? 'daily-theme' : drillId;
+      const sessions = [{ drillId: sessionDrillId, correct, total, date: today, ts: Date.now() }, ...(prev.sessions || []).slice(0, 49)];
       const ws = getWeekStartStr();
       const sameWeek = prev.weekStart === ws;
+      // Update daily challenge state
+      const dc = prev.dailyChallenges || { date: null, weakDone: false, themeDone: false };
+      const sameDay = dc.date === today;
+      const updatedChallenges = {
+        date: today,
+        weakDone: (sameDay && dc.weakDone) || dailyKind === 'weak',
+        themeDone: (sameDay && dc.themeDone) || dailyKind === 'theme',
+      };
       const newData = {
         ...prev,
         xp: (prev.xp || 0) + xpBonus,
@@ -243,6 +262,7 @@ export default function SpanishHub() {
         weekStart: ws,
         streak: { count: newStreakCount, lastDate: today },
         sessions,
+        dailyChallenges: updatedChallenges,
       };
       if (isGuest) {
         try { localStorage.setItem('spanish-hub-guest', JSON.stringify(newData)); } catch (e) { console.error(e); }
@@ -252,13 +272,64 @@ export default function SpanishHub() {
       }
       return newData;
     });
-    setView({ page: 'done', drillId, correct, total });
-  }, [user, isGuest]);
+    setView({ page: 'done', drillId: dailyKind ? `daily-${dailyKind}` : drillId, correct, total });
+  }, [user, isGuest, view.dailyKind, view.xpMultiplier]);
 
   const startDrill = useCallback((drillId) => setView({ page: 'drill', drillId }), []);
   const goHome = useCallback(() => setView({ page: 'home' }), []);
 
+  const startDailyChallenge = useCallback((kind) => {
+    const today = new Date().toDateString();
+    if (kind === 'weak') {
+      // Find 5 weakest non-mastered words from active set
+      const all = MASTER.filter(w => w.group === 'Core' || userData.categoryEnabled[w.group] !== false);
+      const candidates = all.filter(w => masteryLevel(userData.progress, w.es) !== 'mastered');
+      const sorted = spacedRepetitionSort(candidates, userData.progress);
+      const words = sorted.slice(0, 5);
+      if (words.length === 0) return;
+      setView({ page: 'drill', drillId: 'es-en', overrideWords: words, dailyKind: 'weak', xpMultiplier: 2, today });
+    } else {
+      const theme = DAILY_THEMES[new Date().getDay()];
+      const themeWords = MASTER.filter(w => w.group === theme.group);
+      if (themeWords.length === 0) return;
+      const words = spacedRepetitionSort(themeWords, userData.progress).slice(0, 5);
+      setView({ page: 'drill', drillId: 'flashcard', overrideWords: words, dailyKind: 'theme', xpMultiplier: 1.5, today });
+    }
+  }, [userData]);
+
+  const openLesson = useCallback((lessonId) => setView({ page: 'lesson', lessonId }), []);
+
+  const completeLesson = useCallback((lessonId, hasNext) => {
+    setUserData(prev => {
+      const already = (prev.lessonsCompleted || []).includes(lessonId);
+      const lessonsCompleted = already ? prev.lessonsCompleted : [...(prev.lessonsCompleted || []), lessonId];
+      const xpGain = already ? 0 : 15; // bonus XP for completing a lesson once
+      const newData = { ...prev, lessonsCompleted, xp: (prev.xp || 0) + xpGain };
+      persistData(newData);
+      return newData;
+    });
+    if (hasNext) {
+      const idx = LESSONS.findIndex(l => l.id === lessonId);
+      const next = LESSONS[idx + 1];
+      if (next) setView({ page: 'lesson', lessonId: next.id });
+    } else {
+      setView({ page: 'home' });
+      setTab('learn');
+    }
+  }, [persistData]);
+
+  const practiceLessonWords = useCallback((wordEsList) => {
+    const words = wordEsList
+      .map(es => MASTER.find(w => w.es === es) || (userData.customWords || []).find(w => w.es === es))
+      .filter(Boolean);
+    if (words.length === 0) return;
+    setView({ page: 'drill', drillId: 'flashcard', overrideWords: words, dailyKind: null, xpMultiplier: 1 });
+  }, [userData.customWords]);
+
   const getActiveWords = useCallback(() => {
+    if (view.page === 'drill' && Array.isArray(view.overrideWords) && view.overrideWords.length > 0) {
+      return view.overrideWords;
+    }
     const filtered = MASTER.filter(w => w.group === 'Core' || userData.categoryEnabled[w.group] !== false);
     const masterSet = new Set(filtered.map(w => w.es));
     const custom = (userData.customWords || []).filter(w => !masterSet.has(w.es));
@@ -266,7 +337,7 @@ export default function SpanishHub() {
     if (drillMode === 'weak') return all.filter(w => masteryLevel(userData.progress, w.es) !== 'mastered');
     if (drillMode === 'mastered') return all.filter(w => masteryLevel(userData.progress, w.es) === 'mastered');
     return all;
-  }, [userData, drillMode]);
+  }, [userData, drillMode, view]);
 
   const addCustomWord = useCallback((wordData) => {
     setUserData(prev => {
@@ -287,6 +358,20 @@ export default function SpanishHub() {
   const updateCategoryEnabled = useCallback((category, enabled) => {
     setUserData(prev => {
       const newData = { ...prev, categoryEnabled: { ...prev.categoryEnabled, [category]: enabled } };
+      persistData(newData);
+      return newData;
+    });
+  }, [persistData]);
+
+  const applyPreset = useCallback((presetId) => {
+    const preset = PRESET_PACKS.find(p => p.id === presetId);
+    if (!preset) return;
+    setUserData(prev => {
+      const next = { ...DEFAULT_CATEGORIES };
+      Object.keys(next).forEach(cat => {
+        next[cat] = preset.cats.includes('*') || preset.cats.includes(cat);
+      });
+      const newData = { ...prev, categoryEnabled: next };
       persistData(newData);
       return newData;
     });
@@ -328,6 +413,22 @@ export default function SpanishHub() {
 
   const activeWords = getActiveWords();
   const stats = getStats(activeWords, userData.progress);
+
+  if (view.page === 'lesson') {
+    return (
+      <div className="app-outer">
+        <div className="app-container">
+          <LessonView
+            lessonId={view.lessonId}
+            lessonsCompleted={userData.lessonsCompleted || []}
+            onComplete={completeLesson}
+            onPractice={practiceLessonWords}
+            onBack={() => { setView({ page: 'home' }); setTab('learn'); }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   if (view.page === 'drill') {
     return (
@@ -376,15 +477,21 @@ export default function SpanishHub() {
           onGoalClick={() => setShowGoalModal(true)}
         />
         <div className="tab-bar">
-          {[['drills', 'Drills'], ['words', 'My Words'], ['leaderboard', 'Leaderboard']].map(([id, label]) => (
+          {[['drills', 'Drills'], ['learn', 'Learn'], ['words', 'Words'], ['leaderboard', 'Top'], ['history', 'History']].map(([id, label]) => (
             <button key={id} className={`tab-btn${tab === id ? ' active' : ''}`}
               onClick={() => setTab(id)} data-testid={`tab-${id}`}>{label}</button>
           ))}
         </div>
         <div className="px-4 pb-16">
           {tab === 'drills' && (
-            <DrillsGrid words={activeWords} stats={stats} drillMode={drillMode}
-              setDrillMode={setDrillMode} onStartDrill={startDrill} />
+            <>
+              <DailyChallenge challenges={userData.dailyChallenges} onStart={startDailyChallenge} />
+              <DrillsGrid words={activeWords} stats={stats} drillMode={drillMode}
+                setDrillMode={setDrillMode} onStartDrill={startDrill} />
+            </>
+          )}
+          {tab === 'learn' && (
+            <LessonsList lessonsCompleted={userData.lessonsCompleted || []} onOpenLesson={openLesson} />
           )}
           {tab === 'words' && (
             <WordList
@@ -399,6 +506,9 @@ export default function SpanishHub() {
           {tab === 'leaderboard' && (
             <Leaderboard currentUserId={effectiveUser.uid} currentXP={userData.xp} sessions={userData.sessions} isGuest={isGuest} />
           )}
+          {tab === 'history' && (
+            <SessionHistory sessions={userData.sessions || []} />
+          )}
         </div>
 
         {selectedWord && (
@@ -406,7 +516,8 @@ export default function SpanishHub() {
         )}
         {showCategoryModal && (
           <CategoryToggles categoryEnabled={userData.categoryEnabled}
-            onToggle={updateCategoryEnabled} onClose={() => setShowCategoryModal(false)} />
+            onToggle={updateCategoryEnabled} onApplyPreset={applyPreset}
+            onClose={() => setShowCategoryModal(false)} />
         )}
         {showGoalModal && (
           <GoalModal goal={userData.dailyGoal}

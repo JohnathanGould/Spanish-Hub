@@ -1,6 +1,15 @@
 export const TOGGLEABLE_CATEGORIES = [
   'Food & Drink', 'Family', 'Travel', 'Places', 'Numbers',
-  'Days', 'Months', 'Colours', 'Body', 'Adjectives', 'Time', 'Questions', 'Connectors'
+  'Days', 'Months', 'Colours', 'Body', 'Adjectives', 'Time', 'Questions', 'Connectors',
+  'Weather', 'Animals', 'Clothing'
+];
+
+export const PRESET_PACKS = [
+  { id: 'all', name: 'Everything', emoji: '🌎', desc: 'All packs enabled', cats: ['*'] },
+  { id: 'travel', name: 'Travel Trip', emoji: '🧳', desc: 'Just what you need on the road', cats: ['Travel', 'Places', 'Numbers', 'Time', 'Questions'] },
+  { id: 'restaurant', name: 'Restaurant', emoji: '🍽️', desc: 'Order, eat, pay, repeat', cats: ['Food & Drink', 'Numbers', 'Adjectives', 'Connectors'] },
+  { id: 'survival', name: 'Survival 101', emoji: '🆘', desc: 'Bare essentials only', cats: ['Numbers', 'Days', 'Questions', 'Connectors'] },
+  { id: 'beginner', name: 'Beginner', emoji: '🌱', desc: 'Light load to ease in', cats: ['Family', 'Numbers', 'Colours', 'Days'] },
 ];
 
 export const DEFAULT_CATEGORIES = Object.fromEntries(TOGGLEABLE_CATEGORIES.map(c => [c, true]));
@@ -270,6 +279,111 @@ export const MASTER = [
   { es: 'todo', en: 'all / everything', type: 'adv', group: 'Connectors', sentence: { es: 'Todo está bien.', en: 'Everything is fine.' } },
   { es: 'nada', en: 'nothing', type: 'adv', group: 'Connectors', sentence: { es: 'No hay nada que hacer.', en: 'There is nothing to do.' } },
   { es: 'hay', en: 'there is / there are', type: 'adv', group: 'Connectors', sentence: { es: '¿Hay un taxi cerca?', en: 'Is there a taxi nearby?' } },
+  { es: 'o', en: 'or', type: 'adv', group: 'Connectors', sentence: { es: '¿Té o café?', en: 'Tea or coffee?' } },
+  { es: 'si', en: 'if', type: 'adv', group: 'Connectors', sentence: { es: 'Si llueve, no salgo.', en: "If it rains, I won't go out." } },
+
+  // === FOOD & DRINK (extra) ===
+  { es: 'huevo', en: 'egg', type: 'noun', group: 'Food & Drink', gender: 'm', sentence: { es: 'Como un huevo en el desayuno.', en: 'I eat an egg for breakfast.' } },
+  { es: 'mantequilla', en: 'butter', type: 'noun', group: 'Food & Drink', gender: 'f', sentence: { es: 'Pan con mantequilla, por favor.', en: 'Bread with butter, please.' } },
+  { es: 'tomate', en: 'tomato', type: 'noun', group: 'Food & Drink', gender: 'm', sentence: { es: 'El tomate es rojo.', en: 'The tomato is red.' } },
+  { es: 'ensalada', en: 'salad', type: 'noun', group: 'Food & Drink', gender: 'f', sentence: { es: 'Una ensalada mixta, por favor.', en: 'A mixed salad, please.' } },
+  { es: 'postre', en: 'dessert', type: 'noun', group: 'Food & Drink', gender: 'm', sentence: { es: 'De postre, helado.', en: 'For dessert, ice cream.' } },
+  { es: 'helado', en: 'ice cream', type: 'noun', group: 'Food & Drink', gender: 'm', sentence: { es: 'El niño quiere helado.', en: 'The boy wants ice cream.' } },
+
+  // === FAMILY (extra) ===
+  { es: 'tío', en: 'uncle', type: 'noun', group: 'Family', gender: 'm', sentence: { es: 'Mi tío vive en Sevilla.', en: 'My uncle lives in Seville.' } },
+  { es: 'tía', en: 'aunt', type: 'noun', group: 'Family', gender: 'f', sentence: { es: 'Mi tía hace una paella increíble.', en: 'My aunt makes incredible paella.' } },
+  { es: 'primo', en: 'cousin (m)', type: 'noun', group: 'Family', gender: 'm', sentence: { es: 'Mi primo estudia inglés.', en: 'My cousin studies English.' } },
+  { es: 'prima', en: 'cousin (f)', type: 'noun', group: 'Family', gender: 'f', sentence: { es: 'Mi prima toca la guitarra.', en: 'My cousin plays guitar.' } },
+
+  // === TRAVEL (extra) ===
+  { es: 'aeropuerto', en: 'airport', type: 'noun', group: 'Travel', gender: 'm', sentence: { es: 'El aeropuerto está lejos.', en: 'The airport is far.' } },
+  { es: 'vuelo', en: 'flight', type: 'noun', group: 'Travel', gender: 'm', sentence: { es: 'Mi vuelo sale a las ocho.', en: 'My flight leaves at eight.' } },
+  { es: 'billete', en: 'ticket', type: 'noun', group: 'Travel', gender: 'm', sentence: { es: 'Necesito un billete para Madrid.', en: 'I need a ticket to Madrid.' } },
+  { es: 'equipaje', en: 'luggage', type: 'noun', group: 'Travel', gender: 'm', sentence: { es: '¿Dónde está mi equipaje?', en: 'Where is my luggage?' } },
+  { es: 'tren', en: 'train', type: 'noun', group: 'Travel', gender: 'm', sentence: { es: 'El tren llega a las dos.', en: 'The train arrives at two.' } },
+  { es: 'autobús', en: 'bus', type: 'noun', group: 'Travel', gender: 'm', sentence: { es: 'Tomo el autobús al trabajo.', en: 'I take the bus to work.' } },
+  { es: 'coche', en: 'car', type: 'noun', group: 'Travel', gender: 'm', sentence: { es: 'El coche es nuevo.', en: 'The car is new.' } },
+  { es: 'mapa', en: 'map', type: 'noun', group: 'Travel', gender: 'm', sentence: { es: 'Necesito un mapa de la ciudad.', en: 'I need a map of the city.' } },
+
+  // === PLACES (extra) ===
+  { es: 'parque', en: 'park', type: 'noun', group: 'Places', gender: 'm', sentence: { es: 'El parque es muy bonito.', en: 'The park is very beautiful.' } },
+  { es: 'mercado', en: 'market', type: 'noun', group: 'Places', gender: 'm', sentence: { es: 'Compro fruta en el mercado.', en: 'I buy fruit at the market.' } },
+  { es: 'iglesia', en: 'church', type: 'noun', group: 'Places', gender: 'f', sentence: { es: 'La iglesia es del siglo XV.', en: 'The church is from the 15th century.' } },
+  { es: 'museo', en: 'museum', type: 'noun', group: 'Places', gender: 'm', sentence: { es: 'El museo abre a las diez.', en: 'The museum opens at ten.' } },
+
+  // === NUMBERS (extra) ===
+  { es: 'cero', en: 'zero', type: 'other', group: 'Numbers', sentence: { es: 'Cero grados — qué frío.', en: 'Zero degrees — so cold.' } },
+  { es: 'once', en: 'eleven', type: 'other', group: 'Numbers', sentence: { es: 'Son las once de la noche.', en: 'It is eleven at night.' } },
+  { es: 'doce', en: 'twelve', type: 'other', group: 'Numbers', sentence: { es: 'Hay doce meses en un año.', en: 'There are twelve months in a year.' } },
+
+  // === COLOURS (extra) ===
+  { es: 'rosa', en: 'pink', type: 'adj', group: 'Colours', sentence: { es: 'La flor es rosa.', en: 'The flower is pink.' } },
+  { es: 'marrón', en: 'brown', type: 'adj', group: 'Colours', sentence: { es: 'El café es marrón.', en: 'The coffee is brown.' } },
+
+  // === BODY (extra) ===
+  { es: 'corazón', en: 'heart', type: 'noun', group: 'Body', gender: 'm', sentence: { es: 'Mi corazón late rápido.', en: 'My heart beats fast.' } },
+  { es: 'dedo', en: 'finger / toe', type: 'noun', group: 'Body', gender: 'm', sentence: { es: 'Me corté el dedo.', en: 'I cut my finger.' } },
+  { es: 'pelo', en: 'hair', type: 'noun', group: 'Body', gender: 'm', sentence: { es: 'Tiene el pelo largo.', en: 'She has long hair.' } },
+  { es: 'pierna', en: 'leg', type: 'noun', group: 'Body', gender: 'f', sentence: { es: 'Me duele la pierna.', en: 'My leg hurts.' } },
+
+  // === ADJECTIVES (extra) ===
+  { es: 'alto', en: 'tall', type: 'adj', group: 'Adjectives', sentence: { es: 'Mi padre es muy alto.', en: 'My father is very tall.' } },
+  { es: 'bajo', en: 'short / low', type: 'adj', group: 'Adjectives', sentence: { es: 'Mi hermana es bajita.', en: 'My sister is short.' } },
+  { es: 'joven', en: 'young', type: 'adj', group: 'Adjectives', sentence: { es: 'Es muy joven todavía.', en: 'He is still very young.' } },
+  { es: 'contento', en: 'happy', type: 'adj', group: 'Adjectives', sentence: { es: 'Estoy muy contento hoy.', en: 'I am very happy today.' } },
+  { es: 'cansado', en: 'tired', type: 'adj', group: 'Adjectives', sentence: { es: 'Estoy cansado, voy a dormir.', en: 'I am tired, I am going to sleep.' } },
+
+  // === TIME (extra) ===
+  { es: 'minuto', en: 'minute', type: 'noun', group: 'Time', gender: 'm', sentence: { es: 'Espera un minuto, por favor.', en: 'Wait a minute, please.' } },
+  { es: 'hora', en: 'hour', type: 'noun', group: 'Time', gender: 'f', sentence: { es: '¿Qué hora es?', en: 'What time is it?' } },
+  { es: 'semana', en: 'week', type: 'noun', group: 'Time', gender: 'f', sentence: { es: 'La semana tiene siete días.', en: 'The week has seven days.' } },
+  { es: 'año', en: 'year', type: 'noun', group: 'Time', gender: 'm', sentence: { es: 'Tengo treinta años.', en: 'I am thirty years old.' } },
+
+  // === CORE PHRASES (extra) ===
+  { es: 'hasta luego', en: 'see you later', type: 'phrase', group: 'Core', sentence: { es: 'Hasta luego, amigo.', en: 'See you later, friend.' } },
+  { es: 'salud', en: 'cheers / bless you', type: 'phrase', group: 'Core', sentence: { es: '¡Salud y suerte!', en: 'Cheers and good luck!' } },
+  { es: 'suerte', en: 'good luck', type: 'phrase', group: 'Core', sentence: { es: 'Mucha suerte mañana.', en: 'Lots of luck tomorrow.' } },
+  { es: 'buenas tardes', en: 'good afternoon', type: 'phrase', group: 'Core', sentence: { es: 'Buenas tardes, señor.', en: 'Good afternoon, sir.' } },
+  { es: 'encantado', en: 'pleased to meet you', type: 'phrase', group: 'Core', sentence: { es: 'Encantado de conocerte.', en: 'Pleased to meet you.' } },
+
+  // === VERBS (extra) ===
+  { es: 'ayudar', en: 'to help', type: 'verb', group: 'Core', sentence: { es: '¿Puedes ayudarme?', en: 'Can you help me?' } },
+  { es: 'esperar', en: 'to wait / hope', type: 'verb', group: 'Core', sentence: { es: 'Esperamos el tren.', en: 'We wait for the train.' } },
+  { es: 'salir', en: 'to leave / go out', type: 'verb', group: 'Core', sentence: { es: 'Voy a salir esta noche.', en: 'I am going out tonight.' } },
+  { es: 'llegar', en: 'to arrive', type: 'verb', group: 'Core', sentence: { es: 'El vuelo llega tarde.', en: 'The flight arrives late.' } },
+  { es: 'leer', en: 'to read', type: 'verb', group: 'Core', sentence: { es: 'Me gusta leer libros.', en: 'I like to read books.' } },
+  { es: 'escribir', en: 'to write', type: 'verb', group: 'Core', sentence: { es: 'Tengo que escribir un email.', en: 'I have to write an email.' } },
+  { es: 'escuchar', en: 'to listen', type: 'verb', group: 'Core', sentence: { es: 'Me gusta escuchar música.', en: 'I like to listen to music.' } },
+  { es: 'mirar', en: 'to watch / look', type: 'verb', group: 'Core', sentence: { es: 'Vamos a mirar la película.', en: 'We are going to watch the movie.' } },
+
+  // === WEATHER ===
+  { es: 'tiempo', en: 'weather / time', type: 'noun', group: 'Weather', gender: 'm', sentence: { es: '¿Qué tiempo hace?', en: 'What is the weather like?' } },
+  { es: 'sol', en: 'sun', type: 'noun', group: 'Weather', gender: 'm', sentence: { es: 'Hace mucho sol hoy.', en: 'It is very sunny today.' } },
+  { es: 'lluvia', en: 'rain', type: 'noun', group: 'Weather', gender: 'f', sentence: { es: 'La lluvia es buena para las plantas.', en: 'Rain is good for the plants.' } },
+  { es: 'nieve', en: 'snow', type: 'noun', group: 'Weather', gender: 'f', sentence: { es: 'La nieve cubre las montañas.', en: 'Snow covers the mountains.' } },
+  { es: 'viento', en: 'wind', type: 'noun', group: 'Weather', gender: 'm', sentence: { es: 'Hace mucho viento.', en: 'It is very windy.' } },
+  { es: 'calor', en: 'heat', type: 'noun', group: 'Weather', gender: 'm', sentence: { es: 'En agosto hace mucho calor.', en: 'In August it is very hot.' } },
+
+  // === ANIMALS ===
+  { es: 'perro', en: 'dog', type: 'noun', group: 'Animals', gender: 'm', sentence: { es: 'Mi perro se llama Max.', en: 'My dog is called Max.' } },
+  { es: 'gato', en: 'cat', type: 'noun', group: 'Animals', gender: 'm', sentence: { es: 'El gato duerme en el sofá.', en: 'The cat sleeps on the sofa.' } },
+  { es: 'pájaro', en: 'bird', type: 'noun', group: 'Animals', gender: 'm', sentence: { es: 'El pájaro canta por la mañana.', en: 'The bird sings in the morning.' } },
+  { es: 'caballo', en: 'horse', type: 'noun', group: 'Animals', gender: 'm', sentence: { es: 'Voy a montar a caballo.', en: 'I am going to ride a horse.' } },
+  { es: 'vaca', en: 'cow', type: 'noun', group: 'Animals', gender: 'f', sentence: { es: 'La vaca da leche.', en: 'The cow gives milk.' } },
+  { es: 'pez', en: 'fish (alive)', type: 'noun', group: 'Animals', gender: 'm', sentence: { es: 'El pez nada en el río.', en: 'The fish swims in the river.' } },
+  { es: 'oveja', en: 'sheep', type: 'noun', group: 'Animals', gender: 'f', sentence: { es: 'La oveja come hierba.', en: 'The sheep eats grass.' } },
+  { es: 'ratón', en: 'mouse', type: 'noun', group: 'Animals', gender: 'm', sentence: { es: 'El gato persigue al ratón.', en: 'The cat chases the mouse.' } },
+
+  // === CLOTHING ===
+  { es: 'camisa', en: 'shirt', type: 'noun', group: 'Clothing', gender: 'f', sentence: { es: 'Llevo una camisa blanca.', en: 'I am wearing a white shirt.' } },
+  { es: 'pantalón', en: 'pants / trousers', type: 'noun', group: 'Clothing', gender: 'm', sentence: { es: 'Mis pantalones son nuevos.', en: 'My pants are new.' } },
+  { es: 'zapato', en: 'shoe', type: 'noun', group: 'Clothing', gender: 'm', sentence: { es: 'Mis zapatos son cómodos.', en: 'My shoes are comfortable.' } },
+  { es: 'vestido', en: 'dress', type: 'noun', group: 'Clothing', gender: 'm', sentence: { es: 'Compré un vestido nuevo.', en: 'I bought a new dress.' } },
+  { es: 'sombrero', en: 'hat', type: 'noun', group: 'Clothing', gender: 'm', sentence: { es: 'Lleva un sombrero negro.', en: 'He wears a black hat.' } },
+  { es: 'abrigo', en: 'coat', type: 'noun', group: 'Clothing', gender: 'm', sentence: { es: 'Necesitas un abrigo, hace frío.', en: "You need a coat, it's cold." } },
+  { es: 'bolso', en: 'bag / purse', type: 'noun', group: 'Clothing', gender: 'm', sentence: { es: 'Mi bolso es grande.', en: 'My bag is big.' } },
+  { es: 'reloj', en: 'watch / clock', type: 'noun', group: 'Clothing', gender: 'm', sentence: { es: 'Mi reloj es de oro.', en: 'My watch is gold.' } },
 ];
 
 export const VERB_TABLE = [
@@ -287,12 +401,15 @@ export const VERB_TABLE = [
 ];
 
 export const NOUN_GROUPS = [
-  { title: 'Food & Drink', words: [{ es: 'agua', g: 'f', en: 'water' }, { es: 'leche', g: 'f', en: 'milk' }, { es: 'pan', g: 'm', en: 'bread' }, { es: 'manzana', g: 'f', en: 'apple' }, { es: 'pollo', g: 'm', en: 'chicken' }, { es: 'carne', g: 'f', en: 'meat' }, { es: 'pescado', g: 'm', en: 'fish' }, { es: 'arroz', g: 'm', en: 'rice' }, { es: 'sopa', g: 'f', en: 'soup' }, { es: 'fruta', g: 'f', en: 'fruit' }, { es: 'verdura', g: 'f', en: 'vegetable' }, { es: 'café', g: 'm', en: 'coffee' }, { es: 'jugo', g: 'm', en: 'juice' }, { es: 'queso', g: 'm', en: 'cheese' }] },
-  { title: 'Family', words: [{ es: 'madre', g: 'f', en: 'mother' }, { es: 'padre', g: 'm', en: 'father' }, { es: 'hermano', g: 'm', en: 'brother' }, { es: 'hermana', g: 'f', en: 'sister' }, { es: 'hijo', g: 'm', en: 'son' }, { es: 'hija', g: 'f', en: 'daughter' }, { es: 'abuelo', g: 'm', en: 'grandfather' }, { es: 'abuela', g: 'f', en: 'grandmother' }, { es: 'esposo', g: 'm', en: 'husband' }, { es: 'esposa', g: 'f', en: 'wife' }] },
+  { title: 'Food & Drink', words: [{ es: 'agua', g: 'f', en: 'water' }, { es: 'leche', g: 'f', en: 'milk' }, { es: 'pan', g: 'm', en: 'bread' }, { es: 'manzana', g: 'f', en: 'apple' }, { es: 'pollo', g: 'm', en: 'chicken' }, { es: 'carne', g: 'f', en: 'meat' }, { es: 'pescado', g: 'm', en: 'fish' }, { es: 'arroz', g: 'm', en: 'rice' }, { es: 'sopa', g: 'f', en: 'soup' }, { es: 'fruta', g: 'f', en: 'fruit' }, { es: 'verdura', g: 'f', en: 'vegetable' }, { es: 'café', g: 'm', en: 'coffee' }, { es: 'jugo', g: 'm', en: 'juice' }, { es: 'queso', g: 'm', en: 'cheese' }, { es: 'huevo', g: 'm', en: 'egg' }, { es: 'mantequilla', g: 'f', en: 'butter' }, { es: 'tomate', g: 'm', en: 'tomato' }, { es: 'ensalada', g: 'f', en: 'salad' }, { es: 'postre', g: 'm', en: 'dessert' }, { es: 'helado', g: 'm', en: 'ice cream' }] },
+  { title: 'Family', words: [{ es: 'madre', g: 'f', en: 'mother' }, { es: 'padre', g: 'm', en: 'father' }, { es: 'hermano', g: 'm', en: 'brother' }, { es: 'hermana', g: 'f', en: 'sister' }, { es: 'hijo', g: 'm', en: 'son' }, { es: 'hija', g: 'f', en: 'daughter' }, { es: 'abuelo', g: 'm', en: 'grandfather' }, { es: 'abuela', g: 'f', en: 'grandmother' }, { es: 'esposo', g: 'm', en: 'husband' }, { es: 'esposa', g: 'f', en: 'wife' }, { es: 'tío', g: 'm', en: 'uncle' }, { es: 'tía', g: 'f', en: 'aunt' }, { es: 'primo', g: 'm', en: 'cousin (m)' }, { es: 'prima', g: 'f', en: 'cousin (f)' }] },
   { title: 'People', words: [{ es: 'hombre', g: 'm', en: 'man' }, { es: 'mujer', g: 'f', en: 'woman' }, { es: 'niño', g: 'm', en: 'boy' }, { es: 'niña', g: 'f', en: 'girl' }] },
-  { title: 'Travel', words: [{ es: 'taxi', g: 'm', en: 'taxi' }, { es: 'hotel', g: 'm', en: 'hotel' }, { es: 'maleta', g: 'f', en: 'suitcase' }, { es: 'pasaporte', g: 'm', en: 'passport' }, { es: 'teléfono', g: 'm', en: 'telephone' }, { es: 'reserva', g: 'f', en: 'reservation' }] },
-  { title: 'Places', words: [{ es: 'casa', g: 'f', en: 'house/home' }, { es: 'escuela', g: 'f', en: 'school' }, { es: 'tienda', g: 'f', en: 'store' }, { es: 'restaurante', g: 'm', en: 'restaurant' }, { es: 'hospital', g: 'm', en: 'hospital' }, { es: 'banco', g: 'm', en: 'bank' }, { es: 'ciudad', g: 'f', en: 'city' }, { es: 'calle', g: 'f', en: 'street' }, { es: 'playa', g: 'f', en: 'beach' }, { es: 'país', g: 'm', en: 'country' }] },
-  { title: 'Body', words: [{ es: 'cabeza', g: 'f', en: 'head' }, { es: 'mano', g: 'f', en: 'hand' }, { es: 'pie', g: 'm', en: 'foot' }, { es: 'ojo', g: 'm', en: 'eye' }, { es: 'boca', g: 'f', en: 'mouth' }, { es: 'nariz', g: 'f', en: 'nose' }, { es: 'oreja', g: 'f', en: 'ear' }, { es: 'brazo', g: 'm', en: 'arm' }] },
-  { title: 'Colours', words: [{ es: 'rojo', g: null, en: 'red' }, { es: 'azul', g: null, en: 'blue' }, { es: 'verde', g: null, en: 'green' }, { es: 'amarillo', g: null, en: 'yellow' }, { es: 'blanco', g: null, en: 'white' }, { es: 'negro', g: null, en: 'black' }, { es: 'naranja', g: null, en: 'orange' }, { es: 'gris', g: null, en: 'grey' }, { es: 'morado', g: null, en: 'purple' }] },
+  { title: 'Travel', words: [{ es: 'taxi', g: 'm', en: 'taxi' }, { es: 'hotel', g: 'm', en: 'hotel' }, { es: 'maleta', g: 'f', en: 'suitcase' }, { es: 'pasaporte', g: 'm', en: 'passport' }, { es: 'teléfono', g: 'm', en: 'telephone' }, { es: 'reserva', g: 'f', en: 'reservation' }, { es: 'aeropuerto', g: 'm', en: 'airport' }, { es: 'vuelo', g: 'm', en: 'flight' }, { es: 'billete', g: 'm', en: 'ticket' }, { es: 'equipaje', g: 'm', en: 'luggage' }, { es: 'tren', g: 'm', en: 'train' }, { es: 'autobús', g: 'm', en: 'bus' }, { es: 'coche', g: 'm', en: 'car' }, { es: 'mapa', g: 'm', en: 'map' }] },
+  { title: 'Places', words: [{ es: 'casa', g: 'f', en: 'house/home' }, { es: 'escuela', g: 'f', en: 'school' }, { es: 'tienda', g: 'f', en: 'store' }, { es: 'restaurante', g: 'm', en: 'restaurant' }, { es: 'hospital', g: 'm', en: 'hospital' }, { es: 'banco', g: 'm', en: 'bank' }, { es: 'ciudad', g: 'f', en: 'city' }, { es: 'calle', g: 'f', en: 'street' }, { es: 'playa', g: 'f', en: 'beach' }, { es: 'país', g: 'm', en: 'country' }, { es: 'parque', g: 'm', en: 'park' }, { es: 'mercado', g: 'm', en: 'market' }, { es: 'iglesia', g: 'f', en: 'church' }, { es: 'museo', g: 'm', en: 'museum' }] },
+  { title: 'Body', words: [{ es: 'cabeza', g: 'f', en: 'head' }, { es: 'mano', g: 'f', en: 'hand' }, { es: 'pie', g: 'm', en: 'foot' }, { es: 'ojo', g: 'm', en: 'eye' }, { es: 'boca', g: 'f', en: 'mouth' }, { es: 'nariz', g: 'f', en: 'nose' }, { es: 'oreja', g: 'f', en: 'ear' }, { es: 'brazo', g: 'm', en: 'arm' }, { es: 'corazón', g: 'm', en: 'heart' }, { es: 'dedo', g: 'm', en: 'finger' }, { es: 'pelo', g: 'm', en: 'hair' }, { es: 'pierna', g: 'f', en: 'leg' }] },
+  { title: 'Animals', words: [{ es: 'perro', g: 'm', en: 'dog' }, { es: 'gato', g: 'm', en: 'cat' }, { es: 'pájaro', g: 'm', en: 'bird' }, { es: 'caballo', g: 'm', en: 'horse' }, { es: 'vaca', g: 'f', en: 'cow' }, { es: 'pez', g: 'm', en: 'fish' }, { es: 'oveja', g: 'f', en: 'sheep' }, { es: 'ratón', g: 'm', en: 'mouse' }] },
+  { title: 'Clothing', words: [{ es: 'camisa', g: 'f', en: 'shirt' }, { es: 'pantalón', g: 'm', en: 'pants' }, { es: 'zapato', g: 'm', en: 'shoe' }, { es: 'vestido', g: 'm', en: 'dress' }, { es: 'sombrero', g: 'm', en: 'hat' }, { es: 'abrigo', g: 'm', en: 'coat' }, { es: 'bolso', g: 'm', en: 'bag' }, { es: 'reloj', g: 'm', en: 'watch' }] },
+  { title: 'Weather', words: [{ es: 'tiempo', g: 'm', en: 'weather' }, { es: 'sol', g: 'm', en: 'sun' }, { es: 'lluvia', g: 'f', en: 'rain' }, { es: 'nieve', g: 'f', en: 'snow' }, { es: 'viento', g: 'm', en: 'wind' }, { es: 'calor', g: 'm', en: 'heat' }] },
+  { title: 'Colours', words: [{ es: 'rojo', g: null, en: 'red' }, { es: 'azul', g: null, en: 'blue' }, { es: 'verde', g: null, en: 'green' }, { es: 'amarillo', g: null, en: 'yellow' }, { es: 'blanco', g: null, en: 'white' }, { es: 'negro', g: null, en: 'black' }, { es: 'naranja', g: null, en: 'orange' }, { es: 'gris', g: null, en: 'grey' }, { es: 'morado', g: null, en: 'purple' }, { es: 'rosa', g: null, en: 'pink' }, { es: 'marrón', g: null, en: 'brown' }] },
   { title: 'Days', words: [{ es: 'lunes', g: 'm', en: 'monday' }, { es: 'martes', g: 'm', en: 'tuesday' }, { es: 'miércoles', g: 'm', en: 'wednesday' }, { es: 'jueves', g: 'm', en: 'thursday' }, { es: 'viernes', g: 'm', en: 'friday' }, { es: 'sábado', g: 'm', en: 'saturday' }, { es: 'domingo', g: 'm', en: 'sunday' }] },
 ];
