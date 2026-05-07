@@ -132,6 +132,19 @@
   background: hsl(var(--muted));
   border-radius: 14px;
   margin: 12px 16px;
+  position: sticky;
+  /* Sit just below the sticky header */
+  top: 80px;
+  z-index: 40;
+  /* Subtle shadow when scrolled (always rendered, only visible against scrolled content) */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(8px);
+}
+
+@media (prefers-color-scheme: dark) {
+  .tab-bar {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  }
 }
 
 .tab-btn {

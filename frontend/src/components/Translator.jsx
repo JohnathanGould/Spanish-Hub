@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRightLeft, Volume2, Copy, Check, Eraser, Languages } from 'lucide-react';
+import { ArrowRightLeft, Volume2, Copy, Check, Eraser, Languages, BookmarkPlus } from 'lucide-react';
 import { speak } from '../utils/helpers';
 
 const MAX_CHARS = 500;
@@ -18,13 +18,14 @@ async function translate(text, from, to) {
   return data.responseData?.translatedText || '';
 }
 
-export default function Translator() {
+export default function Translator({ onSaveWord, savedWords = [] }) {
   const [direction, setDirection] = useState('en-es'); // 'en-es' or 'es-en'
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [history, setHistory] = useState([]);
   const debounceRef = useRef(null);
 
@@ -88,7 +89,30 @@ export default function Translator() {
     setOutput(entry.output);
   };
 
-  const clear = () => { setInput(''); setOutput(''); setError(null); };
+  const clear = () => { setInput(''); setOutput(''); setError(null); setSaved(false); };
+
+  // Reset saved indicator whenever the output changes
+  useEffect(() => { setSaved(false); }, [output]);
+
+  // Detect if the current pair is a single short word/phrase (saveable)
+  const trimmedIn = input.trim();
+  const trimmedOut = output.trim();
+  const isSaveable = trimmedIn && trimmedOut && trimmedIn.length <= 60 && trimmedOut.length <= 60;
+  const es = direction === 'en-es' ? trimmedOut : trimmedIn;
+  const en = direction === 'en-es' ? trimmedIn : trimmedOut;
+  const alreadySaved = isSaveable && (savedWords || []).some(w => w.es?.toLowerCase() === es.toLowerCase());
+
+  const saveAsWord = () => {
+    if (!isSaveable || !onSaveWord || alreadySaved) return;
+    onSaveWord({
+      es: es.replace(/[¡¿]/g, '').trim(),
+      en: en.replace(/[!?.]/g, '').trim(),
+      type: es.includes(' ') ? 'phrase' : 'other',
+      gender: '',
+      group: 'Custom',
+    });
+    setSaved(true);
+  };
 
   return (
     <div data-testid="translator">
@@ -169,6 +193,18 @@ export default function Translator() {
               {output}
             </div>
             <div className="absolute bottom-3 right-3 flex gap-1.5">
+              {isSaveable && onSaveWord && (
+                <button onClick={saveAsWord} disabled={alreadySaved || saved} data-testid="translator-save"
+                  className="p-2 rounded-lg border transition-all"
+                  style={{
+                    background: (alreadySaved || saved) ? '#DCFCE7' : 'hsl(var(--card))',
+                    borderColor: (alreadySaved || saved) ? '#86EFAC' : 'hsl(var(--border))',
+                    color: (alreadySaved || saved) ? '#14532D' : 'hsl(var(--muted-foreground))',
+                  }}
+                  title={alreadySaved ? 'Already in your words' : 'Save to your words'}>
+                  {(alreadySaved || saved) ? <Check size={14} /> : <BookmarkPlus size={14} />}
+                </button>
+              )}
               <button onClick={copy} data-testid="translator-copy"
                 className="p-2 rounded-lg border transition-all"
                 style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: copied ? '#16A34A' : 'hsl(var(--muted-foreground))' }}>
