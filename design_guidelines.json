@@ -1,0 +1,111 @@
+{
+  "theme": "light",
+  "archetype": "Archetype 1: Organic & Earthy",
+  "design_philosophy": "A deeply Spanish, premium language learning hub. It blends the warmth of terracotta, ivory, and traditional Gaudi/Talavera mosaics with the bold energy of the Spanish flag (Red & Gold). We use 'Optical Clarity' glassmorphism over Mediterranean textures to create a cozy but high-end 'private tutor' feel. Maximum 660px width creates a focused, app-like experience on desktop.",
+  "colors": {
+    "light": {
+      "background": "#FAF7F2", 
+      "foreground": "#2C1A14",
+      "card": "#FFFFFF",
+      "card-foreground": "#2C1A14",
+      "primary": "#C60B1E", 
+      "primary-foreground": "#FFFFFF",
+      "secondary": "#F5C518",
+      "secondary-foreground": "#2C1A14",
+      "terracotta": "#C9745E",
+      "muted": "#F3EBE1",
+      "muted-foreground": "#8B7366",
+      "accent": "#F5C518",
+      "accent-foreground": "#2C1A14",
+      "border": "#E8D5B7"
+    },
+    "dark": {
+      "background": "#1A0F0D",
+      "foreground": "#F4E4BC",
+      "card": "#261714",
+      "card-foreground": "#F4E4BC",
+      "primary": "#E22034", 
+      "primary-foreground": "#FFFFFF",
+      "secondary": "#F5C518",
+      "secondary-foreground": "#1A0F0D",
+      "terracotta": "#8B4513",
+      "muted": "#3D2622",
+      "muted-foreground": "#B3988E",
+      "accent": "#F5C518",
+      "accent-foreground": "#1A0F0D",
+      "border": "#3D2622"
+    }
+  },
+  "typography": {
+    "headings": {
+      "font_family": "Playfair Display",
+      "classes": "font-serif tracking-tight text-foreground",
+      "h1": "text-4xl sm:text-5xl font-black",
+      "h2": "text-2xl sm:text-3xl font-bold",
+      "h3": "text-xl sm:text-2xl font-bold"
+    },
+    "body": {
+      "font_family": "Inter",
+      "classes": "font-sans leading-relaxed text-foreground/90",
+      "base": "text-base",
+      "small": "text-sm uppercase tracking-[0.2em]"
+    }
+  },
+  "layout_and_spacing": {
+    "global_wrapper": "w-full min-h-screen bg-fixed bg-cover bg-center flex justify-center",
+    "app_container": "w-full max-w-[660px] min-h-screen bg-background/95 backdrop-blur-2xl shadow-2xl relative flex flex-col overflow-x-hidden border-x border-border/40",
+    "section_padding": "p-6 sm:p-8",
+    "grid_system": "grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6",
+    "card_spacing": "p-6 rounded-2xl",
+    "header": "sticky top-0 z-50 w-full backdrop-blur-xl bg-background/80 border-b border-border/40 px-6 py-4 flex items-center justify-between"
+  },
+  "components": {
+    "drill_card": "relative overflow-hidden rounded-3xl border border-border/50 bg-card p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out group",
+    "button_primary": "inline-flex items-center justify-center rounded-xl bg-primary px-8 py-4 text-base font-bold text-primary-foreground shadow-[0_4px_14px_0_rgba(198,11,30,0.39)] hover:shadow-[0_6px_20px_rgba(198,11,30,0.23)] hover:-translate-y-0.5 transition-all duration-200",
+    "button_secondary": "inline-flex items-center justify-center rounded-xl bg-secondary px-8 py-4 text-base font-bold text-secondary-foreground shadow-[0_4px_14px_0_rgba(245,197,24,0.39)] hover:-translate-y-0.5 transition-all duration-200",
+    "progress_bar": "h-3 w-full overflow-hidden rounded-full bg-muted shadow-inner",
+    "progress_indicator": "h-full w-full flex-1 bg-secondary transition-all duration-500 ease-in-out",
+    "glass_panel": "backdrop-blur-xl bg-white/70 dark:bg-black/60 border border-white/40 dark:border-white/10 shadow-sm rounded-3xl p-6",
+    "input": "flex h-12 w-full rounded-xl border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+  },
+  "visual_enhancers": {
+    "borders": "1px subtle border on cards, matching the border color to ground them.",
+    "shadows": "Soft diffuse ambient shadows (shadow-[0_8px_32px_rgba(0,0,0,0.08)]).",
+    "motion": "Use smooth transitions: 'transition-all duration-300 ease-out' for hovers. Use Framer Motion for stagger animations on the 15-drill grid.",
+    "decorative_elements": "Incorporate subtle background images of Gaudi mosaic or Terracotta plaster on the global wrapper, shining through the 660px glassmorphism container."
+  },
+  "image_urls": {
+    "global_background_light": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/cd1cbe7e-b631-4d05-96ca-fa46bbb284a5/images/88bfa5a2a8eea4516040b75fb8a8c92551da9eb66424d054f775d4590f931bd7.png",
+      "description": "Warm terracotta textured plaster wall, soft golden hour sunlight. Use as the fixed background for the entire page (behind the 660px container) in light mode."
+    },
+    "global_background_dark": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/cd1cbe7e-b631-4d05-96ca-fa46bbb284a5/images/779966e65a9737d0c076facdf478563c769809c3c46e8596671cfd882dcbb1c5.png",
+      "description": "Abstract elegant geometric background inspired by the Spanish flag, dark mode friendly. Use as fixed background for dark mode."
+    },
+    "category_card_pattern": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/cd1cbe7e-b631-4d05-96ca-fa46bbb284a5/images/4dcd26503c74f50fea2e9a8f16cc637dd4dd01bbf80c87cf0aeee41056fbf29d.png",
+      "description": "Spanish tile pattern, terracotta, ivory, and faded blue. Use as subtle 10% opacity overlay on drill cards or category headers."
+    },
+    "hero_spain_madrid": {
+      "url": "https://images.pexels.com/photos/19130909/pexels-photo-19130909.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+      "description": "Scenic panorama of Madrid's rooftops at sunset. Great for the 'Done screen' or 'Mastery progress' hero image."
+    },
+    "mosaic_accent": {
+      "url": "https://images.unsplash.com/photo-1688680436798-4f8adab4bdbe?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxODd8MHwxfHNlYXJjaHwzfHxiYXJjZWxvbmElMjBnYXVkaSUyMG1vc2FpYyUyMHBhdHRlcm58ZW58MHx8fHwxNzc4MTU3NjQ4fDA&ixlib=rb-4.1.0&q=85",
+      "description": "Barcelona Gaudi mosaic. Use as a beautiful avatar background or leaderboard banner overlay."
+    }
+  },
+  "instructions_to_main_agent": [
+    "Strictly enforce the 660px max-width container for the main app content. The 'body' or root should have the 'global_background_light' or 'global_background_dark' spanning the full screen, while the app container is centered with glassmorphic styles.",
+    "Use Lucide-react for icons by default.",
+    "Install and use 'framer-motion' for staggered entrance animations of the 15 drill cards.",
+    "Headings MUST be Playfair Display, Body MUST be Inter. Import them from Google Fonts in index.css.",
+    "Do NOT use pure #000000 or #FFFFFF for backgrounds. Use the provided tinted terracotta/cream hex codes.",
+    "Ensure the header is sticky and uses a high-blur glass effect (backdrop-blur-xl) so the content passing underneath is smoothly obscured.",
+    "For the daily streak, use the secondary color (#F5C518 - Gold) to make it pop against the terracotta/cream.",
+    "Implement 'data-testid' on all interactive elements (e.g., data-testid='drill-card-1', data-testid='start-quiz-btn').",
+    "Replace standard HTML inputs/selects with custom Shadcn UI (modified to match E1's rounded, warm borders). Use border-radius 'xl' for a friendly, approachable feel.",
+    "The 15 Drill Cards should use E1's 'Bento Grid' protocol but adapted for 660px: grid-cols-1 or sm:grid-cols-2 with generous gap-4 or gap-6."
+  ]
+}
