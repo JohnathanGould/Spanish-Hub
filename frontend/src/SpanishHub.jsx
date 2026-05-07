@@ -45,6 +45,7 @@ import GoalModal from './components/GoalModal';
 import Certificate from './components/Certificate';
 import SharedPacks from './components/SharedPacks';
 import Plaza from './components/Plaza';
+import Translator from './components/Translator';
 
 const DEFAULT_DATA = {
   displayName: '',
@@ -461,7 +462,7 @@ export default function SpanishHub() {
           onGoalClick={() => setShowGoalModal(true)}
         />
         <div className="tab-bar">
-          {[['drills', 'Drills'], ['learn', 'Learn'], ['words', 'Words'], ['plaza', 'Plaza'], ['leaderboard', 'Top'], ['history', 'History']].map(([id, label]) => (
+          {[['drills', 'Drills'], ['learn', 'Learn'], ['words', 'Words'], ['translate', 'Trans'], ['plaza', 'Plaza'], ['leaderboard', 'Top'], ['history', 'Log']].map(([id, label]) => (
             <button key={id} className={`tab-btn${tab === id ? ' active' : ''}`}
               onClick={() => setTab(id)} data-testid={`tab-${id}`}>{label}</button>
           ))}
@@ -498,6 +499,9 @@ export default function SpanishHub() {
           )}
           {tab === 'plaza' && (
             <Plaza user={user} isGuest={isGuest} />
+          )}
+          {tab === 'translate' && (
+            <Translator />
           )}
           {tab === 'history' && (
             <SessionHistory sessions={userData.sessions || []} />
