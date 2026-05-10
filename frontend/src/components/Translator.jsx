@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRightLeft, Volume2, Copy, Check, Eraser, Languages, BookmarkPlus } from 'lucide-react';
+import { ArrowRightLeft, Volume2, Copy, Check, Eraser, Languages, BookmarkPlus, Mic, MicOff } from 'lucide-react';
 import { speak } from '../utils/helpers';
 
 const MAX_CHARS = 500;
@@ -27,12 +27,16 @@ export default function Translator({ onSaveWord, savedWords = [] }) {
   const [copied, setCopied] = useState(false);
   const [saved, setSaved] = useState(false);
   const [history, setHistory] = useState([]);
+  const [listening, setListening] = useState(false);
   const debounceRef = useRef(null);
+  const recRef = useRef(null);
 
   const fromLang = direction === 'en-es' ? 'en' : 'es';
   const toLang = direction === 'en-es' ? 'es' : 'en';
   const fromLabel = direction === 'en-es' ? 'English' : 'Español';
   const toLabel = direction === 'en-es' ? 'Español' : 'English';
+
+  const SR = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
 
   useEffect(() => {
     try {
@@ -50,7 +54,6 @@ export default function Translator({ onSaveWord, savedWords = [] }) {
       try {
         const result = await translate(input.trim().slice(0, MAX_CHARS), fromLang, toLang);
         setOutput(result);
-        // Save to history if both ends non-empty
         const entry = { from: fromLang, to: toLang, input: input.trim(), output: result, ts: Date.now() };
         setHistory(prev => {
           const next = [entry, ...prev.filter(e => !(e.input === entry.input && e.from === entry.from))].slice(0, HISTORY_LIMIT);
@@ -67,11 +70,7 @@ export default function Translator({ onSaveWord, savedWords = [] }) {
 
   const swap = () => {
     setDirection(direction === 'en-es' ? 'es-en' : 'en-es');
-    // Swap input/output too if there's content
-    if (output) {
-      setInput(output);
-      setOutput(input);
-    }
+    if (output) { setInput(output); setOutput(input); }
   };
 
   const copy = async () => {
@@ -91,10 +90,32 @@ export default function Translator({ onSaveWord, savedWords = [] }) {
 
   const clear = () => { setInput(''); setOutput(''); setError(null); setSaved(false); };
 
-  // Reset saved indicator whenever the output changes
   useEffect(() => { setSaved(false); }, [output]);
 
-  // Detect if the current pair is a single short word/phrase (saveable)
+  // Speech to text — mic button
+  const startListening = () => {
+    if (!SR || listening) return;
+    const rec = new SR();
+    recRef.current = rec;
+    rec.lang = fromLang === 'es' ? 'es-MX' : 'en-US';
+    rec.continuous = false;
+    rec.interimResults = false;
+    rec.maxAlternatives = 1;
+    setListening(true);
+    rec.onresult = (ev) => {
+      const heard = ev.results[0][0].transcript.trim();
+      setInput(prev => prev ? `${prev} ${heard}` : heard);
+    };
+    rec.onerror = () => setListening(false);
+    rec.onend = () => setListening(false);
+    try { rec.start(); } catch (e) { setListening(false); }
+  };
+
+  const stopListening = () => {
+    if (recRef.current) { recRef.current.stop(); recRef.current = null; }
+    setListening(false);
+  };
+
   const trimmedIn = input.trim();
   const trimmedOut = output.trim();
   const isSaveable = trimmedIn && trimmedOut && trimmedIn.length <= 60 && trimmedOut.length <= 60;
@@ -123,7 +144,7 @@ export default function Translator({ onSaveWord, savedWords = [] }) {
           <Languages size={18} />
           <h2 className="font-serif text-lg font-bold">Translator</h2>
         </div>
-        <p className="text-xs opacity-90">Translate any sentence between English and Spanish — with audio playback.</p>
+        <p className="text-xs opacity-90">Translate between English and Spanish — type or speak, hear the result.</p>
       </div>
 
       {/* Direction toggle */}
@@ -148,10 +169,10 @@ export default function Translator({ onSaveWord, savedWords = [] }) {
         <textarea data-testid="translator-input"
           value={input}
           onChange={(e) => setInput(e.target.value.slice(0, MAX_CHARS))}
-          placeholder={direction === 'en-es' ? 'Type any English text…' : 'Escribe cualquier texto en español…'}
+          placeholder={direction === 'en-es' ? 'Type or speak any English text…' : 'Escribe o habla cualquier texto en español…'}
           rows={4}
           className="w-full p-4 pr-12 rounded-2xl border text-base resize-none"
-          style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }} />
+          style={{ background: 'hsl(var(--card))', borderColor: listening ? 'hsl(var(--primary))' : 'hsl(var(--border))', color: 'hsl(var(--foreground))' }} />
         <div className="absolute bottom-2 right-3 flex items-center gap-2">
           {input && (
             <button onClick={clear} data-testid="translator-clear"
@@ -167,10 +188,28 @@ export default function Translator({ onSaveWord, savedWords = [] }) {
               <Volume2 size={14} />
             </button>
           )}
+          {SR && (
+            <button
+              onClick={listening ? stopListening : startListening}
+              data-testid="translator-mic"
+              className="p-1.5 rounded-lg transition-all"
+              style={{
+                background: listening ? '#FEE2E2' : 'hsl(var(--primary))',
+                color: listening ? '#991B1B' : 'white',
+              }}
+              title={listening ? 'Stop listening' : `Speak in ${fromLabel}`}>
+              {listening ? <MicOff size={14} /> : <Mic size={14} />}
+            </button>
+          )}
         </div>
         <div className="absolute top-2 right-3 text-[10px]" style={{ color: 'hsl(var(--muted-foreground))' }}>
           {input.length}/{MAX_CHARS}
         </div>
+        {listening && (
+          <div className="mt-1 text-xs text-center font-medium" style={{ color: 'hsl(var(--primary))' }}>
+            🎤 Listening… speak now
+          </div>
+        )}
       </div>
 
       {/* Output */}
@@ -259,7 +298,7 @@ export default function Translator({ onSaveWord, savedWords = [] }) {
       )}
 
       <div className="text-[10px] text-center mt-4" style={{ color: 'hsl(var(--muted-foreground))' }}>
-        Powered by MyMemory · free machine translation. Quality varies for idioms & slang.
+        Powered by MyMemory · free machine translation. Quality varies for idioms &amp; slang.
       </div>
     </div>
   );
