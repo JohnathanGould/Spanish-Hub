@@ -18,40 +18,85 @@ export const DRILLS = [
 ];
 
 // === PRESENT TENSE CONJUGATIONS ===
+// Full 5-form Latin American Spanish (no vosotros)
+// yo / tú / él-ella / nosotros / ustedes-ellos
 export const CONJ = [
-  { q: 'yo → hablar', hint: 'to speak', ans: 'hablo', pool: ['hablas', 'habla', 'bebo', 'como', 'soy', 'estoy', 'necesito', 'tengo'] },
-  { q: 'tú → hablar', hint: 'to speak', ans: 'hablas', pool: ['hablo', 'habla', 'bebes', 'comes', 'eres', 'estás', 'necesitas', 'tienes'] },
-  { q: 'él/ella → hablar', hint: 'to speak', ans: 'habla', pool: ['hablo', 'hablas', 'bebe', 'come', 'es', 'está', 'necesita', 'tiene'] },
-  { q: 'yo → beber', hint: 'to drink', ans: 'bebo', pool: ['bebes', 'bebe', 'hablo', 'como', 'soy', 'estoy', 'necesito', 'tengo'] },
-  { q: 'tú → beber', hint: 'to drink', ans: 'bebes', pool: ['bebo', 'bebe', 'hablas', 'comes', 'eres', 'estás', 'necesitas', 'tienes'] },
-  { q: 'él/ella → beber', hint: 'to drink', ans: 'bebe', pool: ['bebo', 'bebes', 'habla', 'come', 'es', 'está', 'necesita', 'tiene'] },
-  { q: 'yo → comer', hint: 'to eat', ans: 'como', pool: ['comes', 'come', 'hablo', 'bebo', 'soy', 'estoy', 'necesito', 'tengo'] },
-  { q: 'tú → comer', hint: 'to eat', ans: 'comes', pool: ['como', 'come', 'hablas', 'bebes', 'eres', 'estás', 'necesitas', 'tienes'] },
-  { q: 'él/ella → comer', hint: 'to eat', ans: 'come', pool: ['como', 'comes', 'habla', 'bebe', 'es', 'está', 'necesita', 'tiene'] },
-  { q: 'yo → ser', hint: 'to be (permanent)', ans: 'soy', pool: ['eres', 'es', 'estoy', 'estás', 'necesito', 'tengo', 'hablo', 'bebo'] },
-  { q: 'tú → ser', hint: 'to be (permanent)', ans: 'eres', pool: ['soy', 'es', 'estás', 'estoy', 'necesitas', 'tienes', 'hablas', 'bebes'] },
-  { q: 'él/ella → ser', hint: 'to be (permanent)', ans: 'es', pool: ['soy', 'eres', 'está', 'estoy', 'necesita', 'tiene', 'habla', 'bebe'] },
-  { q: 'yo → estar', hint: 'to be (location)', ans: 'estoy', pool: ['estás', 'está', 'soy', 'eres', 'necesito', 'tengo', 'hablo', 'bebo'] },
-  { q: 'tú → estar', hint: 'to be (location)', ans: 'estás', pool: ['estoy', 'está', 'eres', 'soy', 'necesitas', 'tienes', 'hablas', 'bebes'] },
-  { q: 'él/ella → estar', hint: 'to be (location)', ans: 'está', pool: ['estoy', 'estás', 'es', 'eres', 'necesita', 'tiene', 'habla', 'bebe'] },
-  { q: 'yo → necesitar', hint: 'to need', ans: 'necesito', pool: ['necesitas', 'necesita', 'tengo', 'tienes', 'soy', 'estoy', 'hablo', 'como'] },
-  { q: 'tú → necesitar', hint: 'to need', ans: 'necesitas', pool: ['necesito', 'necesita', 'tienes', 'tengo', 'eres', 'estás', 'hablas', 'comes'] },
-  { q: 'él/ella → necesitar', hint: 'to need', ans: 'necesita', pool: ['necesito', 'necesitas', 'tiene', 'tengo', 'es', 'está', 'habla', 'come'] },
-  { q: 'yo → tener', hint: 'to have', ans: 'tengo', pool: ['tienes', 'tiene', 'necesito', 'necesitas', 'soy', 'estoy', 'hablo', 'como'] },
-  { q: 'tú → tener', hint: 'to have', ans: 'tienes', pool: ['tengo', 'tiene', 'necesitas', 'necesito', 'eres', 'estás', 'hablas', 'comes'] },
-  { q: 'él/ella → tener', hint: 'to have', ans: 'tiene', pool: ['tengo', 'tienes', 'necesita', 'necesito', 'es', 'está', 'habla', 'come'] },
-  { q: 'yo → ir', hint: 'to go', ans: 'voy', pool: ['vas', 'va', 'quiero', 'puedo', 'hago', 'tengo', 'soy', 'estoy'] },
-  { q: 'tú → ir', hint: 'to go', ans: 'vas', pool: ['voy', 'va', 'quieres', 'puedes', 'haces', 'tienes', 'eres', 'estás'] },
-  { q: 'él/ella → ir', hint: 'to go', ans: 'va', pool: ['voy', 'vas', 'quiere', 'puede', 'hace', 'tiene', 'es', 'está'] },
-  { q: 'yo → querer', hint: 'to want', ans: 'quiero', pool: ['quieres', 'quiere', 'puedo', 'hago', 'voy', 'tengo', 'soy', 'necesito'] },
-  { q: 'tú → querer', hint: 'to want', ans: 'quieres', pool: ['quiero', 'quiere', 'puedes', 'haces', 'vas', 'tienes', 'eres', 'necesitas'] },
-  { q: 'él/ella → querer', hint: 'to want', ans: 'quiere', pool: ['quiero', 'quieres', 'puede', 'hace', 'va', 'tiene', 'es', 'necesita'] },
-  { q: 'yo → poder', hint: 'can / to be able', ans: 'puedo', pool: ['puedes', 'puede', 'quiero', 'hago', 'voy', 'tengo', 'soy', 'necesito'] },
-  { q: 'tú → poder', hint: 'can / to be able', ans: 'puedes', pool: ['puedo', 'puede', 'quieres', 'haces', 'vas', 'tienes', 'eres', 'necesitas'] },
-  { q: 'él/ella → poder', hint: 'can / to be able', ans: 'puede', pool: ['puedo', 'puedes', 'quiere', 'hace', 'va', 'tiene', 'es', 'necesita'] },
-  { q: 'yo → hacer', hint: 'to do / make', ans: 'hago', pool: ['haces', 'hace', 'quiero', 'puedo', 'voy', 'tengo', 'soy', 'necesito'] },
-  { q: 'tú → hacer', hint: 'to do / make', ans: 'haces', pool: ['hago', 'hace', 'quieres', 'puedes', 'vas', 'tienes', 'eres', 'necesitas'] },
-  { q: 'él/ella → hacer', hint: 'to do / make', ans: 'hace', pool: ['hago', 'haces', 'quiere', 'puede', 'va', 'tiene', 'es', 'necesita'] },
+  // hablar
+  { q: 'yo → hablar', hint: 'to speak', ans: 'hablo', pool: ['hablas', 'habla', 'hablamos', 'hablan', 'bebo', 'como', 'soy', 'tengo'] },
+  { q: 'tú → hablar', hint: 'to speak', ans: 'hablas', pool: ['hablo', 'habla', 'hablamos', 'hablan', 'bebes', 'comes', 'eres', 'tienes'] },
+  { q: 'él/ella → hablar', hint: 'to speak', ans: 'habla', pool: ['hablo', 'hablas', 'hablamos', 'hablan', 'bebe', 'come', 'es', 'tiene'] },
+  { q: 'nosotros → hablar', hint: 'to speak', ans: 'hablamos', pool: ['hablo', 'hablas', 'habla', 'hablan', 'bebemos', 'comemos', 'somos', 'tenemos'] },
+  { q: 'ustedes/ellos → hablar', hint: 'to speak', ans: 'hablan', pool: ['hablo', 'hablas', 'habla', 'hablamos', 'beben', 'comen', 'son', 'tienen'] },
+
+  // beber
+  { q: 'yo → beber', hint: 'to drink', ans: 'bebo', pool: ['bebes', 'bebe', 'bebemos', 'beben', 'hablo', 'como', 'soy', 'tengo'] },
+  { q: 'tú → beber', hint: 'to drink', ans: 'bebes', pool: ['bebo', 'bebe', 'bebemos', 'beben', 'hablas', 'comes', 'eres', 'tienes'] },
+  { q: 'él/ella → beber', hint: 'to drink', ans: 'bebe', pool: ['bebo', 'bebes', 'bebemos', 'beben', 'habla', 'come', 'es', 'tiene'] },
+  { q: 'nosotros → beber', hint: 'to drink', ans: 'bebemos', pool: ['bebo', 'bebes', 'bebe', 'beben', 'hablamos', 'comemos', 'somos', 'tenemos'] },
+  { q: 'ustedes/ellos → beber', hint: 'to drink', ans: 'beben', pool: ['bebo', 'bebes', 'bebe', 'bebemos', 'hablan', 'comen', 'son', 'tienen'] },
+
+  // comer
+  { q: 'yo → comer', hint: 'to eat', ans: 'como', pool: ['comes', 'come', 'comemos', 'comen', 'hablo', 'bebo', 'soy', 'tengo'] },
+  { q: 'tú → comer', hint: 'to eat', ans: 'comes', pool: ['como', 'come', 'comemos', 'comen', 'hablas', 'bebes', 'eres', 'tienes'] },
+  { q: 'él/ella → comer', hint: 'to eat', ans: 'come', pool: ['como', 'comes', 'comemos', 'comen', 'habla', 'bebe', 'es', 'tiene'] },
+  { q: 'nosotros → comer', hint: 'to eat', ans: 'comemos', pool: ['como', 'comes', 'come', 'comen', 'hablamos', 'bebemos', 'somos', 'tenemos'] },
+  { q: 'ustedes/ellos → comer', hint: 'to eat', ans: 'comen', pool: ['como', 'comes', 'come', 'comemos', 'hablan', 'beben', 'son', 'tienen'] },
+
+  // ser
+  { q: 'yo → ser', hint: 'to be (permanent)', ans: 'soy', pool: ['eres', 'es', 'somos', 'son', 'estoy', 'tengo', 'hablo', 'bebo'] },
+  { q: 'tú → ser', hint: 'to be (permanent)', ans: 'eres', pool: ['soy', 'es', 'somos', 'son', 'estás', 'tienes', 'hablas', 'bebes'] },
+  { q: 'él/ella → ser', hint: 'to be (permanent)', ans: 'es', pool: ['soy', 'eres', 'somos', 'son', 'está', 'tiene', 'habla', 'bebe'] },
+  { q: 'nosotros → ser', hint: 'to be (permanent)', ans: 'somos', pool: ['soy', 'eres', 'es', 'son', 'estamos', 'tenemos', 'hablamos', 'bebemos'] },
+  { q: 'ustedes/ellos → ser', hint: 'to be (permanent)', ans: 'son', pool: ['soy', 'eres', 'es', 'somos', 'están', 'tienen', 'hablan', 'beben'] },
+
+  // estar
+  { q: 'yo → estar', hint: 'to be (location)', ans: 'estoy', pool: ['estás', 'está', 'estamos', 'están', 'soy', 'tengo', 'hablo', 'bebo'] },
+  { q: 'tú → estar', hint: 'to be (location)', ans: 'estás', pool: ['estoy', 'está', 'estamos', 'están', 'eres', 'tienes', 'hablas', 'bebes'] },
+  { q: 'él/ella → estar', hint: 'to be (location)', ans: 'está', pool: ['estoy', 'estás', 'estamos', 'están', 'es', 'tiene', 'habla', 'bebe'] },
+  { q: 'nosotros → estar', hint: 'to be (location)', ans: 'estamos', pool: ['estoy', 'estás', 'está', 'están', 'somos', 'tenemos', 'hablamos', 'bebemos'] },
+  { q: 'ustedes/ellos → estar', hint: 'to be (location)', ans: 'están', pool: ['estoy', 'estás', 'está', 'estamos', 'son', 'tienen', 'hablan', 'beben'] },
+
+  // necesitar
+  { q: 'yo → necesitar', hint: 'to need', ans: 'necesito', pool: ['necesitas', 'necesita', 'necesitamos', 'necesitan', 'tengo', 'soy', 'hablo', 'como'] },
+  { q: 'tú → necesitar', hint: 'to need', ans: 'necesitas', pool: ['necesito', 'necesita', 'necesitamos', 'necesitan', 'tienes', 'eres', 'hablas', 'comes'] },
+  { q: 'él/ella → necesitar', hint: 'to need', ans: 'necesita', pool: ['necesito', 'necesitas', 'necesitamos', 'necesitan', 'tiene', 'es', 'habla', 'come'] },
+  { q: 'nosotros → necesitar', hint: 'to need', ans: 'necesitamos', pool: ['necesito', 'necesitas', 'necesita', 'necesitan', 'tenemos', 'somos', 'hablamos', 'comemos'] },
+  { q: 'ustedes/ellos → necesitar', hint: 'to need', ans: 'necesitan', pool: ['necesito', 'necesitas', 'necesita', 'necesitamos', 'tienen', 'son', 'hablan', 'comen'] },
+
+  // tener
+  { q: 'yo → tener', hint: 'to have', ans: 'tengo', pool: ['tienes', 'tiene', 'tenemos', 'tienen', 'necesito', 'soy', 'hablo', 'como'] },
+  { q: 'tú → tener', hint: 'to have', ans: 'tienes', pool: ['tengo', 'tiene', 'tenemos', 'tienen', 'necesitas', 'eres', 'hablas', 'comes'] },
+  { q: 'él/ella → tener', hint: 'to have', ans: 'tiene', pool: ['tengo', 'tienes', 'tenemos', 'tienen', 'necesita', 'es', 'habla', 'come'] },
+  { q: 'nosotros → tener', hint: 'to have', ans: 'tenemos', pool: ['tengo', 'tienes', 'tiene', 'tienen', 'necesitamos', 'somos', 'hablamos', 'comemos'] },
+  { q: 'ustedes/ellos → tener', hint: 'to have', ans: 'tienen', pool: ['tengo', 'tienes', 'tiene', 'tenemos', 'necesitan', 'son', 'hablan', 'comen'] },
+
+  // ir
+  { q: 'yo → ir', hint: 'to go', ans: 'voy', pool: ['vas', 'va', 'vamos', 'van', 'quiero', 'puedo', 'hago', 'tengo'] },
+  { q: 'tú → ir', hint: 'to go', ans: 'vas', pool: ['voy', 'va', 'vamos', 'van', 'quieres', 'puedes', 'haces', 'tienes'] },
+  { q: 'él/ella → ir', hint: 'to go', ans: 'va', pool: ['voy', 'vas', 'vamos', 'van', 'quiere', 'puede', 'hace', 'tiene'] },
+  { q: 'nosotros → ir', hint: 'to go', ans: 'vamos', pool: ['voy', 'vas', 'va', 'van', 'queremos', 'podemos', 'hacemos', 'tenemos'] },
+  { q: 'ustedes/ellos → ir', hint: 'to go', ans: 'van', pool: ['voy', 'vas', 'va', 'vamos', 'quieren', 'pueden', 'hacen', 'tienen'] },
+
+  // querer
+  { q: 'yo → querer', hint: 'to want', ans: 'quiero', pool: ['quieres', 'quiere', 'queremos', 'quieren', 'puedo', 'hago', 'voy', 'tengo'] },
+  { q: 'tú → querer', hint: 'to want', ans: 'quieres', pool: ['quiero', 'quiere', 'queremos', 'quieren', 'puedes', 'haces', 'vas', 'tienes'] },
+  { q: 'él/ella → querer', hint: 'to want', ans: 'quiere', pool: ['quiero', 'quieres', 'queremos', 'quieren', 'puede', 'hace', 'va', 'tiene'] },
+  { q: 'nosotros → querer', hint: 'to want', ans: 'queremos', pool: ['quiero', 'quieres', 'quiere', 'quieren', 'podemos', 'hacemos', 'vamos', 'tenemos'] },
+  { q: 'ustedes/ellos → querer', hint: 'to want', ans: 'quieren', pool: ['quiero', 'quieres', 'quiere', 'queremos', 'pueden', 'hacen', 'van', 'tienen'] },
+
+  // poder
+  { q: 'yo → poder', hint: 'can / to be able', ans: 'puedo', pool: ['puedes', 'puede', 'podemos', 'pueden', 'quiero', 'hago', 'voy', 'tengo'] },
+  { q: 'tú → poder', hint: 'can / to be able', ans: 'puedes', pool: ['puedo', 'puede', 'podemos', 'pueden', 'quieres', 'haces', 'vas', 'tienes'] },
+  { q: 'él/ella → poder', hint: 'can / to be able', ans: 'puede', pool: ['puedo', 'puedes', 'podemos', 'pueden', 'quiere', 'hace', 'va', 'tiene'] },
+  { q: 'nosotros → poder', hint: 'can / to be able', ans: 'podemos', pool: ['puedo', 'puedes', 'puede', 'pueden', 'queremos', 'hacemos', 'vamos', 'tenemos'] },
+  { q: 'ustedes/ellos → poder', hint: 'can / to be able', ans: 'pueden', pool: ['puedo', 'puedes', 'puede', 'podemos', 'quieren', 'hacen', 'van', 'tienen'] },
+
+  // hacer
+  { q: 'yo → hacer', hint: 'to do / make', ans: 'hago', pool: ['haces', 'hace', 'hacemos', 'hacen', 'quiero', 'puedo', 'voy', 'tengo'] },
+  { q: 'tú → hacer', hint: 'to do / make', ans: 'haces', pool: ['hago', 'hace', 'hacemos', 'hacen', 'quieres', 'puedes', 'vas', 'tienes'] },
+  { q: 'él/ella → hacer', hint: 'to do / make', ans: 'hace', pool: ['hago', 'haces', 'hacemos', 'hacen', 'quiere', 'puede', 'va', 'tiene'] },
+  { q: 'nosotros → hacer', hint: 'to do / make', ans: 'hacemos', pool: ['hago', 'haces', 'hace', 'hacen', 'queremos', 'podemos', 'vamos', 'tenemos'] },
+  { q: 'ustedes/ellos → hacer', hint: 'to do / make', ans: 'hacen', pool: ['hago', 'haces', 'hace', 'hacemos', 'quieren', 'pueden', 'van', 'tienen'] },
 ];
 
 // === PAST TENSE (PRETERITE) ===
@@ -142,6 +187,10 @@ export const FITB_POOL = [
   { before: 'Yo', blank: 'tengo', after: 'una reserva.', choices: ['tengo', 'tienes', 'tiene', 'necesito'], hint: 'yo = I, tener' },
   { before: 'Tú', blank: 'tienes', after: 'mi maleta.', choices: ['tengo', 'tienes', 'tiene', 'necesitas'], hint: 'tú = you, tener' },
   { before: 'Él', blank: 'tiene', after: 'un pasaporte.', choices: ['tengo', 'tienes', 'tiene', 'necesita'], hint: 'él = he, tener' },
+  { before: 'Nosotros', blank: 'hablamos', after: 'español.', choices: ['hablo', 'hablas', 'hablamos', 'hablan'], hint: 'nosotros = we, hablar' },
+  { before: 'Ustedes', blank: 'tienen', after: 'mi equipaje.', choices: ['tengo', 'tiene', 'tenemos', 'tienen'], hint: 'ustedes = you all, tener' },
+  { before: 'Nosotros', blank: 'somos', after: 'estudiantes.', choices: ['soy', 'eres', 'somos', 'son'], hint: 'nosotros = we, ser' },
+  { before: 'Ellos', blank: 'van', after: 'al restaurante.', choices: ['voy', 'va', 'vamos', 'van'], hint: 'ellos = they, ir' },
   { before: '¿Dónde está', blank: 'el', after: 'hotel?', choices: ['el', 'la', 'un', 'una'], hint: 'hotel is masculine' },
   { before: 'Ella es', blank: 'una', after: 'mujer.', choices: ['una', 'un', 'la', 'el'], hint: 'feminine indefinite article' },
   { before: 'Necesito', blank: 'mi', after: 'pasaporte.', choices: ['mi', 'un', 'el', 'la'], hint: 'possessive — my' },
