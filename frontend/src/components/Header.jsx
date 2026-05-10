@@ -22,10 +22,10 @@ export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onS
           <SpanishFlag size={28} />
           <div>
             <div className="font-serif font-bold text-base leading-tight" style={{ color: 'hsl(var(--foreground))' }}>
-              My Spanish Hub
+              Milo Speaks Spanish
             </div>
             <div className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
-              Vocabulary &amp; drills
+              Learn · Practice · Master
             </div>
           </div>
         </div>
