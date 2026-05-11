@@ -1,6 +1,3 @@
-
-Copy
-
 // === DRILLS METADATA ===
 export const DRILLS = [
   { id: 'flashcard', n: '1', name: 'Flashcards', desc: 'Tap to flip — mark each word as known or still learning.', color: 'amber', wide: true },
