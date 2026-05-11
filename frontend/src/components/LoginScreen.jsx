@@ -55,7 +55,7 @@ export default function LoginScreen({ onGuest }) {
             </button>
 
             <p className="text-xs mt-4" style={{ color: 'hsl(var(--muted-foreground))' }}>
-              15 drills · 14 lessons · 300+ words · Always free 🐾
+              15 drills · 14 lessons · 300+ words · Free to learn 🐾
             </p>
           </div>
         </div>
