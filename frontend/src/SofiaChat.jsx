@@ -1,8 +1,4 @@
 import { useState, useRef, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Send, Mic, Volume2, VolumeX } from "lucide-react"
-import { cn } from "@/lib/utils"
 
 const initialMessages = [
   {
@@ -11,7 +7,7 @@ const initialMessages = [
   },
 ]
 
-export function SofiaChat() {
+export function SofiaChat({ userUid }) {
   const [messages, setMessages] = useState(initialMessages)
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -50,7 +46,7 @@ export function SofiaChat() {
             role: m.role === "user" ? "user" : "assistant",
             content: m.content,
           })),
-          userUid: "anonymous",
+          userUid: userUid || "anonymous",
         }),
       })
 
@@ -62,17 +58,17 @@ export function SofiaChat() {
           { role: "sofia", content: data.message || "Daily limit reached." },
         ])
       } else if (!response.ok) {
-  const isQuota = data.error === "quota_exceeded";
-  setMessages((prev) => [
-    ...prev,
-    {
-      role: "sofia",
-      content: isQuota
-        ? "Sofia's free daily limit has been reached — she'll be back tomorrow! 🌙 If you'd like to help keep Sofia running without limits, consider supporting Milo Speaks Spanish on Ko-fi ☕ — every donation helps!"
-        : "Sofia is unavailable right now. Try again in a moment.",
-    },
-  ])
-}
+        const isQuota = data.error === "quota_exceeded"
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "sofia",
+            content: isQuota
+              ? "Sofia's free daily limit has been reached — she'll be back tomorrow! 🌙 If you'd like to help keep Sofia running without limits, consider supporting Milo Speaks Spanish on Ko-fi ☕ — every donation helps!"
+              : "Sofia is unavailable right now. Try again in a moment.",
+          },
+        ])
+      } else {
         setMessages((prev) => [...prev, { role: "sofia", content: data.reply }])
         setUsageCount((prev) => prev + 1)
 
@@ -137,55 +133,51 @@ export function SofiaChat() {
   }
 
   return (
-    <div className="flex h-dvh flex-col bg-white">
-      <header className="flex items-center justify-between border-b border-violet-100 bg-white px-4 py-3">
-        <div className="flex items-center gap-2">
-          <div className="flex size-9 items-center justify-center rounded-full bg-violet-600 text-sm font-semibold text-white">
+    <div style={{ display: "flex", flexDirection: "column", height: "80vh", background: "white" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #ede9fe", padding: "12px 16px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>
             🤖
           </div>
-          <span className="text-lg font-semibold text-gray-900">Sofia</span>
+          <span style={{ fontSize: "18px", fontWeight: "600", color: "#111827" }}>Sofia</span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
+        <button
           onClick={handleMuteToggle}
-          className="text-gray-600 hover:bg-violet-50 hover:text-violet-600"
+          style={{ background: "none", border: "none", cursor: "pointer", fontSize: "20px", color: "#6b7280" }}
         >
-          {isMuted ? <VolumeX className="size-5" /> : <Volume2 className="size-5" />}
-        </Button>
-      </header>
+          {isMuted ? "🔇" : "🔊"}
+        </button>
+      </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-4">
-        <div className="mx-auto flex max-w-lg flex-col gap-4">
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px", maxWidth: "512px", margin: "0 auto" }}>
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`flex items-end gap-2 ${message.role === "user" ? "flex-row-reverse" : "flex-row"}`}
+              style={{ display: "flex", alignItems: "flex-end", gap: "8px", flexDirection: message.role === "user" ? "row-reverse" : "row" }}
             >
               {message.role === "sofia" && (
-                <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-violet-600 text-xs font-bold text-white">
+                <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "700", color: "white", flexShrink: 0 }}>
                   S
                 </div>
               )}
-              <div
-                className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${
-                  message.role === "user"
-                    ? "bg-violet-600 text-white"
-                    : "bg-gray-100 text-gray-900"
-                }`}
-              >
-                <p className="text-sm leading-relaxed">{message.content}</p>
+              <div style={{
+                maxWidth: "80%", borderRadius: "18px", padding: "10px 16px",
+                background: message.role === "user" ? "#7c3aed" : "#f3f4f6",
+                color: message.role === "user" ? "white" : "#111827"
+              }}>
+                <p style={{ fontSize: "14px", lineHeight: "1.5", margin: 0 }}>{message.content}</p>
               </div>
             </div>
           ))}
 
           {isLoading && (
-            <div className="flex items-end gap-2">
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-violet-600 text-xs font-bold text-white">
+            <div style={{ display: "flex", alignItems: "flex-end", gap: "8px" }}>
+              <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "700", color: "white", flexShrink: 0 }}>
                 S
               </div>
-              <div className="rounded-2xl bg-gray-100 px-4 py-2.5">
-                <p className="text-sm text-gray-500 italic">Sofia está escribiendo...</p>
+              <div style={{ borderRadius: "18px", padding: "10px 16px", background: "#f3f4f6" }}>
+                <p style={{ fontSize: "14px", color: "#9ca3af", fontStyle: "italic", margin: 0 }}>Sofia está escribiendo...</p>
               </div>
             </div>
           )}
@@ -194,46 +186,41 @@ export function SofiaChat() {
         </div>
       </div>
 
-      <div className="border-t border-violet-100 bg-white px-4 pb-6 pt-3">
-        <div className="mb-2 text-center">
-          <span className="text-xs text-gray-500">{usageCount}/30 messages today</span>
+      <div style={{ borderTop: "1px solid #ede9fe", padding: "12px 16px 24px" }}>
+        <div style={{ textAlign: "center", marginBottom: "8px" }}>
+          <span style={{ fontSize: "12px", color: "#9ca3af" }}>{usageCount}/30 messages today</span>
         </div>
 
-        <div className="mx-auto flex max-w-lg items-center gap-2">
-          <div className="relative flex-1">
-            <Input
+        <div style={{ display: "flex", alignItems: "center", gap: "8px", maxWidth: "512px", margin: "0 auto" }}>
+          <div style={{ position: "relative", flex: 1 }}>
+            <input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Escribe en español..."
               disabled={usageCount >= 30}
-              className="h-11 rounded-full border-violet-200 bg-gray-50 pr-12 focus-visible:border-violet-400 focus-visible:ring-violet-200"
+              style={{ width: "100%", height: "44px", borderRadius: "22px", border: "1px solid #ddd6fe", background: "#f9fafb", padding: "0 48px 0 16px", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
             />
-            <Button
-              size="icon"
+            <button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || usageCount >= 30}
-              className="absolute right-1 top-1/2 size-9 -translate-y-1/2 rounded-full bg-violet-600 hover:bg-violet-700 disabled:bg-violet-300"
+              style={{ position: "absolute", right: "4px", top: "50%", transform: "translateY(-50%)", width: "36px", height: "36px", borderRadius: "50%", background: !inputValue.trim() || usageCount >= 30 ? "#c4b5fd" : "#7c3aed", border: "none", cursor: !inputValue.trim() || usageCount >= 30 ? "not-allowed" : "pointer", color: "white", fontSize: "16px" }}
             >
-              <Send className="size-4" />
-            </Button>
+              ➤
+            </button>
           </div>
 
-          <Button
-            size="icon"
-            variant="outline"
+          <button
             onClick={handleMicClick}
             disabled={usageCount >= 30}
-            className={`size-11 rounded-full border-violet-200 ${
-              isRecording ? "animate-pulse border-red-400 bg-red-50 text-red-600" : ""
-            }`}
+            style={{ width: "44px", height: "44px", borderRadius: "50%", border: isRecording ? "2px solid #f87171" : "1px solid #ddd6fe", background: isRecording ? "#fef2f2" : "white", cursor: "pointer", fontSize: "20px", animation: isRecording ? "pulse 1s infinite" : "none" }}
           >
-            <Mic className={`size-5 ${isRecording ? "text-red-600" : ""}`} />
-          </Button>
+            🎤
+          </button>
         </div>
 
         {usageCount >= 30 && (
-          <p className="mt-2 text-center text-xs text-red-500">
+          <p style={{ textAlign: "center", fontSize: "12px", color: "#ef4444", marginTop: "8px" }}>
             You've reached your daily message limit. Come back tomorrow!
           </p>
         )}
