@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react"
 const initialMessages = [
   {
     role: "sofia",
-    content: "¡Hola! Soy Sofia, tu tutora de español. ¿Cómo estás hoy?",
+    content: "¡Hola! Soy Milo, tu tutor de español. ¿Cómo estás hoy?",
   },
 ]
 
@@ -64,8 +64,8 @@ export function SofiaChat({ userUid }) {
           {
             role: "sofia",
             content: isQuota
-              ? "Sofia's free daily limit has been reached — she'll be back tomorrow! 🌙 If you'd like to help keep Sofia running without limits, consider supporting Milo Speaks Spanish on Ko-fi ☕ — every donation helps!"
-              : "Sofia is unavailable right now. Try again in a moment.",
+              ? "Milo's free daily limit has been reached — he'll be back tomorrow! 🌙 If you'd like to help keep Milo running without limits, consider supporting Milo Speaks Spanish on Ko-fi ☕ — every donation helps!"
+              : "Milo is unavailable right now. Try again in a moment.",
           },
         ])
       } else {
@@ -73,12 +73,26 @@ export function SofiaChat({ userUid }) {
         setUsageCount((prev) => prev + 1)
 
         if (!isMuted && data.reply) {
-          const utterance = new SpeechSynthesisUtterance(data.reply)
+          const spanishText = data.reply.replace(/\[.*?\]/g, "").trim()
+          const translations = [...data.reply.matchAll(/\[([^\]]+)\]/g)].map(m => m[1])
+          const translationText = translations.length > 0 ? translations.join(", ") : ""
+
           const voices = speechSynthesis.getVoices()
           const spanishVoice = voices.find((v) => v.lang.startsWith("es"))
-          if (spanishVoice) utterance.voice = spanishVoice
-          utterance.lang = "es-MX"
-          speechSynthesis.speak(utterance)
+          const englishVoice = voices.find((v) => v.lang.startsWith("en"))
+
+          const spanishUtterance = new SpeechSynthesisUtterance(spanishText)
+          if (spanishVoice) spanishUtterance.voice = spanishVoice
+          spanishUtterance.lang = "es-MX"
+
+          speechSynthesis.speak(spanishUtterance)
+
+          if (translationText) {
+            const englishUtterance = new SpeechSynthesisUtterance(translationText)
+            if (englishVoice) englishUtterance.voice = englishVoice
+            englishUtterance.lang = "en-US"
+            spanishUtterance.onend = () => speechSynthesis.speak(englishUtterance)
+          }
         }
       }
     } catch (err) {
@@ -137,9 +151,9 @@ export function SofiaChat({ userUid }) {
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #ede9fe", padding: "12px 16px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>
-            🤖
+            🐾
           </div>
-          <span style={{ fontSize: "18px", fontWeight: "600", color: "#111827" }}>Sofia</span>
+          <span style={{ fontSize: "18px", fontWeight: "600", color: "#111827" }}>Milo</span>
         </div>
         <button
           onClick={handleMuteToggle}
@@ -158,7 +172,7 @@ export function SofiaChat({ userUid }) {
             >
               {message.role === "sofia" && (
                 <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "700", color: "white", flexShrink: 0 }}>
-                  S
+                  M
                 </div>
               )}
               <div style={{
@@ -174,10 +188,10 @@ export function SofiaChat({ userUid }) {
           {isLoading && (
             <div style={{ display: "flex", alignItems: "flex-end", gap: "8px" }}>
               <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "700", color: "white", flexShrink: 0 }}>
-                S
+                M
               </div>
               <div style={{ borderRadius: "18px", padding: "10px 16px", background: "#f3f4f6" }}>
-                <p style={{ fontSize: "14px", color: "#9ca3af", fontStyle: "italic", margin: 0 }}>Sofia está escribiendo...</p>
+                <p style={{ fontSize: "14px", color: "#9ca3af", fontStyle: "italic", margin: 0 }}>Milo está escribiendo...</p>
               </div>
             </div>
           )}
