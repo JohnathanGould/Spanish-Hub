@@ -62,11 +62,17 @@ export function SofiaChat() {
           { role: "sofia", content: data.message || "Daily limit reached." },
         ])
       } else if (!response.ok) {
-        setMessages((prev) => [
-          ...prev,
-          { role: "sofia", content: "Sofia is unavailable right now. Try again in a moment." },
-        ])
-      } else {
+  const isQuota = data.error === "quota_exceeded";
+  setMessages((prev) => [
+    ...prev,
+    {
+      role: "sofia",
+      content: isQuota
+        ? "Sofia's free daily limit has been reached — she'll be back tomorrow! 🌙 If you'd like to help keep Sofia running without limits, consider supporting Milo Speaks Spanish on Ko-fi ☕ — every donation helps!"
+        : "Sofia is unavailable right now. Try again in a moment.",
+    },
+  ])
+}
         setMessages((prev) => [...prev, { role: "sofia", content: data.reply }])
         setUsageCount((prev) => prev + 1)
 

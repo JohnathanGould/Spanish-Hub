@@ -76,10 +76,13 @@ module.exports = async (req, res) => {
     });
 
     if (!geminiRes.ok) {
-      const err = await geminiRes.text();
-      console.error("Gemini error:", err);
-      return res.status(500).json({ error: "Sofia is unavailable right now. Try again in a moment." });
-    }
+  const err = await geminiRes.text();
+  console.error("Gemini error:", err);
+  const isQuota = err.includes("429") || err.includes("RESOURCE_EXHAUSTED");
+  return res.status(500).json({
+    error: isQuota ? "quota_exceeded" : "Sofia is unavailable right now. Try again in a moment."
+  });
+}
 
     const geminiData = await geminiRes.json();
     const reply = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "Lo siento, no entendi eso. Puedes repetirlo?";
