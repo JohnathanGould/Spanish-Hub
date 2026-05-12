@@ -1,4 +1,3 @@
-
 const admin = require("firebase-admin");
 
 // Initialize Firebase Admin only once
@@ -31,11 +30,10 @@ Rules:
 const DAILY_LIMIT = 30;
 
 module.exports = async (req, res) => {
-  // CORS headers
   res.setHeader("Access-Control-Allow-Origin", "*");
-res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-res.setHeader("Access-Control-Max-Age", "86400");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.setHeader("Access-Control-Max-Age", "86400");
 
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST")
@@ -48,7 +46,6 @@ res.setHeader("Access-Control-Max-Age", "86400");
   }
 
   try {
-    // Check rate limit
     const today = new Date().toISOString().split("T")[0];
     const usageRef = db.collection("chatUsage").doc(userUid);
     const usageDoc = await usageRef.get();
@@ -57,12 +54,10 @@ res.setHeader("Access-Control-Max-Age", "86400");
     if (usage && usage.date === today && usage.count >= DAILY_LIMIT) {
       return res.status(429).json({
         error: "Daily limit reached",
-        message:
-          "You've used all 30 messages for today. Come back tomorrow! 🌙",
+        message: "You've used all 30 messages for today. Come back tomorrow! 🌙",
       });
     }
 
-    // Build conversation for Gemini
     const history = Array.isArray(conversationHistory)
       ? conversationHistory.slice(-10)
       : [];
@@ -77,9 +72,8 @@ res.setHeader("Access-Control-Max-Age", "86400");
       { role: "user", parts: [{ text: message }] },
     ];
 
-    // Call Gemini API
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -100,7 +94,6 @@ res.setHeader("Access-Control-Max-Age", "86400");
       geminiData.candidates?.[0]?.content?.parts?.[0]?.text ||
       "Lo siento, no entendí eso. ¿Puedes repetirlo?";
 
-    // Update rate limit counter
     if (usage && usage.date === today) {
       await usageRef.update({ count: admin.firestore.FieldValue.increment(1) });
     } else {
