@@ -2,6 +2,29 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { auth, db } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { MASTER, DEFAULT_CATEGORIES, PRESET_PACKS } from './data/words';
+import { LESSONS, DAILY_THEMES } from './data/lessons';
+import { masteryLevel, getStats, initVoice, spacedRepetitionSort } from './utils/helpers';
+import Header from './components/Header';
+import WordList from './components/WordList';
+import DrillsGrid from './components/DrillsGrid';
+import DoneScreen from './components/DoneScreen';
+import Leaderboard from './components/Leaderboard';
+import WordDetail from './components/WordDetail';
+import CategoryToggles from './components/CategoryToggles';
+import DrillRouter from './components/DrillRouter';
+import LessonsList from './components/LessonsList';
+import LessonView from './components/LessonView';
+import DailyChallenge from './components/DailyChallenge';
+import SessionHistory from './components/SessionHistory';
+import LoginScreen from './components/LoginScreen';
+import GoalModal from './components/GoalModal';
+import Certificate from './components/Certificate';
+import SharedPacks from './components/SharedPacks';
+import Plaza from './components/Plaza';
+import Translator from './components/Translator';
+import SofiaChat from './SofiaChat';
+import SpanishFlag from './components/SpanishFlag';
 
 function getWeekStartStr() {
   const d = new Date();
@@ -25,30 +48,6 @@ async function syncLeaderboard(user, data) {
     });
   } catch (e) { console.error('LB sync error', e); }
 }
-import { MASTER, DEFAULT_CATEGORIES, PRESET_PACKS } from './data/words';
-import { LESSONS, DAILY_THEMES } from './data/lessons';
-import { masteryLevel, getStats, initVoice, spacedRepetitionSort } from './utils/helpers';
-import Header from './components/Header';
-import WordList from './components/WordList';
-import DrillsGrid from './components/DrillsGrid';
-import DoneScreen from './components/DoneScreen';
-import Leaderboard from './components/Leaderboard';
-import WordDetail from './components/WordDetail';
-import CategoryToggles from './components/CategoryToggles';
-import DrillRouter from './components/DrillRouter';
-import LessonsList from './components/LessonsList';
-import LessonView from './components/LessonView';
-import DailyChallenge from './components/DailyChallenge';
-import SessionHistory from './components/SessionHistory';
-import LoginScreen from './components/LoginScreen';
-import GoalModal from './components/GoalModal';
-import Certificate from './components/Certificate';
-import SharedPacks from './components/SharedPacks';
-import Plaza from './components/Plaza';
-import Translator from './components/Translator';
-import SpanishFlag from './components/SpanishFlag';
-
-function SpanishFlagPulse() { return <SpanishFlag size={88} />; }
 
 const DEFAULT_DATA = {
   displayName: '',
@@ -69,6 +68,8 @@ const DEFAULT_DATA = {
   reminderEnabled: false,
 };
 
+function SpanishFlagPulse() { return <SpanishFlag size={88} />; }
+
 function maybeRunStreakReminder(data) {
   try {
     if (typeof window === 'undefined' || !('Notification' in window)) return;
@@ -78,9 +79,7 @@ function maybeRunStreakReminder(data) {
     const yesterday = new Date(Date.now() - 86400000).toDateString();
     const lastDate = data?.streak?.lastDate;
     const dailyDate = data?.dailyProgress?.date;
-    // If user has done nothing today and had streak yesterday, prompt them
     if (lastDate === yesterday && dailyDate !== today && (data.streak?.count || 0) > 0) {
-      // Avoid spamming — only fire once per session
       if (window.__shStreakNotified) return;
       window.__shStreakNotified = true;
       new Notification('Keep your Spanish streak alive 🇪🇸🔥', {
@@ -208,7 +207,6 @@ export default function SpanishHub() {
       const sessions = [{ drillId: sessionDrillId, correct, total, date: today, ts: Date.now() }, ...(prev.sessions || []).slice(0, 49)];
       const ws = getWeekStartStr();
       const sameWeek = prev.weekStart === ws;
-      // Update daily challenge state
       const dc = prev.dailyChallenges || { date: null, weakDone: false, themeDone: false };
       const sameDay = dc.date === today;
       const updatedChallenges = {
@@ -242,7 +240,6 @@ export default function SpanishHub() {
   const startDailyChallenge = useCallback((kind) => {
     const today = new Date().toDateString();
     if (kind === 'weak') {
-      // Find 5 weakest non-mastered words from active set
       const all = MASTER.filter(w => w.group === 'Core' || userData.categoryEnabled[w.group] !== false);
       const candidates = all.filter(w => masteryLevel(userData.progress, w.es) !== 'mastered');
       const sorted = spacedRepetitionSort(candidates, userData.progress);
@@ -264,7 +261,7 @@ export default function SpanishHub() {
     setUserData(prev => {
       const already = (prev.lessonsCompleted || []).includes(lessonId);
       const lessonsCompleted = already ? prev.lessonsCompleted : [...(prev.lessonsCompleted || []), lessonId];
-      const xpGain = already ? 0 : 15; // bonus XP for completing a lesson once
+      const xpGain = already ? 0 : 15;
       const newData = { ...prev, lessonsCompleted, xp: (prev.xp || 0) + xpGain };
       persistData(newData);
       return newData;
@@ -469,7 +466,7 @@ export default function SpanishHub() {
           onGoalClick={() => setShowGoalModal(true)}
         />
         <div className="tab-bar">
-          {[['learn', 'Learn'], ['words', 'Words'], ['drills', 'Drills'], ['translate', 'Trans'], ['plaza', 'Plaza'], ['leaderboard', 'Top'], ['history', 'Log']].map(([id, label]) => (
+          {[['learn', 'Learn'], ['words', 'Words'], ['drills', 'Drills'], ['sofia', 'Sofia'], ['translate', 'Trans'], ['plaza', 'Plaza'], ['leaderboard', 'Top'], ['history', 'Log']].map(([id, label]) => (
             <button key={id} className={`tab-btn${tab === id ? ' active' : ''}`}
               onClick={() => setTab(id)} data-testid={`tab-${id}`}>{label}</button>
           ))}
@@ -506,6 +503,9 @@ export default function SpanishHub() {
           )}
           {tab === 'plaza' && (
             <Plaza user={user} isGuest={isGuest} />
+          )}
+          {tab === 'sofia' && (
+            <SofiaChat userUid={effectiveUser.uid} />
           )}
           {tab === 'translate' && (
             <Translator onSaveWord={addCustomWord} savedWords={userData.customWords || []} />
