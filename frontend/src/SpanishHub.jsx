@@ -466,7 +466,7 @@ export default function SpanishHub() {
           onGoalClick={() => setShowGoalModal(true)}
         />
         <div className="tab-bar">
-          {[['learn', 'Learn'], ['words', 'Words'], ['drills', 'Drills'], ['sofia', 'Sofia'], ['translate', 'Trans'], ['plaza', 'Plaza'], ['leaderboard', 'Top'], ['history', 'Log']].map(([id, label]) => (
+          {[['learn', 'Learn'], ['words', 'Words'], ['drills', 'Drills'], ['sofia', 'Milo'], ['translate', 'Trans'], ['plaza', 'Plaza'], ['leaderboard', 'Top'], ['history', 'Log']].map(([id, label]) => (
             <button key={id} className={`tab-btn${tab === id ? ' active' : ''}`}
               onClick={() => setTab(id)} data-testid={`tab-${id}`}>{label}</button>
           ))}
