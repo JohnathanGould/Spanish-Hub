@@ -67,7 +67,7 @@ module.exports = async (req, res) => {
       { role: "user", parts: [{ text: message }] },
     ];
 
-   const geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent?key=" + process.env.GEMINI_API_KEY;
+    const geminiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + process.env.GEMINI_API_KEY;
 
     const geminiRes = await fetch(geminiUrl, {
       method: "POST",
@@ -76,13 +76,13 @@ module.exports = async (req, res) => {
     });
 
     if (!geminiRes.ok) {
-  const err = await geminiRes.text();
-  console.error("Gemini error:", err);
-  const isQuota = err.includes("429") || err.includes("RESOURCE_EXHAUSTED");
-  return res.status(500).json({
-    error: isQuota ? "quota_exceeded" : "Sofia is unavailable right now. Try again in a moment."
-  });
-}
+      const err = await geminiRes.text();
+      console.error("Gemini error:", err);
+      const isQuota = err.includes("429") || err.includes("RESOURCE_EXHAUSTED");
+      return res.status(500).json({
+        error: isQuota ? "quota_exceeded" : "Sofia is unavailable right now. Try again in a moment."
+      });
+    }
 
     const geminiData = await geminiRes.json();
     const reply = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "Lo siento, no entendi eso. Puedes repetirlo?";
