@@ -19,10 +19,11 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack }) {
     setPicked(c);
     onAnswer(item.blank, ok);
     if (ok) setCorrect(x => x + 1);
-    setTimeout(() => {
-      if (idx + 1 >= queue.length) onDone(correct + (ok ? 1 : 0), queue.length);
-      else { setIdx(idx + 1); setPicked(null); }
-    }, 850);
+  };
+
+  const handleContinue = () => {
+    if (idx + 1 >= queue.length) onDone(correct, queue.length);
+    else { setIdx(idx + 1); setPicked(null); }
   };
 
   return (
@@ -62,6 +63,22 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack }) {
           );
         })}
       </div>
+
+      {picked && (
+        <div className="mt-4 text-center">
+          <div className="mb-3 text-sm font-medium" style={{ color: picked === item.blank ? '#16A34A' : '#DC2626' }}>
+            {picked === item.blank ? '¡Correcto! ✓' : `Correcto: ${item.blank}`}
+          </div>
+          <button
+            onClick={handleContinue}
+            data-testid="fitb-continue"
+            className="w-full py-3 rounded-xl font-bold text-white text-sm"
+            style={{ background: 'hsl(var(--primary))' }}
+          >
+            {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
+          </button>
+        </div>
+      )}
     </DrillShell>
   );
 }
