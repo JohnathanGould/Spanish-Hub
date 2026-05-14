@@ -18,6 +18,8 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   const inputRef = useRef(null);
 
   useEffect(() => { inputRef.current?.focus(); }, [idx]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { if (mode === 'listen-type' && queue[idx]) setTimeout(() => speak(queue[idx].es, 'es'), 200); }, [idx, mode]);
   useEffect(() => { if (mode === 'listen-type' && queue[idx]) setTimeout(() => speak(queue[idx].es, 'es'), 200); }, [idx, mode]);
 
   if (queue.length === 0) {
