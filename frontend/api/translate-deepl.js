@@ -6,7 +6,7 @@ module.exports = async function handler(req, res) {
     const response = await fetch('https://api-free.deepl.com/v2/translate', {
       method: 'POST',
       headers: {
-        'Authorization': `DeepL-Auth-Key ${process.env.REACT_APP_DEEPL_KEY}`,
+        'Authorization': `DeepL-Auth-Key ${process.env.DEEPL_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ text: [text], target_lang: targetLang }),
