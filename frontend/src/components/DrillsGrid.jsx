@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { DRILLS } from '../data/drillData';
-import { masteryLevel } from '../utils/helpers';
 
 const CARD_STYLES = {
   amber: { bg: '#FEF3C7', num: '#FDE68A', numText: '#78350F', title: '#451A03', desc: '#92400E' },
@@ -21,25 +20,70 @@ const CARD_STYLES = {
   pink: { bg: '#FDF2F8', num: '#F5D0E8', numText: '#6D1B4E', title: '#500D38', desc: '#86185E' },
 };
 
-const DRILL_LABELS = {
-  flashcard: 'Flashcards', 'es-en': 'Sp → En', 'en-es': 'En → Sp',
-  'type-es-en': 'Type Sp→En', 'type-en-es': 'Type En→Sp',
-  conjugation: 'Conjugation', 'past-tense': 'Preterite', gender: 'Gender',
-  matching: 'Matching', 'word-sort': 'Word Sort', 'en-word-sort': 'En Sort',
-  'hear-choose': 'Hear', 'listen-type': 'Listen', 'sent-build': 'Sentences', 'fill-blank': 'Fill Blank',
-};
-
 export default function DrillsGrid({ words, stats, drillMode, setDrillMode, onStartDrill, completedPaths = [] }) {
+  const [pendingDrill, setPendingDrill] = useState(null);
+  const [drillLength, setDrillLength] = useState(10);
+
   const notMastered = words.length - stats.mastered;
   const masteredLabel = drillMode === 'mastered' ? '✓ Review mode' : `${stats.mastered} mastered`;
   const weakLabel = drillMode === 'weak' ? '✓ Focus mode' : `${notMastered} not yet mastered`;
-
   const drillLabel = drillMode === 'weak' ? `${words.length} unmastered words`
     : drillMode === 'mastered' ? `${words.length} mastered words`
     : `All ${words.length} words`;
 
+  const handleDrillClick = (drill) => {
+    setPendingDrill(drill);
+  };
+
+  const handleStart = () => {
+    onStartDrill(pendingDrill.id, drillLength);
+    setPendingDrill(null);
+  };
+
   return (
     <div>
+      {/* Length selector modal */}
+      {pendingDrill && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.4)' }}
+          onClick={() => setPendingDrill(null)}>
+          <div className="rounded-2xl p-6 w-full max-w-sm shadow-2xl"
+            style={{ background: 'hsl(var(--card))' }}
+            onClick={e => e.stopPropagation()}>
+            <div className="text-center mb-4">
+              <div className="text-lg font-bold mb-1" style={{ color: 'hsl(var(--foreground))' }}>
+                {pendingDrill.name}
+              </div>
+              <div className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                How many words?
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 mb-5">
+              {[10, 20, 30].map(n => (
+                <button key={n} onClick={() => setDrillLength(n)}
+                  className="py-3 rounded-xl text-sm font-bold transition-all"
+                  style={{
+                    background: drillLength === n ? 'hsl(var(--primary))' : 'hsl(var(--muted))',
+                    color: drillLength === n ? 'white' : 'hsl(var(--foreground))',
+                  }}>
+                  {n}
+                </button>
+              ))}
+            </div>
+            <button onClick={handleStart}
+              className="w-full py-3 rounded-xl font-bold text-white text-sm"
+              style={{ background: 'hsl(var(--primary))' }}>
+              Start 🎾
+            </button>
+            <button onClick={() => setPendingDrill(null)}
+              className="w-full py-2 mt-2 rounded-xl text-sm"
+              style={{ color: 'hsl(var(--muted-foreground))' }}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Mode filter buttons */}
       <div className="grid grid-cols-2 gap-2 mb-3">
         <button data-testid="mode-weak-btn"
@@ -82,7 +126,7 @@ export default function DrillsGrid({ words, stats, drillMode, setDrillMode, onSt
               transition={{ delay: i * 0.04, duration: 0.3 }}
               className={`drill-card${drill.wide ? ' col-span-2' : ''}${isLocked ? ' opacity-50 cursor-not-allowed' : ''}`}
               style={{ background: s.bg }}
-              onClick={() => !isLocked && onStartDrill(drill.id)}
+              onClick={() => !isLocked && handleDrillClick(drill)}
               data-testid={`drill-card-${drill.id}`}
             >
               <div className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold mb-2"
