@@ -18,7 +18,12 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   const inputRef = useRef(null);
 
   useEffect(() => { inputRef.current?.focus(); }, [idx]);
-  useEffect(() => { if (mode === 'listen-type' && queue[idx]) setTimeout(() => speak(queue[idx].es, 'es'), 200); }, [idx, mode]);
+  const currentWord = queue[idx];
+useEffect(() => {
+  if (mode === 'listen-type' && currentWord) {
+    setTimeout(() => speak(currentWord.es, 'es'), 200);
+  }
+}, [idx, mode, currentWord]);
 
   if (queue.length === 0) {
     return <DrillShell title="Drill" current={0} total={0} onBack={onBack}>
