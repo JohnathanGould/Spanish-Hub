@@ -6,7 +6,11 @@ import { spacedRepetitionSort, levenshtein, speak } from '../../utils/helpers';
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
 export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack }) {
   const total = 10;
-  const queue = useMemo(() => spacedRepetitionSort(words, progress).slice(0, total), [words, progress]);
+  const queueRef = useRef(null);
+  if (!queueRef.current) {
+    queueRef.current = spacedRepetitionSort(words, progress).slice(0, total);
+  }
+  const queue = queueRef.current;
   const [idx, setIdx] = useState(0);
   const [val, setVal] = useState('');
   const [feedback, setFeedback] = useState(null);
@@ -14,7 +18,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   const inputRef = useRef(null);
 
   useEffect(() => { inputRef.current?.focus(); }, [idx]);
-  useEffect(() => { if (mode === 'listen-type' && queue[idx]) setTimeout(() => speak(queue[idx].es, 'es'), 200); }, [idx, mode, queue]);
+  useEffect(() => { if (mode === 'listen-type' && queue[idx]) setTimeout(() => speak(queue[idx].es, 'es'), 200); }, [idx, mode]);
 
   if (queue.length === 0) {
     return <DrillShell title="Drill" current={0} total={0} onBack={onBack}>
@@ -23,7 +27,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   }
 
   const word = queue[idx];
-  const isPromptEs = mode === 'type-es-en'; // show ES → type EN
+  const isPromptEs = mode === 'type-es-en';
   const target = (mode === 'type-es-en') ? word.en : word.es;
   const promptText = mode === 'listen-type' ? '' : (isPromptEs ? word.es : word.en);
 
@@ -98,7 +102,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
           <button data-testid="type-next" onClick={next}
             className="w-full py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all"
             style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 14px rgba(198,11,30,0.3)' }}>
-            Next <ArrowRight size={16} />
+            Continue → <ArrowRight size={16} />
           </button>
         </div>
       ) : (
