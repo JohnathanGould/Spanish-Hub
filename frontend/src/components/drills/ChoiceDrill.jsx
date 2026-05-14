@@ -12,7 +12,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
   const [correct, setCorrect] = useState(0);
 
   const word = queue[idx] || { es: '', en: '' };
-  const isAsk = mode === 'es-en' || mode === 'hear-choose'; // ask Spanish, answer English
+  const isAsk = mode === 'es-en' || mode === 'hear-choose';
   const correctText = isAsk ? word.en : word.es;
   const promptText = isAsk ? word.es : word.en;
 
@@ -42,10 +42,11 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
     setPicked(ans);
     onAnswer(word.es, ok);
     if (ok) setCorrect(c => c + 1);
-    setTimeout(() => {
-      if (idx + 1 >= queue.length) onDone(correct + (ok ? 1 : 0), queue.length);
-      else { setIdx(idx + 1); setPicked(null); }
-    }, 800);
+  };
+
+  const handleContinue = () => {
+    if (idx + 1 >= queue.length) onDone(correct, queue.length);
+    else { setIdx(idx + 1); setPicked(null); }
   };
 
   return (
@@ -87,6 +88,23 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
           );
         })}
       </div>
+
+      {picked && (
+        <div className="mt-4 text-center">
+          <div className="mb-3 text-sm font-medium" style={{ color: picked === correctText ? '#16A34A' : '#DC2626' }}>
+            {picked === correctText ? '¡Correcto! ✓' : `Correcto: ${correctText}`}
+          </div>
+          <button
+            onClick={handleContinue}
+            data-testid="choice-continue"
+            className="w-full py-3 rounded-xl font-bold text-white text-sm"
+            style={{ background: 'hsl(var(--primary))' }}
+          >
+            {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
+          </button>
+        </div>
+      )}
     </DrillShell>
   );
 }
+
