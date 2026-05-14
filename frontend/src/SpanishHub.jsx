@@ -26,6 +26,10 @@ import Translator from './components/Translator';
 import SofiaChat from './SofiaChat';
 import SpanishFlag from './components/SpanishFlag';
 import { KofiSupport } from './components/KofiSupport';
+setView({ page: 'done', drillId: dailyKind ? `daily-${dailyKind}` : drillId, correct, total });
+if (drillId !== 'flashcard') {
+  setTimeout(() => confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } }), 300);
+}
 
 function getWeekStartStr() {
   const d = new Date();
@@ -197,7 +201,7 @@ export default function SpanishHub() {
     const dailyKind = view.dailyKind;
     const xpMultiplier = view.xpMultiplier || 1;
     const baseBonus = total > 0 ? Math.round((correct / total) * 5) : 0;
-    const xpBonus = Math.round(baseBonus * xpMultiplier);
+    const xpBonus = drillId === 'flashcard' ? 0 : Math.round(baseBonus * xpMultiplier);
     setUserData(prev => {
       const today = new Date().toDateString();
       const streak = prev.streak || { count: 0, lastDate: null };
