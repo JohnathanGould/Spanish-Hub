@@ -8,14 +8,16 @@ const STORAGE_KEY = 'spanish-hub-translator-history';
 const HISTORY_LIMIT = 5;
 
 async function translate(text, from, to) {
-  const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${from}|${to}`;
-  const res = await fetch(url);
+  const targetLang = to === 'es' ? 'ES' : 'EN';
+  const res = await fetch('/api/translate-deepl', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, targetLang }),
+  });
   if (!res.ok) throw new Error(`Translator returned ${res.status}`);
   const data = await res.json();
-  if (data.responseStatus !== 200 && data.responseStatus !== '200') {
-    throw new Error(data.responseDetails || 'Translation failed');
-  }
-  return data.responseData?.translatedText || '';
+  if (data.error) throw new Error(data.error);
+  return data.translatedText || '';
 }
 
 export default function Translator({ onSaveWord, savedWords = [] }) {
@@ -298,7 +300,7 @@ export default function Translator({ onSaveWord, savedWords = [] }) {
       )}
 
       <div className="text-[10px] text-center mt-4" style={{ color: 'hsl(var(--muted-foreground))' }}>
-        Powered by MyMemory · free machine translation. Quality varies for idioms &amp; slang.
+        Powered by DeepL · accurate machine translation.
       </div>
     </div>
   );
