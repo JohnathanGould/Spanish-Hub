@@ -26,10 +26,7 @@ import Translator from './components/Translator';
 import SofiaChat from './SofiaChat';
 import SpanishFlag from './components/SpanishFlag';
 import { KofiSupport } from './components/KofiSupport';
-setView({ page: 'done', drillId: dailyKind ? `daily-${dailyKind}` : drillId, correct, total });
-if (drillId !== 'flashcard') {
-  setTimeout(() => confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } }), 300);
-}
+import confetti from 'canvas-confetti';
 
 function getWeekStartStr() {
   const d = new Date();
@@ -237,6 +234,9 @@ export default function SpanishHub() {
       return newData;
     });
     setView({ page: 'done', drillId: dailyKind ? `daily-${dailyKind}` : drillId, correct, total });
+    if (drillId !== 'flashcard') {
+      setTimeout(() => confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } }), 300);
+    }
   }, [user, isGuest, view.dailyKind, view.xpMultiplier]);
 
   const startDrill = useCallback((drillId) => setView({ page: 'drill', drillId }), []);
@@ -481,9 +481,8 @@ export default function SpanishHub() {
             <>
               <DailyChallenge challenges={userData.dailyChallenges} onStart={startDailyChallenge} />
               <DrillsGrid words={activeWords} stats={stats} drillMode={drillMode}
-              setDrillMode={setDrillMode} onStartDrill={startDrill}
-        completedPaths={userData.completedPaths || []} />
-      <KofiSupport />
+                setDrillMode={setDrillMode} onStartDrill={startDrill} />
+              <KofiSupport />
             </>
           )}
           {tab === 'learn' && (
