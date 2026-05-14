@@ -193,7 +193,23 @@ export default function SpanishHub() {
       return newData;
     });
   }, [persistData]);
-
+const recordAnswerNoXP = useCallback((wordEs, isCorrect) => {
+  setUserData(prev => {
+    const p = { ...(prev.progress[wordEs] || { c: 0, w: 0, s: 0 }) };
+    if (isCorrect) { p.c++; p.s = Math.min(p.s + 1, 10); }
+    else { p.w++; p.s = Math.max(p.s - 1, 0); }
+    const today = new Date().toDateString();
+    const dp = prev.dailyProgress || { count: 0, date: null };
+    const dailyCount = (dp.date === today ? dp.count : 0) + (isCorrect ? 1 : 0);
+    const newData = {
+      ...prev,
+      progress: { ...prev.progress, [wordEs]: p },
+      dailyProgress: { count: dailyCount, date: today },
+    };
+    persistData(newData);
+    return newData;
+  });
+}, [persistData]);
   const onDrillDone = useCallback((drillId, correct, total) => {
     const dailyKind = view.dailyKind;
     const xpMultiplier = view.xpMultiplier || 1;
@@ -432,7 +448,7 @@ export default function SpanishHub() {
             drillId={view.drillId}
             words={activeWords}
             progress={userData.progress}
-            onAnswer={recordAnswer}
+            onAnswer={view.drillId === 'flashcard' ? recordAnswerNoXP : recordAnswer}
             onDone={(c, t) => onDrillDone(view.drillId, c, t)}
             onBack={goHome}
           />
