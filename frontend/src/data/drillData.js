@@ -10,7 +10,6 @@ export const DRILLS = [
   { id: 'gender', n: '8', name: 'Gender Drill', desc: 'Is this noun el (masculine) or la (feminine)?', color: 'violet', wide: false },
   { id: 'matching', n: '9', name: 'Matching Game', desc: 'Match Spanish words to their English pairs.', color: 'fuchsia', wide: false },
   { id: 'word-sort', n: '10', name: 'Word Sort — Spanish', desc: 'Is it a noun, verb, adjective, adverb…?', color: 'blue', wide: false },
-  { id: 'en-word-sort', n: '11', name: 'Word Sort — English', desc: 'See an English word in a sentence — name its type.', color: 'indigo', wide: false },
   { id: 'hear-choose', n: '12', name: 'Hear & Choose', desc: 'Listen to the Spanish word — pick the meaning.', color: 'sky', wide: false },
   { id: 'listen-type', n: '13', name: 'Listen & Type', desc: 'Hear a Spanish word — spell it back.', color: 'orange', wide: false },
   { id: 'sent-build', n: '14', name: 'Sentence Builder', desc: 'Arrange words into a correct Spanish sentence.', color: 'lime', wide: true },
