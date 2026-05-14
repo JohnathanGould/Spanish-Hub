@@ -477,10 +477,9 @@ export default function SpanishHub() {
             <>
               <DailyChallenge challenges={userData.dailyChallenges} onStart={startDailyChallenge} />
               <DrillsGrid words={activeWords} stats={stats} drillMode={drillMode}
-  setDrillMode={setDrillMode} onStartDrill={startDrill}
-  completedPaths={userData.completedPaths || []} />
-                setDrillMode={setDrillMode} onStartDrill={startDrill} />
-              <KofiSupport />
+              setDrillMode={setDrillMode} onStartDrill={startDrill}
+        completedPaths={userData.completedPaths || []} />
+      <KofiSupport />
             </>
           )}
           {tab === 'learn' && (
