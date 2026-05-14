@@ -4,36 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Check, Volume2 } from "lucide-react"
-
-export interface HomeTabProps {
-  // Daily Challenge
-  weakWordsCompleted?: boolean
-  themeOfDayCompleted?: boolean
-  onWeakWordsClick?: () => void
-  onThemeOfDayClick?: () => void
-
-  // Word & Phrase of the Week
-  wordOfWeek: {
-    spanish: string
-    english: string
-  }
-  phraseOfWeek: {
-    spanish: string
-    english: string
-  }
-  onWordSpeakerClick?: () => void
-  onPhraseSpeakerClick?: () => void
-  onAddWordToList?: () => void
-  onAddPhraseToList?: () => void
-
-  // Stats
-  currentStreak: number
-  totalXP: number
-  wordsMastered: number
-
-  // Quick Start
-  onStartDrilling?: () => void
-}
+import { KofiSupport } from "./KofiSupport"
 
 export function HomeTab({
   weakWordsCompleted = false,
@@ -50,7 +21,7 @@ export function HomeTab({
   totalXP,
   wordsMastered,
   onStartDrilling,
-}: HomeTabProps) {
+}) {
   return (
     <div className="w-full h-[527px] bg-white px-3 py-3 flex flex-col gap-3">
       {/* Section 1 — Daily Challenge Card */}
@@ -181,6 +152,9 @@ export function HomeTab({
       >
         Start Drilling →
       </Button>
+
+      {/* Ko-fi Support */}
+      <KofiSupport />
     </div>
   )
 }
