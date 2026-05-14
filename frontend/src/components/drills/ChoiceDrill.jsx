@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { spacedRepetitionSort, shuffle, speak } from '../../utils/helpers';
@@ -6,8 +6,11 @@ import { spacedRepetitionSort, shuffle, speak } from '../../utils/helpers';
 // mode: 'es-en' | 'en-es' | 'hear-choose'
 export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack }) {
   const total = 10;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-const queue = useMemo(() => spacedRepetitionSort(words, progress).slice(0, total), [words]);
+  const queueRef = useRef(null);
+  if (!queueRef.current) {
+    queueRef.current = spacedRepetitionSort(words, progress).slice(0, total);
+  }
+  const queue = queueRef.current;
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);
   const [correct, setCorrect] = useState(0);
@@ -108,4 +111,3 @@ const queue = useMemo(() => spacedRepetitionSort(words, progress).slice(0, total
     </DrillShell>
   );
 }
-
