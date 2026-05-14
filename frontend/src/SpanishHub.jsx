@@ -25,6 +25,7 @@ import Plaza from './components/Plaza';
 import Translator from './components/Translator';
 import SofiaChat from './SofiaChat';
 import SpanishFlag from './components/SpanishFlag';
+import { KofiSupport } from './components/KofiSupport';
 
 function getWeekStartStr() {
   const d = new Date();
@@ -477,6 +478,7 @@ export default function SpanishHub() {
               <DailyChallenge challenges={userData.dailyChallenges} onStart={startDailyChallenge} />
               <DrillsGrid words={activeWords} stats={stats} drillMode={drillMode}
                 setDrillMode={setDrillMode} onStartDrill={startDrill} />
+              <KofiSupport />
             </>
           )}
           {tab === 'learn' && (
