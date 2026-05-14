@@ -90,6 +90,9 @@
   position: relative;
 }
 @media (max-width: 660px) {
+  .app-outer {
+    display: block;
+  }
   .app-container {
     max-width: 100%;
     border-left: none;
