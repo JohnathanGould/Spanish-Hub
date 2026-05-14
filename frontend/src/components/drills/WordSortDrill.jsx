@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useRef } from 'react';
 import DrillShell from '../DrillShell';
 import { spacedRepetitionSort, shuffle } from '../../utils/helpers';
 import { EN_POOL, EN_TYPES } from '../../data/drillData';
@@ -12,10 +12,13 @@ const ES_TYPES = ['noun', 'verb', 'adj', 'adv', 'pronoun'];
 // mode: 'es' | 'en'
 export default function WordSortDrill({ mode, words, progress, onAnswer, onDone, onBack }) {
   const total = 10;
-  const queue = useMemo(() => {
-    if (mode === 'en') return shuffle(EN_POOL).slice(0, total);
-    return spacedRepetitionSort(words.filter(w => ES_TYPES.includes(w.type)), progress).slice(0, total);
-  }, [mode, words, progress]);
+  const queueRef = useRef(null);
+  if (!queueRef.current) {
+    queueRef.current = mode === 'en'
+      ? shuffle(EN_POOL).slice(0, total)
+      : spacedRepetitionSort(words.filter(w => ES_TYPES.includes(w.type)), progress).slice(0, total);
+  }
+  const queue = queueRef.current;
 
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);
@@ -28,8 +31,9 @@ export default function WordSortDrill({ mode, words, progress, onAnswer, onDone,
   }
 
   const item = queue[idx];
-  const correctType = mode === 'en' ? item.type : item.type;
+  const correctType = item.type;
   const types = mode === 'en' ? EN_TYPES : ES_TYPES;
+  const correctLabel = TYPE_LABELS[correctType] || correctType;
 
   const handlePick = (t) => {
     if (picked) return;
@@ -37,10 +41,11 @@ export default function WordSortDrill({ mode, words, progress, onAnswer, onDone,
     setPicked(t);
     onAnswer(mode === 'en' ? item.w : item.es, ok);
     if (ok) setCorrect(c => c + 1);
-    setTimeout(() => {
-      if (idx + 1 >= queue.length) onDone(correct + (ok ? 1 : 0), queue.length);
-      else { setIdx(idx + 1); setPicked(null); }
-    }, 800);
+  };
+
+  const handleContinue = () => {
+    if (idx + 1 >= queue.length) onDone(correct, queue.length);
+    else { setIdx(idx + 1); setPicked(null); }
   };
 
   const renderEnSentence = (s) => {
@@ -58,11 +63,9 @@ export default function WordSortDrill({ mode, words, progress, onAnswer, onDone,
       <div className="rounded-3xl p-7 mb-5 text-center"
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
         {mode === 'en' ? (
-          <>
-            <div className="font-serif text-xl mb-2" data-testid="sort-prompt" style={{ color: 'hsl(var(--foreground))', lineHeight: 1.5 }}>
-              {renderEnSentence(item.sentence)}
-            </div>
-          </>
+          <div className="font-serif text-xl mb-2" data-testid="sort-prompt" style={{ color: 'hsl(var(--foreground))', lineHeight: 1.5 }}>
+            {renderEnSentence(item.sentence)}
+          </div>
         ) : (
           <>
             <div className="text-xs uppercase tracking-wider mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>Spanish word</div>
@@ -75,7 +78,7 @@ export default function WordSortDrill({ mode, words, progress, onAnswer, onDone,
       </div>
 
       <div className="grid grid-cols-2 gap-2.5">
-        {types.map((t, i) => {
+        {types.map((t) => {
           const isCorrect = picked && t === correctType;
           const isWrong = picked === t && t !== correctType;
           return (
@@ -86,6 +89,22 @@ export default function WordSortDrill({ mode, words, progress, onAnswer, onDone,
           );
         })}
       </div>
+
+      {picked && (
+        <div className="mt-4 text-center">
+          <div className="mb-3 text-sm font-medium" style={{ color: picked === correctType ? '#16A34A' : '#DC2626' }}>
+            {picked === correctType ? '¡Correcto! ✓' : `Correcto: ${correctLabel}`}
+          </div>
+          <button
+            onClick={handleContinue}
+            data-testid="sort-continue"
+            className="w-full py-3 rounded-xl font-bold text-white text-sm"
+            style={{ background: 'hsl(var(--primary))' }}
+          >
+            {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
+          </button>
+        </div>
+      )}
     </DrillShell>
   );
 }
