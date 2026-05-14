@@ -24,10 +24,11 @@ export default function ConjugationDrill({ mode, onAnswer, onDone, onBack }) {
     setPicked(ans);
     onAnswer(item.ans, ok);
     if (ok) setCorrect(c => c + 1);
-    setTimeout(() => {
-      if (idx + 1 >= queue.length) onDone(correct + (ok ? 1 : 0), queue.length);
-      else { setIdx(idx + 1); setPicked(null); }
-    }, 800);
+  };
+
+  const handleContinue = () => {
+    if (idx + 1 >= queue.length) onDone(correct, queue.length);
+    else { setIdx(idx + 1); setPicked(null); }
   };
 
   const titles = {
@@ -62,6 +63,22 @@ export default function ConjugationDrill({ mode, onAnswer, onDone, onBack }) {
           );
         })}
       </div>
+
+      {picked && (
+        <div className="mt-4 text-center">
+          <div className="mb-3 text-sm font-medium" style={{ color: picked === item.ans ? '#16A34A' : '#DC2626' }}>
+            {picked === item.ans ? '¡Correcto! ✓' : `Correcto: ${item.ans}`}
+          </div>
+          <button
+            onClick={handleContinue}
+            data-testid="conj-continue"
+            className="w-full py-3 rounded-xl font-bold text-white text-sm"
+            style={{ background: 'hsl(var(--primary))' }}
+          >
+            {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
+          </button>
+        </div>
+      )}
     </DrillShell>
   );
 }

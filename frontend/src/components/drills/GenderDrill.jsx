@@ -1,13 +1,18 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useRef } from 'react';
 import DrillShell from '../DrillShell';
 import { spacedRepetitionSort } from '../../utils/helpers';
 
 export default function GenderDrill({ words, progress, onAnswer, onDone, onBack }) {
   const total = 10;
-  const nouns = useMemo(
-    () => spacedRepetitionSort(words.filter(w => w.type === 'noun' && (w.gender === 'm' || w.gender === 'f')), progress).slice(0, total),
-    [words, progress]
-  );
+  const nounsRef = useRef(null);
+  if (!nounsRef.current) {
+    nounsRef.current = spacedRepetitionSort(
+      words.filter(w => w.type === 'noun' && (w.gender === 'm' || w.gender === 'f')),
+      progress
+    ).slice(0, total);
+  }
+  const nouns = nounsRef.current;
+
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);
   const [correct, setCorrect] = useState(0);
@@ -19,6 +24,7 @@ export default function GenderDrill({ words, progress, onAnswer, onDone, onBack 
   }
 
   const word = nouns[idx];
+  const correctLabel = word.gender === 'm' ? 'el' : 'la';
 
   const handlePick = (g) => {
     if (picked) return;
@@ -26,14 +32,15 @@ export default function GenderDrill({ words, progress, onAnswer, onDone, onBack 
     setPicked(g);
     onAnswer(word.es, ok);
     if (ok) setCorrect(c => c + 1);
-    setTimeout(() => {
-      if (idx + 1 >= nouns.length) onDone(correct + (ok ? 1 : 0), nouns.length);
-      else { setIdx(idx + 1); setPicked(null); }
-    }, 800);
+  };
+
+  const handleContinue = () => {
+    if (idx + 1 >= nouns.length) onDone(correct, nouns.length);
+    else { setIdx(idx + 1); setPicked(null); }
   };
 
   return (
-    <DrillShell title="Gender Drill" subtitle="el (m) or la (f)?" current={idx + 1} total={nouns.length} onBack={onBack}>
+    <DrillShell title="Gender Drill" subtitle="el (masculine) or la (feminine)?" current={idx + 1} total={nouns.length} onBack={onBack}>
       <div className="rounded-3xl p-8 mb-6 text-center"
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
         <div className="text-xs uppercase tracking-wider mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>Noun</div>
@@ -64,6 +71,22 @@ export default function GenderDrill({ words, progress, onAnswer, onDone, onBack 
           );
         })}
       </div>
+
+      {picked && (
+        <div className="mt-4 text-center">
+          <div className="mb-3 text-sm font-medium" style={{ color: picked === word.gender ? '#16A34A' : '#DC2626' }}>
+            {picked === word.gender ? '¡Correcto! ✓' : `Correcto: ${correctLabel} ${word.es}`}
+          </div>
+          <button
+            onClick={handleContinue}
+            data-testid="gender-continue"
+            className="w-full py-3 rounded-xl font-bold text-white text-sm"
+            style={{ background: 'hsl(var(--primary))' }}
+          >
+            {idx + 1 >= nouns.length ? 'Finish ✓' : 'Continue →'}
+          </button>
+        </div>
+      )}
     </DrillShell>
   );
 }
