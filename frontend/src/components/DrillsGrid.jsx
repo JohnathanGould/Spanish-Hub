@@ -29,7 +29,7 @@ const DRILL_LABELS = {
   'hear-choose': 'Hear', 'listen-type': 'Listen', 'sent-build': 'Sentences', 'fill-blank': 'Fill Blank',
 };
 
-export default function DrillsGrid({ words, stats, drillMode, setDrillMode, onStartDrill }) {
+export default function DrillsGrid({ words, stats, drillMode, setDrillMode, onStartDrill, completedPaths = [] }) {
   const notMastered = words.length - stats.mastered;
   const masteredLabel = drillMode === 'mastered' ? '✓ Review mode' : `${stats.mastered} mastered`;
   const weakLabel = drillMode === 'weak' ? '✓ Focus mode' : `${notMastered} not yet mastered`;
