@@ -75,28 +75,23 @@
 
 @media (prefers-color-scheme: dark) {
   .app-outer {
-    background-image: url('https://static.prod-images.emergentagent.com/jobs/cd1cbe7e-b631-4d05-96ca-fa46bbb284a5/images/779966e65a9737d0c076facdf478563c769809c3c46e8596671cfd882dcbb1c5.png');
-  }
+  min-height: 100vh;
+  background-image: url('https://static.prod-images.emergentagent.com/jobs/cd1cbe7e-b631-4d05-96ca-fa46bbb284a5/images/88bfa5a2a8eea4516040b75fb8a8c92551da9eb66424d054f775d4590f931bd7.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  display: block;
 }
 
-.app-container {
-  width: 100%;
-  max-width: 660px;
-  min-height: 100vh;
-  background: hsl(40 50% 97% / 0.94);
-  backdrop-filter: blur(20px);
-  border-left: 1px solid hsl(35 43% 81% / 0.5);
-  border-right: 1px solid hsl(35 43% 81% / 0.5);
-  position: relative;
-}
-@media (max-width: 660px) {
+@media (min-width: 700px) {
   .app-outer {
-    display: block;
+    display: flex;
+    justify-content: center;
   }
   .app-container {
-    max-width: 100%;
-    border-left: none;
-    border-right: none;
+    max-width: 660px;
+    border-left: 1px solid hsl(35 43% 81% / 0.5);
+    border-right: 1px solid hsl(35 43% 81% / 0.5);
   }
 }
 @media (prefers-color-scheme: dark) {
