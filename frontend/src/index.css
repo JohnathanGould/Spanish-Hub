@@ -89,7 +89,13 @@
   border-right: 1px solid hsl(35 43% 81% / 0.5);
   position: relative;
 }
-
+@media (max-width: 660px) {
+  .app-container {
+    max-width: 100%;
+    border-left: none;
+    border-right: none;
+  }
+}
 @media (prefers-color-scheme: dark) {
   .app-container {
     background: hsl(9 33% 8% / 0.94);
