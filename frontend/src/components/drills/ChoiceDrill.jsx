@@ -6,7 +6,8 @@ import { spacedRepetitionSort, shuffle, speak } from '../../utils/helpers';
 // mode: 'es-en' | 'en-es' | 'hear-choose'
 export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack }) {
   const total = 10;
-  const queue = useMemo(() => spacedRepetitionSort(words, progress).slice(0, total), [words, progress]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+const queue = useMemo(() => spacedRepetitionSort(words, progress).slice(0, total), [words]);
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);
   const [correct, setCorrect] = useState(0);
