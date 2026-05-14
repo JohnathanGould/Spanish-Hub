@@ -69,7 +69,6 @@
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  display: block;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -80,22 +79,14 @@
 
 .app-container {
   width: 100%;
+  max-width: 660px;
+  margin: 0 auto;
   min-height: 100vh;
   background: hsl(40 50% 97% / 0.94);
   backdrop-filter: blur(20px);
+  border-left: 1px solid hsl(35 43% 81% / 0.5);
+  border-right: 1px solid hsl(35 43% 81% / 0.5);
   position: relative;
-}
-
-@media (min-width: 700px) {
-  .app-outer {
-    display: flex;
-    justify-content: center;
-  }
-  .app-container {
-    max-width: 660px;
-    border-left: 1px solid hsl(35 43% 81% / 0.5);
-    border-right: 1px solid hsl(35 43% 81% / 0.5);
-  }
 }
 
 @media (prefers-color-scheme: dark) {
