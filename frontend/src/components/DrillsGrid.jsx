@@ -73,23 +73,26 @@ export default function DrillsGrid({ words, stats, drillMode, setDrillMode, onSt
       <div className="grid grid-cols-2 gap-2">
         {DRILLS.map((drill, i) => {
           const s = CARD_STYLES[drill.color] || CARD_STYLES.amber;
+          const isLocked = drill.id === 'past-tense' && !completedPaths.includes('path-5');
           return (
             <motion.div
               key={drill.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04, duration: 0.3 }}
-              className={`drill-card${drill.wide ? ' col-span-2' : ''}`}
+              className={`drill-card${drill.wide ? ' col-span-2' : ''}${isLocked ? ' opacity-50 cursor-not-allowed' : ''}`}
               style={{ background: s.bg }}
-              onClick={() => onStartDrill(drill.id)}
+              onClick={() => !isLocked && onStartDrill(drill.id)}
               data-testid={`drill-card-${drill.id}`}
             >
               <div className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold mb-2"
                 style={{ background: s.num, color: s.numText }}>
-                {drill.n}
+                {isLocked ? '🔒' : drill.n}
               </div>
               <div className="text-sm font-bold mb-1" style={{ color: s.title }}>{drill.name}</div>
-              <div className="text-xs leading-relaxed" style={{ color: s.desc }}>{drill.desc}</div>
+              <div className="text-xs leading-relaxed" style={{ color: s.desc }}>
+                {isLocked ? 'Complete Path 5 to unlock' : drill.desc}
+              </div>
             </motion.div>
           );
         })}
