@@ -68,6 +68,9 @@ const DEFAULT_DATA = {
   dailyChallenges: { date: null, weakDone: false, themeDone: false },
   friends: [],
   reminderEnabled: false,
+  bones: 0,
+  treats: 0,
+  stars: 0,
 };
 
 function SpanishFlagPulse() { return <SpanishFlag size={88} />; }
