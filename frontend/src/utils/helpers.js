@@ -102,17 +102,18 @@ export function playTap() {
 export function playConfetti() {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    [0, 0.05, 0.1, 0.15, 0.2].forEach((delay) => {
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.connect(g);
-      g.connect(ctx.destination);
-      o.frequency.value = 400 + Math.random() * 800;
-      o.type = 'sine';
-      g.gain.setValueAtTime(0.12, ctx.currentTime + delay);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.15);
-      o.start(ctx.currentTime + delay);
-      o.stop(ctx.currentTime + delay + 0.15);
-    });
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.3, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2);
+    }
+    const source = ctx.createBufferSource();
+    source.buffer = buf;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.6, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    source.start();
   } catch (e) {}
 }
