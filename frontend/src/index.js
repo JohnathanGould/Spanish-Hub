@@ -1,33 +1,425 @@
-import * as Sentry from "@sentry/react";
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
-Sentry.init({
-  dsn: process.env.REACT_APP_SENTRY_DSN,
-  integrations: [Sentry.browserTracingIntegration()],
-  tracesSampleRate: 0.1,
-});
-import posthog from 'posthog-js';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-posthog.init(process.env.REACT_APP_POSTHOG_KEY, {
-  api_host: 'https://us.i.posthog.com',
-  session_recording: { enabled: true },
-});
-import React from "react";
-import ReactDOM from "react-dom/client";
-import "@/index.css";
-import App from "@/App";
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);
-
-// Register service worker for PWA / offline support (production only)
-if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js').catch((err) => {
-      console.warn('SW registration failed:', err);
-    });
-  });
+/* ── SPANISH THEME VARIABLES ── */
+:root {
+  --background: 40 50% 97%;
+  --foreground: 14 38% 13%;
+  --card: 0 0% 100%;
+  --card-foreground: 14 38% 13%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 14 38% 13%;
+  --primary: 353 89% 41%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 47 91% 53%;
+  --secondary-foreground: 14 38% 13%;
+  --muted: 32 46% 92%;
+  --muted-foreground: 20 16% 47%;
+  --accent: 47 91% 53%;
+  --accent-foreground: 14 38% 13%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 35 43% 81%;
+  --input: 35 43% 81%;
+  --ring: 353 89% 41%;
+  --radius: 0.75rem;
 }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: 9 33% 8%;
+    --foreground: 43 67% 85%;
+    --card: 9 31% 11%;
+    --card-foreground: 43 67% 85%;
+    --popover: 9 31% 11%;
+    --popover-foreground: 43 67% 85%;
+    --primary: 352 75% 51%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 47 91% 53%;
+    --secondary-foreground: 9 33% 8%;
+    --muted: 8 28% 19%;
+    --muted-foreground: 20 16% 65%;
+    --accent: 47 91% 53%;
+    --accent-foreground: 9 33% 8%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 8 28% 22%;
+    --input: 8 28% 22%;
+    --ring: 352 75% 51%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: 'Playfair Display', serif; }
+}
+
+/* ── APP STRUCTURE ── */
+.app-outer {
+  min-height: 100vh;
+  background-image: url('https://static.prod-images.emergentagent.com/jobs/cd1cbe7e-b631-4d05-96ca-fa46bbb284a5/images/88bfa5a2a8eea4516040b75fb8a8c92551da9eb66424d054f775d4590f931bd7.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 660px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: hsl(40 50% 97% / 0.94);
+  backdrop-filter: blur(20px);
+  border-left: 1px solid hsl(35 43% 81% / 0.5);
+  border-right: 1px solid hsl(35 43% 81% / 0.5);
+  position: relative;
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-container {
+    background: hsl(9 33% 8% / 0.94);
+    border-color: hsl(8 28% 22% / 0.5);
+  }
+}
+
+/* ── HEADER ── */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: hsl(40 50% 97% / 0.85);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid hsl(35 43% 81%);
+  padding: 12px 20px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-header {
+    background: hsl(9 33% 8% / 0.85);
+    border-color: hsl(8 28% 22%);
+  }
+}
+
+.spain-flag-bar {
+  height: 4px;
+  background: linear-gradient(90deg, #C60B1E 25%, #F5C518 25%, #F5C518 75%, #C60B1E 75%);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+/* ── TABS ── */
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  background: hsl(var(--muted));
+  border-radius: 14px;
+  margin: 12px 16px;
+  position: sticky;
+  top: 80px;
+  z-index: 40;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(8px);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .tab-bar {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  }
+}
+
+.tab-btn {
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: transparent;
+  color: hsl(20 16% 35%);
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s ease;
+}
+
+.tab-btn:hover:not(.active) {
+  color: hsl(var(--foreground));
+}
+
+.tab-btn.active {
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  font-weight: 600;
+}
+
+/* ── DRILL CARDS ── */
+.drill-card {
+  border-radius: 16px;
+  padding: 18px;
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1);
+  border-bottom: 2px solid rgba(0,0,0,0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.drill-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.drill-card:active {
+  transform: translateY(1px);
+  box-shadow: none;
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+}
+
+/* ── CHOICE BUTTONS ── */
+.choice-btn {
+  padding: 13px 10px;
+  border-radius: 12px;
+  border: 1px solid hsl(var(--border));
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  font-family: 'Inter', sans-serif;
+  transition: all 0.12s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.choice-btn:hover:not(:disabled) {
+  background: hsl(var(--muted));
+}
+
+.choice-btn.correct {
+  background: #DCFCE7 !important;
+  border-color: #86EFAC !important;
+  color: #14532D !important;
+}
+
+.choice-btn.wrong {
+  background: #FEE2E2 !important;
+  border-color: #FCA5A5 !important;
+  color: #991B1B !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .choice-btn.correct { background: #052e16 !important; border-color: #166534 !important; color: #86efac !important; }
+  .choice-btn.wrong { background: #450a0a !important; border-color: #991b1b !important; color: #fca5a5 !important; }
+}
+
+/* ── WORD MASTERY DOTS ── */
+.dot-new { background: #D4D4D4; }
+.dot-learning { background: #FBBF24; }
+.dot-strong { background: #34D399; }
+.dot-mastered { background: #16A34A; }
+
+/* ── PROGRESS BAR ── */
+.drill-progress {
+  height: 5px;
+  background: hsl(var(--muted));
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.drill-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* ── FLASHCARD ── */
+.flip-card {
+  perspective: 1000px;
+}
+
+.flip-inner {
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+  position: relative;
+}
+
+.flip-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.flip-front, .flip-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.flip-back {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  transform: rotateY(180deg);
+}
+
+/* ── SENTENCE BUILDER ── */
+.drop-zone {
+  min-height: 56px;
+  border: 2px dashed hsl(var(--border));
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  background: hsl(var(--muted) / 0.5);
+  transition: border-color 0.15s;
+}
+
+.word-tile {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  color: hsl(var(--foreground));
+  transition: all 0.12s;
+}
+
+.word-tile:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.word-tile.placed {
+  background: hsl(353 89% 95%);
+  border-color: hsl(353 89% 41%);
+  color: hsl(353 89% 30%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .word-tile.placed {
+    background: hsl(353 50% 20%);
+    border-color: hsl(352 75% 51%);
+    color: hsl(353 89% 85%);
+  }
+}
+
+/* ── MATCHING GAME ── */
+.match-btn {
+  padding: 12px 10px;
+  border-radius: 10px;
+  border: 2px solid hsl(var(--border));
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s;
+  min-height: 56px;
+}
+
+.match-btn:hover:not(:disabled) {
+  border-color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.05);
+}
+
+.match-btn.selected {
+  border-color: hsl(47 91% 53%);
+  background: hsl(47 91% 97%);
+  color: hsl(47 80% 25%);
+}
+
+.match-btn.matched {
+  background: #DCFCE7;
+  border-color: #86EFAC;
+  color: #14532D;
+  opacity: 0.6;
+}
+
+.match-btn.wrong-flash {
+  background: #FEE2E2;
+  border-color: #FCA5A5;
+  animation: flash-wrong 0.4s ease;
+}
+
+@keyframes flash-wrong {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* ── MISC UTILITIES ── */
+.speak-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid hsl(var(--border));
+  background: transparent;
+  color: hsl(var(--muted-foreground));
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.speak-btn:hover {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+.mastery-flash {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #16A34A;
+  background: #DCFCE7;
+  padding: 4px 12px;
+  border-radius: 20px;
+  animation: pop-in 0.3s ease;
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ── LOGIN SCREEN ── */
+.login-glass {
+  background: hsl(0 0% 100% / 0.85);
+  backdrop-filter: blur(24px);
+  border: 1px solid hsl(35 43% 81% / 0.6);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .login-glass {
+    background: hsl(9 31% 11% / 0.9);
+    border-color: hsl(8 28% 22% / 0.6);
+  }
+}
+
+/* ── GOAL CIRCLE ── */
+.goal-circle { transition: stroke-dashoffset 0.5s ease; }
