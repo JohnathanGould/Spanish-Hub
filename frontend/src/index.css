@@ -130,6 +130,14 @@
   z-index: 40;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(8px);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.tab-bar::-webkit-scrollbar {
+  display: none;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -139,7 +147,8 @@
 }
 
 .tab-btn {
-  flex: 1;
+  flex-shrink: 0;
+  scroll-snap-align: start;
   padding: 8px 12px;
   border-radius: 10px;
   border: none;
@@ -168,19 +177,22 @@
   border-radius: 16px;
   padding: 18px;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1);
+  border-bottom: 2px solid rgba(0,0,0,0.12);
   position: relative;
   overflow: hidden;
 }
 
 .drill-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.1);
 }
 
 .drill-card:active {
-  transform: translateY(0);
+  transform: translateY(1px);
+  box-shadow: none;
+  border-bottom: 1px solid rgba(0,0,0,0.12);
 }
 
 /* ── CHOICE BUTTONS ── */
