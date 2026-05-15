@@ -10,23 +10,23 @@ import SentenceBuilderDrill from './drills/SentenceBuilderDrill';
 import FillBlankDrill from './drills/FillBlankDrill';
 
 export default function DrillRouter(props) {
-  const { drillId } = props;
+  const { drillId, drillLength = 10 } = props;
+  const drillProps = { ...props, drillLength };
   switch (drillId) {
-    case 'flashcard': return <FlashcardDrill {...props} />;
-    case 'es-en': return <ChoiceDrill mode="es-en" {...props} />;
-    case 'en-es': return <ChoiceDrill mode="en-es" {...props} />;
-    case 'hear-choose': return <ChoiceDrill mode="hear-choose" {...props} />;
-    case 'type-es-en': return <TypeDrill mode="type-es-en" {...props} />;
-    case 'type-en-es': return <TypeDrill mode="type-en-es" {...props} />;
-    case 'listen-type': return <TypeDrill mode="listen-type" {...props} />;
-    case 'conjugation': return <ConjugationDrill mode="present" {...props} />;
-    case 'past-tense': return <ConjugationDrill mode="past" {...props} />;
-    case 'gender': return <GenderDrill {...props} />;
-    case 'matching': return <MatchingDrill {...props} />;
-    case 'word-sort': return <WordSortDrill mode="es" {...props} />;
-    case 'en-word-sort': return <WordSortDrill mode="en" {...props} />;
-    case 'sent-build': return <SentenceBuilderDrill {...props} />;
-    case 'fill-blank': return <FillBlankDrill {...props} />;
+    case 'flashcard': return <FlashcardDrill {...drillProps} />;
+    case 'es-en': return <ChoiceDrill mode="es-en" {...drillProps} />;
+    case 'en-es': return <ChoiceDrill mode="en-es" {...drillProps} />;
+    case 'hear-choose': return <ChoiceDrill mode="hear-choose" {...drillProps} />;
+    case 'type-es-en': return <TypeDrill mode="type-es-en" {...drillProps} />;
+    case 'type-en-es': return <TypeDrill mode="type-en-es" {...drillProps} />;
+    case 'listen-type': return <TypeDrill mode="listen-type" {...drillProps} />;
+    case 'conjugation': return <ConjugationDrill mode="present" {...drillProps} />;
+    case 'past-tense': return <ConjugationDrill mode="past" {...drillProps} />;
+    case 'gender': return <GenderDrill {...drillProps} />;
+    case 'matching': return <MatchingDrill {...drillProps} />;
+    case 'word-sort': return <WordSortDrill mode="es" {...drillProps} />;
+    case 'sent-build': return <SentenceBuilderDrill {...drillProps} />;
+    case 'fill-blank': return <FillBlankDrill {...drillProps} />;
     default: return <div className="p-10 text-center">Drill not found: {drillId}</div>;
   }
 }

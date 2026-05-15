@@ -4,8 +4,8 @@ import DrillShell from '../DrillShell';
 import { spacedRepetitionSort, shuffle, speak } from '../../utils/helpers';
 
 // mode: 'es-en' | 'en-es' | 'hear-choose'
-export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack }) {
-  const total = 10;
+export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
+  const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
     queueRef.current = spacedRepetitionSort(words, progress).slice(0, total);

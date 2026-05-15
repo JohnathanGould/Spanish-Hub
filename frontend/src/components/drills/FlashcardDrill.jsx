@@ -4,8 +4,8 @@ import DrillShell from '../DrillShell';
 import WordImage from '../WordImage';
 import { spacedRepetitionSort, speak } from '../../utils/helpers';
 
-export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBack }) {
-  const queue = useMemo(() => spacedRepetitionSort(words, progress).slice(0, 12), [words, progress]);
+export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
+  const queue = useMemo(() => spacedRepetitionSort(words, progress).slice(0, drillLength), [words, progress]);
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [showHint, setShowHint] = useState(false);

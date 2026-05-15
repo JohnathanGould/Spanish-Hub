@@ -3,8 +3,8 @@ import DrillShell from '../DrillShell';
 import { shuffle } from '../../utils/helpers';
 import { FITB_POOL } from '../../data/drillData';
 
-export default function FillBlankDrill({ onAnswer, onDone, onBack }) {
-  const total = 10;
+export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength = 10 }) {
+  const total = drillLength;
   const queue = useMemo(() => shuffle(FITB_POOL).slice(0, total), []);
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);

@@ -10,8 +10,8 @@ const TYPE_LABELS = {
 const ES_TYPES = ['noun', 'verb', 'adj', 'adv', 'pronoun'];
 
 // mode: 'es' | 'en'
-export default function WordSortDrill({ mode, words, progress, onAnswer, onDone, onBack }) {
-  const total = 10;
+export default function WordSortDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength}) {
+  const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
     queueRef.current = mode === 'en'

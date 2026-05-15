@@ -2,8 +2,8 @@ import React, { useState, useRef } from 'react';
 import DrillShell from '../DrillShell';
 import { spacedRepetitionSort } from '../../utils/helpers';
 
-export default function GenderDrill({ words, progress, onAnswer, onDone, onBack }) {
-  const total = 10;
+export default function GenderDrill({ words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
+  const total = drillLength;
   const nounsRef = useRef(null);
   if (!nounsRef.current) {
     nounsRef.current = spacedRepetitionSort(

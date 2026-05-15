@@ -4,8 +4,8 @@ import DrillShell from '../DrillShell';
 import { spacedRepetitionSort, levenshtein, speak } from '../../utils/helpers';
 
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
-export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack }) {
-  const total = 10;
+export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10}) {
+  const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
     queueRef.current = spacedRepetitionSort(words, progress).slice(0, total);
