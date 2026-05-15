@@ -237,6 +237,16 @@ export const SENT_POOL = [
   { words: ['ella', 'necesita', 'un', 'teléfono'], hint: 'she needs a telephone' },
   { words: ['él', 'tiene', 'una', 'maleta'], hint: 'he has a suitcase' },
   { words: ['estás', 'en', 'el', 'taxi'], hint: 'you are in the taxi' },
+  { words: ['yo', 'quiero', 'un', 'café'], hint: 'I want a coffee' },
+  { words: ['ella', 'habla', 'muy', 'bien'], hint: 'she speaks very well' },
+  { words: ['nosotros', 'vamos', 'al', 'mercado'], hint: 'we go to the market' },
+  { words: ['él', 'tiene', 'un', 'perro'], hint: 'he has a dog' },
+  { words: ['yo', 'puedo', 'hablar', 'español'], hint: 'I can speak Spanish' },
+  { words: ['tú', 'necesitas', 'agua'], hint: 'you need water' },
+  { words: ['la', 'casa', 'es', 'grande'], hint: 'the house is big' },
+  { words: ['ellos', 'comen', 'en', 'el', 'restaurante'], hint: 'they eat at the restaurant' },
+  { words: ['yo', 'voy', 'a', 'la', 'tienda'], hint: 'I go to the store' },
+  { words: ['tú', 'eres', 'muy', 'amable'], hint: 'you are very kind' },
 ];
  
 // === FILL IN THE BLANK ===
