@@ -99,14 +99,23 @@ export function playTap() {
 }
 
 // === CONFETTI SOUND ===
+// === CONFETTI SOUND ===
+let confettiAudio = null;
+
 export function playConfetti() {
   try {
-    const audio = new Audio('/audio/fanfare.mp3');
-    audio.volume = 0.6;
-    audio.play();
+    if (confettiAudio) {
+      confettiAudio.pause();
+      confettiAudio.currentTime = 0;
+    }
+    confettiAudio = new Audio('/audio/fanfare.mp3');
+    confettiAudio.volume = 0.6;
+    confettiAudio.play();
     setTimeout(() => {
-      audio.pause();
-      audio.currentTime = 0;
+      if (confettiAudio) {
+        confettiAudio.pause();
+        confettiAudio.currentTime = 0;
+      }
     }, 660);
   } catch (e) {}
 }
