@@ -22,7 +22,6 @@ import GoalModal from './components/GoalModal';
 import Certificate from './components/Certificate';
 import SharedPacks from './components/SharedPacks';
 import Plaza from './components/Plaza';
-import Translator from './components/Translator';
 import SofiaChat from './SofiaChat';
 import SpanishFlag from './components/SpanishFlag';
 import { KofiSupport } from './components/KofiSupport';
@@ -71,6 +70,11 @@ const DEFAULT_DATA = {
   bones: 0,
   treats: 0,
   stars: 0,
+  completedPaths: [],
+  completedStops: [],
+  audioListenEnabled: true,
+  audioSpeakEnabled: true,
+  earnedBadges: [],
 };
 
 function SpanishFlagPulse() { return <SpanishFlag size={88} />; }
@@ -491,11 +495,13 @@ export default function SpanishHub() {
           dailyProgress={userData.dailyProgress}
           onSignOut={handleSignOut}
           onGoalClick={() => setShowGoalModal(true)}
+          onLeaderboardClick={() => setTab('leaderboard')}
         />
-        <div className="tab-bar">
-          {[['learn', 'Learn'], ['words', 'Words'], ['drills', 'Drills'], ['sofia', 'Milo'], ['translate', 'Trans'], ['plaza', 'Plaza'], ['leaderboard', 'Top'], ['history', 'Log']].map(([id, label]) => (
+        <div className="tab-bar" style={{ overflowX: 'auto', scrollSnapType: 'x mandatory', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+          {[['learn', 'Learn'], ['words', 'Words'], ['drills', 'Drills'], ['sofia', 'Milo'], ['plaza', 'Plaza'], ['history', 'Log']].map(([id, label]) => (
             <button key={id} className={`tab-btn${tab === id ? ' active' : ''}`}
-              onClick={() => setTab(id)} data-testid={`tab-${id}`}>{label}</button>
+              onClick={() => setTab(id)} data-testid={`tab-${id}`}
+              style={{ scrollSnapAlign: 'start', flexShrink: 0 }}>{label}</button>
           ))}
         </div>
         <div className="px-4 pb-16">
@@ -535,9 +541,6 @@ export default function SpanishHub() {
           )}
           {tab === 'sofia' && (
             <SofiaChat userUid={effectiveUser.uid} />
-          )}
-          {tab === 'translate' && (
-            <Translator onSaveWord={addCustomWord} savedWords={userData.customWords || []} />
           )}
           {tab === 'history' && (
             <SessionHistory sessions={userData.sessions || []} />
