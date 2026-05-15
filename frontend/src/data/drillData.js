@@ -267,6 +267,18 @@ export const FITB_POOL = [
   { before: '¿Dónde está', blank: 'el', after: 'hotel?', choices: ['el', 'la', 'un', 'una'], hint: 'hotel is masculine' },
   { before: 'Ella es', blank: 'una', after: 'mujer.', choices: ['una', 'un', 'la', 'el'], hint: 'feminine indefinite article' },
   { before: 'Necesito', blank: 'mi', after: 'pasaporte.', choices: ['mi', 'un', 'el', 'la'], hint: 'possessive — my' },
+  { before: 'Yo', blank: 'voy', after: 'al hotel.', choices: ['voy', 'vas', 'va', 'vamos'], hint: 'yo = I, ir (to go)' },
+  { before: 'Tú', blank: 'vas', after: 'al restaurante.', choices: ['voy', 'vas', 'va', 'van'], hint: 'tú = you, ir' },
+  { before: 'Él', blank: 'va', after: 'a la tienda.', choices: ['voy', 'vas', 'va', 'vamos'], hint: 'él = he, ir' },
+  { before: 'Yo', blank: 'quiero', after: 'un café.', choices: ['quiero', 'quieres', 'quiere', 'tengo'], hint: 'yo = I, querer (to want)' },
+  { before: 'Tú', blank: 'quieres', after: 'agua, ¿verdad?', choices: ['quiero', 'quieres', 'quiere', 'bebes'], hint: 'tú = you, querer' },
+  { before: 'Yo', blank: 'puedo', after: 'hablar español.', choices: ['puedo', 'puedes', 'puede', 'hablo'], hint: 'yo = I, poder (can)' },
+  { before: 'Yo', blank: 'hago', after: 'la tarea.', choices: ['hago', 'haces', 'hace', 'tengo'], hint: 'yo = I, hacer (to do)' },
+  { before: 'Nosotros', blank: 'comemos', after: 'juntos.', choices: ['como', 'comes', 'comemos', 'comen'], hint: 'nosotros = we, comer' },
+  { before: 'Ellos', blank: 'hablan', after: 'muy rápido.', choices: ['habla', 'hablo', 'hablas', 'hablan'], hint: 'ellos = they, hablar' },
+  { before: 'La maleta', blank: 'es', after: 'grande.', choices: ['está', 'estoy', 'es', 'son'], hint: 'use ser for descriptions' },
+  { before: 'Yo', blank: 'estoy', after: 'bien, gracias.', choices: ['estoy', 'soy', 'estás', 'eres'], hint: 'estar for states and feelings' },
+  { before: 'Tú', blank: 'bebes', after: 'mucho agua.', choices: ['bebo', 'bebes', 'bebe', 'comes'], hint: 'tú = you, beber' },
 ];
  
 // === ENGLISH WORD SORT ===
