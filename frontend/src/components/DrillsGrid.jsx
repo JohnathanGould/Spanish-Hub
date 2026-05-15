@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { DRILLS } from '../data/drillData';
 import { motion } from 'framer-motion';
 import { DRILLS } from '../data/drillData';
 
@@ -33,6 +32,7 @@ export default function DrillsGrid({ words, stats, drillMode, setDrillMode, onSt
     : 'All ' + words.length + ' words';
 
   const handleCardClick = (drill) => {
+    if (drill.id === 'matching' && drillLength > 8) setDrillLength(6);
     setPendingId(pendingId === drill.id ? null : drill.id);
   };
 
@@ -136,7 +136,7 @@ export default function DrillsGrid({ words, stats, drillMode, setDrillMode, onSt
                     How many words?
                   </div>
                   <div className="grid grid-cols-3 gap-1.5 mb-2">
-                    {[10, 20, 30].map(n => (
+                    {(drill.id === 'matching' ? [4, 6, 8] : [10, 20, 30]).map(n => (
                       <button
                         key={n}
                         onClick={(e) => { e.stopPropagation(); setDrillLength(n); }}
