@@ -5,6 +5,7 @@ import WordImage from '../WordImage';
 import { spacedRepetitionSort, speak } from '../../utils/helpers';
 
 export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
+  const [direction, setDirection] = useState('es-en'); // 'es-en' or 'en-es'
   const queue = useMemo(() => spacedRepetitionSort(words, progress).slice(0, drillLength), [words, progress, drillLength]);
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -20,6 +21,15 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
   const word = queue[idx];
   const article = word.gender === 'm' ? 'el ' : word.gender === 'f' ? 'la ' : '';
   const canHint = word.type === 'noun' || word.type === 'phrase';
+  const isEsEn = direction === 'es-en';
+
+  const handleFlip = () => {
+    setFlipped(!flipped);
+    if (!flipped) {
+      if (isEsEn) speak(word.es, 'es');
+      else speak(word.en, 'en');
+    }
+  };
 
   const next = (knew) => {
     onAnswer(word.es, knew);
@@ -33,33 +43,72 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
     }
   };
 
+  const handleDirectionChange = (dir) => {
+    setDirection(dir);
+    setFlipped(false);
+    setShowHint(false);
+  };
+
   return (
     <DrillShell title="Flashcards" subtitle="Tap to flip · mark as known or learning"
       current={idx + 1} total={queue.length} onBack={onBack}>
+
+      {/* Direction toggle */}
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={() => handleDirectionChange('es-en')}
+          className="flex-1 py-1.5 rounded-full text-xs font-bold border transition-all"
+          style={{
+            background: isEsEn ? 'hsl(var(--primary))' : 'hsl(var(--card))',
+            color: isEsEn ? 'white' : 'hsl(var(--muted-foreground))',
+            borderColor: isEsEn ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+          }}>
+          🇪🇸 Spanish → English
+        </button>
+        <button
+          onClick={() => handleDirectionChange('en-es')}
+          className="flex-1 py-1.5 rounded-full text-xs font-bold border transition-all"
+          style={{
+            background: !isEsEn ? 'hsl(var(--primary))' : 'hsl(var(--card))',
+            color: !isEsEn ? 'white' : 'hsl(var(--muted-foreground))',
+            borderColor: !isEsEn ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+          }}>
+          🇬🇧 English → Spanish
+        </button>
+      </div>
+
       <div className="flip-card mb-5" style={{ minHeight: 280 }}>
         <div className={`flip-inner ${flipped ? 'flipped' : ''}`} style={{ minHeight: 280 }}
-          onClick={() => { setFlipped(!flipped); if (!flipped) speak(word.es, 'es'); }}
+          onClick={handleFlip}
           data-testid="flashcard-flip">
+
+          {/* Front */}
           <div className="flip-front rounded-3xl p-6 flex flex-col items-center justify-center text-center cursor-pointer"
             style={{ minHeight: 280, background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
-            <div className="text-xs uppercase tracking-wider mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>Spanish</div>
-            <div className="font-serif text-4xl font-black mb-3" style={{ color: 'hsl(var(--foreground))' }} data-testid="flashcard-front">
-              {article}{word.es}
+            <div className="text-xs uppercase tracking-wider mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
+              {isEsEn ? 'Spanish' : 'English'}
             </div>
-            {showHint && canHint && (
+            <div className="font-serif text-4xl font-black mb-3" style={{ color: 'hsl(var(--foreground))' }} data-testid="flashcard-front">
+              {isEsEn ? `${article}${word.es}` : word.en}
+            </div>
+            {showHint && canHint && isEsEn && (
               <div className="w-3/4 max-w-[220px] mt-3" onClick={e => e.stopPropagation()} data-testid="flashcard-hint-image">
                 <WordImage word={word} variant="card" />
               </div>
             )}
             <div className="text-xs mt-4" style={{ color: 'hsl(var(--muted-foreground))' }}>tap card to flip</div>
           </div>
+
+          {/* Back */}
           <div className="flip-back rounded-3xl p-6 flex flex-col items-center justify-center text-center cursor-pointer"
             style={{ minHeight: 280, background: 'linear-gradient(135deg,#FFEDD5,#FEF3C7)', border: '1px solid hsl(var(--border))' }}>
-            <div className="text-xs uppercase tracking-wider mb-3" style={{ color: '#92400E' }}>English</div>
-            <div className="font-serif text-3xl font-black mb-2" style={{ color: '#451A03' }} data-testid="flashcard-back">
-              {word.en}
+            <div className="text-xs uppercase tracking-wider mb-3" style={{ color: '#92400E' }}>
+              {isEsEn ? 'English' : 'Spanish'}
             </div>
-            {word.sentence && (
+            <div className="font-serif text-3xl font-black mb-2" style={{ color: '#451A03' }} data-testid="flashcard-back">
+              {isEsEn ? word.en : `${article}${word.es}`}
+            </div>
+            {word.sentence && isEsEn && (
               <div className="text-xs mt-3 px-2" style={{ color: '#78350F' }}>
                 <em>{word.sentence.es}</em>
               </div>
@@ -73,7 +122,7 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
           className="speak-btn">
           <Volume2 size={12} /> Hear Spanish
         </button>
-        {canHint && !flipped && (
+        {canHint && !flipped && isEsEn && (
           <button data-testid="flashcard-hint-btn" onClick={() => setShowHint(s => !s)}
             className="speak-btn"
             style={{
