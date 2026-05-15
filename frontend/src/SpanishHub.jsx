@@ -26,6 +26,7 @@ import SofiaChat from './SofiaChat';
 import SpanishFlag from './components/SpanishFlag';
 import { KofiSupport } from './components/KofiSupport';
 import confetti from 'canvas-confetti';
+import { masteryLevel, getStats, initVoice, spacedRepetitionSort, playConfetti } from './utils/helpers';
 
 function getWeekStartStr() {
   const d = new Date();
@@ -260,7 +261,10 @@ export default function SpanishHub() {
     });
     setView({ page: 'done', drillId: dailyKind ? `daily-${dailyKind}` : drillId, correct, total });
     if (drillId !== 'flashcard') {
-      setTimeout(() => confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } }), 300);
+      setTimeout(() => {
+  confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+  playConfetti();
+}, 300);
     }
   }, [user, isGuest, view.dailyKind, view.xpMultiplier]);
 

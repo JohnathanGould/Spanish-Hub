@@ -57,6 +57,65 @@ export function levenshtein(a, b) {
 // === SPEECH ===
 let esVoice = null;
 
+// === MASTERY ===
+export function masteryLevel(progress, es) {
+  const p = progress?.[es];
+  if (!p || p.c === 0) return 'new';
+  if (p.s >= 6) return 'mastered';
+  if (p.s >= 3) return 'strong';
+  return 'learning';
+}
+
+export function getStats(words, progress) {
+  const s = { new: 0, learning: 0, strong: 0, mastered: 0 };
+  words.forEach(w => { s[masteryLevel(progress, w.es)]++; });
+  return s;
+}
+
+export function dotColor(lvl) {
+  return { new: '#D4D4D4', learning: '#FBBF24', strong: '#34D399', mastered: '#16A34A' }[lvl] || '#D4D4D4';
+}
+
+// === SPACED REPETITION ===
+export function spacedRepetitionSort(words, progress) {
+  const getWeight = (w) => {
+    const p = progress?.[w.es];
+    if (!p || p.c === 0) return 3;
+    if (p.s >= 6) return 0.5;
+    if (p.s >= 3) return 1.5;
+    if (p.w > p.c * 0.5) return 5;
+    return 2.5;
+  };
+  return [...words]
+    .map(w => ({ w, score: getWeight(w) * Math.random() }))
+    .sort((a, b) => b.score - a.score)
+    .map(x => x.w);
+}
+
+// === RANDOM UTILS ===
+export function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+export function pick(arr, n, exclude = []) {
+  return shuffle(arr.filter(x => !exclude.includes(x))).slice(0, n);
+}
+
+// === LEVENSHTEIN ===
+export function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  const dp = Array.from({ length: m + 1 }, (_, i) =>
+    Array.from({ length: n + 1 }, (_, j) => (i === 0 ? j : j === 0 ? i : 0))
+  );
+  for (let i = 1; i <= m; i++)
+    for (let j = 1; j <= n; j++)
+      dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+  return dp[m][n];
+}
+
+// === SPEECH ===
+let esVoice = null;
+
 export function initVoice() {
   const load = () => {
     const vs = window.speechSynthesis?.getVoices() || [];
@@ -95,5 +154,24 @@ export function playTap() {
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
     oscillator.start(ctx.currentTime);
     oscillator.stop(ctx.currentTime + 0.04);
+  } catch (e) {}
+}
+
+// === CONFETTI SOUND ===
+export function playConfetti() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    [0, 0.05, 0.1, 0.15, 0.2].forEach((delay) => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g);
+      g.connect(ctx.destination);
+      o.frequency.value = 400 + Math.random() * 800;
+      o.type = 'sine';
+      g.gain.setValueAtTime(0.12, ctx.currentTime + delay);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + 0.15);
+      o.start(ctx.currentTime + delay);
+      o.stop(ctx.currentTime + delay + 0.15);
+    });
   } catch (e) {}
 }
