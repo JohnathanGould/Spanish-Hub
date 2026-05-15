@@ -1,6 +1,6 @@
 /* eslint-disable no-restricted-globals */
 // Spanish Hub Service Worker — offline shell + smart caching
-const VERSION = 'spanish-hub-v1';
+const VERSION = 'spanish-hub-v2';
 const CORE_CACHE = `${VERSION}-core`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 
