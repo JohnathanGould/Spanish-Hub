@@ -99,23 +99,21 @@ export function playTap() {
 }
 
 // === CONFETTI SOUND ===
-// === CONFETTI SOUND ===
-let confettiAudio = null;
-
 export function playConfetti() {
   try {
-    if (confettiAudio) {
-      confettiAudio.pause();
-      confettiAudio.currentTime = 0;
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const buf = ctx.createBuffer(1, ctx.sampleRate * 0.66, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / data.length, 2);
     }
-    confettiAudio = new Audio('/audio/fanfare.mp3');
-    confettiAudio.volume = 0.6;
-    confettiAudio.play();
-    setTimeout(() => {
-      if (confettiAudio) {
-        confettiAudio.pause();
-        confettiAudio.currentTime = 0;
-      }
-    }, 660);
+    const source = ctx.createBufferSource();
+    source.buffer = buf;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.6, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    source.start();
   } catch (e) {}
 }
