@@ -108,13 +108,13 @@ export function playConfetti() {
       confettiAudio.currentTime = 0;
     }
     confettiAudio = new Audio('/audio/fanfare.mp3');
-    confettiAudio.volume = 6.6;
+    confettiAudio.volume = 0.3;
     confettiAudio.play();
     setTimeout(() => {
       if (confettiAudio) {
         confettiAudio.pause();
         confettiAudio.currentTime = 0;
       }
-    }, 660);
+    }, 6660);
   } catch (e) {}
 }
