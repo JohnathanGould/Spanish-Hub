@@ -111,7 +111,7 @@ document.addEventListener('click', () => {
       confettiAudio.volume = 0.6;
     }).catch(() => {});
   }
-}, { once: true });
+}, { once: false });
 export function playConfetti() {
   try {
     if (confettiAudio) {
