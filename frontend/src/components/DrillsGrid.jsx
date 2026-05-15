@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { DRILLS } from '../data/drillData';
 import { motion } from 'framer-motion';
 import { DRILLS } from '../data/drillData';
 
