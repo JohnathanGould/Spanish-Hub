@@ -91,7 +91,7 @@ export function playTap() {
     gain.connect(ctx.destination);
     oscillator.frequency.value = 1200;
     oscillator.type = 'sine';
-    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.setValueAtTime(1.0, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
     oscillator.start(ctx.currentTime);
     oscillator.stop(ctx.currentTime + 0.04);
