@@ -108,7 +108,7 @@ export function playConfetti() {
       confettiAudio.currentTime = 0;
     }
     confettiAudio = new Audio('/audio/fanfare.mp3');
-    confettiAudio.volume = 0.6;
+    confettiAudio.volume = 6.6;
     confettiAudio.play();
     setTimeout(() => {
       if (confettiAudio) {
