@@ -4,7 +4,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { MASTER, DEFAULT_CATEGORIES, PRESET_PACKS } from './data/words';
 import { LESSONS, DAILY_THEMES } from './data/lessons';
-import { masteryLevel, getStats, initVoice, spacedRepetitionSort } from './utils/helpers';
+import { masteryLevel, getStats, initVoice, spacedRepetitionSort, playConfetti } from './utils/helpers';
 import Header from './components/Header';
 import WordList from './components/WordList';
 import DrillsGrid from './components/DrillsGrid';
