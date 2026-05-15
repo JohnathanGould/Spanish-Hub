@@ -100,7 +100,18 @@ export function playTap() {
 
 // === CONFETTI SOUND ===
 let confettiAudio = null;
-
+// Preload on first tap so browser allows autoplay later
+document.addEventListener('click', () => {
+  if (!confettiAudio) {
+    confettiAudio = new Audio('/audio/fanfare.mp3');
+    confettiAudio.volume = 0;
+    confettiAudio.play().then(() => {
+      confettiAudio.pause();
+      confettiAudio.currentTime = 0;
+      confettiAudio.volume = 0.6;
+    }).catch(() => {});
+  }
+}, { once: true });
 export function playConfetti() {
   try {
     if (confettiAudio) {
