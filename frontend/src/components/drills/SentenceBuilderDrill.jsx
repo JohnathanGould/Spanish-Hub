@@ -5,8 +5,8 @@ import { shuffle, speak } from '../../utils/helpers';
 import { SENT_POOL } from '../../data/drillData';
 
 export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLength = 10 }) {
-  const total = 8;
-  const queue = useMemo(() => shuffle(SENT_POOL).slice(0, total), []);
+  const total = Math.min(drillLength, SENT_POOL.length);
+  const queue = useMemo(() => shuffle(SENT_POOL).slice(0, total), [total]);
   const [idx, setIdx] = useState(0);
   const [pool, setPool] = useState([]);
   const [placed, setPlaced] = useState([]);
