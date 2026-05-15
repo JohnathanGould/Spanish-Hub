@@ -4,7 +4,7 @@ import DrillShell from '../DrillShell';
 import { shuffle, speak } from '../../utils/helpers';
 import { SENT_POOL } from '../../data/drillData';
 
-export default function SentenceBuilderDrill({ onAnswer, onDone, onBack }) {
+export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLength = 10 }) {
   const total = 8;
   const queue = useMemo(() => shuffle(SENT_POOL).slice(0, total), []);
   const [idx, setIdx] = useState(0);
