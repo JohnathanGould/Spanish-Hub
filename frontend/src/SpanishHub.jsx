@@ -327,8 +327,7 @@ export default function SpanishHub() {
     const custom = (userData.customWords || []).filter(w => !masterSet.has(w.es));
     const all = [...filtered, ...custom];
     if (drillMode === 'weak') return all.filter(w => masteryLevel(userData.progress, w.es) !== 'mastered');
-    if (drillMode === 'mastered') return all.filter(w => masteryLevel(userData.progress, w.es) === 'mastered');
-    return all;
+        return all;
   }, [userData, drillMode, view]);
 
   const addCustomWord = useCallback((wordData) => {
