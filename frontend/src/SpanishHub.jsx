@@ -497,8 +497,8 @@ export default function SpanishHub() {
           onGoalClick={() => setShowGoalModal(true)}
           onLeaderboardClick={() => setTab('leaderboard')}
         />
-        <div className="tab-bar" style={{ overflowX: 'auto', scrollSnapType: 'x mandatory', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
-          {[['learn', 'Learn'], ['words', 'Words'], ['drills', 'Drills'], ['sofia', 'Milo'], ['plaza', 'Plaza'], ['history', 'Log']].map(([id, label]) => (
+        <div className="tab-bar">
+          {[['learn', 'Learn'], ['words', 'Words'], ['drills', 'Drills'], ['sofia', 'Milo'], ['plaza', 'Plaza']].map(([id, label]) => (
             <button key={id} className={`tab-btn${tab === id ? ' active' : ''}`}
               onClick={() => setTab(id)} data-testid={`tab-${id}`}
               style={{ scrollSnapAlign: 'start', flexShrink: 0 }}>{label}</button>
