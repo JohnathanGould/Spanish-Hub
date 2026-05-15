@@ -46,6 +46,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Audio files — never cache, always fetch fresh from network
+  if (url.pathname.startsWith('/audio/')) {
+    event.respondWith(fetch(req));
+    return;
+  }
+
   // Static assets / images / fonts: cache-first with background refresh
   event.respondWith(
     caches.match(req).then((cached) => {
