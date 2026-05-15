@@ -26,7 +26,6 @@ import SofiaChat from './SofiaChat';
 import SpanishFlag from './components/SpanishFlag';
 import { KofiSupport } from './components/KofiSupport';
 import confetti from 'canvas-confetti';
-import { masteryLevel, getStats, initVoice, spacedRepetitionSort, playConfetti } from './utils/helpers';
 
 function getWeekStartStr() {
   const d = new Date();
