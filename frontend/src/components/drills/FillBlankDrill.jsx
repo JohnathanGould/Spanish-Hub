@@ -5,7 +5,7 @@ import { FITB_POOL } from '../../data/drillData';
 
 export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength = 10 }) {
   const total = drillLength;
-  const queue = useMemo(() => shuffle(FITB_POOL).slice(0, total), []);
+  const queue = useMemo(() => shuffle(FITB_POOL).slice(0, total), [total]);
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);
   const [correct, setCorrect] = useState(0);

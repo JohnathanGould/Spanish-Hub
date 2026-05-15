@@ -71,12 +71,6 @@
   background-attachment: fixed;
 }
 
-@media (prefers-color-scheme: dark) {
-  .app-outer {
-    background-image: url('https://static.prod-images.emergentagent.com/jobs/cd1cbe7e-b631-4d05-96ca-fa46bbb284a5/images/779966e65a9737d0c076facdf478563c769809c3c46e8596671cfd882dcbb1c5.png');
-  }
-}
-
 .app-container {
   width: 100%;
   max-width: 660px;
@@ -132,10 +126,8 @@
   border-radius: 14px;
   margin: 12px 16px;
   position: sticky;
-  /* Sit just below the sticky header */
   top: 80px;
   z-index: 40;
-  /* Subtle shadow when scrolled (always rendered, only visible against scrolled content) */
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
   backdrop-filter: blur(8px);
 }

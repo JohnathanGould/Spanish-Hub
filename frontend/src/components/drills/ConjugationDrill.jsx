@@ -7,7 +7,7 @@ import { CONJ, PRETERITE } from '../../data/drillData';
 export default function ConjugationDrill({ mode, onAnswer, onDone, onBack, }) {
   const total = drillLength;
   const pool = mode === 'past' ? PRETERITE : CONJ;
-  const queue = useMemo(() => shuffle(pool).slice(0, total), [pool]);
+  const queue = useMemo(() => shuffle(pool).slice(0, total), [pool, total]);
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);
   const [correct, setCorrect] = useState(0);
