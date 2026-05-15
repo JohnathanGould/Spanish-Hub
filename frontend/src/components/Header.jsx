@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Volume2, LogOut, ChevronDown } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import SpanishFlag from './SpanishFlag';
 
-export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onSignOut, onGoalClick }) {
+export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onSignOut, onGoalClick, onLeaderboardClick }) {
   const [showMenu, setShowMenu] = useState(false);
   const today = new Date().toDateString();
   const todayCount = dailyProgress?.date === today ? (dailyProgress.count || 0) : 0;
@@ -17,6 +17,7 @@ export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onS
     <header className="app-header" data-testid="app-header">
       <div className="spain-flag-bar" />
       <div className="flex items-center justify-between pt-1">
+
         {/* LEFT: Logo */}
         <div className="flex items-center gap-2">
           <SpanishFlag size={28} />
@@ -30,9 +31,10 @@ export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onS
           </div>
         </div>
 
-        {/* CENTER + RIGHT: Stats */}
+        {/* RIGHT: Stats */}
         <div className="flex items-center gap-3">
-          {/* Daily Goal Circle */}
+
+          {/* Daily Goal Circle — no "goal" label */}
           <button onClick={onGoalClick} data-testid="daily-goal-btn"
             className="flex flex-col items-center cursor-pointer" title={`${todayCount}/${goal} today`}>
             <svg width="34" height="34" viewBox="0 0 34 34">
@@ -51,36 +53,48 @@ export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onS
                 {todayCount >= 99 ? '99+' : todayCount}
               </text>
             </svg>
-            <span className="text-xs font-medium" style={{ color: 'hsl(var(--muted-foreground))' }}>goal</span>
           </button>
 
-          {/* Streak */}
-          <div className="flex flex-col items-center" data-testid="streak-display">
+          {/* Streak — tappable, goes to streak screen (future) */}
+          <button className="flex flex-col items-center cursor-pointer" data-testid="streak-display"
+            onClick={() => {}} title="Your streak">
             <span className="text-base font-bold" style={{ color: '#F5C518', lineHeight: 1 }}>
               {streakCount > 0 ? '🔥' : '💤'}
             </span>
             <span className="text-xs font-bold" style={{ color: streakCount > 0 ? '#D97706' : 'hsl(var(--muted-foreground))' }}>
               {streakCount}d
             </span>
-          </div>
+          </button>
 
-          {/* XP */}
-          <div className="flex flex-col items-center" data-testid="xp-display">
+          {/* XP / Star — taps to leaderboard */}
+          <button className="flex flex-col items-center cursor-pointer" data-testid="xp-display"
+            onClick={onLeaderboardClick} title="Leaderboard">
             <span className="text-base font-bold" style={{ color: '#F5C518', lineHeight: 1 }}>⭐</span>
             <span className="text-xs font-bold" style={{ color: '#D97706' }}>
               {xp >= 1000 ? `${(xp / 1000).toFixed(1)}k` : xp}
             </span>
-          </div>
+          </button>
 
-          {/* User Avatar + Menu */}
+          {/* User Avatar — perfect circle, taps to open menu */}
           <div className="relative">
             <button data-testid="user-menu-btn" onClick={() => setShowMenu(!showMenu)}
-              className="flex items-center gap-1 rounded-full border-2 overflow-hidden"
-              style={{ borderColor: 'hsl(var(--border))' }}>
+              className="flex items-center justify-center overflow-hidden border-2"
+              style={{
+                borderColor: 'hsl(var(--border))',
+                borderRadius: '50%',
+                width: 32,
+                height: 32,
+                padding: 0,
+              }}>
               {user.photoURL
-                ? <img src={user.photoURL} alt="" className="w-8 h-8 object-cover" />
-                : <div className="w-8 h-8 flex items-center justify-center text-sm font-bold"
-                    style={{ background: 'hsl(var(--primary))', color: 'white' }}>
+                ? <img src={user.photoURL} alt=""
+                    style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
+                : <div style={{
+                    width: 32, height: 32, borderRadius: '50%',
+                    background: 'hsl(var(--primary))', color: 'white',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 14, fontWeight: 700,
+                  }}>
                     {(user.displayName || 'U')[0]}
                   </div>
               }
@@ -88,7 +102,8 @@ export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onS
             {showMenu && (
               <div className="absolute right-0 top-10 z-50 rounded-xl shadow-xl py-2 min-w-[160px] border"
                 style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-                <div className="px-4 py-2 border-b text-sm font-medium" style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }}>
+                <div className="px-4 py-2 border-b text-sm font-medium"
+                  style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }}>
                   {user.displayName || 'Learner'}
                 </div>
                 <button data-testid="sign-out-btn" onClick={() => { setShowMenu(false); onSignOut(); }}
@@ -99,6 +114,7 @@ export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onS
               </div>
             )}
           </div>
+
         </div>
       </div>
     </header>
