@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { DRILLS } from '../data/drillData';
+import { motion } from 'framer-motion';
 
 const CARD_STYLES = {
   amber:   { bg: '#FEF3C7', num: '#FDE68A', numText: '#78350F', title: '#451A03', desc: '#92400E' },
