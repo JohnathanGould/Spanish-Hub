@@ -41,25 +41,14 @@ export default function WordDetail({ word, progress, onClose }) {
 
   return (
     <div data-testid="word-detail-modal" onClick={onClose}
-      className="fixed inset-0 z-50 flex items-end justify-center"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3"
       style={{ background: 'rgba(0,0,0,0.55)' }}>
-      <motion.div
-        initial={{ y: '100%' }}
-        animate={{ y: 0 }}
-        exit={{ y: '100%' }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         onClick={e => e.stopPropagation()}
-        className="rounded-t-3xl w-full shadow-2xl flex flex-col"
-        style={{ background: 'hsl(var(--card))', height: '75vh' }}>
-
-        {/* Drag handle */}
-        <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div className="w-10 h-1 rounded-full" style={{ background: 'hsl(var(--border))' }} />
-        </div>
-
-        <div className="overflow-y-auto flex-1">
-          <div className="p-6 pb-4 relative"
-            style={{ background: 'linear-gradient(135deg, hsl(var(--primary)/0.08), hsl(47 91% 53% / 0.12))' }}>
+        className="rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col"
+        style={{ background: 'hsl(var(--card))', maxHeight: '90vh' }}>
+        <div className="overflow-y-auto">
+          <div className="p-6 pb-4 relative" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)/0.08), hsl(47 91% 53% / 0.12))' }}>
             <button data-testid="word-detail-close" onClick={onClose}
               className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-black/5 transition-colors z-10"
               style={{ color: 'hsl(var(--muted-foreground))' }}>
@@ -70,13 +59,11 @@ export default function WordDetail({ word, progress, onClose }) {
                 <WordImage word={word} variant="modal" />
               </div>
             )}
-            <div className="text-xs uppercase tracking-wider font-bold mb-2"
-              style={{ color: 'hsl(var(--muted-foreground))' }}>
-              {TYPE_LABELS[word.type] || 'Word'}{word.group && word.group !== 'Core' && ` ┬╖ ${word.group}`}
+            <div className="text-xs uppercase tracking-wider font-bold mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
+              {TYPE_LABELS[word.type] || 'Word'}{word.group && word.group !== 'Core' && ` · ${word.group}`}
             </div>
             <div className="flex items-center gap-3 mb-2">
-              <h3 className="font-serif text-3xl font-black" data-testid="word-detail-es"
-                style={{ color: 'hsl(var(--foreground))' }}>
+              <h3 className="font-serif text-3xl font-black" data-testid="word-detail-es" style={{ color: 'hsl(var(--foreground))' }}>
                 {article}{word.es}
               </h3>
               <button data-testid="word-detail-speak" onClick={() => speak(word.es, 'es')}
@@ -90,18 +77,12 @@ export default function WordDetail({ word, progress, onClose }) {
 
           {word.sentence && (
             <div className="px-6 py-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
-              <div className="text-xs font-bold uppercase tracking-wider mb-2"
-                style={{ color: 'hsl(var(--muted-foreground))' }}>
+              <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
                 Example
               </div>
-              <p className="font-semibold text-base mb-1" style={{ color: 'hsl(var(--foreground))' }}>
-                {word.sentence.es}
-              </p>
-              <p className="text-sm italic mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                {word.sentence.en}
-              </p>
-              <button data-testid="word-detail-sentence-speak"
-                onClick={() => speak(word.sentence.es, 'es')}
+              <p className="font-semibold text-base mb-1" style={{ color: 'hsl(var(--foreground))' }}>{word.sentence.es}</p>
+              <p className="text-sm italic mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>{word.sentence.en}</p>
+              <button data-testid="word-detail-sentence-speak" onClick={() => speak(word.sentence.es, 'es')}
                 className="w-full py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border-2 transition-all hover:-translate-y-0.5"
                 style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--primary))', color: 'hsl(var(--primary))' }}>
                 <Volume2 size={14} /> Hear example sentence
@@ -110,8 +91,7 @@ export default function WordDetail({ word, progress, onClose }) {
           )}
 
           <div className="px-6 py-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
-            <div className="text-xs font-bold uppercase tracking-wider mb-2"
-              style={{ color: 'hsl(var(--muted-foreground))' }}>
+            <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
               Pronunciation practice
             </div>
             {SR ? (
@@ -123,9 +103,7 @@ export default function WordDetail({ word, progress, onClose }) {
                     borderColor: listening ? '#FCA5A5' : 'hsl(var(--primary))',
                     color: listening ? '#991B1B' : 'hsl(var(--primary))',
                   }}>
-                  {listening
-                    ? <><MicOff size={14} /> ListeningΓÇª</>
-                    : <><Mic size={14} /> Try saying "{word.es}"</>}
+                  {listening ? <><MicOff size={14} /> Listening…</> : <><Mic size={14} /> Try saying "{word.es}"</>}
                 </button>
                 {pronCheck && (
                   <div className="mt-2 p-2.5 rounded-lg text-xs" data-testid="pron-result"
@@ -133,7 +111,7 @@ export default function WordDetail({ word, progress, onClose }) {
                       background: pronCheck.ok ? '#DCFCE7' : '#FEE2E2',
                       color: pronCheck.ok ? '#14532D' : '#991B1B',
                     }}>
-                    <strong>{pronCheck.ok ? 'Well said!' : 'Try again'}</strong> ΓÇö heard: <em>"{pronCheck.heard}"</em>
+                    <strong>{pronCheck.ok ? '¡Bien dicho!' : 'Try again'}</strong> — heard: <em>"{pronCheck.heard}"</em>
                   </div>
                 )}
               </>
@@ -144,9 +122,8 @@ export default function WordDetail({ word, progress, onClose }) {
             )}
           </div>
 
-          <div className="px-6 py-4 border-t pb-8" style={{ borderColor: 'hsl(var(--border))' }}>
-            <div className="text-xs font-bold uppercase tracking-wider mb-3"
-              style={{ color: 'hsl(var(--muted-foreground))' }}>
+          <div className="px-6 py-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+            <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
               Your progress
             </div>
             <div className="grid grid-cols-3 gap-2">
