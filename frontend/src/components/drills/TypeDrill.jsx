@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Volume2, ArrowRight } from 'lucide-react';
 import DrillShell from '../DrillShell';
-import { spacedRepetitionSort, levenshtein, speak } from '../../utils/helpers';
+import { spacedRepetitionSort, levenshtein, speak, stripAccents } from '../../utils/helpers';
 
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
 export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
@@ -55,12 +55,14 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
 
   const submit = () => {
     if (feedback || !val.trim()) return;
-    const ans = val.trim().toLowerCase();
-    const tgt = target.toLowerCase();
+
+    // Always strip accents — accents are never penalised in either mode
+    const ans = stripAccents(val.trim().toLowerCase());
+    const tgt = stripAccents(target.toLowerCase());
     const dist = levenshtein(ans, tgt);
 
     // Relaxed mode: 2 errors allowed for 6+ letter words, exact for shorter
-    // Strict mode: exact match always required
+    // Strict mode: exact consonant/vowel spelling required (accents still ignored)
     const allowedErrors = strictMode ? 0 : tgt.length >= 6 ? 2 : 0;
     const ok = dist <= allowedErrors;
     const closeEnough = !strictMode && dist > 0 && dist <= allowedErrors;
