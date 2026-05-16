@@ -67,7 +67,7 @@ export default function WordDetail({ word, progress, onClose }) {
               style={{ color: 'hsl(var(--muted-foreground))' }}>
               <X size={18} />
             </button>
-            {(word.type === 'noun' || word.type === 'phrase') && (
+            {(word.type === 'noun' || word.type === 'phrase') && word.es && (
               <div className="mb-4">
                 <WordImage word={word} variant="modal" />
               </div>
@@ -90,20 +90,20 @@ export default function WordDetail({ word, progress, onClose }) {
             <p className="text-base" style={{ color: 'hsl(var(--muted-foreground))' }}>{word.en}</p>
           </div>
 
-          {word.sentence && (
+          {word.sentence?.es && (
             <div className="px-6 py-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
               <div className="text-xs font-bold uppercase tracking-wider mb-2"
                 style={{ color: 'hsl(var(--muted-foreground))' }}>
                 Example
               </div>
               <p className="font-semibold text-base mb-1" style={{ color: 'hsl(var(--foreground))' }}>
-                {word.sentence.es}
+                {word.sentence?.es}
               </p>
               <p className="text-sm italic mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                {word.sentence.en}
+                {word.sentence?.en}
               </p>
               <button data-testid="word-detail-sentence-speak"
-                onClick={() => speak(word.sentence.es, 'es')}
+                onClick={() => speak(word.sentence?.es, 'es')}
                 className="w-full py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border-2 transition-all hover:-translate-y-0.5"
                 style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--primary))', color: 'hsl(var(--primary))' }}>
                 <Volume2 size={14} /> Hear example sentence
