@@ -44,13 +44,13 @@ export default function WordDetail({ word, progress, onClose }) {
       className="fixed inset-0 z-50 flex items-end justify-center"
       style={{ background: 'rgba(0,0,0,0.55)' }}>
       <motion.div
-        initial={{ y: '100%', opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: '100%', opacity: 0 }}
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         onClick={e => e.stopPropagation()}
-        className="rounded-t-3xl w-full shadow-2xl overflow-hidden flex flex-col"
-        style={{ background: 'hsl(var(--card))', maxHeight: '88vh', minHeight: '60vh' }}>
+        className="rounded-t-3xl w-full shadow-2xl flex flex-col"
+        style={{ background: 'hsl(var(--card))', height: '75vh' }}>
 
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
