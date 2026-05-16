@@ -59,7 +59,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
     const tgt = target.toLowerCase();
     const dist = levenshtein(ans, tgt);
 
-    // Close mode: 2 errors allowed for 6+ letter words, exact for shorter
+    // Relaxed mode: 2 errors allowed for 6+ letter words, exact for shorter
     // Strict mode: exact match always required
     const allowedErrors = strictMode ? 0 : tgt.length >= 6 ? 2 : 0;
     const ok = dist <= allowedErrors;
@@ -89,51 +89,52 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
       total={queue.length}
       onBack={onBack}>
 
-      {/* Close / Strict toggle */}
-      <div className="flex items-center justify-center gap-2 mb-5">
+      {/* Relaxed / Strict toggle — compact for mobile */}
+      <div className="flex items-center justify-center gap-2 mb-3">
         <button
           onClick={() => setStrictMode(false)}
-          className="flex flex-col items-center px-5 py-2 rounded-xl border-2 transition-all text-xs font-bold"
+          className="flex flex-col items-center px-4 py-1.5 rounded-xl border-2 transition-all"
           style={{
             borderColor: !strictMode ? 'hsl(var(--primary))' : 'hsl(var(--border))',
             background: !strictMode ? 'hsl(var(--primary) / 0.08)' : 'hsl(var(--card))',
             color: !strictMode ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
           }}>
-          <span className="text-sm">😌 Close</span>
-          <span className="font-normal opacity-70 mt-0.5">typos forgiven</span>
+          <span className="text-sm font-bold">😌 Relaxed</span>
+          <span className="text-xs font-normal opacity-70">typos forgiven</span>
         </button>
         <button
           onClick={() => setStrictMode(true)}
-          className="flex flex-col items-center px-5 py-2 rounded-xl border-2 transition-all text-xs font-bold"
+          className="flex flex-col items-center px-4 py-1.5 rounded-xl border-2 transition-all"
           style={{
             borderColor: strictMode ? 'hsl(var(--primary))' : 'hsl(var(--border))',
             background: strictMode ? 'hsl(var(--primary) / 0.08)' : 'hsl(var(--card))',
             color: strictMode ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
           }}>
-          <span className="text-sm">🎯 Strict</span>
-          <span className="font-normal opacity-70 mt-0.5">exact spelling</span>
+          <span className="text-sm font-bold">🎯 Strict</span>
+          <span className="text-xs font-normal opacity-70">exact spelling</span>
         </button>
       </div>
 
-      <div className="rounded-3xl p-7 mb-5 text-center"
-        style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
+      {/* Word card — compact padding for mobile */}
+      <div className="rounded-2xl p-4 mb-3 text-center"
+        style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
         {mode === 'listen-type' ? (
           <button data-testid="listen-type-replay" onClick={() => speak(word.es, 'es')}
-            className="mx-auto rounded-full w-20 h-20 flex items-center justify-center text-white"
-            style={{ background: 'hsl(var(--primary))', boxShadow: '0 6px 20px rgba(198,11,30,0.35)' }}>
-            <Volume2 size={28} />
+            className="mx-auto rounded-full w-16 h-16 flex items-center justify-center text-white"
+            style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 14px rgba(198,11,30,0.35)' }}>
+            <Volume2 size={24} />
           </button>
         ) : (
           <>
-            <div className="text-xs uppercase tracking-wider mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
+            <div className="text-xs uppercase tracking-wider mb-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
               {isPromptEs ? 'Spanish' : 'English'}
             </div>
-            <div className="font-serif text-3xl font-black" data-testid="type-prompt"
+            <div className="font-serif text-2xl font-black" data-testid="type-prompt"
               style={{ color: 'hsl(var(--foreground))' }}>
               {promptText}
             </div>
             {isPromptEs && (
-              <button data-testid="type-speak" onClick={() => speak(promptText, 'es')} className="speak-btn mt-4">
+              <button data-testid="type-speak" onClick={() => speak(promptText, 'es')} className="speak-btn mt-2">
                 <Volume2 size={12} /> Hear it
               </button>
             )}
@@ -141,12 +142,13 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
         )}
       </div>
 
+      {/* Input — compact for mobile */}
       <input ref={inputRef} data-testid="type-input"
         value={val} onChange={e => setVal(e.target.value)}
         onKeyDown={e => { if (e.key === 'Enter') feedback ? next() : submit(); }}
         placeholder={mode === 'type-es-en' ? 'Type English…' : 'Type Spanish…'}
         disabled={!!feedback} autoCapitalize="none" autoCorrect="off" spellCheck={false}
-        className="w-full p-4 rounded-xl border-2 text-center text-xl font-bold mb-4 transition-colors"
+        className="w-full p-3 rounded-xl border-2 text-center text-lg font-bold mb-3 transition-colors"
         style={{
           background: 'hsl(var(--card))',
           color: 'hsl(var(--foreground))',
@@ -156,15 +158,15 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
         }} />
 
       {feedback ? (
-        <div className="space-y-3">
-          <div className="text-center py-3 rounded-xl"
+        <div className="space-y-2">
+          <div className="text-center py-2.5 rounded-xl"
             style={{
               background: feedback.ok ? '#DCFCE7' : '#FEE2E2',
               color: feedback.ok ? '#14532D' : '#991B1B',
             }}>
             <div className="font-bold text-sm" data-testid="type-feedback">
               {feedback.ok && !feedback.closeEnough && '¡Correcto! ✓'}
-              {feedback.ok && feedback.closeEnough && `¡Correcto! — just note: ${feedback.target}`}
+              {feedback.ok && feedback.closeEnough && `¡Casi! — ${feedback.target}`}
               {!feedback.ok && `Answer: ${feedback.target}`}
             </div>
           </div>
