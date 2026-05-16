@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Home, RotateCcw, Trophy } from 'lucide-react';
+import { stopConfetti } from '../utils/helpers';
 
 const DRILL_NAMES = {
   flashcard: 'Flashcards', 'es-en': 'Spanish → English', 'en-es': 'English → Spanish',
@@ -15,6 +16,20 @@ export default function DoneScreen({ drillId, correct, total, sessions, onRetry,
   const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
   const greatJob = pct >= 80;
   const recent = (sessions || []).slice(0, 5);
+
+  useEffect(() => {
+    return () => stopConfetti();
+  }, []);
+
+  const handleHome = () => {
+    stopConfetti();
+    onHome();
+  };
+
+  const handleRetry = () => {
+    stopConfetti();
+    onRetry();
+  };
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-start px-6 pt-10 pb-6">
@@ -75,12 +90,12 @@ export default function DoneScreen({ drillId, correct, total, sessions, onRetry,
       )}
 
       <div className="flex gap-3 w-full max-w-sm">
-        <button data-testid="done-retry-btn" onClick={onRetry}
+        <button data-testid="done-retry-btn" onClick={handleRetry}
           className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border text-sm font-semibold transition-all hover:-translate-y-0.5"
           style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }}>
           <RotateCcw size={14} /> Retry
         </button>
-        <button data-testid="done-home-btn" onClick={onHome}
+        <button data-testid="done-home-btn" onClick={handleHome}
           className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white transition-all hover:-translate-y-0.5"
           style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 14px rgba(198,11,30,0.35)' }}>
           <Home size={14} /> Home

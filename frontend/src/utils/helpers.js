@@ -101,6 +101,7 @@ export function playTap() {
 // === CONFETTI SOUND ===
 let confettiBuffer = null;
 let audioCtx = null;
+let activeConfettiSource = null;
 
 function getAudioContext() {
   try {
@@ -137,8 +138,18 @@ export function playConfetti() {
     source.connect(gain);
     gain.connect(ctx.destination);
     source.start();
+    activeConfettiSource = source;
     setTimeout(() => {
-      try { source.stop(); } catch (e) {}
+      try { source.stop(); activeConfettiSource = null; } catch (e) {}
     }, 6600);
+  } catch (e) {}
+}
+
+export function stopConfetti() {
+  try {
+    if (activeConfettiSource) {
+      activeConfettiSource.stop();
+      activeConfettiSource = null;
+    }
   } catch (e) {}
 }
