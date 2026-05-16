@@ -119,7 +119,7 @@ export default function SpanishHub() {
 
   // Scroll to top and open word detail
   const handleWordClick = useCallback((word) => {
-    contentRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
     setSelectedWord(word);
   }, []);
 
