@@ -41,12 +41,21 @@ export default function WordDetail({ word, progress, onClose }) {
 
   return (
     <div data-testid="word-detail-modal" onClick={onClose}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3"
+      className="fixed inset-0 z-50 flex items-end justify-center"
       style={{ background: 'rgba(0,0,0,0.55)' }}>
-      <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      <motion.div
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         onClick={e => e.stopPropagation()}
-        className="rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col"
-        style={{ background: 'hsl(var(--card))', maxHeight: '90vh' }}>
+        className="rounded-t-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col"
+        style={{ background: 'hsl(var(--card))', maxHeight: '85vh' }}>
+
+        {/* Drag handle */}
+        <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
+          <div className="w-10 h-1 rounded-full" style={{ background: 'hsl(var(--border))' }} />
+        </div>
+
         <div className="overflow-y-auto">
           <div className="p-6 pb-4 relative" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)/0.08), hsl(47 91% 53% / 0.12))' }}>
             <button data-testid="word-detail-close" onClick={onClose}
@@ -111,7 +120,7 @@ export default function WordDetail({ word, progress, onClose }) {
                       background: pronCheck.ok ? '#DCFCE7' : '#FEE2E2',
                       color: pronCheck.ok ? '#14532D' : '#991B1B',
                     }}>
-                    <strong>{pronCheck.ok ? '¡Bien dicho!' : 'Try again'}</strong> — heard: <em>"{pronCheck.heard}"</em>
+                    <strong>{pronCheck.ok ? 'Well said!' : 'Try again'}</strong> — heard: <em>"{pronCheck.heard}"</em>
                   </div>
                 )}
               </>
@@ -122,7 +131,7 @@ export default function WordDetail({ word, progress, onClose }) {
             )}
           </div>
 
-          <div className="px-6 py-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+          <div className="px-6 py-4 border-t pb-8" style={{ borderColor: 'hsl(var(--border))' }}>
             <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
               Your progress
             </div>
