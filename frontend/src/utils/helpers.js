@@ -42,6 +42,12 @@ export function pick(arr, n, exclude = []) {
   return shuffle(arr.filter(x => !exclude.includes(x))).slice(0, n);
 }
 
+// === ACCENT STRIPPING ===
+// Accents are never penalised — strip before comparison in all drill modes
+export function stripAccents(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 // === LEVENSHTEIN ===
 export function levenshtein(a, b) {
   const m = a.length, n = b.length;
