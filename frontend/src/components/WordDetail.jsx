@@ -50,7 +50,7 @@ export default function WordDetail({ word, progress, onClose }) {
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         onClick={e => e.stopPropagation()}
         className="rounded-t-3xl w-full shadow-2xl overflow-hidden flex flex-col"
-        style={{ background: 'hsl(var(--card))', maxHeight: '88vh' }}>
+        style={{ background: 'hsl(var(--card))', maxHeight: '88vh', minHeight: '60vh' }}>
 
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
