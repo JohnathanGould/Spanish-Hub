@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Volume2, ArrowRight } from 'lucide-react';
 import DrillShell from '../DrillShell';
-import { spacedRepetitionSort, levenshtein, speak } from '../../utils/helpers';
+import { spacedRepetitionSort, levenshtein, speak } from '../utils/helpers';
 
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
 export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
