@@ -96,14 +96,11 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
       {picked && (
         <div className="mt-4 text-center">
           <div className="mb-3 text-sm font-medium" style={{ color: picked === correctText ? '#16A34A' : '#DC2626' }}>
-            {picked === correctText ? '¡Correcto! ✓' : `Correcto: ${correctText}`}
+            {picked === correctText ? 'Correct! ✓' : `Answer: ${correctText}`}
           </div>
-          <button
-            onClick={handleContinue}
-            data-testid="choice-continue"
+          <button onClick={handleContinue} data-testid="choice-continue"
             className="w-full py-3 rounded-xl font-bold text-white text-sm"
-            style={{ background: 'hsl(var(--primary))' }}
-          >
+            style={{ background: 'hsl(var(--primary))' }}>
             {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
           </button>
         </div>

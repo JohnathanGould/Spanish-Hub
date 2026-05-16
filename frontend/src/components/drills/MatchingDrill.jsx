@@ -28,7 +28,7 @@ export default function MatchingDrill({ words, progress, onAnswer, onDone, onBac
         if (w) onAnswer(w.es, true);
         setMatched(prev => new Set([...prev, selectedEs]));
         setCorrect(c => c + 1);
-        setFeedback({ ok: true, msg: '¡Correcto! ✓' });
+        setFeedback({ ok: true, msg: 'Correct! ✓' });
         setSelectedEs(null);
         setSelectedEn(null);
       } else {
@@ -98,21 +98,19 @@ export default function MatchingDrill({ words, progress, onAnswer, onDone, onBac
       {feedback && !finished && (
         <div className="mt-4 text-center text-sm font-medium"
           style={{ color: feedback.ok ? '#16A34A' : '#DC2626' }}>
-          {feedback.ok ? feedback.msg : `Correcto: ${feedback.msg}`}
+          {feedback.ok ? feedback.msg : `Answer: ${feedback.msg}`}
         </div>
       )}
 
       {finished && (
         <div className="mt-4 text-center">
           <div className="mb-3 text-sm font-medium" style={{ color: '#16A34A' }}>
-            ¡Lo logramos! All matched 🐾
+            All matched! 🐾
           </div>
-          <button
-            onClick={() => onDone(correct, Math.max(correct + wrong, pairs.length))}
+          <button onClick={() => onDone(correct, Math.max(correct + wrong, pairs.length))}
             data-testid="match-finish"
             className="w-full py-3 rounded-xl font-bold text-white text-sm"
-            style={{ background: 'hsl(var(--primary))' }}
-          >
+            style={{ background: 'hsl(var(--primary))' }}>
             Finish ✓
           </button>
         </div>

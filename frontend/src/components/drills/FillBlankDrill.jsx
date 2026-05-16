@@ -67,14 +67,11 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
       {picked && (
         <div className="mt-4 text-center">
           <div className="mb-3 text-sm font-medium" style={{ color: picked === item.blank ? '#16A34A' : '#DC2626' }}>
-            {picked === item.blank ? '¡Correcto! ✓' : `Correcto: ${item.blank}`}
+            {picked === item.blank ? 'Correct! ✓' : `Answer: ${item.blank}`}
           </div>
-          <button
-            onClick={handleContinue}
-            data-testid="fitb-continue"
+          <button onClick={handleContinue} data-testid="fitb-continue"
             className="w-full py-3 rounded-xl font-bold text-white text-sm"
-            style={{ background: 'hsl(var(--primary))' }}
-          >
+            style={{ background: 'hsl(var(--primary))' }}>
             {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
           </button>
         </div>

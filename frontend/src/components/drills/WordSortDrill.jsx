@@ -10,7 +10,7 @@ const TYPE_LABELS = {
 const ES_TYPES = ['noun', 'verb', 'adj', 'adv', 'pronoun'];
 
 // mode: 'es' | 'en'
-export default function WordSortDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength}) {
+export default function WordSortDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength }) {
   const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
@@ -93,14 +93,11 @@ export default function WordSortDrill({ mode, words, progress, onAnswer, onDone,
       {picked && (
         <div className="mt-4 text-center">
           <div className="mb-3 text-sm font-medium" style={{ color: picked === correctType ? '#16A34A' : '#DC2626' }}>
-            {picked === correctType ? '¡Correcto! ✓' : `Correcto: ${correctLabel}`}
+            {picked === correctType ? 'Correct! ✓' : `Answer: ${correctLabel}`}
           </div>
-          <button
-            onClick={handleContinue}
-            data-testid="sort-continue"
+          <button onClick={handleContinue} data-testid="sort-continue"
             className="w-full py-3 rounded-xl font-bold text-white text-sm"
-            style={{ background: 'hsl(var(--primary))' }}
-          >
+            style={{ background: 'hsl(var(--primary))' }}>
             {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
           </button>
         </div>

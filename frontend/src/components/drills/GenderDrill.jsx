@@ -75,14 +75,11 @@ export default function GenderDrill({ words, progress, onAnswer, onDone, onBack,
       {picked && (
         <div className="mt-4 text-center">
           <div className="mb-3 text-sm font-medium" style={{ color: picked === word.gender ? '#16A34A' : '#DC2626' }}>
-            {picked === word.gender ? '¡Correcto! ✓' : `Correcto: ${correctLabel} ${word.es}`}
+            {picked === word.gender ? 'Correct! ✓' : `Answer: ${correctLabel} ${word.es}`}
           </div>
-          <button
-            onClick={handleContinue}
-            data-testid="gender-continue"
+          <button onClick={handleContinue} data-testid="gender-continue"
             className="w-full py-3 rounded-xl font-bold text-white text-sm"
-            style={{ background: 'hsl(var(--primary))' }}
-          >
+            style={{ background: 'hsl(var(--primary))' }}>
             {idx + 1 >= nouns.length ? 'Finish ✓' : 'Continue →'}
           </button>
         </div>

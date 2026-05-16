@@ -67,14 +67,11 @@ export default function ConjugationDrill({ mode, onAnswer, onDone, onBack, drill
       {picked && (
         <div className="mt-4 text-center">
           <div className="mb-3 text-sm font-medium" style={{ color: picked === item.ans ? '#16A34A' : '#DC2626' }}>
-            {picked === item.ans ? '¡Correcto! ✓' : `Correcto: ${item.ans}`}
+            {picked === item.ans ? 'Correct! ✓' : `Answer: ${item.ans}`}
           </div>
-          <button
-            onClick={handleContinue}
-            data-testid="conj-continue"
+          <button onClick={handleContinue} data-testid="conj-continue"
             className="w-full py-3 rounded-xl font-bold text-white text-sm"
-            style={{ background: 'hsl(var(--primary))' }}
-          >
+            style={{ background: 'hsl(var(--primary))' }}>
             {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
           </button>
         </div>

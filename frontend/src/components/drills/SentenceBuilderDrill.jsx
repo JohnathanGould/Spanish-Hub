@@ -35,6 +35,7 @@ export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLe
     setPool(p => p.filter(x => x.id !== w.id));
     setPlaced(p => [...p, w]);
   };
+
   const removeWord = (w) => {
     if (feedback) return;
     setPlaced(p => p.filter(x => x.id !== w.id));
@@ -92,9 +93,11 @@ export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLe
           <div className="text-center py-3 px-4 rounded-xl"
             style={{ background: feedback.ok ? '#DCFCE7' : '#FEE2E2', color: feedback.ok ? '#14532D' : '#991B1B' }}>
             <div className="font-bold text-sm" data-testid="sent-feedback">
-              {feedback.ok ? '¡Perfecto!' : 'Try again next time'}
+              {feedback.ok ? 'Perfect! ✓' : 'Not quite — here\'s the answer:'}
             </div>
-            <div className="text-xs mt-1 opacity-90">{feedback.target}</div>
+            <div className="text-sm font-bold mt-1" style={{ color: feedback.ok ? '#14532D' : '#991B1B' }}>
+              {feedback.target}
+            </div>
             <button onClick={() => speak(feedback.target, 'es')}
               className="speak-btn mt-2 mx-auto"><Volume2 size={11} /> Hear it</button>
           </div>
