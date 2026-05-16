@@ -1,237 +1,181 @@
 import React, { useState } from 'react';
-import { Search, Plus, Trash2, ChevronRight, Settings2, Globe } from 'lucide-react';
-import { VERB_TABLE, NOUN_GROUPS } from '../data/words';
-import { masteryLevel, dotColor, getStats } from '../utils/helpers';
+import { motion } from 'framer-motion';
+import { X, Volume2, CheckCircle2, Mic, MicOff } from 'lucide-react';
+import { speak, levenshtein } from '../utils/helpers';
+import WordImage from './WordImage';
 
-function MasteryDot({ es, progress }) {
-  const lvl = masteryLevel(progress, es);
-  return <span className="inline-block w-2 h-2 rounded-full flex-shrink-0" style={{ background: dotColor(lvl) }} />;
-}
+const TYPE_LABELS = {
+  noun: 'Noun', verb: 'Verb', adj: 'Adjective', adv: 'Adverb',
+  phrase: 'Phrase', pronoun: 'Pronoun', article: 'Article', other: 'Word',
+};
 
-function ProgressPanel({ words, progress }) {
-  const stats = getStats(words, progress);
-  const total = words.length;
-  const pct = total > 0 ? Math.round((stats.mastered / total) * 100) : 0;
-  return (
-    <div className="rounded-2xl p-4 mb-4 border" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
-      <div className="flex justify-between items-center mb-2">
-        <span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'hsl(var(--muted-foreground))' }}>Mastery Progress</span>
-        <span className="text-sm font-bold" style={{ color: '#16A34A' }}>{pct}%</span>
-      </div>
-      <div className="h-2 rounded-full mb-3" style={{ background: 'hsl(var(--muted))' }}>
-        <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#16A34A,#22C55E)' }} />
-      </div>
-      <div className="grid grid-cols-4 gap-2">
-        {[['new', stats.new, '#A8A29E', 'New'], ['learning', stats.learning, '#D97706', 'Learning'], ['strong', stats.strong, '#10B981', 'Strong'], ['mastered', stats.mastered, '#16A34A', 'Mastered']].map(([key, val, color, label]) => (
-          <div key={key} className="rounded-lg py-2 text-center" style={{ background: 'hsl(var(--muted))' }}>
-            <div className="text-lg font-bold" style={{ color }}>{val}</div>
-            <div className="text-xs font-medium" style={{ color: 'hsl(var(--muted-foreground))' }}>{label}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+export default function WordDetail({ word, progress, onClose }) {
+  const p = progress || { c: 0, w: 0, s: 0 };
+  const total = (p.c || 0) + (p.w || 0);
+  const acc = total > 0 ? Math.round((p.c / total) * 100) : 0;
+  const article = word.gender === 'm' ? 'el ' : word.gender === 'f' ? 'la ' : '';
 
-function AddWordForm({ onAdd }) {
-  const [es, setEs] = useState(''); const [en, setEn] = useState('');
-  const [type, setType] = useState('noun'); const [gender, setGender] = useState('');
-  const handleAdd = () => {
-    if (!es.trim() || !en.trim()) return;
-    onAdd({ es: es.trim().toLowerCase(), en: en.trim().toLowerCase(), type, gender: gender || null, group: 'Custom' });
-    setEs(''); setEn('');
+  const [pronCheck, setPronCheck] = useState(null);
+  const [listening, setListening] = useState(false);
+  const scrollRef = React.useRef(null);
+  const SR = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
+
+  // Lock body scroll and scroll sheet content to top on open
+  React.useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+    return () => { document.body.style.overflow = ''; };
+  }, [word]);
+
+  const startPronCheck = () => {
+    if (!SR) return;
+    setListening(true); setPronCheck(null);
+    const rec = new SR();
+    rec.lang = 'es-ES';
+    rec.continuous = false;
+    rec.interimResults = false;
+    rec.maxAlternatives = 3;
+    rec.onresult = (ev) => {
+      const heard = ev.results[0][0].transcript.trim().toLowerCase();
+      const target = word.es.toLowerCase();
+      const dist = levenshtein(heard, target);
+      const ok = dist <= Math.max(1, Math.floor(target.length / 5));
+      setPronCheck({ ok, heard });
+    };
+    rec.onerror = () => { setListening(false); setPronCheck({ ok: false, heard: '(no audio)' }); };
+    rec.onend = () => setListening(false);
+    try { rec.start(); } catch (e) { setListening(false); }
   };
-  const inp = { background: 'hsl(var(--muted))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' };
-  return (
-    <div className="rounded-2xl p-4 mb-4 border" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-      <div className="font-semibold text-sm mb-3 flex items-center gap-2">
-        <Plus size={14} style={{ color: 'hsl(var(--primary))' }} /> Add a word
-      </div>
-      <div className="grid grid-cols-2 gap-2 mb-2">
-        <input data-testid="add-word-es" value={es} onChange={e => setEs(e.target.value)}
-          placeholder="Spanish" className="px-3 py-2 rounded-lg border text-sm" style={inp} />
-        <input data-testid="add-word-en" value={en} onChange={e => setEn(e.target.value)}
-          placeholder="English" className="px-3 py-2 rounded-lg border text-sm" style={inp}
-          onKeyDown={e => e.key === 'Enter' && handleAdd()} />
-      </div>
-      <div className="grid grid-cols-2 gap-2 mb-3">
-        <select data-testid="add-word-type" value={type} onChange={e => setType(e.target.value)}
-          className="px-3 py-2 rounded-lg border text-sm" style={inp}>
-          {['noun','verb','adj','adv','phrase','pronoun','article','other'].map(t => <option key={t}>{t}</option>)}
-        </select>
-        <select data-testid="add-word-gender" value={gender} onChange={e => setGender(e.target.value)}
-          className="px-3 py-2 rounded-lg border text-sm" style={inp}>
-          <option value="">no gender</option>
-          <option value="m">masculine (el)</option>
-          <option value="f">feminine (la)</option>
-        </select>
-      </div>
-      <button data-testid="add-word-btn" onClick={handleAdd}
-        className="px-4 py-2 rounded-lg text-sm font-semibold text-white transition-colors"
-        style={{ background: 'hsl(var(--primary))' }}>
-        Add word
-      </button>
-    </div>
-  );
-}
-
-export default function WordList({ words, progress, customWords, searchQuery, setSearchQuery, onAddWord, onDeleteWord, onWordClick, onCategoryClick, onSharedPacksClick, categoryEnabled }) {
-  const q = searchQuery.toLowerCase();
-  const filtered = q ? words.filter(w => w.es.includes(q) || w.en.includes(q)) : null;
-  const nouns = words.filter(w => w.type === 'noun' && w.group !== 'Core');
-  const phrases = words.filter(w => w.type === 'phrase');
-  const others = words.filter(w => ['pronoun', 'article', 'adj', 'adv', 'other'].includes(w.type));
 
   return (
-    <div>
-      <ProgressPanel words={words} progress={progress} />
+    <div data-testid="word-detail-modal" onClick={onClose}
+      className="fixed inset-0 z-50 flex items-end justify-center"
+      style={{ background: 'rgba(0,0,0,0.55)' }}>
+      <motion.div
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        onClick={e => e.stopPropagation()}
+        className="rounded-t-3xl w-full shadow-2xl flex flex-col"
+        style={{ background: 'hsl(var(--card))', height: '75vh' }}>
 
-      {/* Search + Category button */}
-      <div className="flex gap-2 mb-4">
-        <div className="flex-1 relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'hsl(var(--muted-foreground))' }} />
-          <input data-testid="word-search" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search words…" className="w-full pl-8 pr-3 py-2 rounded-xl border text-sm"
-            style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }} />
+        {/* Drag handle */}
+        <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
+          <div className="w-10 h-1 rounded-full" style={{ background: 'hsl(var(--border))' }} />
         </div>
-        <button data-testid="category-toggle-btn" onClick={onCategoryClick}
-          className="flex items-center gap-1 px-3 py-2 rounded-xl border text-xs font-medium"
-          style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }}>
-          <Settings2 size={13} /> Packs
-        </button>
-        {onSharedPacksClick && (
-          <button data-testid="shared-packs-btn" onClick={onSharedPacksClick}
-            className="flex items-center gap-1 px-3 py-2 rounded-xl border text-xs font-medium"
-            style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }}>
-            <Globe size={13} /> Community
-          </button>
-        )}
-      </div>
 
-      <AddWordForm onAdd={onAddWord} />
-
-      {/* Search results */}
-      {filtered && (
-        <div className="mb-4">
-          <div className="text-xs font-bold uppercase tracking-wide mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
-            {filtered.length} result{filtered.length !== 1 ? 's' : ''}
+        <div ref={scrollRef} className="overflow-y-auto flex-1">
+          <div className="p-6 pb-4 relative"
+            style={{ background: 'linear-gradient(135deg, hsl(var(--primary)/0.08), hsl(47 91% 53% / 0.12))' }}>
+            <button data-testid="word-detail-close" onClick={onClose}
+              className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-black/5 transition-colors z-10"
+              style={{ color: 'hsl(var(--muted-foreground))' }}>
+              <X size={18} />
+            </button>
+            {(word.type === 'noun' || word.type === 'phrase') && (
+              <div className="mb-4">
+                <WordImage word={word} variant="modal" />
+              </div>
+            )}
+            <div className="text-xs uppercase tracking-wider font-bold mb-2"
+              style={{ color: 'hsl(var(--muted-foreground))' }}>
+              {TYPE_LABELS[word.type] || 'Word'}{word.group && word.group !== 'Core' && ` · ${word.group}`}
+            </div>
+            <div className="flex items-center gap-3 mb-2">
+              <h3 className="font-serif text-3xl font-black" data-testid="word-detail-es"
+                style={{ color: 'hsl(var(--foreground))' }}>
+                {article}{word.es}
+              </h3>
+              <button data-testid="word-detail-speak" onClick={() => speak(word.es, 'es')}
+                className="p-2 rounded-full transition-colors hover:bg-black/5"
+                style={{ color: 'hsl(var(--primary))' }}>
+                <Volume2 size={20} />
+              </button>
+            </div>
+            <p className="text-base" style={{ color: 'hsl(var(--muted-foreground))' }}>{word.en}</p>
           </div>
-          {filtered.map(w => (
-            <WordRow key={w.es} word={w} progress={progress} onClick={() => onWordClick(w)} />
-          ))}
-        </div>
-      )}
 
-      {!filtered && (
-        <>
-          {/* Custom words */}
-          {customWords.length > 0 && (
-            <Section title="Your Added Words">
-              {customWords.map(w => (
-                <div key={w.es} className="flex items-center justify-between px-3 py-2 rounded-lg border mb-1 text-sm"
-                  style={{ background: 'hsl(var(--muted))', borderColor: 'hsl(var(--border))' }}>
-                  <span className="flex items-center gap-2">
-                    <MasteryDot es={w.es} progress={progress} />
-                    <strong>{w.es}</strong> = {w.en}
-                    <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>{w.type}</span>
-                  </span>
-                  <button data-testid={`delete-word-${w.es}`} onClick={() => onDeleteWord(w.es)}
-                    className="p-1 rounded transition-colors hover:text-red-500" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                    <Trash2 size={13} />
-                  </button>
-                </div>
-              ))}
-            </Section>
+          {word.sentence && (
+            <div className="px-6 py-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+              <div className="text-xs font-bold uppercase tracking-wider mb-2"
+                style={{ color: 'hsl(var(--muted-foreground))' }}>
+                Example
+              </div>
+              <p className="font-semibold text-base mb-1" style={{ color: 'hsl(var(--foreground))' }}>
+                {word.sentence.es}
+              </p>
+              <p className="text-sm italic mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                {word.sentence.en}
+              </p>
+              <button data-testid="word-detail-sentence-speak"
+                onClick={() => speak(word.sentence.es, 'es')}
+                className="w-full py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border-2 transition-all hover:-translate-y-0.5"
+                style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--primary))', color: 'hsl(var(--primary))' }}>
+                <Volume2 size={14} /> Hear example sentence
+              </button>
+            </div>
           )}
 
-          {/* Verbs */}
-          <Section title="Verbs & Conjugations">
-            {VERB_TABLE.map(v => (
-              <div key={v.inf} className="rounded-xl border p-3 mb-2" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-                <div className="flex items-center gap-2 mb-2 cursor-pointer" onClick={() => onWordClick(words.find(w => w.es === v.inf) || { es: v.inf, en: v.en, type: 'verb' })}>
-                  <MasteryDot es={v.inf} progress={progress} />
-                  <span className="font-bold text-sm">{v.inf}</span>
-                  <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>= {v.en}</span>
-                </div>
-                {v.conj.map(c => (
-                  <div key={c.es} className="flex items-center gap-2 text-xs pl-2 mb-1">
-                    <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: 'hsl(var(--muted-foreground))' }} />
-                    <span className="font-medium w-16" style={{ color: 'hsl(var(--muted-foreground))' }}>{c.subj}</span>
-                    <MasteryDot es={c.es} progress={progress} />
-                    <span className="font-bold">{c.es}</span>
-                    <span style={{ color: 'hsl(var(--muted-foreground))' }}>= {c.en}</span>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </Section>
-
-          {/* Noun groups */}
-          {NOUN_GROUPS.map(g => (
-            <Section key={g.title} title={g.title}>
-              <div className="grid grid-cols-2 gap-1.5">
-                {g.words.map(w => (
-                  <div key={w.es} onClick={() => onWordClick(words.find(x => x.es === w.es) || w)}
-                    className="flex items-center gap-2 rounded-lg border p-2 cursor-pointer hover:bg-muted/50 transition-colors"
-                    style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-                    <MasteryDot es={w.es} progress={progress} />
-                    {w.g && <span className="text-xs font-bold" style={{ color: 'hsl(var(--muted-foreground))' }}>{w.g === 'm' ? 'el' : 'la'}</span>}
-                    <span className="text-xs font-bold flex-1">{w.es}</span>
-                    <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>{w.en}</span>
-                  </div>
-                ))}
-              </div>
-            </Section>
-          ))}
-
-          {/* Phrases */}
-          <Section title="Phrases">
-            {phrases.map(w => (
-              <WordRow key={w.es} word={w} progress={progress} onClick={() => onWordClick(w)} />
-            ))}
-          </Section>
-
-          {/* Other words */}
-          <Section title="Other Words">
-            <div className="flex flex-wrap gap-1.5">
-              {others.map(w => (
-                <div key={w.es} onClick={() => onWordClick(w)}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border cursor-pointer transition-colors hover:bg-muted/50 text-xs"
-                  style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-                  <MasteryDot es={w.es} progress={progress} />
-                  <span className="font-bold">{w.es}</span>
-                  <span style={{ color: 'hsl(var(--muted-foreground))' }}>{w.en}</span>
-                </div>
-              ))}
+          <div className="px-6 py-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+            <div className="text-xs font-bold uppercase tracking-wider mb-2"
+              style={{ color: 'hsl(var(--muted-foreground))' }}>
+              Pronunciation practice
             </div>
-          </Section>
-        </>
-      )}
+            {SR ? (
+              <>
+                <button data-testid="word-detail-pron-btn" onClick={startPronCheck} disabled={listening}
+                  className="w-full py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border-2 transition-all"
+                  style={{
+                    background: listening ? '#FEE2E2' : 'hsl(var(--card))',
+                    borderColor: listening ? '#FCA5A5' : 'hsl(var(--primary))',
+                    color: listening ? '#991B1B' : 'hsl(var(--primary))',
+                  }}>
+                  {listening
+                    ? <><MicOff size={14} /> Listening…</>
+                    : <><Mic size={14} /> Try saying "{word.es}"</>}
+                </button>
+                {pronCheck && (
+                  <div className="mt-2 p-2.5 rounded-lg text-xs" data-testid="pron-result"
+                    style={{
+                      background: pronCheck.ok ? '#DCFCE7' : '#FEE2E2',
+                      color: pronCheck.ok ? '#14532D' : '#991B1B',
+                    }}>
+                    <strong>{pronCheck.ok ? 'Well said!' : 'Try again'}</strong> — heard: <em>"{pronCheck.heard}"</em>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="text-xs italic" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                Pronunciation practice not supported in this browser. Try Chrome or Edge.
+              </div>
+            )}
+          </div>
+
+          <div className="px-6 py-4 border-t pb-8" style={{ borderColor: 'hsl(var(--border))' }}>
+            <div className="text-xs font-bold uppercase tracking-wider mb-3"
+              style={{ color: 'hsl(var(--muted-foreground))' }}>
+              Your progress
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <Stat label="Correct" value={p.c || 0} color="#16A34A" icon={<CheckCircle2 size={12} />} />
+              <Stat label="Wrong" value={p.w || 0} color="#DC2626" />
+              <Stat label="Accuracy" value={`${acc}%`} color="#D97706" />
+            </div>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
 
-function Section({ title, children }) {
+function Stat({ label, value, color, icon }) {
   return (
-    <div className="mb-4">
-      <div className="text-xs font-bold uppercase tracking-wider mb-2 pb-1 border-b"
-        style={{ color: 'hsl(var(--muted-foreground))', borderColor: 'hsl(var(--border))' }}>
-        {title}
+    <div className="rounded-xl py-3 text-center" style={{ background: 'hsl(var(--muted))' }}>
+      <div className="text-xl font-black tabular-nums flex items-center justify-center gap-1" style={{ color }}>
+        {icon} {value}
       </div>
-      {children}
-    </div>
-  );
-}
-
-function WordRow({ word, progress, onClick }) {
-  return (
-    <div onClick={onClick} className="flex items-center gap-2 px-3 py-2 rounded-lg border mb-1 cursor-pointer transition-colors hover:bg-muted/50 text-sm"
-      style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-      <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: dotColor(masteryLevel(progress, word.es)) }} />
-      {word.gender && <span className="text-xs font-bold" style={{ color: 'hsl(var(--muted-foreground))' }}>{word.gender === 'm' ? 'el' : 'la'}</span>}
-      <span className="font-bold">{word.es}</span>
-      <span className="flex-1" style={{ color: 'hsl(var(--muted-foreground))' }}>{word.en}</span>
-      <ChevronRight size={12} style={{ color: 'hsl(var(--muted-foreground))' }} />
+      <div className="text-xs mt-0.5" style={{ color: 'hsl(var(--muted-foreground))' }}>{label}</div>
     </div>
   );
 }
