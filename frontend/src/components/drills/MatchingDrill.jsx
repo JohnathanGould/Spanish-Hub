@@ -64,18 +64,18 @@ export default function MatchingDrill({ words, progress, onAnswer, onDone, onBac
   }
 
   const tileClass = (id, side) => {
-    if (matched.has(id)) return 'match-btn matched';
-    if (wrongFlash && ((side === 'es' && wrongFlash.es === id) || (side === 'en' && wrongFlash.en === id))) return 'match-btn wrong-flash';
-    if (side === 'es' && selectedEs === id) return 'match-btn selected';
-    if (side === 'en' && selectedEn === id) return 'match-btn selected';
-    return 'match-btn';
+    if (matched.has(id)) return 'match-btn w-full matched';
+    if (wrongFlash && ((side === 'es' && wrongFlash.es === id) || (side === 'en' && wrongFlash.en === id))) return 'match-btn w-full wrong-flash';
+    if (side === 'es' && selectedEs === id) return 'match-btn w-full selected';
+    if (side === 'en' && selectedEn === id) return 'match-btn w-full selected';
+    return 'match-btn w-full';
   };
 
   return (
     <DrillShell title="Matching Game" subtitle="Tap a Spanish word, then its English match"
       current={matched.size} total={pairs.length} onBack={onBack}>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
+      <div className="grid grid-cols-2 gap-3 items-start">
+        <div className="flex flex-col gap-2">
           {esTiles.map(t => (
             <button key={t.id} data-testid={`match-es-${t.id}`}
               disabled={matched.has(t.id) || finished} onClick={() => setSelectedEs(t.id)}
@@ -84,7 +84,7 @@ export default function MatchingDrill({ words, progress, onAnswer, onDone, onBac
             </button>
           ))}
         </div>
-        <div className="space-y-2">
+        <div className="flex flex-col gap-2">
           {enTiles.map(t => (
             <button key={t.id + '-en'} data-testid={`match-en-${t.id}`}
               disabled={matched.has(t.id) || finished} onClick={() => setSelectedEn(t.id)}
