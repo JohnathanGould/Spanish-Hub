@@ -115,6 +115,13 @@ export default function SpanishHub() {
   const [showCertificate, setShowCertificate] = useState(false);
   const [showSharedPacks, setShowSharedPacks] = useState(false);
   const saveTimerRef = useRef(null);
+  const contentRef = useRef(null);
+
+  // Scroll to top and open word detail
+  const handleWordClick = useCallback((word) => {
+    contentRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+    setSelectedWord(word);
+  }, []);
 
   useEffect(() => {
     initVoice();
@@ -261,9 +268,9 @@ export default function SpanishHub() {
     setView({ page: 'done', drillId: dailyKind ? `daily-${dailyKind}` : drillId, correct, total });
     if (drillId !== 'flashcard') {
       setTimeout(() => {
-  confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
-  playConfetti();
-}, 300);
+        confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
+        playConfetti();
+      }, 300);
     }
   }, [user, isGuest, view.dailyKind, view.xpMultiplier]);
 
@@ -326,7 +333,7 @@ export default function SpanishHub() {
     const custom = (userData.customWords || []).filter(w => !masterSet.has(w.es));
     const all = [...filtered, ...custom];
     if (drillMode === 'weak') return all.filter(w => masteryLevel(userData.progress, w.es) !== 'mastered');
-        return all;
+    return all;
   }, [userData, drillMode, view]);
 
   const addCustomWord = useCallback((wordData) => {
@@ -506,7 +513,7 @@ export default function SpanishHub() {
               style={{ scrollSnapAlign: 'start', flexShrink: 0 }}>{label}</button>
           ))}
         </div>
-        <div className="px-4 pb-16">
+        <div ref={contentRef} className="px-4 pb-16">
           {tab === 'drills' && (
             <>
               <DailyChallenge challenges={userData.dailyChallenges} onStart={startDailyChallenge} />
@@ -527,7 +534,8 @@ export default function SpanishHub() {
               customWords={userData.customWords || []}
               searchQuery={searchQuery} setSearchQuery={setSearchQuery}
               onAddWord={addCustomWord} onDeleteWord={deleteCustomWord}
-              onWordClick={setSelectedWord} onCategoryClick={() => setShowCategoryModal(true)}
+              onWordClick={handleWordClick}
+              onCategoryClick={() => setShowCategoryModal(true)}
               onSharedPacksClick={() => setShowSharedPacks(true)}
               categoryEnabled={userData.categoryEnabled}
             />
