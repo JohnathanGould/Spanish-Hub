@@ -51,20 +51,15 @@ export default function WordDetail({ word, progress, onClose }) {
 
   return (
     <div data-testid="word-detail-modal" onClick={onClose}
-      className="fixed inset-0 z-50 flex items-end justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: 'rgba(0,0,0,0.55)' }}>
       <motion.div
-        initial={{ y: '100%' }}
-        animate={{ y: 0 }}
+        initial={{ scale: 0.92, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         onClick={e => e.stopPropagation()}
-        className="rounded-t-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col"
+        className="rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col"
         style={{ background: 'hsl(var(--card))', maxHeight: '85vh' }}>
-
-        {/* Drag handle */}
-        <div className="flex justify-center pt-3 pb-1 flex-shrink-0">
-          <div className="w-10 h-1 rounded-full" style={{ background: 'hsl(var(--border))' }} />
-        </div>
 
         <div className="overflow-y-auto">
           <div className="p-6 pb-4 relative" style={{ background: 'linear-gradient(135deg, hsl(var(--primary)/0.08), hsl(47 91% 53% / 0.12))' }}>
