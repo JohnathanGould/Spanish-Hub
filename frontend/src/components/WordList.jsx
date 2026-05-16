@@ -10,11 +10,10 @@ const TYPE_LABELS = {
 };
 
 export default function WordDetail({ word, progress, onClose }) {
-  if (!word) return null;
   const p = progress || { c: 0, w: 0, s: 0 };
   const total = (p.c || 0) + (p.w || 0);
   const acc = total > 0 ? Math.round((p.c / total) * 100) : 0;
-  const article = word.gender === 'm' ? 'el ' : word.gender === 'f' ? 'la ' : '';
+  const article = word?.gender === 'm' ? 'el ' : word?.gender === 'f' ? 'la ' : '';
 
   const [pronCheck, setPronCheck] = useState(null);
   const [listening, setListening] = useState(false);
@@ -27,6 +26,8 @@ export default function WordDetail({ word, progress, onClose }) {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
     return () => { document.body.style.overflow = ''; };
   }, [word]);
+
+  if (!word) return null;
 
   const startPronCheck = () => {
     if (!SR) return;
