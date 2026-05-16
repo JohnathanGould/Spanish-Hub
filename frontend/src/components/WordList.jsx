@@ -10,6 +10,7 @@ const TYPE_LABELS = {
 };
 
 export default function WordDetail({ word, progress, onClose }) {
+  if (!word) return null;
   const p = progress || { c: 0, w: 0, s: 0 };
   const total = (p.c || 0) + (p.w || 0);
   const acc = total > 0 ? Math.round((p.c / total) * 100) : 0;
