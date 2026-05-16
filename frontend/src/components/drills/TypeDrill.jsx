@@ -61,9 +61,9 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
     const tgt = stripAccents(target.toLowerCase());
     const dist = levenshtein(ans, tgt);
 
-    // Relaxed mode: 2 errors allowed for 6+ letter words, exact for shorter
+    // Relaxed mode: 1 error for 4-5 letter words, 2 errors for 6+ letter words, exact for shorter
     // Strict mode: exact consonant/vowel spelling required (accents still ignored)
-    const allowedErrors = strictMode ? 0 : tgt.length >= 6 ? 2 : 0;
+    const allowedErrors = strictMode ? 0 : tgt.length >= 6 ? 2 : tgt.length >= 4 ? 1 : 0;
     const ok = dist <= allowedErrors;
     const closeEnough = !strictMode && dist > 0 && dist <= allowedErrors;
 
