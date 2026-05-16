@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X, Volume2, CheckCircle2, Mic, MicOff } from 'lucide-react';
 import { speak, levenshtein } from '../utils/helpers';
@@ -18,6 +18,16 @@ export default function WordDetail({ word, progress, onClose }) {
   const [pronCheck, setPronCheck] = useState(null);
   const [listening, setListening] = useState(false);
   const SR = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
+
+  // Lock app-container scroll when modal is open
+  useEffect(() => {
+    const el = document.querySelector('.app-container');
+    if (el) {
+      const prev = el.style.overflow;
+      el.style.overflow = 'hidden';
+      return () => { el.style.overflow = prev; };
+    }
+  }, []);
 
   const startPronCheck = () => {
     if (!SR) return;
