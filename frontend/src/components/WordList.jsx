@@ -17,15 +17,7 @@ export default function WordDetail({ word, progress, onClose }) {
 
   const [pronCheck, setPronCheck] = useState(null);
   const [listening, setListening] = useState(false);
-  const scrollRef = React.useRef(null);
   const SR = typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition);
-
-  // Lock body scroll and scroll sheet content to top on open
-  React.useEffect(() => {
-    document.body.style.overflow = 'hidden';
-    if (scrollRef.current) scrollRef.current.scrollTop = 0;
-    return () => { document.body.style.overflow = ''; };
-  }, [word]);
 
   if (!word) return null;
 
@@ -67,7 +59,7 @@ export default function WordDetail({ word, progress, onClose }) {
           <div className="w-10 h-1 rounded-full" style={{ background: 'hsl(var(--border))' }} />
         </div>
 
-        <div ref={scrollRef} className="overflow-y-auto flex-1">
+        <div className="overflow-y-auto flex-1">
           <div className="p-6 pb-4 relative"
             style={{ background: 'linear-gradient(135deg, hsl(var(--primary)/0.08), hsl(47 91% 53% / 0.12))' }}>
             <button data-testid="word-detail-close" onClick={onClose}
