@@ -50,6 +50,19 @@ async function syncLeaderboard(user, data) {
   } catch (e) { console.error('LB sync error', e); }
 }
 
+// Default shape for each word's progress entry.
+// Used when a word is first encountered. FSRS fields included.
+const DEFAULT_WORD_PROGRESS = {
+  c: 0,
+  w: 0,
+  s: 0,
+  outputCorrect: 0,
+  stability: 0,
+  difficulty: 0,
+  due: new Date().toISOString(),
+  lastReview: null,
+};
+
 const DEFAULT_DATA = {
   displayName: '',
   photoURL: null,
@@ -68,8 +81,6 @@ const DEFAULT_DATA = {
   friends: [],
   reminderEnabled: false,
   bones: 0,
-  treats: 0,
-  stars: 0,
   completedPaths: [],
   completedStops: [],
   audioListenEnabled: true,
