@@ -314,7 +314,138 @@ export const MASTER = [
   { es: 'sombrero', en: 'hat', type: 'noun', group: 'Clothing', gender: 'm', sentence: { es: 'Lleva un sombrero negro.', en: 'He wears a black hat.' }, contextSentence: "Lleva un sombrero negro.", imageUrl: "", theme: "clothing" },
   { es: 'abrigo', en: 'coat', type: 'noun', group: 'Clothing', gender: 'm', sentence: { es: 'Necesitas un abrigo, hace frío.', en: "You need a coat, it's cold." }, contextSentence: "Necesitas un abrigo, hace frío.", imageUrl: "", theme: "clothing" },
   { es: 'bolso', en: 'bag / purse', type: 'noun', group: 'Clothing', gender: 'm', sentence: { es: 'Mi bolso es grande.', en: 'My bag is big.' }, contextSentence: "Mi bolso es grande.", imageUrl: "", theme: "clothing" },
-  { es: 'reloj', en: 'watch / clock', type: 'noun', group: 'Clothing', gender: 'm', sentence: { es: 'Mi reloj es de oro.', en: 'My watch is gold.' }, contextSentence: "Mi reloj es de oro.", imageUrl: "", theme: "clothing" },
+   { es: 'reloj', en: 'watch / clock', type: 'noun', group: 'Clothing', gender: 'm', sentence: { es: 'Mi reloj es de oro.', en: 'My watch is gold.' }, contextSentence: "Mi reloj es de oro.", imageUrl: "", theme: "clothing" },
+
+  // --- saber (to know a fact) — irregular yo ---
+  { es: 'sé', en: 'i know', type: 'verb', group: 'Core', sentence: { es: 'No sé dónde está mi pasaporte.', en: "I don't know where my passport is." }, contextSentence: "No sé dónde está mi pasaporte.", imageUrl: "", theme: "descriptions" },
+  { es: 'sabes', en: 'you know', type: 'verb', group: 'Core', sentence: { es: '¿Sabes hablar español bien?', en: 'Do you know how to speak Spanish well?' }, contextSentence: "¿Sabes hablar español bien?", imageUrl: "", theme: "descriptions" },
+  { es: 'sabe', en: 'he/she knows', type: 'verb', group: 'Core', sentence: { es: 'Ella sabe cocinar muy bien.', en: 'She knows how to cook very well.' }, contextSentence: "Ella sabe cocinar muy bien.", imageUrl: "", theme: "descriptions" },
+  { es: 'sabemos', en: 'we know', type: 'verb', group: 'Core', sentence: { es: 'Sabemos que el restaurante está cerca.', en: 'We know that the restaurant is near.' }, contextSentence: "Sabemos que el restaurante está cerca.", imageUrl: "", theme: "descriptions" },
+  { es: 'saben', en: 'they know', type: 'verb', group: 'Core', sentence: { es: 'Mis padres no saben usar el teléfono.', en: "My parents don't know how to use the phone." }, contextSentence: "Mis padres no saben usar el teléfono.", imageUrl: "", theme: "descriptions" },
+
+  // --- leer (to read) — regular -er ---
+  { es: 'leo', en: 'i read', type: 'verb', group: 'Core', sentence: { es: 'Leo un libro cada noche.', en: 'I read a book every night.' }, contextSentence: "Leo un libro cada noche.", imageUrl: "", theme: "descriptions" },
+  { es: 'lees', en: 'you read', type: 'verb', group: 'Core', sentence: { es: '¿Lees mucho en español?', en: 'Do you read a lot in Spanish?' }, contextSentence: "¿Lees mucho en español?", imageUrl: "", theme: "descriptions" },
+  { es: 'lee', en: 'he/she reads', type: 'verb', group: 'Core', sentence: { es: 'Mi hija lee muy bien.', en: 'My daughter reads very well.' }, contextSentence: "Mi hija lee muy bien.", imageUrl: "", theme: "descriptions" },
+  { es: 'leemos', en: 'we read', type: 'verb', group: 'Core', sentence: { es: 'Leemos el menú en español.', en: 'We read the menu in Spanish.' }, contextSentence: "Leemos el menú en español.", imageUrl: "", theme: "restaurant" },
+  { es: 'leen', en: 'they read', type: 'verb', group: 'Core', sentence: { es: 'Los niños leen en la escuela.', en: 'The children read at school.' }, contextSentence: "Los niños leen en la escuela.", imageUrl: "", theme: "descriptions" },
+
+  // --- salir (to leave / go out) — irregular yo ---
+  { es: 'salgo', en: 'i leave', type: 'verb', group: 'Core', sentence: { es: 'Salgo del trabajo a las cinco.', en: 'I leave work at five.' }, contextSentence: "Salgo del trabajo a las cinco.", imageUrl: "", theme: "descriptions" },
+  { es: 'sales', en: 'you leave', type: 'verb', group: 'Core', sentence: { es: '¿Sales esta noche con tus amigos?', en: 'Are you going out tonight with your friends?' }, contextSentence: "¿Sales esta noche con tus amigos?", imageUrl: "", theme: "descriptions" },
+  { es: 'sale', en: 'he/she leaves', type: 'verb', group: 'Core', sentence: { es: 'El avión sale a las ocho.', en: 'The plane leaves at eight.' }, contextSentence: "El avión sale a las ocho.", imageUrl: "", theme: "travel" },
+  { es: 'salimos', en: 'we leave', type: 'verb', group: 'Core', sentence: { es: 'Salimos del hotel muy temprano.', en: 'We leave the hotel very early.' }, contextSentence: "Salimos del hotel muy temprano.", imageUrl: "", theme: "travel" },
+  { es: 'salen', en: 'they leave', type: 'verb', group: 'Core', sentence: { es: 'Los estudiantes salen de la escuela.', en: 'The students leave school.' }, contextSentence: "Los estudiantes salen de la escuela.", imageUrl: "", theme: "descriptions" },
+
+  // --- escribir (to write) — regular -ir ---
+  { es: 'escribo', en: 'i write', type: 'verb', group: 'Core', sentence: { es: 'Escribo un email cada mañana.', en: 'I write an email every morning.' }, contextSentence: "Escribo un email cada mañana.", imageUrl: "", theme: "descriptions" },
+  { es: 'escribes', en: 'you write', type: 'verb', group: 'Core', sentence: { es: '¿Escribes bien en español?', en: 'Do you write well in Spanish?' }, contextSentence: "¿Escribes bien en español?", imageUrl: "", theme: "descriptions" },
+  { es: 'escribe', en: 'he/she writes', type: 'verb', group: 'Core', sentence: { es: 'Ella escribe cartas a su familia.', en: 'She writes letters to her family.' }, contextSentence: "Ella escribe cartas a su familia.", imageUrl: "", theme: "family" },
+  { es: 'escribimos', en: 'we write', type: 'verb', group: 'Core', sentence: { es: 'Escribimos la tarea en clase.', en: 'We write the homework in class.' }, contextSentence: "Escribimos la tarea en clase.", imageUrl: "", theme: "descriptions" },
+  { es: 'escriben', en: 'they write', type: 'verb', group: 'Core', sentence: { es: 'Los alumnos escriben en sus cuadernos.', en: 'The students write in their notebooks.' }, contextSentence: "Los alumnos escriben en sus cuadernos.", imageUrl: "", theme: "descriptions" },
+
+  // --- decir (to say) — irregular yo + stem change e→i ---
+  { es: 'digo', en: 'i say', type: 'verb', group: 'Core', sentence: { es: 'Siempre digo la verdad.', en: 'I always tell the truth.' }, contextSentence: "Siempre digo la verdad.", imageUrl: "", theme: "descriptions" },
+  { es: 'dices', en: 'you say', type: 'verb', group: 'Core', sentence: { es: '¿Qué dices? No entiendo.', en: "What are you saying? I don't understand." }, contextSentence: "¿Qué dices? No entiendo.", imageUrl: "", theme: "descriptions" },
+  { es: 'dice', en: 'he/she says', type: 'verb', group: 'Core', sentence: { es: 'Mi madre dice que es importante.', en: 'My mother says it is important.' }, contextSentence: "Mi madre dice que es importante.", imageUrl: "", theme: "family" },
+  { es: 'decimos', en: 'we say', type: 'verb', group: 'Core', sentence: { es: 'Decimos buenas noches antes de dormir.', en: 'We say good night before sleeping.' }, contextSentence: "Decimos buenas noches antes de dormir.", imageUrl: "", theme: "greetings" },
+  { es: 'dicen', en: 'they say', type: 'verb', group: 'Core', sentence: { es: 'Ellos dicen que el restaurante es bueno.', en: 'They say the restaurant is good.' }, contextSentence: "Ellos dicen que el restaurante es bueno.", imageUrl: "", theme: "restaurant" },
+
+  // --- dormir (to sleep) — stem-changing o→ue, except nosotros ---
+  { es: 'duermo', en: 'i sleep', type: 'verb', group: 'Core', sentence: { es: 'Duermo ocho horas cada noche.', en: 'I sleep eight hours every night.' }, contextSentence: "Duermo ocho horas cada noche.", imageUrl: "", theme: "health" },
+  { es: 'duermes', en: 'you sleep', type: 'verb', group: 'Core', sentence: { es: '¿Cuántas horas duermes por noche?', en: 'How many hours do you sleep per night?' }, contextSentence: "¿Cuántas horas duermes por noche?", imageUrl: "", theme: "health" },
+  { es: 'duerme', en: 'he/she sleeps', type: 'verb', group: 'Core', sentence: { es: 'El bebé duerme en su cama.', en: 'The baby sleeps in his bed.' }, contextSentence: "El bebé duerme en su cama.", imageUrl: "", theme: "health" },
+  { es: 'dormimos', en: 'we sleep', type: 'verb', group: 'Core', sentence: { es: 'Dormimos bien en el hotel.', en: 'We sleep well at the hotel.' }, contextSentence: "Dormimos bien en el hotel.", imageUrl: "", theme: "travel" },
+  { es: 'duermen', en: 'they sleep', type: 'verb', group: 'Core', sentence: { es: 'Los niños duermen temprano los domingos.', en: 'The children sleep early on Sundays.' }, contextSentence: "Los niños duermen temprano los domingos.", imageUrl: "", theme: "health" },
+
+  // --- venir (to come) — irregular yo + stem change e→ie, except nosotros ---
+  { es: 'vengo', en: 'i come', type: 'verb', group: 'Core', sentence: { es: 'Vengo al trabajo en autobús.', en: 'I come to work by bus.' }, contextSentence: "Vengo al trabajo en autobús.", imageUrl: "", theme: "travel" },
+  { es: 'vienes', en: 'you come', type: 'verb', group: 'Core', sentence: { es: '¿Vienes a la fiesta mañana?', en: 'Are you coming to the party tomorrow?' }, contextSentence: "¿Vienes a la fiesta mañana?", imageUrl: "", theme: "descriptions" },
+  { es: 'viene', en: 'he/she comes', type: 'verb', group: 'Core', sentence: { es: 'Mi amigo viene a visitarme mañana.', en: 'My friend is coming to visit me tomorrow.' }, contextSentence: "Mi amigo viene a visitarme mañana.", imageUrl: "", theme: "family" },
+  { es: 'venimos', en: 'we come', type: 'verb', group: 'Core', sentence: { es: 'Venimos de España en avión.', en: 'We come from Spain by plane.' }, contextSentence: "Venimos de España en avión.", imageUrl: "", theme: "travel" },
+  { es: 'vienen', en: 'they come', type: 'verb', group: 'Core', sentence: { es: 'Mis padres vienen a cenar esta noche.', en: 'My parents are coming for dinner tonight.' }, contextSentence: "Mis padres vienen a cenar esta noche.", imageUrl: "", theme: "family" },
+
+  // --- vivir (to live) — regular -ir ---
+  { es: 'vivo', en: 'i live', type: 'verb', group: 'Core', sentence: { es: 'Vivo en una ciudad grande.', en: 'I live in a big city.' }, contextSentence: "Vivo en una ciudad grande.", imageUrl: "", theme: "home" },
+  { es: 'vives', en: 'you live', type: 'verb', group: 'Core', sentence: { es: '¿Vives cerca del centro?', en: 'Do you live near the centre?' }, contextSentence: "¿Vives cerca del centro?", imageUrl: "", theme: "home" },
+  { es: 'vive', en: 'he/she lives', type: 'verb', group: 'Core', sentence: { es: 'Mi hermana vive en México.', en: 'My sister lives in Mexico.' }, contextSentence: "Mi hermana vive en México.", imageUrl: "", theme: "family" },
+  { es: 'vivimos', en: 'we live', type: 'verb', group: 'Core', sentence: { es: 'Vivimos en una casa pequeña.', en: 'We live in a small house.' }, contextSentence: "Vivimos en una casa pequeña.", imageUrl: "", theme: "home" },
+  { es: 'viven', en: 'they live', type: 'verb', group: 'Core', sentence: { es: 'Mis abuelos viven en el campo.', en: 'My grandparents live in the countryside.' }, contextSentence: "Mis abuelos viven en el campo.", imageUrl: "", theme: "family" },
+
+  // --- llevar (to carry / wear) — regular -ar ---
+  { es: 'llevo', en: 'i carry / wear', type: 'verb', group: 'Core', sentence: { es: 'Llevo una camisa azul hoy.', en: 'I am wearing a blue shirt today.' }, contextSentence: "Llevo una camisa azul hoy.", imageUrl: "", theme: "clothing" },
+  { es: 'llevas', en: 'you carry / wear', type: 'verb', group: 'Core', sentence: { es: '¿Llevas mucho equipaje en el viaje?', en: 'Do you carry a lot of luggage on the trip?' }, contextSentence: "¿Llevas mucho equipaje en el viaje?", imageUrl: "", theme: "travel" },
+  { es: 'lleva', en: 'he/she carries / wears', type: 'verb', group: 'Core', sentence: { es: 'Él lleva su maleta al aeropuerto.', en: 'He carries his suitcase to the airport.' }, contextSentence: "Él lleva su maleta al aeropuerto.", imageUrl: "", theme: "travel" },
+  { es: 'llevamos', en: 'we carry / wear', type: 'verb', group: 'Core', sentence: { es: 'Llevamos el equipaje al hotel.', en: 'We carry the luggage to the hotel.' }, contextSentence: "Llevamos el equipaje al hotel.", imageUrl: "", theme: "travel" },
+  { es: 'llevan', en: 'they carry / wear', type: 'verb', group: 'Core', sentence: { es: 'Los turistas llevan mucho equipaje.', en: 'The tourists carry a lot of luggage.' }, contextSentence: "Los turistas llevan mucho equipaje.", imageUrl: "", theme: "travel" },
+
+  // --- llegar (to arrive) — regular -ar ---
+  { es: 'llego', en: 'i arrive', type: 'verb', group: 'Core', sentence: { es: 'Llego al trabajo a las nueve.', en: 'I arrive at work at nine.' }, contextSentence: "Llego al trabajo a las nueve.", imageUrl: "", theme: "descriptions" },
+  { es: 'llegas', en: 'you arrive', type: 'verb', group: 'Core', sentence: { es: '¿A qué hora llegas a casa?', en: 'What time do you arrive home?' }, contextSentence: "¿A qué hora llegas a casa?", imageUrl: "", theme: "home" },
+  { es: 'llega', en: 'he/she arrives', type: 'verb', group: 'Core', sentence: { es: 'El tren llega a las tres.', en: 'The train arrives at three.' }, contextSentence: "El tren llega a las tres.", imageUrl: "", theme: "travel" },
+  { es: 'llegamos', en: 'we arrive', type: 'verb', group: 'Core', sentence: { es: 'Llegamos al hotel muy tarde.', en: 'We arrive at the hotel very late.' }, contextSentence: "Llegamos al hotel muy tarde.", imageUrl: "", theme: "travel" },
+  { es: 'llegan', en: 'they arrive', type: 'verb', group: 'Core', sentence: { es: 'Los turistas llegan en autobús.', en: 'The tourists arrive by bus.' }, contextSentence: "Los turistas llegan en autobús.", imageUrl: "", theme: "travel" },
+
+  // --- escuchar (to listen) — regular -ar ---
+  { es: 'escucho', en: 'i listen', type: 'verb', group: 'Core', sentence: { es: 'Escucho música cuando camino.', en: 'I listen to music when I walk.' }, contextSentence: "Escucho música cuando camino.", imageUrl: "", theme: "descriptions" },
+  { es: 'escuchas', en: 'you listen', type: 'verb', group: 'Core', sentence: { es: '¿Escuchas música en español?', en: 'Do you listen to music in Spanish?' }, contextSentence: "¿Escuchas música en español?", imageUrl: "", theme: "descriptions" },
+  { es: 'escucha', en: 'he/she listens', type: 'verb', group: 'Core', sentence: { es: 'Él escucha la radio en el carro.', en: 'He listens to the radio in the car.' }, contextSentence: "Él escucha la radio en el carro.", imageUrl: "", theme: "travel" },
+  { es: 'escuchamos', en: 'we listen', type: 'verb', group: 'Core', sentence: { es: 'Escuchamos al profesor con atención.', en: 'We listen to the teacher carefully.' }, contextSentence: "Escuchamos al profesor con atención.", imageUrl: "", theme: "descriptions" },
+  { es: 'escuchan', en: 'they listen', type: 'verb', group: 'Core', sentence: { es: 'Los estudiantes escuchan en clase.', en: 'The students listen in class.' }, contextSentence: "Los estudiantes escuchan en clase.", imageUrl: "", theme: "descriptions" },
+
+  // --- ayudar (to help) — regular -ar ---
+  { es: 'ayudo', en: 'i help', type: 'verb', group: 'Core', sentence: { es: 'Ayudo a mi madre en casa.', en: 'I help my mother at home.' }, contextSentence: "Ayudo a mi madre en casa.", imageUrl: "", theme: "family" },
+  { es: 'ayudas', en: 'you help', type: 'verb', group: 'Core', sentence: { es: '¿Me ayudas con la maleta?', en: 'Can you help me with the suitcase?' }, contextSentence: "¿Me ayudas con la maleta?", imageUrl: "", theme: "travel" },
+  { es: 'ayuda', en: 'he/she helps', type: 'verb', group: 'Core', sentence: { es: 'Ella ayuda a los niños en la escuela.', en: 'She helps the children at school.' }, contextSentence: "Ella ayuda a los niños en la escuela.", imageUrl: "", theme: "family" },
+  { es: 'ayudamos', en: 'we help', type: 'verb', group: 'Core', sentence: { es: 'Ayudamos a los turistas en el aeropuerto.', en: 'We help the tourists at the airport.' }, contextSentence: "Ayudamos a los turistas en el aeropuerto.", imageUrl: "", theme: "travel" },
+  { es: 'ayudan', en: 'they help', type: 'verb', group: 'Core', sentence: { es: 'Los vecinos se ayudan entre sí.', en: 'The neighbours help each other.' }, contextSentence: "Los vecinos se ayudan entre sí.", imageUrl: "", theme: "descriptions" },
+
+  // --- esperar (to wait / hope) — regular -ar ---
+  { es: 'espero', en: 'i wait', type: 'verb', group: 'Core', sentence: { es: 'Espero el autobús cada mañana.', en: 'I wait for the bus every morning.' }, contextSentence: "Espero el autobús cada mañana.", imageUrl: "", theme: "travel" },
+  { es: 'esperas', en: 'you wait', type: 'verb', group: 'Core', sentence: { es: '¿Esperas a alguien en el aeropuerto?', en: 'Are you waiting for someone at the airport?' }, contextSentence: "¿Esperas a alguien en el aeropuerto?", imageUrl: "", theme: "travel" },
+  { es: 'espera', en: 'he/she waits', type: 'verb', group: 'Core', sentence: { es: 'Mi padre espera en el carro.', en: 'My father waits in the car.' }, contextSentence: "Mi padre espera en el carro.", imageUrl: "", theme: "family" },
+  { es: 'esperamos', en: 'we wait', type: 'verb', group: 'Core', sentence: { es: 'Esperamos el tren en la estación.', en: 'We wait for the train at the station.' }, contextSentence: "Esperamos el tren en la estación.", imageUrl: "", theme: "travel" },
+  { es: 'esperan', en: 'they wait', type: 'verb', group: 'Core', sentence: { es: 'Los pasajeros esperan en la sala.', en: 'The passengers wait in the lounge.' }, contextSentence: "Los pasajeros esperan en la sala.", imageUrl: "", theme: "travel" },
+
+  // --- trabajar (to work) — regular -ar ---
+  { es: 'trabajo', en: 'i work', type: 'verb', group: 'Core', sentence: { es: 'Trabajo en un banco en el centro.', en: 'I work at a bank in the centre.' }, contextSentence: "Trabajo en un banco en el centro.", imageUrl: "", theme: "shopping" },
+  { es: 'trabajas', en: 'you work', type: 'verb', group: 'Core', sentence: { es: '¿Trabajas los fines de semana?', en: 'Do you work on weekends?' }, contextSentence: "¿Trabajas los fines de semana?", imageUrl: "", theme: "descriptions" },
+  { es: 'trabaja', en: 'he/she works', type: 'verb', group: 'Core', sentence: { es: 'Mi padre trabaja muy duro cada día.', en: 'My father works very hard every day.' }, contextSentence: "Mi padre trabaja muy duro cada día.", imageUrl: "", theme: "family" },
+  { es: 'trabajamos', en: 'we work', type: 'verb', group: 'Core', sentence: { es: 'Trabajamos juntos en la misma oficina.', en: 'We work together in the same office.' }, contextSentence: "Trabajamos juntos en la misma oficina.", imageUrl: "", theme: "descriptions" },
+  { es: 'trabajan', en: 'they work', type: 'verb', group: 'Core', sentence: { es: 'Ellos trabajan de lunes a viernes.', en: 'They work from Monday to Friday.' }, contextSentence: "Ellos trabajan de lunes a viernes.", imageUrl: "", theme: "descriptions" },
+
+  // --- ver (to see / watch) — irregular ---
+  { es: 'veo', en: 'i see / watch', type: 'verb', group: 'Core', sentence: { es: 'Veo una película cada semana.', en: 'I watch a film every week.' }, contextSentence: "Veo una película cada semana.", imageUrl: "", theme: "descriptions" },
+  { es: 'ves', en: 'you see / watch', type: 'verb', group: 'Core', sentence: { es: '¿Ves la televisión por la noche?', en: 'Do you watch television at night?' }, contextSentence: "¿Ves la televisión por la noche?", imageUrl: "", theme: "descriptions" },
+  { es: 've', en: 'he/she sees / watches', type: 'verb', group: 'Core', sentence: { es: 'Ella ve el partido en casa.', en: 'She watches the match at home.' }, contextSentence: "Ella ve el partido en casa.", imageUrl: "", theme: "descriptions" },
+  { es: 'vemos', en: 'we see / watch', type: 'verb', group: 'Core', sentence: { es: 'Vemos una serie en español juntos.', en: 'We watch a series in Spanish together.' }, contextSentence: "Vemos una serie en español juntos.", imageUrl: "", theme: "descriptions" },
+  { es: 'ven', en: 'they see / watch', type: 'verb', group: 'Core', sentence: { es: 'Ellos ven las noticias cada noche.', en: 'They watch the news every night.' }, contextSentence: "Ellos ven las noticias cada noche.", imageUrl: "", theme: "descriptions" },
+
+  // --- caminar (to walk) — regular -ar ---
+  { es: 'camino', en: 'i walk', type: 'verb', group: 'Core', sentence: { es: 'Camino al trabajo cada mañana.', en: 'I walk to work every morning.' }, contextSentence: "Camino al trabajo cada mañana.", imageUrl: "", theme: "nature" },
+  { es: 'caminas', en: 'you walk', type: 'verb', group: 'Core', sentence: { es: '¿Caminas mucho durante el día?', en: 'Do you walk a lot during the day?' }, contextSentence: "¿Caminas mucho durante el día?", imageUrl: "", theme: "nature" },
+  { es: 'camina', en: 'he/she walks', type: 'verb', group: 'Core', sentence: { es: 'Mi abuela camina en el parque.', en: 'My grandmother walks in the park.' }, contextSentence: "Mi abuela camina en el parque.", imageUrl: "", theme: "nature" },
+  { es: 'caminamos', en: 'we walk', type: 'verb', group: 'Core', sentence: { es: 'Caminamos por la ciudad por la tarde.', en: 'We walk through the city in the afternoon.' }, contextSentence: "Caminamos por la ciudad por la tarde.", imageUrl: "", theme: "nature" },
+  { es: 'caminan', en: 'they walk', type: 'verb', group: 'Core', sentence: { es: 'Los turistas caminan por el centro.', en: 'The tourists walk through the centre.' }, contextSentence: "Los turistas caminan por el centro.", imageUrl: "", theme: "travel" },
+
+  // --- mirar (to watch / look at) — regular -ar ---
+  { es: 'miro', en: 'i watch / look at', type: 'verb', group: 'Core', sentence: { es: 'Miro la televisión después de cenar.', en: 'I watch television after dinner.' }, contextSentence: "Miro la televisión después de cenar.", imageUrl: "", theme: "descriptions" },
+  { es: 'miras', en: 'you watch / look at', type: 'verb', group: 'Core', sentence: { es: '¿Miras mucho fútbol en la televisión?', en: 'Do you watch a lot of football on television?' }, contextSentence: "¿Miras mucho fútbol en la televisión?", imageUrl: "", theme: "descriptions" },
+  { es: 'mira', en: 'he/she watches / looks at', type: 'verb', group: 'Core', sentence: { es: 'Ella mira las fotos en el teléfono.', en: 'She looks at the photos on her phone.' }, contextSentence: "Ella mira las fotos en el teléfono.", imageUrl: "", theme: "descriptions" },
+  { es: 'miramos', en: 'we watch / look at', type: 'verb', group: 'Core', sentence: { es: 'Miramos el mapa para encontrar el hotel.', en: 'We look at the map to find the hotel.' }, contextSentence: "Miramos el mapa para encontrar el hotel.", imageUrl: "", theme: "travel" },
+  { es: 'miran', en: 'they watch / look at', type: 'verb', group: 'Core', sentence: { es: 'Los niños miran la televisión en casa.', en: 'The children watch television at home.' }, contextSentence: "Los niños miran la televisión en casa.", imageUrl: "", theme: "descriptions" },
+
+  // --- comprar (to buy) — regular -ar ---
+  { es: 'compro', en: 'i buy', type: 'verb', group: 'Core', sentence: { es: 'Compro fruta en el mercado cada semana.', en: 'I buy fruit at the market every week.' }, contextSentence: "Compro fruta en el mercado cada semana.", imageUrl: "", theme: "shopping" },
+  { es: 'compras', en: 'you buy', type: 'verb', group: 'Core', sentence: { es: '¿Dónde compras la ropa normalmente?', en: 'Where do you normally buy clothes?' }, contextSentence: "¿Dónde compras la ropa normalmente?", imageUrl: "", theme: "shopping" },
+  { es: 'compra', en: 'he/she buys', type: 'verb', group: 'Core', sentence: { es: 'Mi madre compra el pan cada mañana.', en: 'My mother buys bread every morning.' }, contextSentence: "Mi madre compra el pan cada mañana.", imageUrl: "", theme: "shopping" },
+  { es: 'compramos', en: 'we buy', type: 'verb', group: 'Core', sentence: { es: 'Compramos los boletos en la tienda.', en: 'We buy the tickets at the store.' }, contextSentence: "Compramos los boletos en la tienda.", imageUrl: "", theme: "shopping" },
+  { es: 'compran', en: 'they buy', type: 'verb', group: 'Core', sentence: { es: 'Los turistas compran recuerdos en el mercado.', en: 'The tourists buy souvenirs at the market.' }, contextSentence: "Los turistas compran recuerdos en el mercado.", imageUrl: "", theme: "shopping" },
+  { es: 'día', en: 'day', type: 'noun', group: 'Time', gender: 'm', sentence: { es: 'Hoy es un día muy bonito.', en: 'Today is a very beautiful day.' }, contextSentence: "Hoy es un día muy soleado, perfecto para la playa.", imageUrl: "", theme: "time", path: 6, stop: 5 },
+  { es: 'noche', en: 'night', type: 'noun', group: 'Time', gender: 'f', sentence: { es: 'Esta noche vamos al restaurante.', en: 'Tonight we go to the restaurant.' }, contextSentence: "Esta noche vamos al restaurante a cenar.", imageUrl: "", theme: "time", path: 1, stop: 3 },
+  { es: 'amigo', en: 'friend (m)', type: 'noun', group: 'Core', gender: 'm', sentence: { es: 'Mi amigo habla español.', en: 'My friend speaks Spanish.' }, contextSentence: "El amigo de mi hijo habla español muy bien.", imageUrl: "", theme: "family", path: 3, stop: 4 },
+  { es: 'amiga', en: 'friend (f)', type: 'noun', group: 'Core', gender: 'f', sentence: { es: 'Mi amiga vive en México.', en: 'My friend lives in Mexico.' }, contextSentence: "La amiga de mi hija vive en México.", imageUrl: "", theme: "family", path: 3, stop: 4 },
+  { es: 'nombre', en: 'name', type: 'noun', group: 'Core', gender: 'm', sentence: { es: '¿Cómo te llamas? ¿Cuál es tu nombre?', en: 'What is your name?' }, contextSentence: "¿Cuál es tu nombre? Yo me llamo Ana.", imageUrl: "", theme: "greetings", path: 2, stop: 4 },
 ];
 
 // === VERB TABLE — Full 5-form Latin American conjugation (no vosotros) ===
@@ -330,12 +461,30 @@ export const VERB_TABLE = [
   { inf: 'querer', en: 'to want', conj: [{ subj: 'Yo', es: 'quiero', en: 'I want' }, { subj: 'Tú', es: 'quieres', en: 'You want' }, { subj: 'Él/Ella', es: 'quiere', en: 'He/She wants' }, { subj: 'Nosotros', es: 'queremos', en: 'We want' }, { subj: 'Ustedes/Ellos', es: 'quieren', en: 'You all/They want' }] },
   { inf: 'poder', en: 'can / to be able', conj: [{ subj: 'Yo', es: 'puedo', en: 'I can' }, { subj: 'Tú', es: 'puedes', en: 'You can' }, { subj: 'Él/Ella', es: 'puede', en: 'He/She can' }, { subj: 'Nosotros', es: 'podemos', en: 'We can' }, { subj: 'Ustedes/Ellos', es: 'pueden', en: 'You all/They can' }] },
   { inf: 'hacer', en: 'to do / make', conj: [{ subj: 'Yo', es: 'hago', en: 'I do/make' }, { subj: 'Tú', es: 'haces', en: 'You do/make' }, { subj: 'Él/Ella', es: 'hace', en: 'He/She does/makes' }, { subj: 'Nosotros', es: 'hacemos', en: 'We do/make' }, { subj: 'Ustedes/Ellos', es: 'hacen', en: 'You all/They do/make' }] },
+  { inf: 'saber', en: 'to know (a fact)', conj: [{ subj: 'Yo', es: 'sé', en: 'I know' }, { subj: 'Tú', es: 'sabes', en: 'You know' }, { subj: 'Él/Ella', es: 'sabe', en: 'He/She knows' }, { subj: 'Nosotros', es: 'sabemos', en: 'We know' }, { subj: 'Ustedes/Ellos', es: 'saben', en: 'You all/They know' }] },
+  { inf: 'leer', en: 'to read', conj: [{ subj: 'Yo', es: 'leo', en: 'I read' }, { subj: 'Tú', es: 'lees', en: 'You read' }, { subj: 'Él/Ella', es: 'lee', en: 'He/She reads' }, { subj: 'Nosotros', es: 'leemos', en: 'We read' }, { subj: 'Ustedes/Ellos', es: 'leen', en: 'You all/They read' }] },
+  { inf: 'salir', en: 'to leave / go out', conj: [{ subj: 'Yo', es: 'salgo', en: 'I leave' }, { subj: 'Tú', es: 'sales', en: 'You leave' }, { subj: 'Él/Ella', es: 'sale', en: 'He/She leaves' }, { subj: 'Nosotros', es: 'salimos', en: 'We leave' }, { subj: 'Ustedes/Ellos', es: 'salen', en: 'You all/They leave' }] },
+  { inf: 'escribir', en: 'to write', conj: [{ subj: 'Yo', es: 'escribo', en: 'I write' }, { subj: 'Tú', es: 'escribes', en: 'You write' }, { subj: 'Él/Ella', es: 'escribe', en: 'He/She writes' }, { subj: 'Nosotros', es: 'escribimos', en: 'We write' }, { subj: 'Ustedes/Ellos', es: 'escriben', en: 'You all/They write' }] },
+  { inf: 'decir', en: 'to say', conj: [{ subj: 'Yo', es: 'digo', en: 'I say' }, { subj: 'Tú', es: 'dices', en: 'You say' }, { subj: 'Él/Ella', es: 'dice', en: 'He/She says' }, { subj: 'Nosotros', es: 'decimos', en: 'We say' }, { subj: 'Ustedes/Ellos', es: 'dicen', en: 'You all/They say' }] },
+  { inf: 'dormir', en: 'to sleep', conj: [{ subj: 'Yo', es: 'duermo', en: 'I sleep' }, { subj: 'Tú', es: 'duermes', en: 'You sleep' }, { subj: 'Él/Ella', es: 'duerme', en: 'He/She sleeps' }, { subj: 'Nosotros', es: 'dormimos', en: 'We sleep' }, { subj: 'Ustedes/Ellos', es: 'duermen', en: 'You all/They sleep' }] },
+  { inf: 'venir', en: 'to come', conj: [{ subj: 'Yo', es: 'vengo', en: 'I come' }, { subj: 'Tú', es: 'vienes', en: 'You come' }, { subj: 'Él/Ella', es: 'viene', en: 'He/She comes' }, { subj: 'Nosotros', es: 'venimos', en: 'We come' }, { subj: 'Ustedes/Ellos', es: 'vienen', en: 'You all/They come' }] },
+  { inf: 'vivir', en: 'to live', conj: [{ subj: 'Yo', es: 'vivo', en: 'I live' }, { subj: 'Tú', es: 'vives', en: 'You live' }, { subj: 'Él/Ella', es: 'vive', en: 'He/She lives' }, { subj: 'Nosotros', es: 'vivimos', en: 'We live' }, { subj: 'Ustedes/Ellos', es: 'viven', en: 'You all/They live' }] },
+  { inf: 'llevar', en: 'to carry / wear', conj: [{ subj: 'Yo', es: 'llevo', en: 'I carry/wear' }, { subj: 'Tú', es: 'llevas', en: 'You carry/wear' }, { subj: 'Él/Ella', es: 'lleva', en: 'He/She carries/wears' }, { subj: 'Nosotros', es: 'llevamos', en: 'We carry/wear' }, { subj: 'Ustedes/Ellos', es: 'llevan', en: 'You all/They carry/wear' }] },
+  { inf: 'llegar', en: 'to arrive', conj: [{ subj: 'Yo', es: 'llego', en: 'I arrive' }, { subj: 'Tú', es: 'llegas', en: 'You arrive' }, { subj: 'Él/Ella', es: 'llega', en: 'He/She arrives' }, { subj: 'Nosotros', es: 'llegamos', en: 'We arrive' }, { subj: 'Ustedes/Ellos', es: 'llegan', en: 'You all/They arrive' }] },
+  { inf: 'escuchar', en: 'to listen', conj: [{ subj: 'Yo', es: 'escucho', en: 'I listen' }, { subj: 'Tú', es: 'escuchas', en: 'You listen' }, { subj: 'Él/Ella', es: 'escucha', en: 'He/She listens' }, { subj: 'Nosotros', es: 'escuchamos', en: 'We listen' }, { subj: 'Ustedes/Ellos', es: 'escuchan', en: 'You all/They listen' }] },
+  { inf: 'ayudar', en: 'to help', conj: [{ subj: 'Yo', es: 'ayudo', en: 'I help' }, { subj: 'Tú', es: 'ayudas', en: 'You help' }, { subj: 'Él/Ella', es: 'ayuda', en: 'He/She helps' }, { subj: 'Nosotros', es: 'ayudamos', en: 'We help' }, { subj: 'Ustedes/Ellos', es: 'ayudan', en: 'You all/They help' }] },
+  { inf: 'esperar', en: 'to wait / hope', conj: [{ subj: 'Yo', es: 'espero', en: 'I wait' }, { subj: 'Tú', es: 'esperas', en: 'You wait' }, { subj: 'Él/Ella', es: 'espera', en: 'He/She waits' }, { subj: 'Nosotros', es: 'esperamos', en: 'We wait' }, { subj: 'Ustedes/Ellos', es: 'esperan', en: 'You all/They wait' }] },
+  { inf: 'trabajar', en: 'to work', conj: [{ subj: 'Yo', es: 'trabajo', en: 'I work' }, { subj: 'Tú', es: 'trabajas', en: 'You work' }, { subj: 'Él/Ella', es: 'trabaja', en: 'He/She works' }, { subj: 'Nosotros', es: 'trabajamos', en: 'We work' }, { subj: 'Ustedes/Ellos', es: 'trabajan', en: 'You all/They work' }] },
+  { inf: 'ver', en: 'to see / watch', conj: [{ subj: 'Yo', es: 'veo', en: 'I see/watch' }, { subj: 'Tú', es: 'ves', en: 'You see/watch' }, { subj: 'Él/Ella', es: 've', en: 'He/She sees/watches' }, { subj: 'Nosotros', es: 'vemos', en: 'We see/watch' }, { subj: 'Ustedes/Ellos', es: 'ven', en: 'You all/They see/watch' }] },
+  { inf: 'caminar', en: 'to walk', conj: [{ subj: 'Yo', es: 'camino', en: 'I walk' }, { subj: 'Tú', es: 'caminas', en: 'You walk' }, { subj: 'Él/Ella', es: 'camina', en: 'He/She walks' }, { subj: 'Nosotros', es: 'caminamos', en: 'We walk' }, { subj: 'Ustedes/Ellos', es: 'caminan', en: 'You all/They walk' }] },
+  { inf: 'mirar', en: 'to watch / look at', conj: [{ subj: 'Yo', es: 'miro', en: 'I watch/look' }, { subj: 'Tú', es: 'miras', en: 'You watch/look' }, { subj: 'Él/Ella', es: 'mira', en: 'He/She watches/looks' }, { subj: 'Nosotros', es: 'miramos', en: 'We watch/look' }, { subj: 'Ustedes/Ellos', es: 'miran', en: 'You all/They watch/look' }] },
+  { inf: 'comprar', en: 'to buy', conj: [{ subj: 'Yo', es: 'compro', en: 'I buy' }, { subj: 'Tú', es: 'compras', en: 'You buy' }, { subj: 'Él/Ella', es: 'compra', en: 'He/She buys' }, { subj: 'Nosotros', es: 'compramos', en: 'We buy' }, { subj: 'Ustedes/Ellos', es: 'compran', en: 'You all/They buy' }] },
 ];
 
 export const NOUN_GROUPS = [
   { title: 'Food & Drink', words: [{ es: 'agua', g: 'f', en: 'water' }, { es: 'leche', g: 'f', en: 'milk' }, { es: 'pan', g: 'm', en: 'bread' }, { es: 'manzana', g: 'f', en: 'apple' }, { es: 'pollo', g: 'm', en: 'chicken' }, { es: 'carne', g: 'f', en: 'meat' }, { es: 'pescado', g: 'm', en: 'fish' }, { es: 'arroz', g: 'm', en: 'rice' }, { es: 'sopa', g: 'f', en: 'soup' }, { es: 'fruta', g: 'f', en: 'fruit' }, { es: 'verdura', g: 'f', en: 'vegetable' }, { es: 'café', g: 'm', en: 'coffee' }, { es: 'jugo', g: 'm', en: 'juice' }, { es: 'queso', g: 'm', en: 'cheese' }, { es: 'huevo', g: 'm', en: 'egg' }, { es: 'mantequilla', g: 'f', en: 'butter' }, { es: 'tomate', g: 'm', en: 'tomato' }, { es: 'ensalada', g: 'f', en: 'salad' }, { es: 'postre', g: 'm', en: 'dessert' }, { es: 'helado', g: 'm', en: 'ice cream' }] },
   { title: 'Family', words: [{ es: 'madre', g: 'f', en: 'mother' }, { es: 'padre', g: 'm', en: 'father' }, { es: 'hermano', g: 'm', en: 'brother' }, { es: 'hermana', g: 'f', en: 'sister' }, { es: 'hijo', g: 'm', en: 'son' }, { es: 'hija', g: 'f', en: 'daughter' }, { es: 'abuelo', g: 'm', en: 'grandfather' }, { es: 'abuela', g: 'f', en: 'grandmother' }, { es: 'esposo', g: 'm', en: 'husband' }, { es: 'esposa', g: 'f', en: 'wife' }, { es: 'tío', g: 'm', en: 'uncle' }, { es: 'tía', g: 'f', en: 'aunt' }, { es: 'primo', g: 'm', en: 'cousin (m)' }, { es: 'prima', g: 'f', en: 'cousin (f)' }] },
-  { title: 'People', words: [{ es: 'hombre', g: 'm', en: 'man' }, { es: 'mujer', g: 'f', en: 'woman' }, { es: 'niño', g: 'm', en: 'boy' }, { es: 'niña', g: 'f', en: 'girl' }] },
+  { title: 'People', words: [{ es: 'hombre', g: 'm', en: 'man' }, { es: 'mujer', g: 'f', en: 'woman' }, { es: 'niño', g: 'm', en: 'boy' }, { es: 'niña', g: 'f', en: 'girl' }, { es: 'amigo', g: 'm', en: 'friend' }, { es: 'amiga', g: 'f', en: 'friend' }, { es: 'nombre', g: 'm', en: 'name' }] },
   { title: 'Travel', words: [{ es: 'taxi', g: 'm', en: 'taxi' }, { es: 'hotel', g: 'm', en: 'hotel' }, { es: 'maleta', g: 'f', en: 'suitcase' }, { es: 'pasaporte', g: 'm', en: 'passport' }, { es: 'teléfono', g: 'm', en: 'telephone' }, { es: 'reserva', g: 'f', en: 'reservation' }, { es: 'aeropuerto', g: 'm', en: 'airport' }, { es: 'vuelo', g: 'm', en: 'flight' }, { es: 'boleto', g: 'm', en: 'ticket' }, { es: 'equipaje', g: 'm', en: 'luggage' }, { es: 'tren', g: 'm', en: 'train' }, { es: 'autobús', g: 'm', en: 'bus' }, { es: 'carro', g: 'm', en: 'car' }, { es: 'mapa', g: 'm', en: 'map' }] },
   { title: 'Places', words: [{ es: 'casa', g: 'f', en: 'house/home' }, { es: 'escuela', g: 'f', en: 'school' }, { es: 'tienda', g: 'f', en: 'store' }, { es: 'restaurante', g: 'm', en: 'restaurant' }, { es: 'hospital', g: 'm', en: 'hospital' }, { es: 'banco', g: 'm', en: 'bank' }, { es: 'ciudad', g: 'f', en: 'city' }, { es: 'calle', g: 'f', en: 'street' }, { es: 'playa', g: 'f', en: 'beach' }, { es: 'país', g: 'm', en: 'country' }, { es: 'parque', g: 'm', en: 'park' }, { es: 'mercado', g: 'm', en: 'market' }, { es: 'iglesia', g: 'f', en: 'church' }, { es: 'museo', g: 'm', en: 'museum' }] },
   { title: 'Body', words: [{ es: 'cabeza', g: 'f', en: 'head' }, { es: 'mano', g: 'f', en: 'hand' }, { es: 'pie', g: 'm', en: 'foot' }, { es: 'ojo', g: 'm', en: 'eye' }, { es: 'boca', g: 'f', en: 'mouth' }, { es: 'nariz', g: 'f', en: 'nose' }, { es: 'oreja', g: 'f', en: 'ear' }, { es: 'brazo', g: 'm', en: 'arm' }, { es: 'corazón', g: 'm', en: 'heart' }, { es: 'dedo', g: 'm', en: 'finger' }, { es: 'pelo', g: 'm', en: 'hair' }, { es: 'pierna', g: 'f', en: 'leg' }] },
@@ -344,4 +493,22 @@ export const NOUN_GROUPS = [
   { title: 'Weather', words: [{ es: 'tiempo', g: 'm', en: 'weather' }, { es: 'sol', g: 'm', en: 'sun' }, { es: 'lluvia', g: 'f', en: 'rain' }, { es: 'nieve', g: 'f', en: 'snow' }, { es: 'viento', g: 'm', en: 'wind' }, { es: 'calor', g: 'm', en: 'heat' }] },
   { title: 'Colours', words: [{ es: 'rojo', g: null, en: 'red' }, { es: 'azul', g: null, en: 'blue' }, { es: 'verde', g: null, en: 'green' }, { es: 'amarillo', g: null, en: 'yellow' }, { es: 'blanco', g: null, en: 'white' }, { es: 'negro', g: null, en: 'black' }, { es: 'naranja', g: null, en: 'orange' }, { es: 'gris', g: null, en: 'grey' }, { es: 'morado', g: null, en: 'purple' }, { es: 'rosa', g: null, en: 'pink' }, { es: 'marrón', g: null, en: 'brown' }] },
   { title: 'Days', words: [{ es: 'lunes', g: 'm', en: 'monday' }, { es: 'martes', g: 'm', en: 'tuesday' }, { es: 'miércoles', g: 'm', en: 'wednesday' }, { es: 'jueves', g: 'm', en: 'thursday' }, { es: 'viernes', g: 'm', en: 'friday' }, { es: 'sábado', g: 'm', en: 'saturday' }, { es: 'domingo', g: 'm', en: 'sunday' }] },
+  { title: 'Time', words: [{ es: 'día', g: 'm', en: 'day' }, { es: 'noche', g: 'f', en: 'night' }] },
+  { title: 'Numbers', words: [
+    { es: 'cero', g: null, en: 'zero' },
+    { es: 'uno', g: null, en: 'one' },
+    { es: 'dos', g: null, en: 'two' },
+    { es: 'tres', g: null, en: 'three' },
+    { es: 'cuatro', g: null, en: 'four' },
+    { es: 'cinco', g: null, en: 'five' },
+    { es: 'seis', g: null, en: 'six' },
+    { es: 'siete', g: null, en: 'seven' },
+    { es: 'ocho', g: null, en: 'eight' },
+    { es: 'nueve', g: null, en: 'nine' },
+    { es: 'diez', g: null, en: 'ten' },
+    { es: 'once', g: null, en: 'eleven' },
+    { es: 'doce', g: null, en: 'twelve' },
+    { es: 'veinte', g: null, en: 'twenty' },
+    { es: 'cien', g: null, en: 'one hundred' },
+  ]},
 ];
