@@ -16,7 +16,6 @@ import DrillRouter from './components/DrillRouter';
 import LessonsList from './components/LessonsList';
 import LessonView from './components/LessonView';
 import DailyChallenge from './components/DailyChallenge';
-import SessionHistory from './components/SessionHistory';
 import LoginScreen from './components/LoginScreen';
 import GoalModal from './components/GoalModal';
 import Certificate from './components/Certificate';
@@ -515,7 +514,7 @@ export default function SpanishHub() {
           dailyProgress={userData.dailyProgress}
           onSignOut={handleSignOut}
           onGoalClick={() => setShowGoalModal(true)}
-          onLeaderboardClick={() => setTab('leaderboard')}
+          ={() => setTab('leaderboard')}
         />
         <div className="tab-bar">
           {[['learn', 'Learn'], ['words', 'Words'], ['drills', 'Drills'], ['sofia', 'Milo'], ['plaza', 'Plaza']].map(([id, label]) => (
@@ -551,7 +550,7 @@ export default function SpanishHub() {
               categoryEnabled={userData.categoryEnabled}
             />
           )}
-          {tab === 'leaderboard' && (
+
             <Leaderboard currentUserId={effectiveUser.uid} currentXP={userData.xp}
               sessions={userData.sessions} isGuest={isGuest}
               user={user} friends={userData.friends || []}
@@ -563,10 +562,7 @@ export default function SpanishHub() {
           {tab === 'sofia' && (
             <SofiaChat userUid={effectiveUser.uid} />
           )}
-          {tab === 'history' && (
-            <SessionHistory sessions={userData.sessions || []} />
-          )}
-        </div>
+          </div>
 
         {selectedWord && (
           <WordDetail word={selectedWord} progress={userData.progress[selectedWord.es]} onClose={() => setSelectedWord(null)} />
