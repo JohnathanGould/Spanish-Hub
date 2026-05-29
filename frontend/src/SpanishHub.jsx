@@ -512,12 +512,11 @@ export default function SpanishHub() {
           xp={userData.xp}
           dailyGoal={userData.dailyGoal}
           dailyProgress={userData.dailyProgress}
-          onSignOut={handleSignOut}
           onGoalClick={() => setShowGoalModal(true)}
           ={() => setTab('leaderboard')}
         />
         <div className="tab-bar">
-          {[['learn', 'Learn'], ['words', 'Words'], ['drills', 'Drills'], ['sofia', 'Milo'], ['plaza', 'Plaza']].map(([id, label]) => (
+          {[['learn', 'Learn'], ['words', 'Words'], ['drills', 'Drills'], ['sofia', 'Milo']].map(([id, label]) => (
             <button key={id} className={`tab-btn${tab === id ? ' active' : ''}`}
               onClick={() => setTab(id)} data-testid={`tab-${id}`}
               style={{ scrollSnapAlign: 'start', flexShrink: 0 }}>{label}</button>
