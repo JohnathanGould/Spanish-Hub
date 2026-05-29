@@ -6,6 +6,7 @@ import { MASTER, DEFAULT_CATEGORIES, PRESET_PACKS } from './data/words';
 import { LESSONS, DAILY_THEMES } from './data/lessons';
 import { masteryLevel, getStats, initVoice, spacedRepetitionSort, playConfetti } from './utils/helpers';
 import Header from './components/Header';
+import HomeTab from './components/HomeTab';
 import WordList from './components/WordList';
 import DrillsGrid from './components/DrillsGrid';
 import DoneScreen from './components/DoneScreen';
@@ -15,7 +16,6 @@ import CategoryToggles from './components/CategoryToggles';
 import DrillRouter from './components/DrillRouter';
 import LessonsList from './components/LessonsList';
 import LessonView from './components/LessonView';
-import DailyChallenge from './components/DailyChallenge';
 import LoginScreen from './components/LoginScreen';
 import GoalModal from './components/GoalModal';
 import Certificate from './components/Certificate';
@@ -123,6 +123,7 @@ export default function SpanishHub() {
   const [userData, setUserData] = useState(DEFAULT_DATA);
   const [view, setView] = useState({ page: 'home' });
   const [tab, setTab] = useState('study');
+  const [showHome, setShowHome] = useState(true);
   const [studyCategory, setStudyCategory] = useState(null);
   const [drillMode, setDrillMode] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -520,15 +521,27 @@ export default function SpanishHub() {
           dailyGoal={userData.dailyGoal}
           dailyProgress={userData.dailyProgress}
           onGoalClick={() => setShowGoalModal(true)}
+          onHomeClick={() => setShowHome(true)}
         />
         <div className="tab-bar">
           {[['learn', 'Learn'], ['words', 'My Words'], ['study', 'Study'], ['sofia', 'Talk to Milo']].map(([id, label]) => (
             <button key={id} className={`tab-btn${tab === id ? ' active' : ''}`}
-              onClick={() => setTab(id)} data-testid={`tab-${id}`}
+              onClick={() => { setShowHome(false); setTab(id); }} data-testid={`tab-${id}`}
               style={{ scrollSnapAlign: 'start', flexShrink: 0 }}>{label}</button>
           ))}
         </div>
         <div ref={contentRef} className="px-4 pb-16">
+          {showHome ? (
+            <HomeTab
+              onNavigate={(tabId) => { setShowHome(false); setTab(tabId); }}
+              userData={userData}
+              streak={userData.streak}
+              dailyProgress={userData.dailyProgress}
+              dailyGoal={userData.dailyGoal}
+              onStartDailyChallenge={startDailyChallenge}
+            />
+          ) : (
+          <>
           {tab === 'study' && studyCategory === null && (
             <div className="flex flex-col gap-3 pt-1">
               {STUDY_OPTIONS.map((option) => (
@@ -561,7 +574,6 @@ export default function SpanishHub() {
               >
                 ← Back
               </button>
-              <DailyChallenge challenges={userData.dailyChallenges} onStart={startDailyChallenge} />
               <DrillsGrid words={activeWords} stats={stats} drillMode={drillMode}
                 setDrillMode={setDrillMode} onStartDrill={startDrill}
                 completedPaths={userData.completedPaths || []}
@@ -589,6 +601,8 @@ export default function SpanishHub() {
 
           {tab === 'sofia' && (
             <SofiaChat userUid={effectiveUser.uid} />
+          )}
+          </>
           )}
           </div>
         {selectedWord && (

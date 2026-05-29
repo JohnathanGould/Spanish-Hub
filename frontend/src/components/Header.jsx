@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { LogOut } from 'lucide-react';
 import SpanishFlag from './SpanishFlag';
 
-export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onSignOut, onGoalClick }) {
+export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onSignOut, onGoalClick, onHomeClick }) {
   const [showMenu, setShowMenu] = useState(false);
   const today = new Date().toDateString();
   const todayCount = dailyProgress?.date === today ? (dailyProgress.count || 0) : 0;
@@ -18,8 +18,13 @@ export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onS
       <div className="spain-flag-bar" />
       <div className="flex items-center justify-between pt-1">
 
-        {/* LEFT: Logo */}
-        <div className="flex items-center gap-2">
+        {/* LEFT: Logo — tap to return home */}
+        <button
+          type="button"
+          onClick={onHomeClick}
+          data-testid="header-home-btn"
+          className="flex items-center gap-2 text-left transition-opacity hover:opacity-80"
+        >
           <SpanishFlag size={28} />
           <div>
             <div className="font-serif font-bold text-base leading-tight" style={{ color: 'hsl(var(--foreground))' }}>
@@ -29,7 +34,7 @@ export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onS
               Learn · Practice · Master
             </div>
           </div>
-        </div>
+        </button>
 
         {/* RIGHT: Stats */}
         <div className="flex items-center gap-3">
