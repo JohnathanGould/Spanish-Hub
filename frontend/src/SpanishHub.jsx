@@ -549,19 +549,10 @@ export default function SpanishHub() {
             />
           )}
 
-            <Leaderboard currentUserId={effectiveUser.uid} currentXP={userData.xp}
-              sessions={userData.sessions} isGuest={isGuest}
-              user={user} friends={userData.friends || []}
-              onAddFriend={addFriend} onRemoveFriend={removeFriend} />
-          )}
-          {tab === 'plaza' && (
-            <Plaza user={user} isGuest={isGuest} />
-          )}
           {tab === 'sofia' && (
             <SofiaChat userUid={effectiveUser.uid} />
           )}
           </div>
-
         {selectedWord && (
           <WordDetail word={selectedWord} progress={userData.progress[selectedWord.es]} onClose={() => setSelectedWord(null)} />
         )}
