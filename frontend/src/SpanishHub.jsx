@@ -633,8 +633,8 @@ export default function SpanishHub() {
             onImport={importPackWords}
             onClose={() => setShowSharedPacks(false)} />
         )}
-        <BottomNav activeTab={tab} onTabChange={setTab} />
       </div>
+      <BottomNav activeTab={tab} onTabChange={setTab} />
     </div>
   );
 }
