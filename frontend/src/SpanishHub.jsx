@@ -9,7 +9,7 @@ import Header from './components/Header';
 import WordList from './components/WordList';
 import DrillsGrid from './components/DrillsGrid';
 import DoneScreen from './components/DoneScreen';
-import Leaderboard from './components/Leaderboard';
+
 import WordDetail from './components/WordDetail';
 import CategoryToggles from './components/CategoryToggles';
 import DrillRouter from './components/DrillRouter';
