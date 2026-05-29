@@ -116,7 +116,7 @@ export default function SpanishHub() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(DEFAULT_DATA);
   const [view, setView] = useState({ page: 'home' });
-  const [tab, setTab] = useState('practice');
+  const [tab, setTab] = useState('study');
   const [drillMode, setDrillMode] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWord, setSelectedWord] = useState(null);
@@ -515,14 +515,14 @@ export default function SpanishHub() {
           onGoalClick={() => setShowGoalModal(true)}
         />
         <div className="tab-bar">
-          {[['learn', 'Learn'], ['words', 'Words'], ['practice', 'Practice'], ['sofia', 'Milo']].map(([id, label]) => (
+          {[['learn', 'Learn'], ['words', 'My Words'], ['study', 'Study'], ['sofia', 'Talk to Milo']].map(([id, label]) => (
             <button key={id} className={`tab-btn${tab === id ? ' active' : ''}`}
               onClick={() => setTab(id)} data-testid={`tab-${id}`}
               style={{ scrollSnapAlign: 'start', flexShrink: 0 }}>{label}</button>
           ))}
         </div>
         <div ref={contentRef} className="px-4 pb-16">
-          {tab === 'practice' && (
+          {tab === 'study' && (
             <>
               <DailyChallenge challenges={userData.dailyChallenges} onStart={startDailyChallenge} />
               <DrillsGrid words={activeWords} stats={stats} drillMode={drillMode}
