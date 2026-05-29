@@ -605,9 +605,6 @@ export default function SpanishHub() {
             </div>
           )}
           </div>
-        {selectedWord && (
-          <WordDetail word={selectedWord} progress={userData.progress[selectedWord.es]} onClose={() => setSelectedWord(null)} />
-        )}
         {showCategoryModal && (
           <CategoryToggles categoryEnabled={userData.categoryEnabled}
             onToggle={updateCategoryEnabled} onApplyPreset={applyPreset}
@@ -635,6 +632,9 @@ export default function SpanishHub() {
         )}
       </div>
       <BottomNav activeTab={tab} onTabChange={setTab} />
+      {selectedWord && (
+        <WordDetail word={selectedWord} progress={userData.progress[selectedWord.es]} onClose={() => setSelectedWord(null)} />
+      )}
     </div>
   );
 }
