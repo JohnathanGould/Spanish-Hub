@@ -5,7 +5,7 @@ import TypeDrill from './drills/TypeDrill';
 import ConjugationDrill from './drills/ConjugationDrill';
 import GenderDrill from './drills/GenderDrill';
 import MatchingDrill from './drills/MatchingDrill';
-import WordSortDrill from './drills/WordSortDrill';
+
 import SentenceBuilderDrill from './drills/SentenceBuilderDrill';
 import FillBlankDrill from './drills/FillBlankDrill';
 
@@ -24,7 +24,7 @@ export default function DrillRouter(props) {
     case 'past-tense': return <ConjugationDrill mode="past" {...drillProps} />;
     case 'gender': return <GenderDrill {...drillProps} />;
     case 'matching': return <MatchingDrill {...drillProps} />;
-    case 'word-sort': return <WordSortDrill mode="es" {...drillProps} />;
+    
     case 'sent-build': return <SentenceBuilderDrill {...drillProps} />;
     case 'fill-blank': return <FillBlankDrill {...drillProps} />;
     default: return <div className="p-10 text-center">Drill not found: {drillId}</div>;
