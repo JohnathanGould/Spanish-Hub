@@ -89,6 +89,12 @@ const DEFAULT_DATA = {
 
 function SpanishFlagPulse() { return <SpanishFlag size={88} />; }
 
+const STUDY_OPTIONS = [
+  { id: 'warmup', title: 'Warm Up', desc: 'Get into the rhythm — low stakes', bg: '#E0F2FE', titleColor: '#0C4A6E', descColor: '#0369A1' },
+  { id: 'practice', title: 'Practice', desc: 'Active production — type and build sentences', bg: '#EDE9FE', titleColor: '#2E1065', descColor: '#4C1D95' },
+  { id: 'review', title: 'Review', desc: 'Test what you know — Flashcards', bg: '#FEF3C7', titleColor: '#451A03', descColor: '#92400E' },
+];
+
 function maybeRunStreakReminder(data) {
   try {
     if (typeof window === 'undefined' || !('Notification' in window)) return;
@@ -117,6 +123,7 @@ export default function SpanishHub() {
   const [userData, setUserData] = useState(DEFAULT_DATA);
   const [view, setView] = useState({ page: 'home' });
   const [tab, setTab] = useState('study');
+  const [studyCategory, setStudyCategory] = useState(null);
   const [drillMode, setDrillMode] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWord, setSelectedWord] = useState(null);
@@ -522,12 +529,43 @@ export default function SpanishHub() {
           ))}
         </div>
         <div ref={contentRef} className="px-4 pb-16">
-          {tab === 'study' && (
+          {tab === 'study' && studyCategory === null && (
+            <div className="flex flex-col gap-3 pt-1">
+              {STUDY_OPTIONS.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  data-testid={`study-option-${option.id}`}
+                  onClick={() => setStudyCategory(option.id)}
+                  className="w-full rounded-2xl px-5 py-5 text-left transition-all active:scale-[0.98]"
+                  style={{ background: option.bg }}
+                >
+                  <div className="text-lg font-bold leading-tight" style={{ color: option.titleColor }}>
+                    {option.title}
+                  </div>
+                  <div className="text-sm mt-1.5 leading-snug" style={{ color: option.descColor }}>
+                    {option.desc}
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+          {tab === 'study' && studyCategory !== null && (
             <>
+              <button
+                type="button"
+                data-testid="study-back-btn"
+                onClick={() => setStudyCategory(null)}
+                className="mb-3 text-sm font-semibold"
+                style={{ color: 'hsl(var(--muted-foreground))' }}
+              >
+                ← Back
+              </button>
               <DailyChallenge challenges={userData.dailyChallenges} onStart={startDailyChallenge} />
               <DrillsGrid words={activeWords} stats={stats} drillMode={drillMode}
                 setDrillMode={setDrillMode} onStartDrill={startDrill}
-                completedPaths={userData.completedPaths || []} />
+                completedPaths={userData.completedPaths || []}
+                studyCategory={studyCategory} setStudyCategory={setStudyCategory} />
               <KofiSupport />
             </>
           )}

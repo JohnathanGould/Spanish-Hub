@@ -26,7 +26,18 @@ const DRILL_SECTIONS = [
   { tier: 'warmup', label: 'Warm Up' },
 ];
 
-export default function DrillsGrid({ words, stats, drillMode, setDrillMode, onStartDrill, completedPaths = [] }) {
+function getDrillsForCategory(studyCategory) {
+  const section = DRILL_SECTIONS.find(({ tier }) => tier === studyCategory);
+  if (!section) return [];
+  return DRILLS.filter(drill =>
+    drill.tier === section.tier || (section.includeUntiered && !drill.tier)
+  );
+}
+
+export default function DrillsGrid({
+  words, stats, drillMode, setDrillMode, onStartDrill, completedPaths = [],
+  studyCategory, setStudyCategory,
+}) {
   const [pendingId, setPendingId] = useState(null);
   const [drillLength, setDrillLength] = useState(10);
 
@@ -137,6 +148,8 @@ export default function DrillsGrid({ words, stats, drillMode, setDrillMode, onSt
   };
 
   let cardIndex = 0;
+  const categoryDrills = getDrillsForCategory(studyCategory);
+  const sectionLabel = DRILL_SECTIONS.find(({ tier }) => tier === studyCategory)?.label;
 
   return (
     <div>
@@ -169,31 +182,20 @@ export default function DrillsGrid({ words, stats, drillMode, setDrillMode, onSt
         {drillLabel} — tap a pill to filter, tap again to reset
       </p>
 
-      {/* Drill list — grouped by tier, single column compact rows */}
+      {/* Drill list — filtered to active study category */}
       <div className="flex flex-col gap-1.5">
-        {DRILL_SECTIONS.map(({ tier, label, includeUntiered }, sectionIndex) => {
-          const sectionDrills = DRILLS.filter(drill =>
-            drill.tier === tier || (includeUntiered && !drill.tier)
-          );
-          if (sectionDrills.length === 0) return null;
-
-          return (
-            <div key={tier} className={sectionIndex > 0 ? 'mt-4' : ''}>
-              <h3
-                className="text-xs font-bold uppercase tracking-wide mb-2"
-                style={{ color: 'hsl(var(--muted-foreground))' }}
-              >
-                {label}
-              </h3>
-              <div className="flex flex-col gap-1.5">
-                {sectionDrills.map((drill) => {
-                  const card = renderDrillCard(drill, cardIndex);
-                  cardIndex += 1;
-                  return card;
-                })}
-              </div>
-            </div>
-          );
+        {sectionLabel && (
+          <h3
+            className="text-xs font-bold uppercase tracking-wide mb-2"
+            style={{ color: 'hsl(var(--muted-foreground))' }}
+          >
+            {sectionLabel}
+          </h3>
+        )}
+        {categoryDrills.map((drill) => {
+          const card = renderDrillCard(drill, cardIndex);
+          cardIndex += 1;
+          return card;
         })}
       </div>
     </div>
