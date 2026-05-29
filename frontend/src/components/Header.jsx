@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { LogOut } from 'lucide-react';
 import SpanishFlag from './SpanishFlag';
 
-export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onSignOut, onGoalClick, onLeaderboardClick }) {
+export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onSignOut, onGoalClick }) {
   const [showMenu, setShowMenu] = useState(false);
   const today = new Date().toDateString();
   const todayCount = dailyProgress?.date === today ? (dailyProgress.count || 0) : 0;
@@ -66,14 +66,13 @@ export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onS
             </span>
           </button>
 
-          {/* XP / Star — taps to leaderboard */}
-          <button className="flex flex-col items-center cursor-pointer" data-testid="xp-display"
-            onClick={onLeaderboardClick} title="Leaderboard">
+          {/* XP / Star — display only */}
+          <div className="flex flex-col items-center" data-testid="xp-display">
             <span className="text-base font-bold" style={{ color: '#F5C518', lineHeight: 1 }}>⭐</span>
             <span className="text-xs font-bold" style={{ color: '#D97706' }}>
               {xp >= 1000 ? `${(xp / 1000).toFixed(1)}k` : xp}
             </span>
-          </button>
+          </div>
 
           {/* User Avatar — perfect circle, taps to open menu */}
           <div className="relative">
