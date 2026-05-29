@@ -513,7 +513,6 @@ export default function SpanishHub() {
           dailyGoal={userData.dailyGoal}
           dailyProgress={userData.dailyProgress}
           onGoalClick={() => setShowGoalModal(true)}
-          ={() => setTab('leaderboard')}
         />
         <div className="tab-bar">
           {[['learn', 'Learn'], ['words', 'Words'], ['drills', 'Drills'], ['sofia', 'Milo']].map(([id, label]) => (
