@@ -6,6 +6,7 @@ import { MASTER, DEFAULT_CATEGORIES, PRESET_PACKS } from './data/words';
 import { LESSONS, DAILY_THEMES } from './data/lessons';
 import { masteryLevel, getStats, initVoice, spacedRepetitionSort, playConfetti } from './utils/helpers';
 import Header from './components/Header';
+import BottomNav from './components/BottomNav';
 import HomeTab from './components/HomeTab';
 import WordList from './components/WordList';
 import DrillsGrid from './components/DrillsGrid';
@@ -522,14 +523,7 @@ export default function SpanishHub() {
           onGoalClick={() => setShowGoalModal(true)}
           onHomeClick={() => setTab('home')}
         />
-        <div className="tab-bar">
-          {[['home', 'Home'], ['learn', 'Learn'], ['words', 'My Words'], ['study', 'Study'], ['sofia', 'Talk to Milo']].map(([id, label]) => (
-            <button key={id} className={`tab-btn${tab === id ? ' active' : ''}`}
-              onClick={() => setTab(id)} data-testid={`tab-${id}`}
-              style={{ scrollSnapAlign: 'start', flexShrink: 0 }}>{label}</button>
-          ))}
-        </div>
-        <div ref={contentRef} className="px-4 pb-16">
+        <div ref={contentRef} className="px-4 pb-20">
           {tab === 'home' && (
             <HomeTab
               onNavigate={setTab}
@@ -629,6 +623,7 @@ export default function SpanishHub() {
             onImport={importPackWords}
             onClose={() => setShowSharedPacks(false)} />
         )}
+        <BottomNav activeTab={tab} onTabChange={setTab} />
       </div>
     </div>
   );
