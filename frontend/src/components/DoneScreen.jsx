@@ -7,7 +7,7 @@ const DRILL_NAMES = {
   flashcard: 'Flashcards', 'es-en': 'Spanish → English', 'en-es': 'English → Spanish',
   'type-es-en': 'Type Sp→En', 'type-en-es': 'Type En→Sp',
   conjugation: 'Conjugation', 'past-tense': 'Preterite', gender: 'Gender',
-  matching: 'Matching', 'word-sort': 'Word Sort', 'en-word-sort': 'En Word Sort',
+  matching: 'Matching',
   'hear-choose': 'Hear & Choose', 'listen-type': 'Listen & Type',
   'sent-build': 'Sentence Builder', 'fill-blank': 'Fill the Blank',
 };
