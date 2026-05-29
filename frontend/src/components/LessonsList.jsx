@@ -10,7 +10,7 @@ export default function LessonsList({ lessonsCompleted = [], onOpenLesson, onSho
   const allDone = completedCount === LESSONS.length;
 
   return (
-    <div data-testid="lessons-list">
+    <div data-testid="lessons-list" className="relative z-0">
       {/* Header banner */}
       <div className="rounded-2xl p-5 mb-4 text-white relative overflow-hidden"
         style={{ background: 'linear-gradient(135deg,#7C2D12,#C9745E)', boxShadow: '0 8px 24px rgba(124,45,18,0.25)' }}>

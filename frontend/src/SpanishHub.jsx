@@ -512,8 +512,8 @@ export default function SpanishHub() {
   }
 
   return (
-    <div className="app-outer">
-      <div className="app-container">
+    <div className="app-outer overflow-visible">
+      <div className="app-container overflow-visible">
         <Header
           user={effectiveUser}
           streak={userData.streak}

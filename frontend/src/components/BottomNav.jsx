@@ -12,7 +12,7 @@ const tabs = [
 
 export default function BottomNav({ activeTab, onTabChange }) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 h-[60px] w-full bg-white border-t border-gray-100">
+    <nav className="fixed bottom-0 left-0 right-0 z-[9999] h-[60px] w-full bg-white border-t border-gray-100">
       <div className="flex h-full items-center justify-around">
         {tabs.map((tab) => {
           const Icon = tab.icon;
