@@ -28,14 +28,6 @@ export default function HomeTab({
         onStart={onStartDailyChallenge}
       />
 
-      <div className="flex items-center justify-center gap-2 text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
-        <span>🔥 {streakCount}d streak</span>
-        <span>·</span>
-        <span>{todayCount}/{goal} today</span>
-        <span>·</span>
-        <span>⭐ {userData?.xp || 0} XP</span>
-      </div>
-
       <div className="flex flex-col gap-3">
         {NAV_CARDS.map((card) => (
           <button
