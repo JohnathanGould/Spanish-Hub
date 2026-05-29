@@ -50,15 +50,37 @@ export default function WordDetail({ word, progress, onClose }) {
   };
 
   return (
-    <div data-testid="word-detail-modal" onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.55)' }}>
+    <>
+      <div
+        data-testid="word-detail-overlay"
+        onClick={onClose}
+        aria-hidden="true"
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 10000,
+          background: 'rgba(0,0,0,0.55)',
+        }}
+      />
+      <div
+        data-testid="word-detail-modal"
+        onClick={e => e.stopPropagation()}
+        style={{
+          position: 'fixed',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 10001,
+          width: 'calc(100% - 2rem)',
+          maxWidth: '28rem',
+          maxHeight: '85vh',
+        }}
+      >
       <motion.div
         initial={{ scale: 0.92, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        onClick={e => e.stopPropagation()}
-        className="rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col"
+        className="rounded-3xl w-full shadow-2xl overflow-hidden flex flex-col"
         style={{ background: 'hsl(var(--card))', maxHeight: '85vh' }}>
 
         <div className="overflow-y-auto">
@@ -148,7 +170,8 @@ export default function WordDetail({ word, progress, onClose }) {
           </div>
         </div>
       </motion.div>
-    </div>
+      </div>
+    </>
   );
 }
 
