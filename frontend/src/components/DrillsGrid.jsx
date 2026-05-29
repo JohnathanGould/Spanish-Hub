@@ -20,6 +20,12 @@ const CARD_STYLES = {
   pink:    { bg: '#FDF2F8', num: '#F5D0E8', numText: '#6D1B4E', title: '#500D38', desc: '#86185E' },
 };
 
+const DRILL_SECTIONS = [
+  { tier: 'practice', label: 'Practice', includeUntiered: true },
+  { tier: 'review', label: 'Review' },
+  { tier: 'warmup', label: 'Warm Up' },
+];
+
 export default function DrillsGrid({ words, stats, drillMode, setDrillMode, onStartDrill, completedPaths = [] }) {
   const [pendingId, setPendingId] = useState(null);
   const [drillLength, setDrillLength] = useState(10);
@@ -40,6 +46,97 @@ export default function DrillsGrid({ words, stats, drillMode, setDrillMode, onSt
     onStartDrill(drill.id, drillLength);
     setPendingId(null);
   };
+
+  const renderDrillCard = (drill, i) => {
+    const s = CARD_STYLES[drill.color] || CARD_STYLES.amber;
+    const isLocked = drill.id === 'past-tense' && !completedPaths.includes('path-5');
+    const isExpanded = pendingId === drill.id;
+
+    return (
+      <motion.div
+        key={drill.id}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: i * 0.03, duration: 0.25 }}
+        className={'rounded-2xl overflow-hidden' + (isLocked ? ' opacity-50' : '')}
+        style={{ background: s.bg }}
+        data-testid={'drill-card-' + drill.id}
+      >
+        {/* Row — always visible */}
+        <div
+          className={'flex items-center gap-3 px-4 py-3' + (isLocked ? ' cursor-not-allowed' : ' cursor-pointer')}
+          onClick={() => !isLocked && handleCardClick(drill)}
+        >
+          {/* Number badge */}
+          <div
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
+            style={{ background: s.num, color: s.numText }}
+          >
+            {isLocked ? '🔒' : drill.n}
+          </div>
+
+          {/* Name + description */}
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-bold leading-tight" style={{ color: s.title }}>
+              {drill.name}
+            </div>
+            <div className="text-xs leading-snug mt-0.5 truncate" style={{ color: s.desc }}>
+              {isLocked ? 'Complete Path 5 to unlock' : drill.desc}
+            </div>
+          </div>
+
+          {/* Chevron */}
+          {!isLocked && (
+            <div
+              className="flex-shrink-0 text-xs transition-transform duration-200"
+              style={{
+                color: s.desc,
+                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              }}
+            >
+              ▾
+            </div>
+          )}
+        </div>
+
+        {/* Expanded selector */}
+        {isExpanded && (
+          <div
+            className="px-4 pb-3"
+            style={{ borderTop: '1px solid ' + s.num }}
+          >
+            <div className="text-xs font-medium mb-2 mt-2 text-center" style={{ color: s.desc }}>
+              How many words?
+            </div>
+            <div className="grid grid-cols-3 gap-1.5 mb-2">
+              {(drill.id === 'matching' ? [4, 6, 8] : [10, 20, 30]).map(n => (
+                <button
+                  key={n}
+                  onClick={(e) => { e.stopPropagation(); setDrillLength(n); }}
+                  className="py-1.5 rounded-lg text-xs font-bold transition-all"
+                  style={{
+                    background: drillLength === n ? 'hsl(var(--primary))' : s.num,
+                    color: drillLength === n ? 'white' : s.numText,
+                  }}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); handleStart(drill); }}
+              className="w-full py-2 rounded-lg text-xs font-bold text-white"
+              style={{ background: 'hsl(var(--primary))' }}
+            >
+              Start
+            </button>
+          </div>
+        )}
+      </motion.div>
+    );
+  };
+
+  let cardIndex = 0;
 
   return (
     <div>
@@ -72,94 +169,30 @@ export default function DrillsGrid({ words, stats, drillMode, setDrillMode, onSt
         {drillLabel} — tap a pill to filter, tap again to reset
       </p>
 
-      {/* Drill list — single column, compact rows */}
+      {/* Drill list — grouped by tier, single column compact rows */}
       <div className="flex flex-col gap-1.5">
-        {DRILLS.map((drill, i) => {
-          const s = CARD_STYLES[drill.color] || CARD_STYLES.amber;
-          const isLocked = drill.id === 'past-tense' && !completedPaths.includes('path-5');
-          const isExpanded = pendingId === drill.id;
+        {DRILL_SECTIONS.map(({ tier, label, includeUntiered }, sectionIndex) => {
+          const sectionDrills = DRILLS.filter(drill =>
+            drill.tier === tier || (includeUntiered && !drill.tier)
+          );
+          if (sectionDrills.length === 0) return null;
 
           return (
-            <motion.div
-              key={drill.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.03, duration: 0.25 }}
-              className={'rounded-2xl overflow-hidden' + (isLocked ? ' opacity-50' : '')}
-              style={{ background: s.bg }}
-              data-testid={'drill-card-' + drill.id}
-            >
-              {/* Row — always visible */}
-              <div
-                className={'flex items-center gap-3 px-4 py-3' + (isLocked ? ' cursor-not-allowed' : ' cursor-pointer')}
-                onClick={() => !isLocked && handleCardClick(drill)}
+            <div key={tier} className={sectionIndex > 0 ? 'mt-4' : ''}>
+              <h3
+                className="text-xs font-bold uppercase tracking-wide mb-2"
+                style={{ color: 'hsl(var(--muted-foreground))' }}
               >
-                {/* Number badge */}
-                <div
-                  className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
-                  style={{ background: s.num, color: s.numText }}
-                >
-                  {isLocked ? '🔒' : drill.n}
-                </div>
-
-                {/* Name + description */}
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold leading-tight" style={{ color: s.title }}>
-                    {drill.name}
-                  </div>
-                  <div className="text-xs leading-snug mt-0.5 truncate" style={{ color: s.desc }}>
-                    {isLocked ? 'Complete Path 5 to unlock' : drill.desc}
-                  </div>
-                </div>
-
-                {/* Chevron */}
-                {!isLocked && (
-                  <div
-                    className="flex-shrink-0 text-xs transition-transform duration-200"
-                    style={{
-                      color: s.desc,
-                      transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                    }}
-                  >
-                    ▾
-                  </div>
-                )}
+                {label}
+              </h3>
+              <div className="flex flex-col gap-1.5">
+                {sectionDrills.map((drill) => {
+                  const card = renderDrillCard(drill, cardIndex);
+                  cardIndex += 1;
+                  return card;
+                })}
               </div>
-
-              {/* Expanded selector */}
-              {isExpanded && (
-                <div
-                  className="px-4 pb-3"
-                  style={{ borderTop: '1px solid ' + s.num }}
-                >
-                  <div className="text-xs font-medium mb-2 mt-2 text-center" style={{ color: s.desc }}>
-                    How many words?
-                  </div>
-                  <div className="grid grid-cols-3 gap-1.5 mb-2">
-                    {(drill.id === 'matching' ? [4, 6, 8] : [10, 20, 30]).map(n => (
-                      <button
-                        key={n}
-                        onClick={(e) => { e.stopPropagation(); setDrillLength(n); }}
-                        className="py-1.5 rounded-lg text-xs font-bold transition-all"
-                        style={{
-                          background: drillLength === n ? 'hsl(var(--primary))' : s.num,
-                          color: drillLength === n ? 'white' : s.numText,
-                        }}
-                      >
-                        {n}
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleStart(drill); }}
-                    className="w-full py-2 rounded-lg text-xs font-bold text-white"
-                    style={{ background: 'hsl(var(--primary))' }}
-                  >
-                    Start
-                  </button>
-                </div>
-              )}
-            </motion.div>
+            </div>
           );
         })}
       </div>

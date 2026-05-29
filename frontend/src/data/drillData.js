@@ -1,18 +1,18 @@
 // === DRILLS METADATA ===
 export const DRILLS = [
-  { id: 'flashcard', n: '1', name: 'Flashcards', desc: 'Tap to flip — mark each word as known or still learning.', color: 'amber', wide: true },
-  { id: 'es-en', n: '2', name: 'Spanish → English', desc: 'See a Spanish word — pick the English meaning.', color: 'teal', wide: false },
-  { id: 'en-es', n: '3', name: 'English → Spanish', desc: 'See an English word — pick the Spanish translation.', color: 'coral', wide: false },
-  { id: 'type-es-en', n: '4', name: 'Type it — Sp → En', desc: 'See Spanish — type the English translation.', color: 'green', wide: false },
-  { id: 'type-en-es', n: '5', name: 'Type it — En → Sp', desc: 'See English — type the Spanish word.', color: 'rose', wide: false },
-  { id: 'conjugation', n: '6', name: 'Conjugation Drill', desc: 'Present tense — choose the right verb form.', color: 'purple', wide: false },
+  { id: 'flashcard', n: '1', name: 'Flashcards', desc: 'Tap to flip — mark each word as known or still learning.', color: 'amber', wide: true, tier: 'review' },
+  { id: 'es-en', n: '2', name: 'Spanish → English', desc: 'See a Spanish word — pick the English meaning.', color: 'teal', wide: false, tier: 'practice' },
+  { id: 'en-es', n: '3', name: 'English → Spanish', desc: 'See an English word — pick the Spanish translation.', color: 'coral', wide: false, tier: 'practice' },
+  { id: 'type-es-en', n: '4', name: 'Type it — Sp → En', desc: 'See Spanish — type the English translation.', color: 'green', wide: false, tier: 'practice' },
+  { id: 'type-en-es', n: '5', name: 'Type it — En → Sp', desc: 'See English — type the Spanish word.', color: 'rose', wide: false, tier: 'practice' },
+  { id: 'conjugation', n: '6', name: 'Conjugation Drill', desc: 'Present tense — choose the right verb form.', color: 'purple', wide: false, tier: 'practice' },
   { id: 'past-tense', n: '7', name: 'Past Tense (Preterite)', desc: 'Practice irregular & regular preterite forms.', color: 'stone', wide: false },
-  { id: 'gender', n: '8', name: 'Gender Drill', desc: 'Is this noun el (masculine) or la (feminine)?', color: 'violet', wide: false },
-  { id: 'matching', n: '9', name: 'Matching Game', desc: 'Match Spanish words to their English pairs.', color: 'fuchsia', wide: false },
-  { id: 'hear-choose', n: '10', name: 'Hear & Choose', desc: 'Listen to the Spanish word — pick the meaning.', color: 'sky', wide: false },
-  { id: 'listen-type', n: '11', name: 'Listen & Type', desc: 'Hear a Spanish word — spell it back.', color: 'orange', wide: false },
-  { id: 'sent-build', n: '12', name: 'Sentence Builder', desc: 'Arrange words into a correct Spanish sentence.', color: 'lime', wide: true },
-  { id: 'fill-blank', n: '13', name: 'Fill in the Blank', desc: 'A sentence with one missing word — pick the right one.', color: 'pink', wide: true },
+  { id: 'gender', n: '8', name: 'Gender Drill', desc: 'Is this noun el (masculine) or la (feminine)?', color: 'violet', wide: false, tier: 'practice' },
+  { id: 'matching', n: '9', name: 'Matching Game', desc: 'Match Spanish words to their English pairs.', color: 'fuchsia', wide: false, tier: 'warmup' },
+  { id: 'hear-choose', n: '10', name: 'Hear & Choose', desc: 'Listen to the Spanish word — pick the meaning.', color: 'sky', wide: false, tier: 'warmup' },
+  { id: 'listen-type', n: '11', name: 'Listen & Type', desc: 'Hear a Spanish word — spell it back.', color: 'orange', wide: false, tier: 'practice' },
+  { id: 'sent-build', n: '12', name: 'Sentence Builder', desc: 'Arrange words into a correct Spanish sentence.', color: 'lime', wide: true, tier: 'practice' },
+  { id: 'fill-blank', n: '13', name: 'Fill in the Blank', desc: 'A sentence with one missing word — pick the right one.', color: 'pink', wide: true, tier: 'practice' },
 ];
  
 // ============================================================
