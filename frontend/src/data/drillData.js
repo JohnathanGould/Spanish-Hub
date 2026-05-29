@@ -9,10 +9,10 @@ export const DRILLS = [
   { id: 'past-tense', n: '7', name: 'Past Tense (Preterite)', desc: 'Practice irregular & regular preterite forms.', color: 'stone', wide: false },
   { id: 'gender', n: '8', name: 'Gender Drill', desc: 'Is this noun el (masculine) or la (feminine)?', color: 'violet', wide: false },
   { id: 'matching', n: '9', name: 'Matching Game', desc: 'Match Spanish words to their English pairs.', color: 'fuchsia', wide: false },
-  { id: 'hear-choose', n: '12', name: 'Hear & Choose', desc: 'Listen to the Spanish word — pick the meaning.', color: 'sky', wide: false },
-  { id: 'listen-type', n: '13', name: 'Listen & Type', desc: 'Hear a Spanish word — spell it back.', color: 'orange', wide: false },
-  { id: 'sent-build', n: '14', name: 'Sentence Builder', desc: 'Arrange words into a correct Spanish sentence.', color: 'lime', wide: true },
-  { id: 'fill-blank', n: '15', name: 'Fill in the Blank', desc: 'A sentence with one missing word — pick the right one.', color: 'pink', wide: true },
+  { id: 'hear-choose', n: '10', name: 'Hear & Choose', desc: 'Listen to the Spanish word — pick the meaning.', color: 'sky', wide: false },
+  { id: 'listen-type', n: '11', name: 'Listen & Type', desc: 'Hear a Spanish word — spell it back.', color: 'orange', wide: false },
+  { id: 'sent-build', n: '12', name: 'Sentence Builder', desc: 'Arrange words into a correct Spanish sentence.', color: 'lime', wide: true },
+  { id: 'fill-blank', n: '13', name: 'Fill in the Blank', desc: 'A sentence with one missing word — pick the right one.', color: 'pink', wide: true },
 ];
  
 // ============================================================
