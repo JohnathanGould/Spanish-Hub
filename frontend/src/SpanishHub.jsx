@@ -122,8 +122,7 @@ export default function SpanishHub() {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(DEFAULT_DATA);
   const [view, setView] = useState({ page: 'home' });
-  const [tab, setTab] = useState('study');
-  const [showHome, setShowHome] = useState(true);
+  const [tab, setTab] = useState('home');
   const [studyCategory, setStudyCategory] = useState(null);
   const [drillMode, setDrillMode] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -521,27 +520,26 @@ export default function SpanishHub() {
           dailyGoal={userData.dailyGoal}
           dailyProgress={userData.dailyProgress}
           onGoalClick={() => setShowGoalModal(true)}
-          onHomeClick={() => setShowHome(true)}
+          onHomeClick={() => setTab('home')}
         />
         <div className="tab-bar">
-          {[['learn', 'Learn'], ['words', 'My Words'], ['study', 'Study'], ['sofia', 'Talk to Milo']].map(([id, label]) => (
+          {[['home', 'Home'], ['learn', 'Learn'], ['words', 'My Words'], ['study', 'Study'], ['sofia', 'Talk to Milo']].map(([id, label]) => (
             <button key={id} className={`tab-btn${tab === id ? ' active' : ''}`}
-              onClick={() => { setShowHome(false); setTab(id); }} data-testid={`tab-${id}`}
+              onClick={() => setTab(id)} data-testid={`tab-${id}`}
               style={{ scrollSnapAlign: 'start', flexShrink: 0 }}>{label}</button>
           ))}
         </div>
         <div ref={contentRef} className="px-4 pb-16">
-          {showHome ? (
+          {tab === 'home' && (
             <HomeTab
-              onNavigate={(tabId) => { setShowHome(false); setTab(tabId); }}
+              onNavigate={setTab}
               userData={userData}
               streak={userData.streak}
               dailyProgress={userData.dailyProgress}
               dailyGoal={userData.dailyGoal}
               onStartDailyChallenge={startDailyChallenge}
             />
-          ) : (
-          <>
+          )}
           {tab === 'study' && studyCategory === null && (
             <div className="flex flex-col gap-3 pt-1">
               {STUDY_OPTIONS.map((option) => (
@@ -601,8 +599,6 @@ export default function SpanishHub() {
 
           {tab === 'sofia' && (
             <SofiaChat userUid={effectiveUser.uid} />
-          )}
-          </>
           )}
           </div>
         {selectedWord && (
