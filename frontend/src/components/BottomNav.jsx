@@ -10,7 +10,7 @@ interface BottomNavProps {
 
 const tabs = [
   { id: "learn", label: "Learn", icon: BookOpen },
-  { id: "drills", label: "Drills", icon: Dumbbell },
+  { id: "practice", label: "Practice", icon: Dumbbell },
   { id: "home", label: "Home", icon: Home, isCenter: true },
   { id: "milo", label: "Milo", icon: Bot },
   { id: "more", label: "More", icon: Trophy },
