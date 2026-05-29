@@ -9,7 +9,6 @@ export const DRILLS = [
   { id: 'past-tense', n: '7', name: 'Past Tense (Preterite)', desc: 'Practice irregular & regular preterite forms.', color: 'stone', wide: false },
   { id: 'gender', n: '8', name: 'Gender Drill', desc: 'Is this noun el (masculine) or la (feminine)?', color: 'violet', wide: false },
   { id: 'matching', n: '9', name: 'Matching Game', desc: 'Match Spanish words to their English pairs.', color: 'fuchsia', wide: false },
-  { id: 'word-sort', n: '10', name: 'Word Sort — Spanish', desc: 'Is it a noun, verb, adjective, adverb…?', color: 'blue', wide: false },
   { id: 'hear-choose', n: '12', name: 'Hear & Choose', desc: 'Listen to the Spanish word — pick the meaning.', color: 'sky', wide: false },
   { id: 'listen-type', n: '13', name: 'Listen & Type', desc: 'Hear a Spanish word — spell it back.', color: 'orange', wide: false },
   { id: 'sent-build', n: '14', name: 'Sentence Builder', desc: 'Arrange words into a correct Spanish sentence.', color: 'lime', wide: true },
@@ -291,26 +290,3 @@ export const FITB_POOL = [
   { before: 'Tú', blank: 'bebes', after: 'mucho agua.', choices: ['bebo', 'bebes', 'bebe', 'comes'], hint: 'tú = you, beber' },
 ];
  
-// === ENGLISH WORD SORT ===
-export const EN_POOL = [
-  { w: 'dog', type: 'noun', sentence: 'The [[dog]] barked loudly.' },
-  { w: 'teach', type: 'verb', sentence: 'She will [[teach]] the class.' },
-  { w: 'happy', type: 'adjective', sentence: 'The [[happy]] child smiled.' },
-  { w: 'quickly', type: 'adverb', sentence: 'He ran [[quickly]] away.' },
-  { w: 'she', type: 'pronoun', sentence: '[[She]] opened the door.' },
-  { w: 'run', type: 'verb', sentence: 'They like to [[run]] every day.' },
-  { w: 'beautiful', type: 'adjective', sentence: 'What a [[beautiful]] day!' },
-  { w: 'softly', type: 'adverb', sentence: 'She spoke [[softly]] to him.' },
-  { w: 'house', type: 'noun', sentence: 'The [[house]] was painted blue.' },
-  { w: 'he', type: 'pronoun', sentence: '[[He]] forgot his keys.' },
-  { w: 'eat', type: 'verb', sentence: 'We should [[eat]] together.' },
-  { w: 'tall', type: 'adjective', sentence: 'The [[tall]] man waved at us.' },
-  { w: 'slowly', type: 'adverb', sentence: 'Walk [[slowly]] on the ice.' },
-  { w: 'book', type: 'noun', sentence: 'She read the [[book]] twice.' },
-  { w: 'they', type: 'pronoun', sentence: '[[They]] arrived late again.' },
-  { w: 'jump', type: 'verb', sentence: 'The cat can [[jump]] high.' },
-  { w: 'cold', type: 'adjective', sentence: 'Drink the [[cold]] water.' },
-  { w: 'always', type: 'adverb', sentence: 'He [[always]] tells the truth.' },
-];
- 
-export const EN_TYPES = ['noun', 'verb', 'adjective', 'adverb', 'pronoun'];
