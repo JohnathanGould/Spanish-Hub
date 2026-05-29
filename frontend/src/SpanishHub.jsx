@@ -523,8 +523,9 @@ export default function SpanishHub() {
           onGoalClick={() => setShowGoalModal(true)}
           onHomeClick={() => setTab('home')}
         />
-        <div ref={contentRef} className="px-4 pb-20">
+        <div ref={contentRef} className="px-4">
           {tab === 'home' && (
+            <div className="pb-20">
             <HomeTab
               onNavigate={setTab}
               userData={userData}
@@ -533,9 +534,10 @@ export default function SpanishHub() {
               dailyGoal={userData.dailyGoal}
               onStartDailyChallenge={startDailyChallenge}
             />
+            </div>
           )}
           {tab === 'study' && studyCategory === null && (
-            <div className="flex flex-col gap-3 pt-1">
+            <div className="flex flex-col gap-3 pt-1 pb-20">
               {STUDY_OPTIONS.map((option) => (
                 <button
                   key={option.id}
@@ -556,6 +558,7 @@ export default function SpanishHub() {
             </div>
           )}
           {tab === 'study' && studyCategory !== null && (
+            <div className="pb-20">
             <>
               <button
                 type="button"
@@ -572,13 +575,17 @@ export default function SpanishHub() {
                 studyCategory={studyCategory} setStudyCategory={setStudyCategory} />
               <KofiSupport />
             </>
+            </div>
           )}
           {tab === 'learn' && (
+            <div className="pb-20">
             <LessonsList lessonsCompleted={userData.lessonsCompleted || []}
               onOpenLesson={openLesson}
               onShowCertificate={() => setShowCertificate(true)} />
+            </div>
           )}
           {tab === 'words' && (
+            <div className="pb-20">
             <WordList
               words={activeWords} progress={userData.progress}
               customWords={userData.customWords || []}
@@ -589,10 +596,13 @@ export default function SpanishHub() {
               onSharedPacksClick={() => setShowSharedPacks(true)}
               categoryEnabled={userData.categoryEnabled}
             />
+            </div>
           )}
 
           {tab === 'sofia' && (
+            <div className="pb-20">
             <SofiaChat userUid={effectiveUser.uid} />
+            </div>
           )}
           </div>
         {selectedWord && (
