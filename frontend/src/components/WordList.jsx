@@ -8,7 +8,14 @@ function MasteryDot({ es, progress }) {
   return <span className="inline-block w-2 h-2 rounded-full flex-shrink-0" style={{ background: dotColor(lvl) }} />;
 }
 
-function ProgressPanel({ words, progress }) {
+const STAT_TIERS = [
+  ['new',      '#A8A29E', 'New'],
+  ['learning', '#D97706', 'Learning'],
+  ['strong',   '#10B981', 'Strong'],
+  ['mastered', '#16A34A', 'Mastered'],
+];
+
+function ProgressPanel({ words, progress, tierFilter, setTierFilter }) {
   const stats = getStats(words, progress);
   const total = words.length;
   const pct = total > 0 ? Math.round((stats.mastered / total) * 100) : 0;
@@ -21,14 +28,29 @@ function ProgressPanel({ words, progress }) {
       <div className="h-2 rounded-full mb-3" style={{ background: 'hsl(var(--muted))' }}>
         <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#16A34A,#22C55E)' }} />
       </div>
-      <div className="grid grid-cols-4 gap-2">
-        {[['new', stats.new, '#A8A29E', 'New'], ['learning', stats.learning, '#D97706', 'Learning'], ['strong', stats.strong, '#10B981', 'Strong'], ['mastered', stats.mastered, '#16A34A', 'Mastered']].map(([key, val, color, label]) => (
-          <div key={key} className="rounded-lg py-2 text-center" style={{ background: 'hsl(var(--muted))' }}>
-            <div className="text-lg font-bold" style={{ color }}>{val}</div>
-            <div className="text-xs font-medium" style={{ color: 'hsl(var(--muted-foreground))' }}>{label}</div>
-          </div>
-        ))}
+      <div className="grid grid-cols-4 gap-2 mb-2">
+        {STAT_TIERS.map(([key, color, label]) => {
+          const active = tierFilter === key;
+          return (
+            <button key={key} onClick={() => setTierFilter(active ? null : key)}
+              className="rounded-lg py-2 text-center transition-all"
+              style={{
+                background: active ? `${color}20` : 'hsl(var(--muted))',
+                border: `2px solid ${active ? color : 'transparent'}`,
+              }}>
+              <div className="text-lg font-bold" style={{ color }}>{stats[key]}</div>
+              <div className="text-xs font-medium" style={{ color: 'hsl(var(--muted-foreground))' }}>{label}</div>
+            </button>
+          );
+        })}
       </div>
+      <button onClick={() => setTierFilter(null)}
+        className="w-full py-1.5 rounded-lg text-xs font-semibold transition-all"
+        style={tierFilter === null
+          ? { background: 'hsl(var(--foreground))', color: 'hsl(var(--background))' }
+          : { background: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}>
+        All · {stats.new + stats.learning + stats.strong + stats.mastered}
+      </button>
     </div>
   );
 }
@@ -76,22 +98,24 @@ function AddWordForm({ onAdd }) {
 }
 
 export default function WordList({ words, progress, customWords, searchQuery, setSearchQuery, onAddWord, onDeleteWord, onWordClick, onCategoryClick, onSharedPacksClick, categoryEnabled }) {
+  const [tierFilter, setTierFilter] = useState(null);
   const q = searchQuery.toLowerCase();
-  const filtered = q ? words.filter(w => w.es.includes(q) || w.en.includes(q)) : null;
+  const matchesTier = (es) => !tierFilter || masteryLevel(progress, es) === tierFilter;
+  const filtered = q ? words.filter(w => (w.es.includes(q) || w.en.includes(q)) && matchesTier(w.es)) : null;
   const nouns = words.filter(w => w.type === 'noun' && w.group !== 'Core');
   const phrases = words.filter(w => w.type === 'phrase');
   const others = words.filter(w => ['pronoun', 'article', 'adj', 'adv', 'other'].includes(w.type));
 
   return (
     <div>
-      <ProgressPanel words={words} progress={progress} />
+      <ProgressPanel words={words} progress={progress} tierFilter={tierFilter} setTierFilter={setTierFilter} />
 
       {/* Search + Category button */}
       <div className="flex gap-2 mb-4">
         <div className="flex-1 relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'hsl(var(--muted-foreground))' }} />
           <input data-testid="word-search" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search wordsΓÇª" className="w-full pl-8 pr-3 py-2 rounded-xl border text-sm"
+            placeholder="Search words…" className="w-full pl-8 pr-3 py-2 rounded-xl border text-sm"
             style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }} />
         </div>
         <button data-testid="category-toggle-btn" onClick={onCategoryClick}
@@ -125,9 +149,9 @@ export default function WordList({ words, progress, customWords, searchQuery, se
       {!filtered && (
         <>
           {/* Custom words */}
-          {customWords.length > 0 && (
+          {customWords.filter(w => matchesTier(w.es)).length > 0 && (
             <Section title="Your Added Words">
-              {customWords.map(w => (
+              {customWords.filter(w => matchesTier(w.es)).map(w => (
                 <div key={w.es} className="flex items-center justify-between px-3 py-2 rounded-lg border mb-1 text-sm"
                   style={{ background: 'hsl(var(--muted))', borderColor: 'hsl(var(--border))' }}>
                   <span className="flex items-center gap-2">
@@ -145,66 +169,76 @@ export default function WordList({ words, progress, customWords, searchQuery, se
           )}
 
           {/* Verbs */}
-          <Section title="Verbs & Conjugations">
-            {VERB_TABLE.map(v => (
-              <div key={v.inf} className="rounded-xl border p-3 mb-2" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-                <div className="flex items-center gap-2 mb-2 cursor-pointer" onClick={() => onWordClick(words.find(w => w.es === v.inf) || { es: v.inf, en: v.en, type: 'verb' })}>
-                  <MasteryDot es={v.inf} progress={progress} />
-                  <span className="font-bold text-sm">{v.inf}</span>
-                  <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>= {v.en}</span>
-                </div>
-                {v.conj.map(c => (
-                  <div key={c.es} className="flex items-center gap-2 text-xs pl-2 mb-1">
-                    <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: 'hsl(var(--muted-foreground))' }} />
-                    <span className="font-medium w-16" style={{ color: 'hsl(var(--muted-foreground))' }}>{c.subj}</span>
-                    <MasteryDot es={c.es} progress={progress} />
-                    <span className="font-bold">{c.es}</span>
-                    <span style={{ color: 'hsl(var(--muted-foreground))' }}>= {c.en}</span>
+          {VERB_TABLE.filter(v => matchesTier(v.inf) || v.conj.some(c => matchesTier(c.es))).length > 0 && (
+            <Section title="Verbs & Conjugations">
+              {VERB_TABLE.filter(v => matchesTier(v.inf) || v.conj.some(c => matchesTier(c.es))).map(v => (
+                <div key={v.inf} className="rounded-xl border p-3 mb-2" style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+                  <div className="flex items-center gap-2 mb-2 cursor-pointer" onClick={() => onWordClick(words.find(w => w.es === v.inf) || { es: v.inf, en: v.en, type: 'verb' })}>
+                    <MasteryDot es={v.inf} progress={progress} />
+                    <span className="font-bold text-sm">{v.inf}</span>
+                    <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>= {v.en}</span>
                   </div>
-                ))}
-              </div>
-            ))}
-          </Section>
+                  {v.conj.filter(c => matchesTier(c.es)).map(c => (
+                    <div key={c.es} className="flex items-center gap-2 text-xs pl-2 mb-1">
+                      <span className="w-1 h-1 rounded-full flex-shrink-0" style={{ background: 'hsl(var(--muted-foreground))' }} />
+                      <span className="font-medium w-16" style={{ color: 'hsl(var(--muted-foreground))' }}>{c.subj}</span>
+                      <MasteryDot es={c.es} progress={progress} />
+                      <span className="font-bold">{c.es}</span>
+                      <span style={{ color: 'hsl(var(--muted-foreground))' }}>= {c.en}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </Section>
+          )}
 
           {/* Noun groups */}
-          {NOUN_GROUPS.map(g => (
-            <Section key={g.title} title={g.title}>
-              <div className="grid grid-cols-2 gap-1.5">
-                {g.words.map(w => (
-                  <div key={w.es} onClick={() => onWordClick(words.find(x => x.es === w.es) || w)}
-                    className="flex items-center gap-2 rounded-lg border p-2 cursor-pointer hover:bg-muted/50 transition-colors"
+          {NOUN_GROUPS.map(g => {
+            const visibleWords = g.words.filter(w => matchesTier(w.es));
+            if (visibleWords.length === 0) return null;
+            return (
+              <Section key={g.title} title={g.title}>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {visibleWords.map(w => (
+                    <div key={w.es} onClick={() => onWordClick(words.find(x => x.es === w.es) || w)}
+                      className="flex items-center gap-2 rounded-lg border p-2 cursor-pointer hover:bg-muted/50 transition-colors"
+                      style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+                      <MasteryDot es={w.es} progress={progress} />
+                      {w.g && <span className="text-xs font-bold" style={{ color: 'hsl(var(--muted-foreground))' }}>{w.g === 'm' ? 'el' : 'la'}</span>}
+                      <span className="text-xs font-bold flex-1">{w.es}</span>
+                      <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>{w.en}</span>
+                    </div>
+                  ))}
+                </div>
+              </Section>
+            );
+          })}
+
+          {/* Phrases */}
+          {phrases.filter(w => matchesTier(w.es)).length > 0 && (
+            <Section title="Phrases">
+              {phrases.filter(w => matchesTier(w.es)).map(w => (
+                <WordRow key={w.es} word={w} progress={progress} onClick={() => onWordClick(w)} />
+              ))}
+            </Section>
+          )}
+
+          {/* Other words */}
+          {others.filter(w => matchesTier(w.es)).length > 0 && (
+            <Section title="Other Words">
+              <div className="flex flex-wrap gap-1.5">
+                {others.filter(w => matchesTier(w.es)).map(w => (
+                  <div key={w.es} onClick={() => onWordClick(w)}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border cursor-pointer transition-colors hover:bg-muted/50 text-xs"
                     style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
                     <MasteryDot es={w.es} progress={progress} />
-                    {w.g && <span className="text-xs font-bold" style={{ color: 'hsl(var(--muted-foreground))' }}>{w.g === 'm' ? 'el' : 'la'}</span>}
-                    <span className="text-xs font-bold flex-1">{w.es}</span>
-                    <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>{w.en}</span>
+                    <span className="font-bold">{w.es}</span>
+                    <span style={{ color: 'hsl(var(--muted-foreground))' }}>{w.en}</span>
                   </div>
                 ))}
               </div>
             </Section>
-          ))}
-
-          {/* Phrases */}
-          <Section title="Phrases">
-            {phrases.map(w => (
-              <WordRow key={w.es} word={w} progress={progress} onClick={() => onWordClick(w)} />
-            ))}
-          </Section>
-
-          {/* Other words */}
-          <Section title="Other Words">
-            <div className="flex flex-wrap gap-1.5">
-              {others.map(w => (
-                <div key={w.es} onClick={() => onWordClick(w)}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border cursor-pointer transition-colors hover:bg-muted/50 text-xs"
-                  style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-                  <MasteryDot es={w.es} progress={progress} />
-                  <span className="font-bold">{w.es}</span>
-                  <span style={{ color: 'hsl(var(--muted-foreground))' }}>{w.en}</span>
-                </div>
-              ))}
-            </div>
-          </Section>
+          )}
         </>
       )}
     </div>
