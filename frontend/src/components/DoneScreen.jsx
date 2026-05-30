@@ -98,8 +98,8 @@ export default function DoneScreen({ drillId, correct, total, sessions, onRetry,
           <RotateCcw size={14} /> Retry
         </button>
         <button data-testid="done-home-btn" onClick={handleHome}
-          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border text-sm font-semibold transition-all hover:-translate-y-0.5"
-          style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }}>
+          className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border-2 text-sm font-semibold transition-all hover:-translate-y-0.5"
+          style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--foreground) / 0.35)', color: 'hsl(var(--foreground) / 0.75)' }}>
           <Home size={14} /> Home
         </button>
       </div>
