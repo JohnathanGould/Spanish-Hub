@@ -49,7 +49,7 @@ export default function DrillsGrid({
     : 'All ' + words.length + ' words';
 
   const handleCardClick = (drill) => {
-    if (drill.id === 'matching' && drillLength > 8) setDrillLength(6);
+    if (drill.id === 'matching' && drillLength > 10) setDrillLength(6);
     setPendingId(pendingId === drill.id ? null : drill.id);
   };
 
@@ -119,8 +119,8 @@ export default function DrillsGrid({
             <div className="text-xs font-medium mb-2 mt-2 text-center" style={{ color: s.desc }}>
               How many words?
             </div>
-            <div className="grid grid-cols-3 gap-1.5 mb-2">
-              {(drill.id === 'matching' ? [4, 6, 8] : [10, 20, 30]).map(n => (
+            <div className={`grid gap-1.5 mb-2 ${drill.id === 'matching' ? 'grid-cols-4' : 'grid-cols-3'}`}>
+              {(drill.id === 'matching' ? [4, 6, 8, 10] : [10, 20, 30]).map(n => (
                 <button
                   key={n}
                   onClick={(e) => { e.stopPropagation(); setDrillLength(n); }}
