@@ -1,0 +1,17 @@
+{
+  "short_name": "Milo Speaks Spanish",
+  "name": "Milo Speaks Spanish — Learn Spanish for Free",
+  "description": "Learn Spanish with Milo 🐾 Drills, lessons, AI conversation practice and 300+ words. Free forever.",
+  "icons": [
+    {
+      "src": "milo-icon.jpg",
+      "type": "image/jpeg",
+      "sizes": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#F5C518",
+  "background_color": "#FAF7F2",
+  "lang": "en"
+}

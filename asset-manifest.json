@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/Spanish-Hub/static/css/main.4993cc69.css",
+    "main.js": "/Spanish-Hub/static/js/main.c054ee12.js",
+    "index.html": "/Spanish-Hub/index.html",
+    "main.4993cc69.css.map": "/Spanish-Hub/static/css/main.4993cc69.css.map",
+    "main.c054ee12.js.map": "/Spanish-Hub/static/js/main.c054ee12.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4993cc69.css",
+    "static/js/main.c054ee12.js"
+  ]
+}
