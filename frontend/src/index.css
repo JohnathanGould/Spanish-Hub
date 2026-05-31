@@ -6,6 +6,7 @@
 
 /* ── SPANISH THEME VARIABLES ── */
 :root {
+  color-scheme: dark;
   --background: 40 50% 97%;
   --foreground: 14 38% 13%;
   --card: 0 0% 100%;
