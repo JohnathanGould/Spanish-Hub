@@ -605,11 +605,6 @@ export default function SpanishHub() {
             </div>
           )}
           </div>
-        {showCategoryModal && (
-          <CategoryToggles categoryEnabled={userData.categoryEnabled}
-            onToggle={updateCategoryEnabled} onApplyPreset={applyPreset}
-            onClose={() => setShowCategoryModal(false)} />
-        )}
         {showGoalModal && (
           <GoalModal goal={userData.dailyGoal}
             reminderEnabled={userData.reminderEnabled}
@@ -632,6 +627,15 @@ export default function SpanishHub() {
         )}
       </div>
       <BottomNav activeTab={tab} onTabChange={setTab} />
+      {showCategoryModal && (
+        <>
+          <div onClick={() => setShowCategoryModal(false)}
+            style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', zIndex: 49 }} />
+          <CategoryToggles categoryEnabled={userData.categoryEnabled}
+            onToggle={updateCategoryEnabled} onApplyPreset={applyPreset}
+            onClose={() => setShowCategoryModal(false)} />
+        </>
+      )}
       {selectedWord && (
         <WordDetail word={selectedWord} progress={userData.progress[selectedWord.es]} onClose={() => setSelectedWord(null)} />
       )}

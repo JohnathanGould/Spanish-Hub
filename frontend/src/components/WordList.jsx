@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { Search, Plus, Trash2, ChevronRight, Settings2, Globe } from 'lucide-react';
+import { Search, Plus, Trash2, ChevronRight, Globe, Package } from 'lucide-react';
 import { VERB_TABLE, NOUN_GROUPS } from '../data/words';
 import { masteryLevel, dotColor, getStats } from '../utils/helpers';
 
@@ -110,19 +110,14 @@ export default function WordList({ words, progress, customWords, searchQuery, se
     <div>
       <ProgressPanel words={words} progress={progress} tierFilter={tierFilter} setTierFilter={setTierFilter} />
 
-      {/* Search + Category button */}
-      <div className="flex gap-2 mb-4">
+      {/* Search + Community button */}
+      <div className="flex gap-2 mb-3">
         <div className="flex-1 relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: 'hsl(var(--muted-foreground))' }} />
           <input data-testid="word-search" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search words…" className="w-full pl-8 pr-3 py-2 rounded-xl border text-sm"
             style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }} />
         </div>
-        <button data-testid="category-toggle-btn" onClick={onCategoryClick}
-          className="flex items-center gap-1 px-3 py-2 rounded-xl border text-xs font-medium"
-          style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }}>
-          <Settings2 size={13} /> Packs
-        </button>
         {onSharedPacksClick && (
           <button data-testid="shared-packs-btn" onClick={onSharedPacksClick}
             className="flex items-center gap-1 px-3 py-2 rounded-xl border text-xs font-medium"
@@ -131,6 +126,13 @@ export default function WordList({ words, progress, customWords, searchQuery, se
           </button>
         )}
       </div>
+
+      {/* Add a Pack button */}
+      <button data-testid="category-toggle-btn" onClick={onCategoryClick}
+        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border mb-4 text-sm font-semibold transition-all hover:-translate-y-0.5"
+        style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }}>
+        <Package size={14} /> Add a Pack
+      </button>
 
       <AddWordForm onAdd={onAddWord} />
 

@@ -13,8 +13,7 @@ const CATEGORY_EMOJI = {
 export default function CategoryToggles({ categoryEnabled, onToggle, onApplyPreset, onClose }) {
   return (
     <div data-testid="category-toggle-modal" onClick={onClose}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3"
-      style={{ background: 'rgba(0,0,0,0.55)' }}>
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3">
       <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         onClick={e => e.stopPropagation()}
