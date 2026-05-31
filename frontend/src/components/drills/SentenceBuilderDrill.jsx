@@ -21,6 +21,10 @@ export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLe
     }
   }, [idx, queue]);
 
+  React.useEffect(() => {
+    if (feedback) speak(feedback.target, 'es', 0.72);
+  }, [feedback]); // eslint-disable-line react-hooks/exhaustive-deps
+
   if (queue.length === 0) {
     return <DrillShell title="Sentence Builder" current={0} total={0} onBack={onBack}>
       <div className="text-center py-10" style={{ color: 'hsl(var(--muted-foreground))' }}>No sentences available</div>
