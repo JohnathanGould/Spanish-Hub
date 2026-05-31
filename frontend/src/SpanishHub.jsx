@@ -253,9 +253,12 @@ export default function SpanishHub() {
       const today = new Date().toDateString();
       const streak = prev.streak || { count: 0, lastDate: null };
       const yesterday = new Date(Date.now() - 86400000).toDateString();
-      const newStreakCount = streak.lastDate === today ? streak.count
-        : streak.lastDate === yesterday ? streak.count + 1 : 1;
-      const sessionDrillId = dailyKind === 'weak' ? 'daily-weak' : dailyKind === 'theme' ? 'daily-theme' : drillId;
+      let newStreakCount = 1;
+      if (streak.lastDate === today) newStreakCount = streak.count;
+      else if (streak.lastDate === yesterday) newStreakCount = streak.count + 1;
+      let sessionDrillId = drillId;
+      if (dailyKind === 'weak') sessionDrillId = 'daily-weak';
+      else if (dailyKind === 'theme') sessionDrillId = 'daily-theme';
       const sessions = [{ drillId: sessionDrillId, correct, total, date: today, ts: Date.now() }, ...(prev.sessions || []).slice(0, 49)];
       const ws = getWeekStartStr();
       const sameWeek = prev.weekStart === ws;

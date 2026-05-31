@@ -13,7 +13,9 @@ export default function WordDetail({ word, progress, onClose }) {
   const p = progress || { c: 0, w: 0, s: 0 };
   const total = (p.c || 0) + (p.w || 0);
   const acc = total > 0 ? Math.round((p.c / total) * 100) : 0;
-  const article = word.gender === 'm' ? 'el ' : word.gender === 'f' ? 'la ' : '';
+  let article = '';
+  if (word.gender === 'm') article = 'el ';
+  else if (word.gender === 'f') article = 'la ';
 
   const [pronCheck, setPronCheck] = useState(null);
   const [listening, setListening] = useState(false);

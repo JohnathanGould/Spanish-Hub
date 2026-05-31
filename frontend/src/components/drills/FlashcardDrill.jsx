@@ -19,9 +19,12 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
   }
 
   const word = queue[idx];
-  const article = word.gender === 'm' ? 'el ' : word.gender === 'f' ? 'la ' : '';
+  let article = '';
+  if (word.gender === 'm') article = 'el ';
+  else if (word.gender === 'f') article = 'la ';
   const canHint = word.type === 'noun' || word.type === 'phrase';
   const isEsEn = direction === 'es-en';
+  const isEnEs = direction === 'en-es';
 
   const handleFlip = () => {
     setFlipped(!flipped);
@@ -69,9 +72,9 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
           onClick={() => handleDirectionChange('en-es')}
           className="flex-1 py-1.5 rounded-full text-xs font-bold border transition-all"
           style={{
-            background: !isEsEn ? 'hsl(var(--primary))' : 'hsl(var(--card))',
-            color: !isEsEn ? 'white' : 'hsl(var(--muted-foreground))',
-            borderColor: !isEsEn ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+            background: isEnEs ? 'hsl(var(--primary))' : 'hsl(var(--card))',
+            color: isEnEs ? 'white' : 'hsl(var(--muted-foreground))',
+            borderColor: isEnEs ? 'hsl(var(--primary))' : 'hsl(var(--border))',
           }}>
           🇬🇧 English → Spanish
         </button>

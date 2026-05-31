@@ -47,9 +47,13 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   }
 
   const word = queue[idx];
+  const isRelaxed = !strictMode;
   const isPromptEs = mode === 'type-es-en';
   const target = (mode === 'type-es-en') ? word.en : word.es;
-  const promptText = mode === 'listen-type' ? '' : (isPromptEs ? word.es : word.en);
+  let promptText = '';
+  if (mode !== 'listen-type') promptText = isPromptEs ? word.es : word.en;
+  let inputBorderColor = 'hsl(var(--border))';
+  if (feedback) inputBorderColor = feedback.ok ? '#86EFAC' : '#FCA5A5';
 
   const titles = {
     'type-es-en': { title: 'Type — Sp → En', sub: 'See Spanish — type English' },
@@ -93,9 +97,9 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
           onClick={() => setStrictMode(false)}
           className="flex flex-col items-center px-4 py-1.5 rounded-xl border-2 transition-all"
           style={{
-            borderColor: !strictMode ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-            background: !strictMode ? 'hsl(var(--primary) / 0.08)' : 'hsl(var(--card))',
-            color: !strictMode ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
+            borderColor: isRelaxed ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+            background: isRelaxed ? 'hsl(var(--primary) / 0.08)' : 'hsl(var(--card))',
+            color: isRelaxed ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
           }}>
           <span className="text-sm font-bold">😌 Relaxed</span>
           <span className="text-xs font-normal opacity-70">typos forgiven</span>
@@ -150,9 +154,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
         style={{
           background: 'hsl(var(--card))',
           color: 'hsl(var(--foreground))',
-          borderColor: feedback
-            ? (feedback.ok ? '#86EFAC' : '#FCA5A5')
-            : 'hsl(var(--border))',
+          borderColor: inputBorderColor,
         }} />
 
       {feedback ? (

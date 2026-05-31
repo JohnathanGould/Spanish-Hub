@@ -8,6 +8,8 @@ export default function DailyChallenge({ challenges, onStart }) {
   const sameDay = challenges?.date === today;
   const weakDone = sameDay && challenges?.weakDone;
   const themeDone = sameDay && challenges?.themeDone;
+  const weakActive = weakActive;
+  const themeActive = themeActive;
 
   const theme = DAILY_THEMES[new Date().getDay()];
 
@@ -17,9 +19,9 @@ export default function DailyChallenge({ challenges, onStart }) {
       {/* Weak words challenge */}
       <motion.button
         data-testid="daily-weak-card"
-        whileHover={!weakDone ? { y: -1 } : {}}
+        whileHover={weakActive ? { y: -1 } : {}}
         disabled={weakDone}
-        onClick={() => !weakDone && onStart('weak')}
+        onClick={() => weakActive && onStart('weak')}
         className="flex-1 relative overflow-hidden rounded-2xl px-3 py-2.5 text-left border transition-all"
         style={{
           background: weakDone ? '#DCFCE7' : 'linear-gradient(135deg,#C60B1E,#E22034)',
@@ -42,9 +44,9 @@ export default function DailyChallenge({ challenges, onStart }) {
       {/* Theme challenge */}
       <motion.button
         data-testid="daily-theme-card"
-        whileHover={!themeDone ? { y: -1 } : {}}
+        whileHover={themeActive ? { y: -1 } : {}}
         disabled={themeDone}
-        onClick={() => !themeDone && onStart('theme')}
+        onClick={() => themeActive && onStart('theme')}
         className="flex-1 relative overflow-hidden rounded-2xl px-3 py-2.5 text-left border transition-all"
         style={{
           background: themeDone ? '#DCFCE7' : 'linear-gradient(135deg,#D97706,#F5C518)',

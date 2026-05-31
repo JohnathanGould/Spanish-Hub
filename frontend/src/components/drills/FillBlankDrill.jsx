@@ -26,6 +26,13 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
     else { setIdx(idx + 1); setPicked(null); }
   };
 
+  let blankBg = 'hsl(var(--muted))';
+  let blankColor = 'hsl(var(--muted-foreground))';
+  if (picked) {
+    blankBg = picked === item.blank ? '#DCFCE7' : '#FEE2E2';
+    blankColor = picked === item.blank ? '#14532D' : '#991B1B';
+  }
+
   return (
     <DrillShell title="Fill in the Blank" subtitle="Pick the missing word"
       current={idx + 1} total={queue.length} onBack={onBack}>
@@ -35,8 +42,8 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
           {item.before}{' '}
           <span className="inline-block px-3 py-0.5 rounded-lg mx-1 align-middle"
             style={{
-              background: picked ? (picked === item.blank ? '#DCFCE7' : '#FEE2E2') : 'hsl(var(--muted))',
-              color: picked ? (picked === item.blank ? '#14532D' : '#991B1B') : 'hsl(var(--muted-foreground))',
+              background: blankBg,
+              color: blankColor,
               minWidth: 80,
               fontSize: '0.95em',
             }}>

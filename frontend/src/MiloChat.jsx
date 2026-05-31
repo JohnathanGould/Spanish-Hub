@@ -218,7 +218,7 @@ export function MiloChat({ userUid }) {
             <button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || usageCount >= 30}
-              style={{ position: "absolute", right: "4px", top: "50%", transform: "translateY(-50%)", width: "36px", height: "36px", borderRadius: "50%", background: !inputValue.trim() || usageCount >= 30 ? "#c4b5fd" : "#7c3aed", border: "none", cursor: !inputValue.trim() || usageCount >= 30 ? "not-allowed" : "pointer", color: "white", fontSize: "16px" }}
+              style={{ position: "absolute", right: "4px", top: "50%", transform: "translateY(-50%)", width: "36px", height: "36px", borderRadius: "50%", background: inputValue.trim() && usageCount < 30 ? "#7c3aed" : "#c4b5fd", border: "none", cursor: inputValue.trim() && usageCount < 30 ? "pointer" : "not-allowed", color: "white", fontSize: "16px" }}
             >
               ➤
             </button>

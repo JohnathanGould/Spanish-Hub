@@ -123,6 +123,7 @@ export default function Plaza({ user, isGuest }) {
           <AnimatePresence initial={false}>
             {messages.map(m => {
               const isMine = m.uid === user.uid;
+              const isOther = !isMine;
               return (
                 <motion.div key={m.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} layout
                   className={`flex gap-2 ${isMine ? 'flex-row-reverse' : ''}`}
@@ -149,7 +150,7 @@ export default function Plaza({ user, isGuest }) {
                         background: isMine ? 'hsl(var(--primary))' : 'hsl(var(--muted))',
                         color: isMine ? 'white' : 'hsl(var(--foreground))',
                         borderTopRightRadius: isMine ? 4 : undefined,
-                        borderTopLeftRadius: !isMine ? 4 : undefined,
+                        borderTopLeftRadius: isOther ? 4 : undefined,
                       }}>
                       {m.text}
                     </div>
