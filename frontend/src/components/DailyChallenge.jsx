@@ -8,8 +8,8 @@ export default function DailyChallenge({ challenges, onStart }) {
   const sameDay = challenges?.date === today;
   const weakDone = sameDay && challenges?.weakDone;
   const themeDone = sameDay && challenges?.themeDone;
-  const weakActive = weakActive;
-  const themeActive = themeActive;
+  const weakActive = !weakDone;
+  const themeActive = !themeDone;
 
   const theme = DAILY_THEMES[new Date().getDay()];
 

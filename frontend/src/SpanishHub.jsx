@@ -207,7 +207,8 @@ export default function SpanishHub() {
       const wasAboutToMaster = p.s === 5 && isCorrect;
       if (isCorrect) { p.c++; p.s = Math.min(p.s + 1, 10); }
       else { p.w++; p.s = Math.max(p.s - 1, 0); }
-      const xpGain = isCorrect ? 1 + (wasAboutToMaster ? 10 : 0) : 0;
+      let xpGain = 0;
+      if (isCorrect) xpGain = wasAboutToMaster ? 11 : 1;
       const today = new Date().toDateString();
       const dp = prev.dailyProgress || { count: 0, date: null };
       const dailyCount = (dp.date === today ? dp.count : 0) + (isCorrect ? 1 : 0);

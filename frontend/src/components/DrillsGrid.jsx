@@ -36,17 +36,13 @@ function getDrillsForCategory(studyCategory) {
 
 export default function DrillsGrid({
   words, stats, drillMode, setDrillMode, onStartDrill, completedPaths = [],
-  studyCategory, setStudyCategory,
+  studyCategory,
 }) {
   const [pendingId, setPendingId] = useState(null);
   const [drillLength, setDrillLength] = useState(10);
-
-  const notMastered = words.length - stats.mastered;
-  const masteredLabel = drillMode === 'mastered' ? 'Review mode' : stats.mastered + ' mastered';
-  const weakLabel = drillMode === 'weak' ? 'Focus mode' : notMastered + ' not yet mastered';
-  const drillLabel = drillMode === 'weak' ? words.length + ' unmastered words'
-    : drillMode === 'mastered' ? words.length + ' mastered words'
-    : 'All ' + words.length + ' words';
+  let drillLabel = 'All ' + words.length + ' words';
+  if (drillMode === 'weak') drillLabel = words.length + ' unmastered words';
+  else if (drillMode === 'mastered') drillLabel = words.length + ' mastered words';
 
   const handleCardClick = (drill) => {
     if (drill.id === 'matching' && drillLength > 10) setDrillLength(6);
@@ -76,7 +72,7 @@ export default function DrillsGrid({
         {/* Row — always visible */}
         <div
           className={'flex items-center gap-3 px-4 py-3' + (isLocked ? ' cursor-not-allowed' : ' cursor-pointer')}
-          onClick={() => !isLocked && handleCardClick(drill)}
+          onClick={isLocked ? undefined : () => handleCardClick(drill)}
         >
           {/* Number badge */}
           <div
