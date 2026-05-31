@@ -68,6 +68,9 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
         <div className="mt-4 text-center">
           <div className="mb-3 text-sm font-medium" style={{ color: picked === item.blank ? '#16A34A' : '#DC2626' }}>
             {picked === item.blank ? 'Correct! ✓' : `Answer: ${item.blank}`}
+            {picked === item.blank && item.hint && (
+              <div className="text-xs mt-1 opacity-70">{item.hint}</div>
+            )}
           </div>
           <button onClick={handleContinue} data-testid="fitb-continue"
             className="w-full py-3 rounded-xl font-bold text-white text-sm"
