@@ -1,0 +1,13 @@
+node_modules/
+dist/
+build/
+.next/
+.vercel/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp3
+*.wav
+*.mp4
+public/audio/
