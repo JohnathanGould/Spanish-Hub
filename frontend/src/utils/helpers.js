@@ -33,6 +33,22 @@ export function spacedRepetitionSort(words, progress) {
     .map(x => x.w);
 }
 
+export function buildNoRepeatQueue(words, progress, total) {
+  if (words.length === 0 || total === 0) return [];
+  const queue = [];
+  const seen = new Set();
+  while (queue.length < total) {
+    if (seen.size >= words.length) seen.clear();
+    const pool = words.filter(w => !seen.has(w.es));
+    for (const w of spacedRepetitionSort(pool, progress)) {
+      if (queue.length >= total) break;
+      queue.push(w);
+      seen.add(w.es);
+    }
+  }
+  return queue;
+}
+
 // === RANDOM UTILS ===
 export function shuffle(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -58,6 +74,56 @@ export function levenshtein(a, b) {
     for (let j = 1; j <= n; j++)
       dp[i][j] = a[i - 1] === b[j - 1] ? dp[i - 1][j - 1] : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
   return dp[m][n];
+}
+
+// Split stored translation into alternate answers (e.g. "store / shop" → ["store", "shop"])
+export function splitTranslationOptions(str) {
+  if (!str) return [''];
+  return str.split(' / ').map(s => s.trim()).filter(Boolean);
+}
+
+function allowedTyposForLength(len, strictMode) {
+  if (strictMode) return 0;
+  if (len >= 6) return 2;
+  if (len >= 4) return 1;
+  return 0;
+}
+
+// Grade a typed drill answer against one stored translation (may contain " / " alternates).
+// Exact match on any alternate = correct (not "Almost"). Almost only for spelling near-misses.
+export function gradeTypedAnswer(userAnswer, storedAnswer, strictMode = false) {
+  const ans = stripAccents(userAnswer.trim().toLowerCase());
+  const options = splitTranslationOptions(storedAnswer);
+  const displayTarget = storedAnswer;
+
+  for (const raw of options) {
+    const tgt = stripAccents(raw.trim().toLowerCase());
+    if (ans === tgt) {
+      return { ok: true, closeEnough: false, matchedTarget: raw.trim(), displayTarget };
+    }
+  }
+
+  if (!strictMode) {
+    let bestNearMiss = null;
+    for (const raw of options) {
+      const tgt = stripAccents(raw.trim().toLowerCase());
+      const dist = levenshtein(ans, tgt);
+      const allowed = allowedTyposForLength(tgt.length, strictMode);
+      if (dist > 0 && dist <= allowed && (!bestNearMiss || dist < bestNearMiss.dist)) {
+        bestNearMiss = { dist, matchedTarget: raw.trim() };
+      }
+    }
+    if (bestNearMiss) {
+      return {
+        ok: true,
+        closeEnough: true,
+        matchedTarget: bestNearMiss.matchedTarget,
+        displayTarget: bestNearMiss.matchedTarget,
+      };
+    }
+  }
+
+  return { ok: false, closeEnough: false, matchedTarget: null, displayTarget };
 }
 
 // === SPEECH ===

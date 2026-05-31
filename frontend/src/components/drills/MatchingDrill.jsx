@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import DrillShell from '../DrillShell';
-import { spacedRepetitionSort, shuffle, playCorrect } from '../../utils/helpers';
+import { buildNoRepeatQueue, shuffle, playCorrect } from '../../utils/helpers';
 
 export default function MatchingDrill({ words, progress, onAnswer, onDone, onBack, drillLength = 6 }) {
   const PAIRS = Math.min(drillLength, words.length);
   const pairsRef = useRef(null);
   if (!pairsRef.current) {
-    pairsRef.current = spacedRepetitionSort(words, progress).slice(0, PAIRS);
+    pairsRef.current = buildNoRepeatQueue(words, progress, PAIRS);
   }
   const pairs = pairsRef.current;
 

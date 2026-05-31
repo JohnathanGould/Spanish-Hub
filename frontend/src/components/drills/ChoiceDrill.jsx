@@ -1,14 +1,14 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
-import { spacedRepetitionSort, shuffle, speak } from '../../utils/helpers';
+import { buildNoRepeatQueue, shuffle, speak } from '../../utils/helpers';
 
 // mode: 'es-en' | 'en-es' | 'hear-choose'
 export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
   const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
-    queueRef.current = spacedRepetitionSort(words, progress).slice(0, total);
+    queueRef.current = buildNoRepeatQueue(words, progress, total);
   }
   const queue = queueRef.current;
   const [idx, setIdx] = useState(0);

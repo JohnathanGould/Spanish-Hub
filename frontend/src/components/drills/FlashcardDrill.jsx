@@ -2,11 +2,11 @@ import React, { useState, useMemo } from 'react';
 import { Volume2, Check, X, Image as ImageIcon } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import WordImage from '../WordImage';
-import { spacedRepetitionSort, speak } from '../../utils/helpers';
+import { buildNoRepeatQueue, speak } from '../../utils/helpers';
 
 export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
   const [direction, setDirection] = useState('es-en'); // 'es-en' or 'en-es'
-  const queue = useMemo(() => spacedRepetitionSort(words, progress).slice(0, drillLength), [words, progress, drillLength]);
+  const queue = useMemo(() => buildNoRepeatQueue(words, progress, drillLength), [words, progress, drillLength]);
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [showHint, setShowHint] = useState(false);

@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Volume2, ArrowRight } from 'lucide-react';
 import DrillShell from '../DrillShell';
-import { spacedRepetitionSort, levenshtein, speak, stripAccents, playCorrect, playAlmost } from '../../utils/helpers';
+import { buildNoRepeatQueue, speak, stripAccents, playCorrect, playAlmost, gradeTypedAnswer } from '../../utils/helpers';
 
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
 export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
   const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
-    queueRef.current = spacedRepetitionSort(words, progress).slice(0, total);
+    queueRef.current = buildNoRepeatQueue(words, progress, total);
   }
   const queue = queueRef.current;
   const [idx, setIdx] = useState(0);
@@ -56,19 +56,10 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   const submit = () => {
     if (feedback || !val.trim()) return;
 
-    // Always strip accents — accents are never penalised in either mode
-    const ans = stripAccents(val.trim().toLowerCase());
-    const tgt = stripAccents(target.toLowerCase());
-    const dist = levenshtein(ans, tgt);
-
-    // Relaxed mode: 1 error for 4-5 letter words, 2 errors for 6+ letter words, exact for shorter
-    // Strict mode: exact consonant/vowel spelling required (accents still ignored)
-    const allowedErrors = strictMode ? 0 : tgt.length >= 6 ? 2 : tgt.length >= 4 ? 1 : 0;
-    const ok = dist <= allowedErrors;
-    const closeEnough = !strictMode && dist > 0 && dist <= allowedErrors;
+    const { ok, closeEnough, displayTarget, matchedTarget } = gradeTypedAnswer(val, target, strictMode);
 
     if (ok) { if (closeEnough) playAlmost(); else playCorrect(); }
-    setFeedback({ ok, closeEnough, target, ans });
+    setFeedback({ ok, closeEnough, target: displayTarget, matchedTarget, ans: stripAccents(val.trim().toLowerCase()) });
     onAnswer(word.es, ok);
     if (ok) setCorrect(c => c + 1);
   };
