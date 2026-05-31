@@ -146,6 +146,8 @@ export function MiloChat({ userUid }) {
     if (!isMuted) speechSynthesis.cancel()
   }
 
+  const sendEnabled = !!inputValue.trim() && usageCount < 30;
+
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "80vh", background: "white" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #ede9fe", padding: "12px 16px" }}>
@@ -218,7 +220,7 @@ export function MiloChat({ userUid }) {
             <button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || usageCount >= 30}
-              style={{ position: "absolute", right: "4px", top: "50%", transform: "translateY(-50%)", width: "36px", height: "36px", borderRadius: "50%", background: inputValue.trim() && usageCount < 30 ? "#7c3aed" : "#c4b5fd", border: "none", cursor: inputValue.trim() && usageCount < 30 ? "pointer" : "not-allowed", color: "white", fontSize: "16px" }}
+              style={{ position: "absolute", right: "4px", top: "50%", transform: "translateY(-50%)", width: "36px", height: "36px", borderRadius: "50%", background: sendEnabled ? "#7c3aed" : "#c4b5fd", border: "none", cursor: sendEnabled ? "pointer" : "not-allowed", color: "white", fontSize: "16px" }}
             >
               ➤
             </button>

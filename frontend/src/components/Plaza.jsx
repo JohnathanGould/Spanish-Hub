@@ -154,7 +154,7 @@ export default function Plaza({ user, isGuest }) {
                       }}>
                       {m.text}
                     </div>
-                    {!isMine && (
+                    {isOther && (
                       <button data-testid={`report-msg-${m.id}`} onClick={() => reportMessage(m)}
                         disabled={reported.has(m.id)}
                         className="mt-1 px-1.5 text-[10px] flex items-center gap-1 transition-opacity"

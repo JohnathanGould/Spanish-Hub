@@ -65,6 +65,9 @@ export default function SharedPacks({ user, isGuest, customWords, onImport, onCl
     } catch (e) { console.error(e); }
   };
 
+  const feedbackBg    = feedback?.ok ? '#DCFCE7' : '#FEE2E2';
+  const feedbackColor = feedback?.ok ? '#14532D' : '#991B1B';
+
   return (
     <div data-testid="shared-packs-modal" onClick={onClose}
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3"
@@ -176,7 +179,7 @@ export default function SharedPacks({ user, isGuest, customWords, onImport, onCl
                   </button>
                   {feedback && (
                     <div className="text-center py-2 rounded-lg text-xs font-semibold"
-                      style={{ background: feedback.ok ? '#DCFCE7' : '#FEE2E2', color: feedback.ok ? '#14532D' : '#991B1B' }}>
+                      style={{ background: feedbackBg, color: feedbackColor }}>
                       {feedback.msg}
                     </div>
                   )}

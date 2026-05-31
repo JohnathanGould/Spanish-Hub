@@ -54,6 +54,10 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   if (mode !== 'listen-type') promptText = isPromptEs ? word.es : word.en;
   let inputBorderColor = 'hsl(var(--border))';
   if (feedback) inputBorderColor = feedback.ok ? '#86EFAC' : '#FCA5A5';
+  const feedbackBg    = feedback?.ok ? '#DCFCE7' : '#FEE2E2';
+  const feedbackColor = feedback?.ok ? '#14532D' : '#991B1B';
+  let feedbackType = 'wrong';
+  if (feedback?.ok) feedbackType = feedback.closeEnough ? 'almost' : 'correct';
 
   const titles = {
     'type-es-en': { title: 'Type — Sp → En', sub: 'See Spanish — type English' },
@@ -161,12 +165,12 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
         <div className="space-y-2">
           <div className="text-center py-2.5 rounded-xl"
             style={{
-              background: feedback.ok ? '#DCFCE7' : '#FEE2E2',
-              color: feedback.ok ? '#14532D' : '#991B1B',
+              background: feedbackBg,
+              color: feedbackColor,
             }}>
             <div className="font-bold text-sm" data-testid="type-feedback">
-              {feedback.ok && !feedback.closeEnough && 'Correct! ✓'}
-              {feedback.ok && feedback.closeEnough && (
+              {feedbackType === 'correct' && 'Correct! ✓'}
+              {feedbackType === 'almost' && (
                 <>
                   <div>Almost! ✓</div>
                   <div className="text-base font-black mt-1" style={{ color: '#D97706' }}>
@@ -174,7 +178,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
                   </div>
                 </>
               )}
-              {!feedback.ok && (
+              {feedbackType === 'wrong' && (
                 <>
                   <div>Answer:</div>
                   <div className="text-base font-black mt-1">{feedback.target}</div>

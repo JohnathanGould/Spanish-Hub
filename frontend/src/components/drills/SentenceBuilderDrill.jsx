@@ -61,6 +61,9 @@ export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLe
     else setIdx(idx + 1);
   };
 
+  const feedbackBg    = feedback?.ok ? '#DCFCE7' : '#FEE2E2';
+  const feedbackColor = feedback?.ok ? '#14532D' : '#991B1B';
+
   return (
     <DrillShell title="Sentence Builder" subtitle="Tap words to build the Spanish sentence"
       current={idx + 1} total={queue.length} onBack={onBack}>
@@ -96,11 +99,11 @@ export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLe
       {feedback ? (
         <div className="space-y-3">
           <div className="text-center py-3 px-4 rounded-xl"
-            style={{ background: feedback.ok ? '#DCFCE7' : '#FEE2E2', color: feedback.ok ? '#14532D' : '#991B1B' }}>
+            style={{ background: feedbackBg, color: feedbackColor }}>
             <div className="font-bold text-sm" data-testid="sent-feedback">
               {feedback.ok ? 'Perfect! ✓' : 'Not quite — here\'s the answer:'}
             </div>
-            <div className="text-sm font-bold mt-1" style={{ color: feedback.ok ? '#14532D' : '#991B1B' }}>
+            <div className="text-sm font-bold mt-1" style={{ color: feedbackColor }}>
               {feedback.target}
             </div>
             <button onClick={() => speak(feedback.target, 'es', 0.72)}

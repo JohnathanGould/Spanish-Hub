@@ -84,6 +84,9 @@ export default function FriendsList({ user, friends = [], onAddFriend, onRemoveF
     );
   }
 
+  const feedbackBg    = feedback?.ok ? '#DCFCE7' : '#FEE2E2';
+  const feedbackColor = feedback?.ok ? '#14532D' : '#991B1B';
+
   return (
     <div data-testid="friends-list">
       {/* My code */}
@@ -120,7 +123,7 @@ export default function FriendsList({ user, friends = [], onAddFriend, onRemoveF
         </div>
         {feedback && (
           <div className="mt-2 text-xs px-3 py-1.5 rounded-lg"
-            style={{ background: feedback.ok ? '#DCFCE7' : '#FEE2E2', color: feedback.ok ? '#14532D' : '#991B1B' }}>
+            style={{ background: feedbackBg, color: feedbackColor }}>
             {feedback.msg}
           </div>
         )}
