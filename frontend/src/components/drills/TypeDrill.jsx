@@ -21,6 +21,10 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
 
   useEffect(() => { inputRef.current?.focus(); }, [idx]);
 
+  useEffect(() => {
+    if (mode === 'listen-type' && feedback) speak(word.es, 'es');
+  }, [feedback]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const currentWord = queue[idx];
 
   // Only speak when idx changes and word hasn't been spoken yet
@@ -175,6 +179,9 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
                 </>
               )}
             </div>
+            {mode === 'listen-type' && (
+              <div className="text-xs mt-2 opacity-70">{word.en}</div>
+            )}
           </div>
           <button data-testid="type-next" onClick={next}
             className="w-full py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all"
