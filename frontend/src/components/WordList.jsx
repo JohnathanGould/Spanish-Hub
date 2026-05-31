@@ -102,7 +102,6 @@ export default function WordList({ words, progress, customWords, searchQuery, se
   const q = searchQuery.toLowerCase();
   const matchesTier = (es) => !tierFilter || masteryLevel(progress, es) === tierFilter;
   const filtered = q ? words.filter(w => (w.es.includes(q) || w.en.includes(q)) && matchesTier(w.es)) : null;
-  const nouns = words.filter(w => w.type === 'noun' && w.group !== 'Core');
   const phrases = words.filter(w => w.type === 'phrase');
   const others = words.filter(w => ['pronoun', 'article', 'adj', 'adv', 'other'].includes(w.type));
 

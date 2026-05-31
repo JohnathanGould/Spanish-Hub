@@ -18,7 +18,7 @@ export default function WordImage({ word, variant = 'card', onLoaded, eager = tr
       if (onLoaded) onLoaded(!!res);
     });
     return () => { cancelled = true; };
-  }, [word.es, eager]); // eslint-disable-line
+  }, [word.es, eager]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (data === undefined && eager) {
     return (

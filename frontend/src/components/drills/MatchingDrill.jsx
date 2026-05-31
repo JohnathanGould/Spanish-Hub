@@ -46,7 +46,7 @@ export default function MatchingDrill({ words, progress, onAnswer, onDone, onBac
         }, 600);
       }
     }
-  }, [selectedEs, selectedEn]); // eslint-disable-line
+  }, [selectedEs, selectedEn]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (matched.size > 0 && matched.size === pairs.length) {
