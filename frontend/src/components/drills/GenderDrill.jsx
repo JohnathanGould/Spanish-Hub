@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
-import { buildNoRepeatQueue } from '../../utils/helpers';
+import { buildNoRepeatQueue, speak } from '../../utils/helpers';
 
 export default function GenderDrill({ words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
   const total = drillLength;
@@ -17,6 +18,13 @@ export default function GenderDrill({ words, progress, onAnswer, onDone, onBack,
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);
   const [correct, setCorrect] = useState(0);
+
+  useEffect(() => {
+    if (picked && nouns[idx]) {
+      const n = nouns[idx];
+      speak(`${n.gender === 'm' ? 'el' : 'la'} ${n.es}`, 'es');
+    }
+  }, [picked]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (nouns.length === 0) {
     return <DrillShell title="Gender Drill" current={0} total={0} onBack={onBack}>
@@ -78,6 +86,9 @@ export default function GenderDrill({ words, progress, onAnswer, onDone, onBack,
           <div className="mb-3 text-sm font-medium" style={{ color: picked === word.gender ? '#16A34A' : '#DC2626' }}>
             {picked === word.gender ? 'Correct! ✓' : `Answer: ${correctLabel} ${word.es}`}
           </div>
+          <button onClick={() => speak(`${correctLabel} ${word.es}`, 'es')} className="speak-btn mx-auto mb-3">
+            <Volume2 size={12} /> Hear it
+          </button>
           <button onClick={handleContinue} data-testid="gender-continue"
             className="w-full py-3 rounded-xl font-bold text-white text-sm"
             style={{ background: 'hsl(var(--primary))' }}>
