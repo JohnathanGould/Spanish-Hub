@@ -22,7 +22,7 @@ import GoalModal from './components/GoalModal';
 import Certificate from './components/Certificate';
 import SharedPacks from './components/SharedPacks';
 import Plaza from './components/Plaza';
-import SofiaChat from './SofiaChat';
+import MiloChat from './MiloChat';
 import SpanishFlag from './components/SpanishFlag';
 import { KofiSupport } from './components/KofiSupport';
 import confetti from 'canvas-confetti';
@@ -599,9 +599,9 @@ export default function SpanishHub() {
             </div>
           )}
 
-          {tab === 'sofia' && (
+          {tab === 'milo' && (
             <div className="pb-20">
-            <SofiaChat userUid={effectiveUser.uid} />
+            <MiloChat userUid={effectiveUser.uid} />
             </div>
           )}
           </div>

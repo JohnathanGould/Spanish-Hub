@@ -7,7 +7,7 @@ const tabs = [
   { id: 'learn', label: 'Learn', icon: BookOpen },
   { id: 'words', label: 'My Words', icon: BookMarked },
   { id: 'study', label: 'Study', icon: Dumbbell },
-  { id: 'sofia', label: 'Milo', icon: Bot },
+  { id: 'milo', label: 'Milo', icon: Bot },
 ];
 
 export default function BottomNav({ activeTab, onTabChange }) {

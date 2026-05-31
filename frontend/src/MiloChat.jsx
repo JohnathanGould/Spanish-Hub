@@ -2,12 +2,12 @@ import { useState, useRef, useEffect } from "react"
 
 const initialMessages = [
   {
-    role: "sofia",
+    role: "milo",
     content: "¡Hola! Soy Milo, tu tutor de español. ¿Cómo estás hoy?",
   },
 ]
 
-export function SofiaChat({ userUid }) {
+export function MiloChat({ userUid }) {
   const [messages, setMessages] = useState(initialMessages)
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -55,21 +55,21 @@ export function SofiaChat({ userUid }) {
       if (response.status === 429) {
         setMessages((prev) => [
           ...prev,
-          { role: "sofia", content: data.message || "Daily limit reached." },
+          { role: "milo", content: data.message || "Daily limit reached." },
         ])
       } else if (!response.ok) {
         const isQuota = data.error === "quota_exceeded"
         setMessages((prev) => [
           ...prev,
           {
-            role: "sofia",
+            role: "milo",
             content: isQuota
               ? "Milo's free daily limit has been reached — he'll be back tomorrow! 🌙 If you'd like to help keep Milo running without limits, consider supporting Milo Speaks Spanish on Ko-fi ☕ — every donation helps!"
               : "Milo is unavailable right now. Try again in a moment.",
           },
         ])
       } else {
-        setMessages((prev) => [...prev, { role: "sofia", content: data.reply }])
+        setMessages((prev) => [...prev, { role: "milo", content: data.reply }])
         setUsageCount((prev) => prev + 1)
 
         if (!isMuted && data.reply) {
@@ -98,7 +98,7 @@ export function SofiaChat({ userUid }) {
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { role: "sofia", content: "Connection issue. Check your internet and try again." },
+        { role: "milo", content: "Connection issue. Check your internet and try again." },
       ])
     } finally {
       setIsLoading(false)
@@ -170,7 +170,7 @@ export function SofiaChat({ userUid }) {
               key={index}
               style={{ display: "flex", alignItems: "flex-end", gap: "8px", flexDirection: message.role === "user" ? "row-reverse" : "row" }}
             >
-              {message.role === "sofia" && (
+              {message.role === "milo" && (
                 <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", fontWeight: "700", color: "white", flexShrink: 0 }}>
                   M
                 </div>
@@ -243,4 +243,4 @@ export function SofiaChat({ userUid }) {
   )
 }
 
-export default SofiaChat
+export default MiloChat

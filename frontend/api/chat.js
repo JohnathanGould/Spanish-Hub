@@ -83,7 +83,7 @@ module.exports = async (req, res) => {
       console.error("Gemini error:", err);
       const isQuota = err.includes("429") || err.includes("RESOURCE_EXHAUSTED");
       return res.status(500).json({
-        error: isQuota ? "quota_exceeded" : "Sofia is unavailable right now. Try again in a moment."
+        error: isQuota ? "quota_exceeded" : "Milo is unavailable right now. Try again in a moment."
       });
     }
 
