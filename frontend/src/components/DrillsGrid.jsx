@@ -146,7 +146,7 @@ export default function DrillsGrid({
   let cardIndex = 0;
   const categoryDrills = getDrillsForCategory(studyCategory);
   const sectionLabel = DRILL_SECTIONS.find(({ tier }) => tier === studyCategory)?.label;
-
+  console.log("STATS DEBUG:", stats);
   return (
     <div>
       {/* Mode filter pills — compact single row */}
@@ -160,7 +160,7 @@ export default function DrillsGrid({
             borderColor: drillMode === 'weak' ? '#F6D080' : 'hsl(var(--border))',
             color: drillMode === 'weak' ? '#78350F' : 'hsl(var(--muted-foreground))',
           }}>
-          {notMastered} not mastered
+          0 not mastered
         </button>
         <button
           data-testid="mode-mastered-btn"
