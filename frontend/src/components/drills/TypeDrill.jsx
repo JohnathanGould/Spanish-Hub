@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Volume2, ArrowRight } from 'lucide-react';
 import DrillShell from '../DrillShell';
-import { spacedRepetitionSort, levenshtein, speak, stripAccents } from '../../utils/helpers';
+import { spacedRepetitionSort, levenshtein, speak, stripAccents, playCorrect, playAlmost } from '../../utils/helpers';
 
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
 export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
@@ -67,6 +67,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
     const ok = dist <= allowedErrors;
     const closeEnough = !strictMode && dist > 0 && dist <= allowedErrors;
 
+    if (ok) { if (closeEnough) playAlmost(); else playCorrect(); }
     setFeedback({ ok, closeEnough, target, ans });
     onAnswer(word.es, ok);
     if (ok) setCorrect(c => c + 1);

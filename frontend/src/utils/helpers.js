@@ -106,6 +106,8 @@ export function playTap() {
 
 // === CONFETTI SOUND ===
 let confettiBuffer = null;
+let correctBuffer = null;
+let almostBuffer = null;
 let audioCtx = null;
 let activeConfettiSource = null;
 
@@ -118,17 +120,20 @@ function getAudioContext() {
   } catch (e) { return null; }
 }
 
-// Preload the fanfare buffer on first user tap
+// Preload audio buffers on first user tap
 document.addEventListener('click', async () => {
   try {
-    if (confettiBuffer) return;
     const ctx = getAudioContext();
     if (!ctx) return;
     if (ctx.state === 'suspended') await ctx.resume();
-    const response = await fetch('/audio/fanfare.mp3');
-    if (!response.ok) return;
-    const arrayBuffer = await response.arrayBuffer();
-    confettiBuffer = await ctx.decodeAudioData(arrayBuffer);
+    const load = async (url) => {
+      const res = await fetch(url);
+      if (!res.ok) return null;
+      return ctx.decodeAudioData(await res.arrayBuffer());
+    };
+    if (!confettiBuffer) confettiBuffer = await load('/audio/fanfare.mp3');
+    if (!correctBuffer)  correctBuffer  = await load('/audio/correct.wav');
+    if (!almostBuffer)   almostBuffer   = await load('/audio/almost.wav');
   } catch (e) {}
 }, { once: false });
 
@@ -150,6 +155,24 @@ export function playConfetti() {
     }, 6600);
   } catch (e) {}
 }
+
+function playBuffer(buffer) {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx || !buffer) return;
+    if (ctx.state === 'suspended') ctx.resume();
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.5, ctx.currentTime);
+    source.connect(gain);
+    gain.connect(ctx.destination);
+    source.start();
+  } catch (e) {}
+}
+
+export function playCorrect() { playBuffer(correctBuffer); }
+export function playAlmost()  { playBuffer(almostBuffer); }
 
 export function stopConfetti() {
   try {
