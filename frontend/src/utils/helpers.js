@@ -140,7 +140,7 @@ export function playConfetti() {
     const source = ctx.createBufferSource();
     source.buffer = confettiBuffer;
     const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.6, ctx.currentTime);
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
     source.connect(gain);
     gain.connect(ctx.destination);
     source.start();
