@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
+import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
-import { shuffle } from '../../utils/helpers';
+import { shuffle, speak } from '../../utils/helpers';
 import { CONJ, PRETERITE } from '../../data/drillData';
 
 // mode: 'present' | 'past'
@@ -46,9 +47,12 @@ export default function ConjugationDrill({ mode, onAnswer, onDone, onBack, drill
         <div className="font-serif text-2xl sm:text-3xl font-black mb-2" data-testid="conj-prompt" style={{ color: 'hsl(var(--foreground))' }}>
           {item.q}
         </div>
-        <div className="text-xs italic mt-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
+        <div className="text-xs italic mt-2 mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
           {item.hint}
         </div>
+        <button onClick={() => speak(item.verb, 'es')} className="speak-btn mx-auto">
+          <Volume2 size={12} /> Hear it
+        </button>
       </div>
 
       <div className="grid grid-cols-2 gap-2.5">
