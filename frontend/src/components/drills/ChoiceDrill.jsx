@@ -95,12 +95,21 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
 
       {picked && (
         <div className="mt-4 text-center">
-          <div className="mb-3 text-sm font-medium" style={{ color: picked === correctText ? '#16A34A' : '#DC2626' }}>
-            {picked === correctText ? 'Correct! ✓' : `Answer: ${correctText}`}
-            {mode === 'hear-choose' && picked === correctText && (
-              <div className="text-xs mt-1 opacity-70">{word.en}</div>
-            )}
-          </div>
+          {picked === correctText && (
+            <div className="mb-3 text-sm font-medium" style={{ color: '#16A34A' }}>
+              Correct! ✓
+            </div>
+          )}
+          {mode === 'hear-choose' && (
+            <div className="mb-3 py-3 rounded-lg" style={{ background: 'hsl(var(--muted))' }}>
+              <div className="font-serif text-2xl font-black" style={{ color: 'hsl(var(--foreground))' }}>
+                {word.es}
+              </div>
+              <div className="text-xs mt-2" style={{ color: picked === correctText ? '#16A34A' : '#DC2626' }}>
+                {picked === correctText ? word.en : `Answer: ${correctText}`}
+              </div>
+            </div>
+          )}
           <button onClick={handleContinue} data-testid="choice-continue"
             className="w-full py-3 rounded-xl font-bold text-white text-sm"
             style={{ background: 'hsl(var(--primary))' }}>
