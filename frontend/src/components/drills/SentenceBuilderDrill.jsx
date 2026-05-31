@@ -99,7 +99,7 @@ export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLe
             <div className="text-sm font-bold mt-1" style={{ color: feedback.ok ? '#14532D' : '#991B1B' }}>
               {feedback.target}
             </div>
-            <button onClick={() => speak(feedback.target, 'es')}
+            <button onClick={() => speak(feedback.target, 'es', 0.72)}
               className="speak-btn mt-2 mx-auto"><Volume2 size={11} /> Hear it</button>
           </div>
           <button data-testid="sent-next" onClick={next}

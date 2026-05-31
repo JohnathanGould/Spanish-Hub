@@ -138,17 +138,17 @@ export function initVoice() {
   else if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = load;
 }
 
-export function speak(text, lang = 'es') {
+export function speak(text, lang = 'es', rate = 0.85) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   if (lang === 'es') {
     u.lang = esVoice ? esVoice.lang : 'es-ES';
     if (esVoice) u.voice = esVoice;
-    u.rate = 0.85;
+    u.rate = rate;
   } else {
     u.lang = 'en-US';
-    u.rate = 0.9;
+    u.rate = rate;
   }
   window.speechSynthesis.speak(u);
 }
