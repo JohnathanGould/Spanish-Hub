@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
-import { shuffle } from '../../utils/helpers';
+import { shuffle, speak } from '../../utils/helpers';
 import { FITB_POOL } from '../../data/drillData';
 
 export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength = 10 }) {
@@ -25,6 +26,10 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
     if (idx + 1 >= queue.length) onDone(correct, queue.length);
     else { setIdx(idx + 1); setPicked(null); }
   };
+
+  useEffect(() => {
+    if (picked) speak(item.sentence, 'es', 0.72);
+  }, [picked]);
 
   let blankBg = 'hsl(var(--muted))';
   let blankColor = 'hsl(var(--muted-foreground))';
@@ -79,6 +84,9 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
               <div className="text-xs mt-1 opacity-70">{item.hint}</div>
             )}
           </div>
+          <button onClick={() => speak(item.sentence, 'es', 0.72)} className="speak-btn mx-auto mb-3">
+            <Volume2 size={12} /> Hear it
+          </button>
           <button onClick={handleContinue} data-testid="fitb-continue"
             className="w-full py-3 rounded-xl font-bold text-white text-sm"
             style={{ background: 'hsl(var(--primary))' }}>
