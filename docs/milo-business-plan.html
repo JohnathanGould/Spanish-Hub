@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Milo Speaks Spanish — Business Plan</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+  :root {
+    --cream: #FAF8F4;
+    --warm-white: #FFFFFF;
+    --charcoal: #1C1C1E;
+    --mid: #5A5A5E;
+    --light: #8E8E93;
+    --lighter: #C7C7CC;
+    --border: #E5E3DE;
+    --border-light: #F0EDE8;
+    --blue: #2D6BE4;
+    --blue-light: #EEF3FC;
+    --blue-mid: #B8CEEF;
+    --green: #1A8A5E;
+    --green-light: #EAF5EF;
+    --green-mid: #9FD6BA;
+    --amber: #B06E1A;
+    --amber-light: #FDF3E7;
+    --red-light: #FDF0EC;
+    --red: #C0412A;
+    --paw: #6B4FA0;
+    --paw-light: #F2EEF9;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--charcoal);
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--charcoal);
+    color: white;
+    padding: 2rem 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .header-left { }
+  .header-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 6px; }
+  .header-title { font-family: 'Lora', serif; font-size: 28px; font-weight: 500; color: white; line-height: 1.2; }
+  .header-sub { font-size: 14px; color: rgba(255,255,255,0.55); margin-top: 6px; }
+  .header-paw { font-size: 40px; opacity: 0.4; }
+
+  /* NAV */
+  .nav {
+    background: var(--warm-white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 3rem;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .nav-btn {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--light);
+    padding: 16px 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { color: var(--charcoal); }
+  .nav-btn.active { color: var(--charcoal); border-bottom-color: var(--charcoal); }
+
+  /* CONTENT */
+  .content { padding: 2.5rem 3rem; max-width: 1100px; margin: 0 auto; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* TYPOGRAPHY */
+  .page-title { font-family: 'Lora', serif; font-size: 22px; font-weight: 500; color: var(--charcoal); margin-bottom: 6px; }
+  .page-sub { font-size: 14px; color: var(--mid); margin-bottom: 2rem; }
+  .sec { margin-bottom: 2.5rem; }
+  .sec-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--lighter); margin-bottom: 1rem; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+
+  /* GRIDS */
+  .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+  .g4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .g5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: .75rem; }
+
+  /* METRIC CARDS */
+  .metric { background: var(--warm-white); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; }
+  .metric-label { font-size: 11px; color: var(--light); margin-bottom: 4px; }
+  .metric-value { font-size: 24px; font-weight: 600; color: var(--charcoal); line-height: 1; }
+  .metric-sub { font-size: 11px; color: var(--light); margin-top: 5px; line-height: 1.4; }
+
+  /* CARDS */
+  .card { background: var(--warm-white); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  .card-blue { border-color: var(--blue-mid); }
+  .card-green { border-color: var(--green-mid); }
+  .card-paw { border-color: #C9B8F0; background: var(--paw-light); }
+
+  /* CALLOUTS */
+  .callout { border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: 13px; line-height: 1.65; }
+  .callout b { color: var(--charcoal); }
+  .callout-blue { background: var(--blue-light); border-left: 3px solid var(--blue); color: var(--mid); }
+  .callout-green { background: var(--green-light); border-left: 3px solid var(--green); color: var(--mid); }
+  .callout-amber { background: var(--amber-light); border-left: 3px solid var(--amber); color: var(--mid); }
+  .callout-paw { background: var(--paw-light); border-left: 3px solid var(--paw); color: var(--mid); }
+  .callout-cream { background: var(--cream); border: 1px solid var(--border); color: var(--mid); }
+
+  /* ROWS */
+  .row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border-light); gap: 1rem; font-size: 13px; }
+  .row:last-child { border-bottom: none; }
+  .row-label { color: var(--mid); flex-shrink: 0; }
+  .row-value { font-weight: 500; text-align: right; }
+  .total-row { display: flex; justify-content: space-between; padding: 10px 0 0; border-top: 1px solid var(--border); margin-top: 4px; }
+
+  /* BADGES */
+  .badge { display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
+  .badge-n { background: var(--cream); color: var(--mid); border: 1px solid var(--border); }
+  .badge-b { background: var(--blue-light); color: var(--blue); }
+  .badge-g { background: var(--green-light); color: var(--green); }
+  .badge-a { background: var(--amber-light); color: var(--amber); }
+  .badge-r { background: var(--red-light); color: var(--red); }
+  .badge-p { background: var(--paw-light); color: var(--paw); }
+
+  /* CHARTS */
+  .chart-wrap { position: relative; width: 100%; height: 240px; margin: 1rem 0; }
+  .chart-wrap-sm { position: relative; width: 100%; height: 190px; margin: 1rem 0; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--mid); margin-bottom: 8px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; display: inline-block; margin-right: 4px; vertical-align: 1px; }
+
+  /* TABS */
+  .tab-row { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
+  .tab-btn { font-size: 12px; font-family: 'DM Sans', sans-serif; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--mid); cursor: pointer; font-weight: 500; transition: all 0.15s; }
+  .tab-btn.active { background: var(--charcoal); color: white; border-color: var(--charcoal); }
+
+  /* COMPARE */
+  .compare-label { font-size: 11px; color: var(--lighter); min-width: 80px; }
+  .compare-bad { font-size: 12px; color: var(--red); line-height: 1.5; }
+  .compare-good { font-size: 12px; color: var(--green); font-weight: 500; line-height: 1.5; }
+
+  /* SERIES */
+  .series-item { border: 1px solid var(--border); border-radius: 10px; padding: 1rem; text-align: center; }
+  .series-first { border-color: var(--blue-mid); background: var(--blue-light); }
+  .series-lang { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+  .series-apps { font-size: 11px; color: var(--light); margin-bottom: 8px; }
+  .series-cost { font-size: 20px; font-weight: 600; }
+
+  /* ORIGIN BOX */
+  .origin-box {
+    background: linear-gradient(135deg, var(--paw-light) 0%, var(--green-light) 100%);
+    border: 1px solid #C9B8F0;
+    border-radius: 14px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .origin-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--paw); margin-bottom: .75rem; }
+  .origin-text { font-family: 'Lora', serif; font-size: 15px; color: var(--charcoal); line-height: 1.9; font-style: italic; }
+
+  /* PITCH BOX */
+  .pitch-box {
+    background: linear-gradient(135deg, var(--blue-light) 0%, var(--green-light) 100%);
+    border: 1px solid var(--blue-mid);
+    border-radius: 14px;
+    padding: 1.75rem 2rem;
+    margin: 1.5rem 0;
+  }
+  .pitch-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); margin-bottom: .75rem; }
+  .pitch-text { font-family: 'Lora', serif; font-size: 15px; color: var(--charcoal); line-height: 1.9; font-style: italic; }
+
+  /* PRO CON */
+  .procon-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+  .pro-col { border: 1px solid var(--green-mid); border-radius: 10px; padding: 1rem; }
+  .con-col { border: 1px solid #F0C9B8; border-radius: 10px; padding: 1rem; }
+  .pc-title { font-size: 11px; font-weight: 600; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border-light); }
+  .pc-item { display: flex; gap: 8px; padding: 5px 0; font-size: 12px; color: var(--mid); line-height: 1.5; border-bottom: 1px solid var(--border-light); }
+  .pc-item:last-child { border-bottom: none; }
+  .dot-g { width: 6px; height: 6px; border-radius: 50%; background: var(--green); margin-top: 5px; flex-shrink: 0; }
+  .dot-r { width: 6px; height: 6px; border-radius: 50%; background: var(--red); margin-top: 5px; flex-shrink: 0; }
+
+  /* PHASE */
+  .phase-item { border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 8px; }
+  .phase-active { border-color: var(--blue-mid); background: var(--blue-light); }
+  .phase-num { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--light); margin-bottom: 3px; }
+  .phase-active .phase-num { color: var(--blue); }
+  .phase-title { font-size: 14px; font-weight: 600; color: var(--charcoal); margin-bottom: 4px; }
+  .phase-desc { font-size: 12px; color: var(--mid); line-height: 1.6; }
+
+  /* ANGLE ITEMS */
+  .angle-item { border-left: 3px solid var(--border); border-radius: 0 10px 10px 0; background: var(--warm-white); padding: 1rem 1.25rem; margin-bottom: .75rem; border-top: 1px solid var(--border); border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .angle-red { border-left-color: var(--red); }
+  .angle-amber { border-left-color: var(--amber); }
+  .angle-blue { border-left-color: var(--blue); }
+  .angle-title { font-size: 14px; font-weight: 600; color: var(--charcoal); margin-bottom: 6px; }
+  .angle-body { font-size: 12px; color: var(--mid); line-height: 1.6; margin-bottom: 8px; }
+  .angle-answer { font-size: 12px; color: var(--green); background: var(--green-light); border-radius: 8px; padding: 8px 12px; line-height: 1.6; }
+
+  /* BE TABLE */
+  .be-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .be-table th { text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--lighter); padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .be-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-light); color: var(--mid); vertical-align: top; line-height: 1.5; }
+  .be-table td:first-child { font-weight: 600; color: var(--charcoal); }
+  .be-table tr:last-child td { border-bottom: none; }
+
+  /* FOOTER */
+  .footer { text-align: center; padding: 2rem; color: var(--lighter); font-size: 12px; border-top: 1px solid var(--border); margin-top: 2rem; }
+
+  @media (max-width: 768px) {
+    .header { padding: 1.5rem; flex-direction: column; align-items: flex-start; gap: 8px; }
+    .nav { padding: 0 1rem; }
+    .content { padding: 1.5rem; }
+    .g2,.g3,.g4,.g5 { grid-template-columns: 1fr 1fr; }
+    .g4 { grid-template-columns: 1fr 1fr; }
+    .g5 { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header" style="padding:0;flex-direction:column;align-items:stretch;">
+  <div style="position:relative;width:100%;overflow:hidden;max-height:260px;">
+    <img src="milo_speaks_spanish_banner_v2.png" alt="Milo Speaks Spanish — a black lab in a colourful classroom waving hello" style="width:100%;display:block;object-fit:cover;object-position:center 30%;" />
+    <div style="position:absolute;bottom:0;left:0;right:0;height:80px;background:linear-gradient(to bottom,transparent,rgba(28,28,30,0.85));"></div>
+  </div>
+  <div style="padding:1rem 3rem 1.25rem;background:var(--charcoal);display:flex;justify-content:space-between;align-items:center;">
+    <div>
+      <p class="header-eyebrow">Business Plan · May 2026 · Truro, Nova Scotia</p>
+      <p class="header-sub" style="margin-top:3px;">Free to learn. No ads. No subscription. A 10-app franchise chassis — built one language at a time.</p>
+    </div>
+    <a href="https://spanish-hub-zeta.vercel.app" target="_blank" style="font-size:12px;color:rgba(255,255,255,0.5);text-decoration:none;border:1px solid rgba(255,255,255,0.2);padding:6px 14px;border-radius:20px;white-space:nowrap;transition:all .2s;" onmouseover="this.style.color='white';this.style.borderColor='rgba(255,255,255,0.5)'" onmouseout="this.style.color='rgba(255,255,255,0.5)';this.style.borderColor='rgba(255,255,255,0.2)'">View live app ↗</a>
+  </div>
+</header>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="show('market')">Market</button>
+  <button class="nav-btn" onclick="show('competitive')">Competitive Gap</button>
+  <button class="nav-btn" onclick="show('model')">Revenue Model</button>
+  <button class="nav-btn" onclick="show('series')">Series Plan</button>
+  <button class="nav-btn" onclick="show('costs')">Costs & Break-Even</button>
+  <button class="nav-btn" onclick="show('precedents')">Precedents</button>
+  <button class="nav-btn" onclick="show('funding')">Funding Ask</button>
+  <button class="nav-btn" onclick="show('gaps')">Due Diligence</button>
+  <button class="nav-btn" onclick="show('characters')">The People & Animals</button>
+  <button class="nav-btn" onclick="show('personal')">Why Now</button>
+</nav>
+
+<main class="content">
+
+<!-- MARKET -->
+<div id="page-market" class="page active">
+  <h1 class="page-title">The Market Opportunity</h1>
+  <p class="page-sub">Data-verified demand in the world's most-searched language learning categories.</p>
+
+  <div class="sec">
+    <p class="sec-label">Summary numbers</p>
+    <div class="g4">
+      <div class="metric"><p class="metric-label">Language learning market</p><p class="metric-value">$85B</p><p class="metric-sub">Global, 2025. Growing ~17% annually.</p></div>
+      <div class="metric"><p class="metric-label">US Spanish learners</p><p class="metric-value">34M</p><p class="metric-sub">49% of all US language course enrolments. 78% under 35.</p></div>
+      <div class="metric"><p class="metric-label">Spanish learner growth 2025</p><p class="metric-value">+49%</p><p class="metric-sub">While English, German, French all declined (Berlitz 2025).</p></div>
+      <div class="metric"><p class="metric-label">Language app market</p><p class="metric-value">$6.3B</p><p class="metric-sub">Duolingo holds 67% of app-based revenue.</p></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">North American language demand — verified by data</p>
+    <div class="card">
+      <p style="font-size:11px;color:var(--light);margin-bottom:1rem;">Sources: 2025 Duolingo Language Report · MLA Enrollment Data · Preply North American Learner Metrics 2026</p>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;">
+        <thead><tr style="border-bottom:1px solid var(--border);">
+          <th style="text-align:left;padding:6px 8px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--lighter);">#</th>
+          <th style="text-align:left;padding:6px 8px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--lighter);">Language</th>
+          <th style="text-align:left;padding:6px 8px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--lighter);">N.Am. share</th>
+          <th style="text-align:left;padding:6px 8px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--lighter);">US college enrolments</th>
+          <th style="text-align:left;padding:6px 8px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--lighter);">Series target</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border-light);">
+            <td style="padding:10px 8px;color:var(--blue);font-weight:600;">1</td>
+            <td style="padding:10px 8px;font-weight:600;">Spanish <span class="badge badge-b" style="margin-left:6px;">Building now</span></td>
+            <td style="padding:10px 8px;color:var(--mid);">25% (Preply)</td>
+            <td style="padding:10px 8px;color:var(--mid);">584,453 — 49.4% of market</td>
+            <td style="padding:10px 8px;color:var(--blue);font-weight:600;">Apps 1 & 2</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border-light);">
+            <td style="padding:10px 8px;color:var(--green);font-weight:600;">2</td>
+            <td style="padding:10px 8px;font-weight:600;">French <span class="badge badge-g" style="margin-left:6px;">Next</span></td>
+            <td style="padding:10px 8px;color:var(--mid);">9% (Preply)</td>
+            <td style="padding:10px 8px;color:var(--mid);">135,088 — 11.4%</td>
+            <td style="padding:10px 8px;color:var(--green);font-weight:600;">Apps 3 & 4</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border-light);">
+            <td style="padding:10px 8px;color:var(--mid);">3</td>
+            <td style="padding:10px 8px;">Japanese</td>
+            <td style="padding:10px 8px;color:var(--mid);">4% (Preply)</td>
+            <td style="padding:10px 8px;color:var(--mid);">65,661 — 5.6%</td>
+            <td style="padding:10px 8px;color:var(--mid);">Apps 5 & 6</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border-light);">
+            <td style="padding:10px 8px;color:var(--mid);">4</td>
+            <td style="padding:10px 8px;">Portuguese</td>
+            <td style="padding:10px 8px;color:var(--mid);">Fastest growing</td>
+            <td style="padding:10px 8px;color:var(--mid);">Top 10</td>
+            <td style="padding:10px 8px;color:var(--mid);">Apps 7 & 8</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 8px;color:var(--mid);">5</td>
+            <td style="padding:10px 8px;">Italian</td>
+            <td style="padding:10px 8px;color:var(--mid);">Consistent top 5</td>
+            <td style="padding:10px 8px;color:var(--mid);">Top 10</td>
+            <td style="padding:10px 8px;color:var(--mid);">Apps 9 & 10</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:11px;color:var(--light);margin-top:6px;">French is the #1 studied language in Canada — directly relevant as a Truro-based developer. Spanish is the uncontested leader in the US. Together they represent the two largest English-speaking markets in North America.</p>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">Spanish specifically — why this language, why now</p>
+    <div class="g3">
+      <div class="metric"><p class="metric-label">Duolingo global ranking</p><p class="metric-value">#2</p><p class="metric-sub">#1 in US. Most serious learners of any language on the platform.</p></div>
+      <div class="metric"><p class="metric-label">Learner volume growth</p><p class="metric-value">+49%</p><p class="metric-sub">2025 vs 2024. The only major language growing while others declined.</p></div>
+      <div class="metric"><p class="metric-label">US market share</p><p class="metric-value">49.4%</p><p class="metric-sub">Nearly half of ALL US foreign language college enrolments are Spanish.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPETITIVE GAP -->
+<div id="page-competitive" class="page">
+  <h1 class="page-title">The Competitive Gap</h1>
+  <p class="page-sub">The dominant player is actively creating the opening Milo is built to fill.</p>
+
+  <div class="sec">
+    <div class="callout callout-cream" style="margin-bottom:1.5rem;">
+      Duolingo crossed <b>$1 billion in annual revenue in 2025</b> and simultaneously had its stock drop ~50% as users revolted against aggressive monetization. Its own analyst described the subscription push as causing <b>"disgruntled users and a meaningful negative impact to word-of-mouth marketing."</b> This is not a struggling company failing — it is the dominant player deliberately sacrificing user trust for short-term revenue.
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;"><span style="font-size:15px;font-weight:600;">Duolingo (2025–2026)</span><span class="badge badge-r">User backlash</span></div>
+        <div class="row"><span class="compare-label">Ads</span><span class="compare-bad">30–45 sec ads after 30-sec lessons. More time watching ads than learning.</span></div>
+        <div class="row"><span class="compare-label">Subscription</span><span class="compare-bad">~$84–168/yr. Features that were free are now paywalled.</span></div>
+        <div class="row"><span class="compare-label">Energy system</span><span class="compare-bad">25 energy depletes on every exercise — correct or not. 1/hr recharge.</span></div>
+        <div class="row"><span class="compare-label">Streak pressure</span><span class="compare-bad">Aggressive guilt-trip notifications. Used Apple Live Activities as subscription ads.</span></div>
+        <div class="row"><span class="compare-label">Community</span><span class="compare-bad">Forums removed. CFO resigned Feb 2026. Growing backlash on r/duolingo.</span></div>
+      </div>
+      <div class="card card-green">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;"><span style="font-size:15px;font-weight:600;">Milo (commitment)</span><span class="badge badge-g">Trust-first</span></div>
+        <div class="row"><span class="compare-label">Ads</span><span class="compare-good">No ads. Ever. Publicly committed.</span></div>
+        <div class="row"><span class="compare-label">Subscription</span><span class="compare-good">No subscription. No paywalled features. Free to learn — always.</span></div>
+        <div class="row"><span class="compare-label">Energy system</span><span class="compare-good">No energy system. No lesson locks. Learn as much as you want.</span></div>
+        <div class="row"><span class="compare-label">Streak pressure</span><span class="compare-good">Bones protect streaks. Milo is a companion, not a salesman.</span></div>
+        <div class="row"><span class="compare-label">Community</span><span class="compare-good">Plaza is open. Ko-fi is voluntary. No manipulation. Ever.</span></div>
+      </div>
+    </div>
+    <div class="callout callout-amber"><b>The anti-Duolingo positioning is not just an ethical stand — it is a direct, zero-cost acquisition strategy.</b> In language learning communities, "no ads, no subscription" is a shareable, viral narrative hook that drives organic downloads at $0 customer acquisition cost. A digital marketing COO will recognise this immediately as product-led growth done correctly.</div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">Subscription fatigue — the numbers</p>
+    <div class="g3">
+      <div class="metric"><p class="metric-label">Monthly app subscription launches</p><p class="metric-value">14,000+</p><p class="metric-sub">Up from 2,000/month in 2022. Driving aggressive consumer pushback.</p></div>
+      <div class="metric"><p class="metric-label">Users willing to pay flat fee to avoid ads</p><p class="metric-value">32%</p><p class="metric-sub">Of educational app users (CNIL Consumer Report).</p></div>
+      <div class="metric"><p class="metric-label">Duolingo stock drop in 2025</p><p class="metric-value">~50%</p><p class="metric-sub">Despite crossing $1B revenue. User backlash cited as primary cause.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- REVENUE MODEL -->
+<div id="page-model" class="page">
+  <h1 class="page-title">Revenue Model</h1>
+  <p class="page-sub">Four income streams — all compatible with the no-ads, no-subscription promise.</p>
+
+  <div class="sec">
+    <p class="sec-label">How AdSense is earned — an important distinction</p>
+    <div class="callout callout-blue">
+      <b>The app itself is 100% ad-free.</b> AdSense revenue is earned through the <b>Milo Speaks Spanish YouTube channel</b>. Each of the 25 Path Stop videos is hosted on YouTube and embedded inside the app as part of the learning experience. When users watch them, those views count toward the channel's watch hours and generate AdSense revenue on the YouTube side. <b>The user never sees an ad. The channel earns passively from their engagement.</b> This is the same model used by educational YouTube channels worldwide.
+    </div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">The four streams</p>
+    <div class="g2">
+      <div class="card"><p style="font-size:14px;font-weight:600;margin-bottom:.5rem;">1 · YouTube AdSense</p><p style="font-size:12px;color:var(--mid);line-height:1.6;">Earned through the YouTube channel — not the app. 25 Stop videos per language. Views accumulate as users progress through Paths. Requires 1,000 subscribers + 4,000 watch hours to unlock. Medium-term passive income stream.</p></div>
+      <div class="card"><p style="font-size:14px;font-weight:600;margin-bottom:.5rem;">2 · Ko-fi (voluntary support)</p><p style="font-size:12px;color:var(--mid);line-height:1.6;">Completely optional. No features locked behind it. Industry benchmark: 1–3% voluntary conversion. At 1,000 MAU, even 10–15 Ko-fi supporters at $3–6/month covers all infrastructure costs.</p></div>
+      <div class="card"><p style="font-size:14px;font-weight:600;margin-bottom:.5rem;">3 · Digital workbooks (PDF)</p><p style="font-size:12px;color:var(--mid);line-height:1.6;">Companion PDF workbooks aligned to each Path. Sold via Gumroad or Ko-fi. $7–12 each, $35–45 bundle. ~95% margin. Zero inventory. Revenue can begin before the app reaches Play Store.</p></div>
+      <div class="card"><p style="font-size:14px;font-weight:600;margin-bottom:.5rem;">4 · Print-on-demand (Amazon KDP)</p><p style="font-size:12px;color:var(--mid);line-height:1.6;">Same workbooks on Amazon KDP. No upfront cost, no inventory. ~$4–6 net per unit. A user who finds the workbook on Amazon discovers the free app. Both channels feed each other.</p></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">Revenue projections — 24 months post-launch (Spanish app only)</p>
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="showRev('c')">Conservative</button>
+      <button class="tab-btn" onclick="showRev('r')">Realistic</button>
+      <button class="tab-btn" onclick="showRev('o')">Optimistic</button>
+    </div>
+    <div class="legend">
+      <span><span class="legend-dot" style="background:#2D6BE4;"></span>YouTube AdSense</span>
+      <span><span class="legend-dot" style="background:#1A8A5E;"></span>Ko-fi</span>
+      <span><span class="legend-dot" style="background:#B06E1A;"></span>Workbooks</span>
+      <span><span class="legend-dot" style="background:#C0412A;border:1px dashed #C0412A;"></span>Infrastructure</span>
+    </div>
+    <div class="chart-wrap"><canvas id="revChart"></canvas></div>
+    <div class="g3" style="margin-top:1rem;">
+      <div class="metric" id="mMAU"><p class="metric-label">MAU at month 24</p><p class="metric-value">2,800</p><p class="metric-sub">Conservative growth</p></div>
+      <div class="metric" id="mRev"><p class="metric-label">Monthly revenue</p><p class="metric-value">~$195</p><p class="metric-sub">All 4 streams</p></div>
+      <div class="metric" id="mNet"><p class="metric-label">Net after costs</p><p class="metric-value">~$170</p><p class="metric-sub">After infrastructure</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- SERIES PLAN -->
+<div id="page-series" class="page">
+  <h1 class="page-title">The Series Plan</h1>
+  <p class="page-sub">10 apps. 5 language families. All proceeds reinvested until the series is complete.</p>
+
+  <div class="sec">
+    <div class="callout callout-blue"><b>Profit is not the immediate goal.</b> All proceeds from each app are reinvested into building the next language pair. The series runs until all 10 apps are complete. Only then does the model shift to maintenance and collecting surplus revenue. Language selection follows search demand data — not personal preference.</div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">The 10-app series</p>
+    <div class="g5">
+      <div class="series-item series-first"><p class="series-lang" style="color:var(--blue);">Spanish</p><p class="series-apps">EN→SP + SP→EN</p><p class="series-cost" style="color:var(--blue);">~$470</p><p style="font-size:10px;color:var(--light);margin-top:3px;">Apps 1 & 2. Full chassis.</p></div>
+      <div class="series-item"><p class="series-lang">French</p><p class="series-apps">EN→FR + FR→EN</p><p class="series-cost">~$210</p><p style="font-size:10px;color:var(--light);margin-top:3px;">Apps 3 & 4. ~33% of chassis.</p></div>
+      <div class="series-item"><p class="series-lang">Japanese</p><p class="series-apps">EN→JP + JP→EN</p><p class="series-cost">~$230</p><p style="font-size:10px;color:var(--light);margin-top:3px;">Apps 5 & 6. Script adaptation.</p></div>
+      <div class="series-item"><p class="series-lang">Portuguese</p><p class="series-apps">EN→PT + PT→EN</p><p class="series-cost">~$170</p><p style="font-size:10px;color:var(--light);margin-top:3px;">Apps 7 & 8. Fastest growing.</p></div>
+      <div class="series-item"><p class="series-lang">Italian</p><p class="series-apps">EN→IT + IT→EN</p><p class="series-cost">~$180</p><p style="font-size:10px;color:var(--light);margin-top:3px;">Apps 9 & 10. Series complete.</p></div>
+    </div>
+    <div class="callout callout-green" style="margin-top:1rem;">Total estimated investment across all 10 apps: approximately <b>$1,260</b>. Average cost per app: <b>~$126</b>. Each app has its own Play Store listing, YouTube channel, workbook set, and Ko-fi page. <b>Spanish is the R&D cost. Everything after is incremental.</b></div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">Four phases to series completion</p>
+    <div class="phase-item phase-active"><p class="phase-num">Phase 1 — Now</p><p class="phase-title">Build the chassis (Spanish)</p><p class="phase-desc">Complete v2, launch on Google Play, publish workbooks, establish YouTube channel. All proceeds reinvested into Phase 2.</p></div>
+    <div class="phase-item"><p class="phase-num">Phase 2 — ~12–18 months post-launch</p><p class="phase-title">Expand to French</p><p class="phase-desc">EN→FR and FR→EN. Both benefit from the Canadian market. French workbooks for school and CEGEP market. Proceeds reinvested into Phase 3.</p></div>
+    <div class="phase-item"><p class="phase-num">Phase 3 — Data-led expansion</p><p class="phase-title">Japanese · Portuguese · Italian</p><p class="phase-desc">Each language pair funded by proceeds from the previous. Series completes when all 10 apps are live.</p></div>
+    <div class="phase-item"><p class="phase-num">Phase 4 — Series complete (3–5 year horizon)</p><p class="phase-title">Maintenance + income collection</p><p class="phase-desc">10 apps, 10 YouTube channels, 10 workbook sets generating passive income. Monthly overhead ~$150–200 total. Net surplus collected.</p></div>
+  </div>
+</div>
+
+<!-- COSTS -->
+<div id="page-costs" class="page">
+  <h1 class="page-title">Costs & Break-Even</h1>
+  <p class="page-sub">Maximum monthly exposure: $50. Break-even requires remarkably few conversions.</p>
+
+  <div class="sec">
+    <p class="sec-label">Infrastructure cost architecture</p>
+    <div class="g2">
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;"><span style="font-weight:600;">Fixed monthly costs</span><span class="badge badge-g">Predictable</span></div>
+        <div class="row"><span class="row-label">Firebase (generous allowance)</span><span class="row-value">~$10/mo</span></div>
+        <div class="row"><span class="row-label">DeepL API base fee</span><span class="row-value">~$5.49/mo</span></div>
+        <div class="row"><span class="row-label">Vercel Pro (when needed)</span><span class="row-value">$0 → $20/mo</span></div>
+        <div class="total-row"><span style="font-weight:600;">Fixed baseline</span><span style="font-size:18px;font-weight:700;">~$15–35/mo</span></div>
+      </div>
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;"><span style="font-weight:600;">Variable costs (per user)</span><span class="badge badge-n">Scales gently</span></div>
+        <div class="row"><span class="row-label">Gemini 2.5 Flash per lesson</span><span class="row-value">~$0.00035/DAU</span></div>
+        <div class="row"><span class="row-label">1,000 free users · 3 lessons/day</span><span class="row-value">&lt;$0.35/day</span></div>
+        <div class="row"><span class="row-label">Firebase programmatic cap</span><span class="row-value">$20/mo max</span></div>
+        <div class="total-row"><span style="font-weight:600;">Hard monthly ceiling</span><span style="font-size:18px;font-weight:700;">$50 max</span></div>
+      </div>
+    </div>
+    <div class="callout callout-blue"><b>Circuit breakers are built in:</b> Firebase is programmatically capped at $20/month. Gemini and DeepL API keys are metered at a $1/day maximum. DeepL calls are cached in Firestore — repeat lessons pull from cache at near-zero cost. Maximum financial exposure under any scenario: $50/month.</div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">Break-even matrix</p>
+    <div class="card">
+      <table class="be-table">
+        <thead><tr><th>User scale</th><th>Est. monthly cost</th><th>Break-even (pick ONE option)</th></tr></thead>
+        <tbody>
+          <tr><td>100 active users</td><td>~$20/mo</td><td>4 workbook PDFs ($5 each) · OR 7 Ko-fi Pack Members ($3/mo)</td></tr>
+          <tr><td>1,000 active users</td><td>~$35/mo</td><td>7 workbook PDFs · OR 6 Ko-fi Top of Pack ($6/mo) · OR 12 Pack Members</td></tr>
+          <tr><td>5,000 active users</td><td>~$95/mo</td><td>19 workbook PDFs · OR 16 Ko-fi Top of Pack · OR 32 Pack Members</td></tr>
+          <tr><td>10,000 active users</td><td>~$150/mo</td><td>YouTube AdSense alone covers this. Workbooks and Ko-fi become surplus.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:11px;color:var(--light);margin-top:6px;">If a single user buys the $5 workbook bundle, that one transaction generates enough net profit to fund their own variable API costs for approximately three years.</p>
+  </div>
+</div>
+
+<!-- PRECEDENTS -->
+<div id="page-precedents" class="page">
+  <h1 class="page-title">Proven Precedents</h1>
+  <p class="page-sub">This model already works. It has been working for 15 years.</p>
+
+  <div class="sec">
+    <p class="sec-label">The Anki framework — the single strongest proof of concept</p>
+    <div class="callout callout-cream" style="margin-bottom:1rem;">Anki is a flashcard learning app. Outdated interface. Zero marketing budget. Zero ads. Zero subscription. It is <b>the most recommended language learning tool on earth</b> — recommended above Duolingo in serious learning communities. One developer. Free on desktop, web, and Android. A single <b>$24.99 one-time iOS fee</b> funds the entire global infrastructure for all free users indefinitely. This has been running for over 15 years. <b>It is not theoretical. It is proof.</b></div>
+    <div class="g3">
+      <div class="metric"><p class="metric-label">Business model</p><p class="metric-value">Identical</p><p class="metric-sub">Free everywhere. One optional paid gateway. No ads. No subscription. Community-funded.</p></div>
+      <div class="metric"><p class="metric-label">Marketing budget</p><p class="metric-value">$0</p><p class="metric-sub">100% word-of-mouth in learning communities. No paid acquisition. Ever.</p></div>
+      <div class="metric"><p class="metric-label">Longevity</p><p class="metric-value">15+ years</p><p class="metric-sub">Still running. Still growing. Recommended above $1B companies by serious learners.</p></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">Customer acquisition cost — the number a COO will notice</p>
+    <div class="g3">
+      <div class="metric" style="border-color:#F0C9B8;background:var(--red-light);"><p class="metric-label" style="color:var(--red);">Corporate app (paid ads)</p><p class="metric-value" style="color:var(--red);">$15–30</p><p class="metric-sub">Cost per user acquired. Duolingo spends tens of millions annually on this.</p></div>
+      <div class="metric"><p class="metric-label">Indie app (some promotion)</p><p class="metric-value">$5–10</p><p class="metric-sub">With modest marketing spend. Still a real cost per user.</p></div>
+      <div class="metric" style="border-color:var(--green-mid);background:var(--green-light);"><p class="metric-label" style="color:var(--green);">Milo (organic community)</p><p class="metric-value" style="color:var(--green);">$0</p><p class="metric-sub">Product-led growth. "No ads, no subscription" is the distribution mechanism.</p></div>
+    </div>
+    <div class="callout callout-amber"><b>You are not competing with Duolingo's ad budget. You are making their ad budget irrelevant.</b> In language learning communities, posts announcing free, ethical tools routinely reach tens of thousands of readers organically within 24 hours.</div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">The pitch line</p>
+    <div class="pitch-box">
+      <p class="pitch-label">For the conversation — say this</p>
+      <p class="pitch-text">"Corporate ed-tech apps are bleeding money on Facebook and Google ads trying to force people into subscriptions they resent. Milo takes the Anki approach — give the market exactly what it's begging for, fund the infrastructure through high-margin digital workbooks and voluntary support, and let the 'no ads, no subscription' promise do the marketing for free. The model has a 15-year proven precedent. The maximum monthly cost exposure is $50. And the app is already live."</p>
+    </div>
+  </div>
+</div>
+
+<!-- FUNDING -->
+<div id="page-funding" class="page">
+  <h1 class="page-title">The Funding Ask</h1>
+  <p class="page-sub">A capped, one-time investment in a working product. Not an open-ended commitment.</p>
+
+  <div class="sec">
+    <div class="callout callout-blue">This is not a loan for an idea. There is a <b>working, live app</b> at spanish-hub-zeta.vercel.app right now — built to v1 on $62 in Emergent credits. The ask is to fund the gap between v1 and a stable, Play Store-listed product. <b>Maximum ask: ~$500 remaining.</b> Defined deliverable. No open-ended budget.</div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">What has been spent and what remains</p>
+    <div class="g2">
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;"><span style="font-weight:600;">Already spent</span><span class="badge badge-n">Sunk cost</span></div>
+        <div class="row"><span class="row-label">Emergent AI credits</span><span class="row-value">$62</span></div>
+        <div class="row"><span class="row-label">Dev time (hobby, sweat equity)</span><span class="row-value" style="color:var(--light);">$0 cash</span></div>
+        <div class="total-row"><span style="font-weight:600;">Total to date</span><span style="font-size:20px;font-weight:700;">$62</span></div>
+      </div>
+      <div class="card card-blue"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;"><span style="font-weight:600;">Remaining to Play Store</span><span class="badge badge-b">One-time</span></div>
+        <div class="row"><span class="row-label">Emergent sessions (8–14)</span><span class="row-value">$160–280</span></div>
+        <div class="row"><span class="row-label">Stop videos (25 × Frameloop)</span><span class="row-value">$75–200</span></div>
+        <div class="row"><span class="row-label">Google Play fee (one-time)</span><span class="row-value">$25</span></div>
+        <div class="row"><span class="row-label">Custom domain (year 1)</span><span class="row-value">$12</span></div>
+        <div class="total-row"><span style="font-weight:600;">Remaining range</span><span style="font-size:20px;font-weight:700;">$272–517</span></div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--light);margin-top:6px;">Workbooks require no upfront cash. Amazon KDP and Gumroad are free to list on. Total worst-case including $62 already spent: <b>~$580.</b></p>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">Two options</p>
+    <div class="g2">
+      <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;"><span style="font-weight:600;">Option A — Self-finance</span><span class="badge badge-n">Slower</span></div>
+        <div class="row"><span class="row-label">Monthly spend</span><span class="row-value">~$50–75/mo</span></div>
+        <div class="row"><span class="row-label">Timeline to Play Store</span><span class="row-value">4–8 months</span></div>
+        <div class="row"><span class="row-label">Risk level</span><span class="row-value" style="color:var(--green);">Minimal</span></div>
+        <p style="font-size:12px;color:var(--light);margin-top:10px;line-height:1.6;">Entirely viable. Slower pace. Late 2026 launch.</p>
+      </div>
+      <div class="card" style="border:2px solid var(--blue-mid);">
+        <span class="badge badge-b" style="margin-bottom:10px;display:inline-block;">Recommended for discussion</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;"><span style="font-weight:600;">Option B — Funded sprint</span><span class="badge badge-b">Faster</span></div>
+        <div class="row"><span class="row-label">One-time amount needed</span><span class="row-value">~$500</span></div>
+        <div class="row"><span class="row-label">Timeline to Play Store</span><span class="row-value">6–10 weeks</span></div>
+        <div class="row"><span class="row-label">Break-even (Spanish only)</span><span class="row-value">12–18 months</span></div>
+        <div class="row"><span class="row-label">What $500 actually funds</span><span class="row-value">10 apps + workbook series</span></div>
+        <p style="font-size:12px;color:var(--light);margin-top:10px;line-height:1.6;">The $500 is the chassis investment. Every subsequent app costs $100–230 and is funded by the previous app's revenue.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DUE DILIGENCE -->
+<div id="page-gaps" class="page">
+  <h1 class="page-title">Due Diligence</h1>
+  <p class="page-sub">Every question a COO will ask — answered before she asks it.</p>
+
+  <div class="sec">
+    <p class="sec-label">🔴 She will almost certainly raise these</p>
+    <div class="angle-item angle-red">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span class="angle-title">1 · Worst case — what do you lose if it fails?</span><span class="badge badge-r">She will ask this</span></div>
+      <p class="angle-body">A CFO's first move is always downside analysis. What is the total loss if the app never gains traction?</p>
+      <p class="angle-answer">Maximum total cash loss = $580 (including $62 already spent). Skills built are retained permanently. The app remains live. No inventory, no lease, no staff, no debt. The floor is: "we spent $580 and Johnathan learned to build apps with AI."</p>
+    </div>
+    <div class="angle-item angle-red">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span class="angle-title">2 · Time to first dollar — how long before any revenue?</span><span class="badge badge-r">She will ask this</span></div>
+      <p class="angle-body">The projections show 24 months but don't address when the first revenue unit actually arrives.</p>
+      <p class="angle-answer">Workbooks can go live on Gumroad and Amazon KDP before the app reaches Play Store — potentially within weeks. The first dollar doesn't depend on app store approval, user acquisition, or YouTube thresholds. It depends only on completing a PDF layout.</p>
+    </div>
+    <div class="angle-item angle-red">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span class="angle-title">3 · App Store compliance — won't Apple/Google take 30%?</span><span class="badge badge-r">She will ask this</span></div>
+      <p class="angle-body">App Store rules require in-app purchases to go through their payment rails (15–30% cut).</p>
+      <p class="angle-answer">Ko-fi donations and PDF workbook purchases happen on external platforms — not inside the app. No app features are locked behind these purchases. This is fully compliant. It is the same model used by Wikipedia, Anki, and hundreds of community-funded apps.</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">🟡 Sharp COOs often go here</p>
+    <div class="angle-item angle-amber">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span class="angle-title">4 · Legal and tax structure in Nova Scotia</span><span class="badge badge-a">Worth preparing</span></div>
+      <p class="angle-answer">As a sole proprietor in NS, revenue is reported on a personal T1 under self-employment income. HST registration only mandatory above $30,000/year. Business name registration (~$100 in NS) adds professionalism. Worth doing before revenue starts. No incorporation required at this scale.</p>
+    </div>
+    <div class="angle-item angle-amber">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span class="angle-title">5 · What stops someone from copying this?</span><span class="badge badge-a">Worth preparing</span></div>
+      <p class="angle-answer">Duolingo cannot credibly promise "no ads, no subscription" — their business model depends on both. The moat is the public commitment, brand trust, the Milo character, and community relationship. None of these can be replicated by a corporation without destroying their own revenue model. Trust is not copyable at scale.</p>
+    </div>
+    <div class="angle-item angle-amber">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><span class="angle-title">6 · Atlantic Canada grants — has this been explored?</span><span class="badge badge-a">Potentially valuable</span></div>
+      <p class="angle-answer">ACOA (Atlantic Canada Opportunities Agency) and NS Digital Economy initiatives exist specifically for this type of project. Worth one Google session before the conversation. Even "I'm looking into NS digital economy grants" shows due diligence and may reduce the personal funding ask.</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">Conversation checklist — before you sit down</p>
+    <div class="card">
+      <div class="row"><span class="row-label">Check Vercel/PostHog for any existing session data</span><span class="row-value" style="color:var(--blue);">Know your traction number</span></div>
+      <div class="row"><span class="row-label">Quick search: ACOA grants NS digital economy 2025</span><span class="row-value" style="color:var(--blue);">15 minutes</span></div>
+      <div class="row"><span class="row-label">Know the worst-case number cold: $580 total, zero debt</span><span class="row-value" style="color:var(--blue);">Say it without hesitation</span></div>
+      <div class="row"><span class="row-label">Have the live app open on your phone before you sit down</span><span class="row-value" style="color:var(--blue);">Show, don't describe</span></div>
+      <div class="row"><span class="row-label">Know the App Store compliance answer cold</span><span class="row-value" style="color:var(--blue);">She will ask</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- CHARACTERS -->
+<div id="page-characters" class="page">
+  <h1 class="page-title">The People & Animals</h1>
+  <p class="page-sub">A proposal for who belongs in this world — and the business case for including them.</p>
+
+  <div class="sec">
+    <div class="origin-box">
+      <p class="origin-label">Why this app exists</p>
+      <p class="origin-text">Milo was a black lab from Truro, Nova Scotia. He wore a plaid tie on trips to the vet and a purple tie at the family's wedding. He lived fourteen years — long enough to become the kind of dog a family builds its identity around. When he passed, his name didn't go with him. It went into an app. A free language learning app, built by his person, that carries his character forward — curious, enthusiastic, always learning, never giving up on a new word.</p>
+    </div>
+    <div class="callout callout-cream">Every corporate language app has a mascot invented by a marketing team. Milo is real. That distinction is not sentimental — <b>it is a structural competitive advantage that cannot be purchased or replicated.</b></div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">Part 1 — Milo's friends: the family's other pets</p>
+    <div class="procon-grid">
+      <div class="pro-col">
+        <p class="pc-title" style="color:var(--green);">✓ The case for it</p>
+        <div class="pc-item"><div class="dot-g"></div><span>Real animals with real personalities. Not invented. Not generic. Genuinely yours. The most authentic cast any language app has ever had.</span></div>
+        <div class="pc-item"><div class="dot-g"></div><span>Pet owners are one of the most loyal and vocal demographics online. Named, real characters earn community word-of-mouth that money cannot buy.</span></div>
+        <div class="pc-item"><div class="dot-g"></div><span>Each character carries their own personality — the nervous cat who hides during drills, the energetic dog who goes wild on a perfect score. Personality is already written.</span></div>
+        <div class="pc-item"><div class="dot-g"></div><span>Extends to the franchise naturally. Milo Speaks French has the same cast in a new setting. The characters travel with the brand.</span></div>
+      </div>
+      <div class="con-col">
+        <p class="pc-title" style="color:var(--red);">△ Things to consider</p>
+        <div class="pc-item"><div class="dot-r"></div><span>Each character needs art assets and a personality. Manage scope — introduce 2–3 at launch, add others as the app grows.</span></div>
+        <div class="pc-item"><div class="dot-r"></div><span>If a pet passes, their character needs to be handled with care inside the app. Plan for this in advance.</span></div>
+        <div class="pc-item"><div class="dot-r"></div><span>Supporting cast, not competing mascots. Milo is always the lead.</span></div>
+      </div>
+    </div>
+    <div class="callout callout-green"><b>Recommendation: Yes — build this from the start.</b> The pets-as-friends model has no meaningful downside and significant upside in authenticity, community loyalty, and storytelling.</div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">Part 2 — Family as cartoon characters</p>
+    <div class="callout callout-cream" style="margin-bottom:1rem;">These would be <b>stylised cartoon representations</b> — friendly illustrated figures, not realistic likenesses. Think Pixar-adjacent. The privacy concern about likeness in a public app is significantly reduced when the format is clearly an illustrated character created with the person's knowledge and blessing.</div>
+    <div class="g3">
+      <div class="card"><p style="font-weight:600;margin-bottom:6px;">The developer</p><p style="font-size:12px;color:var(--mid);line-height:1.6;">Already part of the story. A named "built by" credit, Ko-fi page, and Reddit presence as the developer are low-stakes ways to put a real face to the project.</p></div>
+      <div class="card card-blue"><p style="font-weight:600;margin-bottom:6px;">Your wife</p><p style="font-size:12px;color:var(--mid);line-height:1.6;">If she invests, she has earned acknowledgment. A named credit or optional character creates genuine co-ownership. The decision is hers entirely. Present it as an open offer, not a pre-made decision.</p></div>
+      <div class="card"><p style="font-weight:600;margin-bottom:6px;">Your children</p><p style="font-size:12px;color:var(--mid);line-height:1.6;">Their own choice to make. A family project with family characters creates a legacy. But the conversation happens with them, not about them — separately from this pitch.</p></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">The emotional connection — and why it belongs in this conversation</p>
+    <div class="callout callout-paw">She already knows Milo. She was there for fourteen years. Before this conversation is about numbers or markets or projections, it is about a dog from Truro and what he left behind. That is not a manipulation. That is the truth of what this project is. <b>A business plan that is purely financial asks for investment. A business plan that is financial and true asks for partnership.</b> Present the numbers first. Let the story land on its own.</div>
+  </div>
+</div>
+
+<!-- PERSONAL -->
+<div id="page-personal" class="page">
+  <h1 class="page-title">Why Now</h1>
+  <p class="page-sub">The personal case for why this project matters beyond the numbers.</p>
+
+  <div class="sec">
+    <div class="callout callout-cream" style="margin-bottom:1.5rem;">
+      With retirement on the horizon, the honest question is: <b>what does the next chapter look like?</b> A career built on skills that don't translate to post-retirement income, in a world moving toward AI dominance, is a real problem — not a hypothetical one. The choice is between developing these skills now, while there's time and context, or waiting until retirement and finding the window has closed.
+    </div>
+    <div class="g3">
+      <div class="metric"><p class="metric-label">Risk of inaction</p><p class="metric-value">Real</p><p class="metric-sub">AI is restructuring what skills have economic value. Waiting until retirement to adapt is too late.</p></div>
+      <div class="metric"><p class="metric-label">What this project builds</p><p class="metric-value">Durable skills</p><p class="metric-sub">AI-assisted development, product design, digital marketing, passive income architecture.</p></div>
+      <div class="metric"><p class="metric-label">The investment framing</p><p class="metric-value">Dual ROI</p><p class="metric-sub">Returns on the app AND returns on the skills built. Both compound over time.</p></div>
+    </div>
+    <div class="callout callout-green"><b>This is not "I want to make an app."</b> This is: I am investing in my own relevance before the window closes — by building something with genuine market value in a proven-demand space, with a working product already live, using skills that compound in value as the world shifts toward AI. The $500 funds both the app and the person building it.</div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">Why this project works where the last one didn't</p>
+    <div class="g2">
+      <div class="card" style="border-color:#F0C9B8;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;"><span style="font-weight:600;">Dread Nocturna (previous)</span><span class="badge badge-a">Untestable loop</span></div>
+        <div class="row"><span class="compare-label">Feedback loop</span><span class="compare-bad">Each chapter depended on 10 others. Progress was invisible and cumulative drift undetectable.</span></div>
+        <div class="row"><span class="compare-label">ADHD fit</span><span class="compare-bad">No way to verify quality without holding the entire story in memory.</span></div>
+        <div class="row"><span class="compare-label">Value</span><span style="font-size:12px;color:var(--mid);">Built the AI tool knowledge that makes Milo possible.</span></div>
+      </div>
+      <div class="card card-green">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;"><span style="font-weight:600;">Milo (current)</span><span class="badge badge-g">30-second loop</span></div>
+        <div class="row"><span class="compare-label">Feedback loop</span><span class="compare-good">Every change compiles or it doesn't. Every drill works or it doesn't. Testable in under 30 seconds.</span></div>
+        <div class="row"><span class="compare-label">ADHD fit</span><span class="compare-good">Progress is tangible and verifiable at every step. No hidden drift possible.</span></div>
+        <div class="row"><span class="compare-label">Evidence</span><span class="compare-good">Working app live at spanish-hub-zeta.vercel.app. Right now.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <p class="sec-label">Her role — if she wants one</p>
+    <div class="callout callout-cream">No formal duties. No deliverables. No legal liability. 100% of daily development, curriculum, marketing, and support is handled independently. If her instincts as a COO/CFO ever find a piece of the puzzle interesting — Ko-fi conversion copy, Reddit launch strategy, the franchise positioning — <b>the advisory seat is open, always on her terms.</b> She is not being asked to work. She is being asked to believe the numbers.</div>
+  </div>
+</div>
+
+</main>
+
+<footer class="footer">
+  Milo Speaks Spanish · Built in Truro, Nova Scotia · spanish-hub-zeta.vercel.app · Named after a black lab who wore a plaid tie at the vet and a purple one at the wedding.
+</footer>
+
+<script>
+// Navigation
+function show(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const pages = ['market','competitive','model','series','costs','precedents','funding','gaps','characters','personal'];
+  document.querySelectorAll('.nav-btn')[pages.indexOf(id)].classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'model' && !revChart) { setTimeout(() => showRev('c'), 100); }
+}
+
+// Revenue chart
+const revD = {
+  c: { yt:[2,4,8,14,20,27,35,42,50,56,63,70,74,78,82,85,88,90,92,94,96,98,100,102], kf:[0,3,5,8,12,15,18,22,26,30,34,38,40,42,44,46,48,50,52,54,56,58,60,62], wb:[0,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,28,28,30,30,30,31,31,31], co:[0,0,0,0,0,0,0,0,0,5,8,10,10,12,12,15,15,18,18,20,20,22,22,25], mau:'2,800', rev:'~$195', net:'~$170', sub:'Slow organic growth' },
+  r: { yt:[4,12,22,34,54,80,110,140,165,192,222,252,278,296,315,333,340,352,359,366,374,381,389,400], kf:[5,12,22,35,55,80,110,140,165,190,220,250,270,285,300,315,325,335,340,350,360,370,380,390], wb:[0,5,10,20,35,55,80,100,120,140,160,180,200,215,225,235,240,250,255,260,265,270,275,280], co:[0,0,0,0,7,12,20,28,35,38,45,55,60,65,65,70,72,75,75,78,80,82,82,85], mau:'10,800', rev:'~$1,070', net:'~$985', sub:'Reddit launch + Play Store' },
+  o: { yt:[8,24,55,110,185,278,370,444,518,593,667,741,778,815,834,852,871,890,908,927,945,964,982,1000], kf:[10,25,60,120,200,300,400,480,560,640,720,800,840,880,900,920,940,960,980,1000,1020,1040,1060,1080], wb:[5,15,35,80,150,250,380,480,560,640,720,800,840,880,900,920,940,960,980,1000,1020,1040,1060,1080], co:[0,0,7,20,38,55,75,90,100,110,120,130,135,140,142,145,148,150,152,155,158,160,162,165], mau:'27,000', rev:'~$3,160', net:'~$2,995', sub:'Viral + franchise started' }
+};
+let revChart = null;
+function showRev(s) {
+  document.querySelectorAll('.tab-btn').forEach((t,i) => t.classList.toggle('active', ['c','r','o'][i] === s));
+  const d = revD[s];
+  const lb = Array.from({length:24}, (_,i) => 'M'+(i+1));
+  document.getElementById('mMAU').innerHTML = `<p class="metric-label">MAU at month 24</p><p class="metric-value">${d.mau}</p><p class="metric-sub">${d.sub}</p>`;
+  document.getElementById('mRev').innerHTML = `<p class="metric-label">Monthly revenue</p><p class="metric-value">${d.rev}</p><p class="metric-sub">All 4 streams</p>`;
+  document.getElementById('mNet').innerHTML = `<p class="metric-label">Net after costs</p><p class="metric-value">${d.net}</p><p class="metric-sub">After infrastructure</p>`;
+  if (revChart) revChart.destroy();
+  revChart = new Chart(document.getElementById('revChart').getContext('2d'), {
+    type: 'line',
+    data: { labels: lb, datasets: [
+      { label:'YouTube', data:d.yt, borderColor:'#2D6BE4', backgroundColor:'rgba(45,107,228,0.07)', fill:true, tension:.4, pointRadius:0, borderWidth:2 },
+      { label:'Ko-fi', data:d.kf, borderColor:'#1A8A5E', backgroundColor:'rgba(26,138,94,0.05)', fill:true, tension:.4, pointRadius:0, borderWidth:2 },
+      { label:'Workbooks', data:d.wb, borderColor:'#B06E1A', backgroundColor:'rgba(176,110,26,0.05)', fill:true, tension:.4, pointRadius:0, borderWidth:2 },
+      { label:'Costs', data:d.co, borderColor:'#C0412A', fill:false, tension:.4, pointRadius:0, borderWidth:2, borderDash:[4,3] }
+    ]},
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:(c)=>`${c.dataset.label}: $${Math.round(c.parsed.y)}`}} },
+      scales:{
+        x:{grid:{display:false}, ticks:{color:'#8E8E93',font:{size:11},maxTicksLimit:12}},
+        y:{grid:{color:'rgba(0,0,0,0.05)'}, ticks:{color:'#8E8E93',font:{size:11},callback:(v)=>'$'+Math.round(v)}}
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
