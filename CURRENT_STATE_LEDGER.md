@@ -1,5 +1,5 @@
 # CURRENT_STATE_LEDGER.md
-# Milo Speaks Spanish — Compressed Project Memory
+# Milo Speaks Spanish â Compressed Project Memory
 *Paste this into any new chat session. Update after every milestone.*
 *Last updated: 2026-06-01*
 
@@ -10,74 +10,74 @@
 - **Live URL:** spanish-hub-zeta.vercel.app
 - **Repo:** github.com/JohnathanGould/Spanish-Hub (johnathangould@gmail.com)
 - **Stack:** React + Tailwind + CRACO / Firebase Auth + Firestore / Gemini 2.5 Flash / Vercel
-- **Firebase project:** my-spanish-hub — northamerica-northeast1 (Montreal)
-- **Current MEOS stage:** Stabilize (Stage 3) — bugs fixed, moving to Learn phase
+- **Firebase project:** my-spanish-hub â northamerica-northeast1 (Montreal)
+- **Current MEOS stage:** Stabilize (Stage 3) â bugs fixed, moving to Learn phase
 
 ---
 
 ## NAVIGATION (confirmed)
-5 tabs: **Home · Learn · My Words · Study · Talk to Milo**
+5 tabs: **Home Â· Learn Â· My Words Â· Study Â· Talk to Milo**
 - Home = default landing tab
 - Learn = Paths curriculum (replaces 14 lessons)
 - My Words = vocabulary browser
 - Study = drill hub (Warm Up / Practice / Review sub-tabs)
 - Talk to Milo = Gemini AI chat
 
-**Internal tab IDs:** `home`, `learn`, `words`, `drills` (rename pending → `study`), `milo` (renamed from `sofia` ✅)
+**Internal tab IDs:** `home`, `learn`, `words`, `drills` (rename pending â `study`), `milo` (renamed from `sofia` â)
 
 ---
 
 ## DRILL STRUCTURE (confirmed, research-backed)
 
-### Study tab — 3 sub-tabs: Warm Up · Practice · Review
+### Study tab â 3 sub-tabs: Warm Up Â· Practice Â· Review
 
-**Practice** — bones + XP earned:
+**Practice** â bones + XP earned:
 1. Fill in the Blank
-2. Type It — EN→SP direction, toggle to SP→EN
-3. Listen & Type — word/sentence toggle (sentence locked until contextSentence populated)
+2. Type It â ENâSP direction, toggle to SPâEN
+3. Listen & Type â word/sentence toggle (sentence locked until contextSentence populated)
 4. Sentence Builder
 5. Conjugation
-6. Multiple Choice — EN→SP default, toggle to SP→EN
+6. Multiple Choice â ENâSP default, toggle to SPâEN
 
-**Review** — no bones, no XP:
-- Flashcard (word) — active retrieval with self-rating, FSRS-scored
-- Flashcard (sentence) — locked until contextSentence populated
+**Review** â no bones, no XP:
+- Flashcard (word) â active retrieval with self-rating, FSRS-scored
+- Flashcard (sentence) â locked until contextSentence populated
 
-**Warm Up** — no bones, no XP:
+**Warm Up** â no bones, no XP:
 - Matching
 - Hear & Choose
-- Gender Drill — no gender color coding (strips the crutch)
+- Gender Drill â no gender color coding (strips the crutch)
 
 **Removed from drill set:**
-- Word Sort — semantic interference (research)
-- Type It SP→EN — trains translation reflex wrong direction
-- Translate drill — removed entirely
+- Word Sort â semantic interference (research)
+- Type It SPâEN â trains translation reflex wrong direction
+- Translate drill â removed entirely
 
-**Fetch** — embedded in every Stop. Uses FSRS `due` date for word selection. Defaults to 6 Practice drills. FSRS may surface Warm Up/Review drill for persistently difficult words (individual cognitive architecture adaptation).
+**Fetch** â embedded in every Stop. Uses FSRS `due` date for word selection. Defaults to 6 Practice drills. FSRS may surface Warm Up/Review drill for persistently difficult words (individual cognitive architecture adaptation).
 
 ---
 
 ## LEARNING ARCHITECTURE (confirmed)
 
-**FSRS** (ts-fsrs npm library) — confirmed for Learn phase
+**FSRS** (ts-fsrs npm library) â confirmed for Learn phase
 - Fields per word per user: `stability`, `difficulty`, `due`, `lastReview`
-- Rating inferred from drill performance — never shown to user
+- Rating inferred from drill performance â never shown to user
 - Handles 80/20 session composition automatically
 - `due` date drives Fetch word selection
 
-**Three mastery tiers:** Learning → Strong → Mastered
+**Three mastery tiers:** Learning â Strong â Mastered
 - Mastery requires success on at least one Practice drill (not recognition alone)
 - Stop hard-gates on at least one Practice drill attempt
 
-**No-English rule:** English is never the primary retrieval trigger after Phase 1 introduction. Image + audio + Spanish word → active production.
+**No-English rule:** English is never the primary retrieval trigger after Phase 1 introduction. Image + audio + Spanish word â active production.
 
-**Contextual Binding:** After correct answer on any Practice drill, word shown in contextSentence for 2–3 seconds. Practice drills only — not Warm Up.
+**Contextual Binding:** After correct answer on any Practice drill, word shown in contextSentence for 2â3 seconds. Practice drills only â not Warm Up.
 
 **3-strike retry system:** 1st wrong = try again, 2nd wrong = try again + hint, 3rd wrong = reveal answer. Research-supported (retrieval attempt effect + hypercorrection effect).
 
-**Hint system (Flashcard):** Hint 1 → image, Hint 2 → multiple choice, Show Answer. FSRS rating: no hints = Good, image hint = Hard, choice hint = Again.
+**Hint system (Flashcard):** Hint 1 â image, Hint 2 â multiple choice, Show Answer. FSRS rating: no hints = Good, image hint = Hard, choice hint = Again.
 
-**Paths structure:** 5 Paths × 5 Stops × ~5 words. A1–A2. paths.js complete. contextSentence populated for all 300 words. theme values assigned. imageUrl scaffolded empty.
+**Paths structure:** 5 Paths Ã 5 Stops Ã ~5 words. A1âA2. paths.js complete. contextSentence populated for all 300 words. theme values assigned. imageUrl scaffolded empty.
 
 ---
 
@@ -85,38 +85,47 @@
 
 ```
 users/{uid}:
-  displayName: string          — from Firebase Auth
-  photoURL: string|null        — from auth.currentUser.photoURL
-  xp: number                   — permanent, never resets
-  weeklyXP: number             — resets weekly
+  displayName: string          â from Firebase Auth
+  photoURL: string|null        â from auth.currentUser.photoURL
+  xp: number                   â permanent, never resets
+  weeklyXP: number             â resets weekly
   streak: number
   dailyGoal: number
-  bones: number                — spendable currency
+  bones: number                â spendable currency
   earnedBadges: string[]
   completedStops: string[]
   completedPaths: string[]
   lessonsCompleted: string[]
-  friends: string[]            — hidden from UI in v2/v3, active in v4
+  friends: string[]            â hidden from UI in v2/v3, active in v4
   audioListenEnabled: boolean
   audioSpeakEnabled: boolean
-  customWords: array           — user word list (Add to word list feature)
+  customWords: array           â user word list (Add to word list feature)
+  votedRequests: string[]      â IDs of customWordRequests upvoted by this user (prevents duplicate votes)
+  approvedRequestCount: number â approved word requests count (drives Pioneer badge logic)
   progress: {
     es: {
       [wordId]: {
-        c: number,             — correct answers
-        w: number,             — wrong answers
-        s: number,             — confidence score
-        stability: number,     — FSRS field
-        difficulty: number,    — FSRS field
-        due: string,           — FSRS next review date
-        lastReview: string     — FSRS last review date
+        c: number,             â correct answers
+        w: number,             â wrong answers
+        s: number,             â confidence score
+        stability: number,     â FSRS field
+        difficulty: number,    â FSRS field
+        due: string,           â FSRS next review date
+        lastReview: string     â FSRS last review date
       }
     }
   }
 
+customWordRequests/{docId}: es, en, uid, contributorName, timestamp, count, votes, exampleSentence, status, approvedDate
+  â community word requests. count = how many users want it. votes = upvotes.
+  â status: pending / approved / rejected
+  â on approval: 5 bones + Pioneer badge awarded to requester
+  â approved words auto-upgrade all users' custom word entries to full cards
+  â Words tab Community sub-tab shows Requested / Recently Added / Pioneers sections
+
 leaderboard/{uid}: displayName, photoURL, xp, weeklyXP
-chatUsage/{uid}: count, date   — 30 msg/day limit
-plaza/{postId}: uid, displayName, text, timestamp, likes  — Plaza removed from nav but data preserved
+chatUsage/{uid}: count, date   â 30 msg/day limit
+plaza/{postId}: uid, displayName, text, timestamp, likes  â Plaza removed from nav but data preserved
 ```
 
 **Parent Fan-Out pattern always:** SpanishHub.jsx is the ONLY file that reads/writes Firestore.
@@ -125,7 +134,7 @@ plaza/{postId}: uid, displayName, text, timestamp, likes  — Plaza removed from
 
 ## REWARDS ECONOMY (confirmed)
 
-### Bones — earning
+### Bones â earning
 - 1 bone per correct Practice tier answer
 - Stop completed: 5 bones (loot drop)
 - Path completed: 15 bones (loot drop)
@@ -135,15 +144,15 @@ plaza/{postId}: uid, displayName, text, timestamp, likes  — Plaza removed from
 - Tier capstone: 100 bones
 - Streak freeze deduction: 5 bones per missed day (stackable)
 
-### Bones — spending
+### Bones â spending
 - Skip a question: 5 bones
 - Streak freeze: 30 bones
-- Milo skin 50% off: 50 bones — $2.00 becomes $1.00 (min $1.00 paid)
-- Companion character 50% off: 200 bones — $9.99 becomes $4.99 (min $4.99 paid)
-- Bones NEVER make anything free — minimum payment always applies
+- Milo skin 50% off: 50 bones â $2.00 becomes $1.00 (min $1.00 paid)
+- Companion character 50% off: 200 bones â $9.99 becomes $4.99 (min $4.99 paid)
+- Bones NEVER make anything free â minimum payment always applies
 
 ### XP
-- D&D personal growth model — never competitive
+- D&D personal growth model â never competitive
 - 1 XP per correct Practice answer + event bonuses
 - Permanent, never resets, never spent
 - Drives milestone badges
@@ -155,28 +164,28 @@ plaza/{postId}: uid, displayName, text, timestamp, likes  — Plaza removed from
 Milo's real family. Purchasable characters. Appear in Fetch once purchased.
 Each assigned to one Practice drill. Molly appears randomly across all 6.
 
-| Character | Species | Assigned drill | Notes |
-|---|---|---|---|
-| Ruby | Dog 🐕 | Fill in the Blank — BUILD FIRST | Rescue — Texas |
-| Lola | Dog 🐕 | Type It | Rescue — Texas |
-| Junny | Dog 🐕 | Listen & Type | Rescue — Texas |
-| Maz | Cat 🐈 | Sentence Builder | NS SPCA Colchester |
-| Bela | Cat 🐈 | Conjugation | From a litter — friend's cat |
-| Delilah | Cat 🐈 | Multiple Choice EN→SP | NS SPCA Colchester |
-| Molly | Cat 🐈 | All drills — random, rare. Died one month before Milo. | NS SPCA Colchester |
+| Character | Species | Assigned drill |
+|---|---|---|
+| Ruby | Dog ð | Fill in the Blank â BUILD FIRST | Rescue â Texas |
+| Lola | Dog ð | Type It | Rescue â Texas |
+| Junny | Dog ð | Listen & Type | Rescue â Texas |
+| Maz | Cat ð | Sentence Builder | NS SPCA Colchester |
+| Bela | Cat ð | Conjugation | From a litter â friend's cat |
+| Delilah | Cat ð | Multiple Choice ENâSP | NS SPCA Colchester |
+| Molly | Cat ð | All drills â random, rare. Died one month before Milo. | NS SPCA Colchester |
 
 Maz, Delilah, Molly adopted from NS SPCA Colchester (same shelter that gets 10% charity share).
 
 ---
 
-## BREAK FREE — ¡LIBRE! (confirmed)
+## BREAK FREE â Â¡LIBRE! (confirmed)
 - Trigger: Path completion
 - Version A: countdown timer speed round
-- Milo strains at chain — chain snaps — Milo runs free
+- Milo strains at chain â chain snaps â Milo runs free
 - Success: 25 bones loot drop + Unchained badge
 - Failure: no penalty, gentle message
-- Spanish name: ¡Libre!
-- Emergent task — Milo straining + free-running poses must exist first
+- Spanish name: Â¡Libre!
+- Emergent task â Milo straining + free-running poses must exist first
 
 ---
 
@@ -198,7 +207,7 @@ Goes public only after: app stable on Play Store, 1,000+ MAU for 60 days, revenu
 - No energy systems, no lesson locks, no pay-to-learn. Ever.
 - No interruptive ads. Ever.
 - Bones earned, never purchased.
-- "Free to learn" — not "always free"
+- "Free to learn" â not "always free"
 - Code uses generic vars: mascotName, mascotMessage, companionReaction
 - Language-agnostic content files from day one
 
@@ -206,7 +215,7 @@ Goes public only after: app stable on Play Store, 1,000+ MAU for 60 days, revenu
 
 ## ARCHITECTURE RULES
 - SpanishHub.jsx = single source of truth. All global state lives here.
-- v0 components in src/components/v0/ — never edit directly. Wrapper Pattern only.
+- v0 components in src/components/v0/ â never edit directly. Wrapper Pattern only.
 - Never modify without dedicated session: Firebase Auth logic, api/chat.js, Firestore security rules.
 - Fixed modals/overlays render OUTSIDE app-container (backdrop-filter traps position:fixed children).
 - git push triggers Vercel auto-deploy. Never npx vercel --prod.
@@ -221,66 +230,71 @@ Goes public only after: app stable on Play Store, 1,000+ MAU for 60 days, revenu
 
 ---
 
-## STABILIZE — COMPLETED (as of 2026-05-30)
-- ✅ Leaderboard removed entirely
-- ✅ Plaza, Trans, Top, Log tabs removed from navigation
-- ✅ Treats removed from DEFAULT_DATA
-- ✅ Navigation cleaned: Home · Learn · My Words · Study · Talk to Milo
-- ✅ WordSort drill removed
-- ✅ Sofia → Milo rename complete
-- ✅ ts-fsrs installed, FSRS fields added to DEFAULT_DATA
-- ✅ completedStops[], completedPaths[] added to DEFAULT_DATA
-- ✅ contextSentence populated for all 300 words
-- ✅ theme values assigned for all 300 words
-- ✅ 11 drill fixes shipped (Task 8A)
-- ✅ BottomNav wired — outside app-container
-- ✅ WordDetail modal fixed — viewport centered
-- ✅ DrillsGrid restructured — three tiers
-- ✅ Study tab options screen built
-- ✅ HomeTab wired — daily challenges moved to home
-- ✅ DoneScreen scroll fix + button colours
-- ✅ Word mastery filter — tappable stat boxes
-- ✅ Ko-fi button on home screen
-- ✅ Correct + Almost audio feedback wired
-- ✅ Vercel auto-deploy confirmed working
-- ✅ Firebase emulator set up — Auth port 9099, Firestore port 8080
-- ✅ .gitignore cleaned
-- ✅ CURRENT_STATE_LEDGER.md created at repo root
+## STABILIZE â COMPLETED (as of 2026-05-30)
+- â Leaderboard removed entirely
+- â Plaza, Trans, Top, Log tabs removed from navigation
+- â Treats removed from DEFAULT_DATA
+- â Navigation cleaned: Home Â· Learn Â· My Words Â· Study Â· Talk to Milo
+- â WordSort drill removed
+- â Sofia â Milo rename complete
+- â ts-fsrs installed, FSRS fields added to DEFAULT_DATA
+- â completedStops[], completedPaths[] added to DEFAULT_DATA
+- â contextSentence populated for all 300 words
+- â theme values assigned for all 300 words
+- â 11 drill fixes shipped (Task 8A)
+- â BottomNav wired â outside app-container
+- â WordDetail modal fixed â viewport centered
+- â DrillsGrid restructured â three tiers
+- â Study tab options screen built
+- â HomeTab wired â daily challenges moved to home
+- â DoneScreen scroll fix + button colours
+- â Word mastery filter â tappable stat boxes
+- â Ko-fi button on home screen
+- â Correct + Almost audio feedback wired
+- â Vercel auto-deploy confirmed working
+- â Firebase emulator set up â Auth port 9099, Firestore port 8080
+- â .gitignore cleaned
+- â CURRENT_STATE_LEDGER.md created at repo root
 
 ---
 
-## STABILIZE — STILL OPEN
-- [ ] Listen & Type — translation display + sentence toggle
-- [ ] Hear & Choose — show Spanish spelling after selection
-- [ ] Type It — hear word + sentence toggle
-- [ ] Fill in the Blank — listen button after completion
-- [ ] Conjugation drill — verb type filter toggles
+## STABILIZE â STILL OPEN
+- [ ] Listen & Type â translation display + sentence toggle
+- [ ] Hear & Choose â show Spanish spelling after selection
+- [ ] Type It â hear word + sentence toggle
+- [ ] Fill in the Blank â listen button after completion
+- [ ] Conjugation drill â verb type filter toggles
 - [ ] Add theme tag field to Add Word form
 - [ ] Milo vocabulary awareness fix (test in AI Studio first)
-- [ ] Log tab — implement decision (keep/rename/remove)
-- [ ] DrillsGrid redesign — full spec and Emergent brief pending
-- [ ] Word detail page — full page spec written ✅, Emergent build pending
-- [ ] v0 components: MiloHeader, ProfileSheet, BadgeGrid — review and regenerate if needed
+- [ ] Log tab â implement decision (keep/rename/remove)
+- [ ] DrillsGrid redesign â full spec and Emergent brief pending
+- [ ] Word detail page â full page spec written â, Emergent build pending
+- [ ] v0 components: MiloHeader, ProfileSheet, BadgeGrid â review and regenerate if needed
 
 ---
 
 ## DOCUMENTS PRODUCED (save all to repo root)
-- MILO_FIREBASE_STRUCTURE.md — in repo
-- MILO_WORD_DETAIL_PAGE_SPEC.md — in repo
-- MILO_TERMS_AND_PRIVACY.md — in repo
-- MILO_BONES_LOGIC_SPEC.md — in repo
-- FSRS-SCHEMA-SPEC.md — in repo
-- PATHS-STATE-LEDGER.md — in repo
-- MILO-MASTER-REFERENCE.md — in repo
-- MILO-DRILL-PROTOCOLS.md — in repo
-- MILO-REWARDS-ECONOMY.md — in repo
-- MILO-CURRICULUM-ARCHITECTURE.md — in repo
-- PATHS-LEARNING-DESIGN.md — from previous sessions
-- MILO-IMAGE-PROMPTS.md — from previous sessions
+- MILO_FIREBASE_STRUCTURE.md â in repo
+- MILO_WORD_DETAIL_PAGE_SPEC.md â in repo
+- MILO_TERMS_AND_PRIVACY.md â save to repo
+- MILO_BONES_LOGIC_SPEC.md â save to repo
+- FSRS-SCHEMA-SPEC.md â from previous sessions
+- PATHS-STATE-LEDGER.md â from previous sessions
+- MILO-MASTER-REFERENCE.md â from previous sessions
+- MILO-DRILL-PROTOCOLS.md â from previous sessions
+- MILO-REWARDS-ECONOMY.md â from previous sessions
+- MILO-CURRICULUM-ARCHITECTURE.md â from previous sessions
+- PATHS-LEARNING-DESIGN.md â from previous sessions
+- MILO-IMAGE-PROMPTS.md â from previous sessions
 
 ---
 
-## NEXT SESSION — FIRST TASK
+## FUTURE APPS & SPECS
+- **Milo Admin Dashboard** â spec saved locally in Milo folder on laptop. Move to `milo-admin` repo when created. Build trigger: 500 MAU on Play Store.
+- **Milo Speaks Code (Dev Dashboard)** â spec in action list. Separate brand, separate repo, separate audience. Build after Spanish app is stable.
+- **Milo Speaks French / Italian / etc.** â same Firebase project, new repo per language. Universal Concept IDs needed before second language starts.
+
+---
 DrillsGrid redesign spec + Emergent brief. Full drill inventory confirmed. Ready to write.
 
 ---
