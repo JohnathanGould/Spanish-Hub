@@ -23,7 +23,7 @@
 - Study = drill hub (Warm Up / Practice / Review sub-tabs)
 - Talk to Milo = Gemini AI chat
 
-**Internal tab IDs:** `home`, `learn`, `words`, `drills` (rename pending → `study`), `sofia` (renamed → `milo`)
+**Internal tab IDs:** `home`, `learn`, `words`, `drills` (rename pending → `study`), `milo` (renamed from `sofia` ✅)
 
 ---
 
@@ -155,15 +155,15 @@ plaza/{postId}: uid, displayName, text, timestamp, likes  — Plaza removed from
 Milo's real family. Purchasable characters. Appear in Fetch once purchased.
 Each assigned to one Practice drill. Molly appears randomly across all 6.
 
-| Character | Species | Assigned drill |
-|---|---|---|
-| Ruby | Dog 🐕 | Fill in the Blank — BUILD FIRST |
-| Lola | Dog 🐕 | Type It |
-| Junny | Dog 🐕 | Listen & Type |
-| Maz | Cat 🐈 | Sentence Builder |
-| Bela | Cat 🐈 | Conjugation |
-| Delilah | Cat 🐈 | Multiple Choice EN→SP |
-| Molly | Cat 🐈 | All drills — random, rare. Died one month before Milo. |
+| Character | Species | Assigned drill | Notes |
+|---|---|---|---|
+| Ruby | Dog 🐕 | Fill in the Blank — BUILD FIRST | Rescue — Texas |
+| Lola | Dog 🐕 | Type It | Rescue — Texas |
+| Junny | Dog 🐕 | Listen & Type | Rescue — Texas |
+| Maz | Cat 🐈 | Sentence Builder | NS SPCA Colchester |
+| Bela | Cat 🐈 | Conjugation | From a litter — friend's cat |
+| Delilah | Cat 🐈 | Multiple Choice EN→SP | NS SPCA Colchester |
+| Molly | Cat 🐈 | All drills — random, rare. Died one month before Milo. | NS SPCA Colchester |
 
 Maz, Delilah, Molly adopted from NS SPCA Colchester (same shelter that gets 10% charity share).
 
@@ -269,12 +269,12 @@ Goes public only after: app stable on Play Store, 1,000+ MAU for 60 days, revenu
 - MILO_WORD_DETAIL_PAGE_SPEC.md — in repo
 - MILO_TERMS_AND_PRIVACY.md — in repo
 - MILO_BONES_LOGIC_SPEC.md — in repo
-- FSRS-SCHEMA-SPEC.md — from previous sessions
-- PATHS-STATE-LEDGER.md — from previous sessions
-- MILO-MASTER-REFERENCE.md — from previous sessions
-- MILO-DRILL-PROTOCOLS.md — from previous sessions
-- MILO-REWARDS-ECONOMY.md — from previous sessions
-- MILO-CURRICULUM-ARCHITECTURE.md — from previous sessions
+- FSRS-SCHEMA-SPEC.md — in repo
+- PATHS-STATE-LEDGER.md — in repo
+- MILO-MASTER-REFERENCE.md — in repo
+- MILO-DRILL-PROTOCOLS.md — in repo
+- MILO-REWARDS-ECONOMY.md — in repo
+- MILO-CURRICULUM-ARCHITECTURE.md — in repo
 - PATHS-LEARNING-DESIGN.md — from previous sessions
 - MILO-IMAGE-PROMPTS.md — from previous sessions
 
