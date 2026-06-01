@@ -3,6 +3,7 @@ import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { shuffle, speak } from '../../utils/helpers';
 import { FITB_POOL } from '../../data/drillData';
+import { VERB_TABLE } from '../../data/words';
 
 export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength = 10 }) {
   const total = drillLength;
@@ -13,6 +14,15 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
 
   const item = queue[idx];
   const choices = useMemo(() => shuffle([...item.choices]), [item]);
+
+  const getEnglishMeaning = (blankWord) => {
+    for (const verb of VERB_TABLE) {
+      for (const conj of verb.conj) {
+        if (conj.es === blankWord) return verb.en;
+      }
+    }
+    return null;
+  };
 
   const handlePick = (c) => {
     if (picked) return;
@@ -28,7 +38,7 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
   };
 
   useEffect(() => {
-    if (picked) speak(item.sentence, 'es', 0.72);
+    if (picked) speak(`${item.before} ${item.blank} ${item.after}`, 'es', 0.72);
   }, [picked]);
 
   let blankBg = 'hsl(var(--muted))';
@@ -80,11 +90,11 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
         <div className="mt-4 text-center">
           <div className="mb-3 text-sm font-medium" style={{ color: picked === item.blank ? '#16A34A' : '#DC2626' }}>
             {picked === item.blank ? 'Correct! ✓' : `Answer: ${item.blank}`}
-            {picked === item.blank && item.hint && (
-              <div className="text-xs mt-1 opacity-70">{item.hint}</div>
+            {picked === item.blank && (
+              <div className="text-xs mt-1 opacity-70">{getEnglishMeaning(item.blank)}</div>
             )}
           </div>
-          <button onClick={() => speak(item.sentence, 'es', 0.72)} className="speak-btn mx-auto mb-3">
+          <button onClick={() => speak(`${item.before} ${item.blank} ${item.after}`, 'es', 0.72)} className="speak-btn mx-auto mb-3">
             <Volume2 size={12} /> Hear it
           </button>
           <button onClick={handleContinue} data-testid="fitb-continue"
