@@ -92,19 +92,33 @@ function AddWordForm({ onAdd }) {
       <select data-testid="add-word-theme" value={theme} onChange={e => setTheme(e.target.value)}
         className="w-full px-3 py-2 rounded-lg border text-sm mb-3" style={inp}>
         <option value="">Select theme (optional)</option>
-        <option value="animals">animals</option>
-        <option value="clothing">clothing</option>
-        <option value="descriptions">descriptions</option>
-        <option value="family">family</option>
-        <option value="greetings">greetings</option>
-        <option value="health">health</option>
-        <option value="home">home</option>
-        <option value="nature">nature</option>
-        <option value="restaurant">restaurant</option>
-        <option value="shopping">shopping</option>
-        <option value="social">social</option>
-        <option value="time">time</option>
-        <option value="travel">travel</option>
+<option value="adjectives">adjectives</option>
+<option value="animals">animals</option>
+<option value="body">body</option>
+<option value="clothing">clothing</option>
+<option value="colours">colours</option>
+<option value="connectors">connectors</option>
+<option value="days">days</option>
+<option value="descriptions">descriptions</option>
+<option value="emotions">emotions</option>
+<option value="family">family</option>
+<option value="food & drink">food & drink</option>
+<option value="greetings">greetings</option>
+<option value="health">health</option>
+<option value="home">home</option>
+<option value="months">months</option>
+<option value="nature">nature</option>
+<option value="numbers">numbers</option>
+<option value="people">people</option>
+<option value="phrases">phrases</option>
+<option value="places">places</option>
+<option value="questions">questions</option>
+<option value="restaurant">restaurant</option>
+<option value="shopping">shopping</option>
+<option value="social">social</option>
+<option value="time">time</option>
+<option value="travel">travel</option>
+<option value="weather">weather</option>
       </select>
       <button data-testid="add-word-btn" onClick={handleAdd}
         className="px-4 py-2 rounded-lg text-sm font-semibold text-white transition-colors"
