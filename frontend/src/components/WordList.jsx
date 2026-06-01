@@ -58,10 +58,11 @@ function ProgressPanel({ words, progress, tierFilter, setTierFilter }) {
 function AddWordForm({ onAdd }) {
   const [es, setEs] = useState(''); const [en, setEn] = useState('');
   const [type, setType] = useState('noun'); const [gender, setGender] = useState('');
+  const [theme, setTheme] = useState('');
   const handleAdd = () => {
     if (!es.trim() || !en.trim()) return;
-    onAdd({ es: es.trim().toLowerCase(), en: en.trim().toLowerCase(), type, gender: gender || null, group: 'Custom' });
-    setEs(''); setEn('');
+    onAdd({ es: es.trim().toLowerCase(), en: en.trim().toLowerCase(), type, gender: gender || null, theme: theme || null, group: 'Custom' });
+    setEs(''); setEn(''); setTheme('');
   };
   const inp = { background: 'hsl(var(--muted))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' };
   return (
@@ -88,6 +89,23 @@ function AddWordForm({ onAdd }) {
           <option value="f">feminine (la)</option>
         </select>
       </div>
+      <select data-testid="add-word-theme" value={theme} onChange={e => setTheme(e.target.value)}
+        className="w-full px-3 py-2 rounded-lg border text-sm mb-3" style={inp}>
+        <option value="">Select theme (optional)</option>
+        <option value="animals">animals</option>
+        <option value="clothing">clothing</option>
+        <option value="descriptions">descriptions</option>
+        <option value="family">family</option>
+        <option value="greetings">greetings</option>
+        <option value="health">health</option>
+        <option value="home">home</option>
+        <option value="nature">nature</option>
+        <option value="restaurant">restaurant</option>
+        <option value="shopping">shopping</option>
+        <option value="social">social</option>
+        <option value="time">time</option>
+        <option value="travel">travel</option>
+      </select>
       <button data-testid="add-word-btn" onClick={handleAdd}
         className="px-4 py-2 rounded-lg text-sm font-semibold text-white transition-colors"
         style={{ background: 'hsl(var(--primary))' }}>
