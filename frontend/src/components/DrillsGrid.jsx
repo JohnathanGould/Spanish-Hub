@@ -20,136 +20,152 @@ const CARD_STYLES = {
   pink:    { bg: '#FDF2F8', num: '#F5D0E8', numText: '#6D1B4E', title: '#500D38', desc: '#86185E' },
 };
 
-const DRILL_SECTIONS = [
-  { tier: 'practice', label: 'Practice', includeUntiered: true },
-  { tier: 'review', label: 'Review' },
-  { tier: 'warmup', label: 'Warm Up' },
+const DRILL_META = DRILLS.reduce((acc, d) => { acc[d.id] = d; return acc; }, {});
+
+const SUB_TABS = [
+  { key: 'warmup', label: 'Warm Up' },
+  { key: 'practice', label: 'Practice' },
+  { key: 'review', label: 'Review' },
 ];
 
-function getDrillsForCategory(studyCategory) {
-  const section = DRILL_SECTIONS.find(({ tier }) => tier === studyCategory);
-  if (!section) return [];
-  return DRILLS.filter(drill =>
-    drill.tier === section.tier || (section.includeUntiered && !drill.tier)
-  );
-}
+const TAB_DRILLS = {
+  warmup: [
+    { key: 'matching',    drillId: 'warmup-matching',    metaId: 'matching',    name: 'Matching' },
+    { key: 'hear-choose', drillId: 'warmup-hear-choose', metaId: 'hear-choose', name: 'Hear & Choose' },
+    { key: 'gender',      drillId: 'warmup-gender',      metaId: 'gender',      name: 'Gender Drill' },
+  ],
+  practice: [
+    { key: 'fill-blank',   drillId: 'fill-blank',  metaId: 'fill-blank',  name: 'Fill in the Blank' },
+    { key: 'type-it',                               metaId: 'type-en-es',  name: 'Type It',
+      toggle: { options: [{ label: 'EN→SP', drillId: 'type-en-es' }, { label: 'SP→EN', drillId: 'type-es-en' }], defaultIdx: 0 },
+    },
+    { key: 'listen-type',                           metaId: 'listen-type', name: 'Listen & Type',
+      toggle: { options: [{ label: 'word', drillId: 'listen-type' }, { label: 'sentence', drillId: 'listen-type-sentence' }], defaultIdx: 0 },
+    },
+    { key: 'sent-build',   drillId: 'sent-build',  metaId: 'sent-build',  name: 'Sentence Builder' },
+    { key: 'conjugation',  drillId: 'conjugation', metaId: 'conjugation', name: 'Conjugation' },
+    { key: 'multi-choice',                          metaId: 'en-es',       name: 'Multiple Choice',
+      toggle: { options: [{ label: 'EN→SP', drillId: 'en-es' }, { label: 'SP→EN', drillId: 'es-en' }], defaultIdx: 0 },
+    },
+  ],
+  review: [
+    { key: 'flashcard',          drillId: 'review-flashcard', metaId: 'flashcard', name: 'Flashcard word' },
+    { key: 'flashcard-sentence', locked: true, color: 'stone', name: 'Flashcard sentence',
+      lockedMsg: 'Coming soon — sentence flashcards unlock when example sentences are added 🐾',
+    },
+  ],
+};
 
 export default function DrillsGrid({
-  words, stats, drillMode, setDrillMode, onStartDrill, completedPaths = [],
-  studyCategory,
+  words, stats, drillMode, setDrillMode, onStartDrill, completedPaths = [], studyCategory,
 }) {
-  const [pendingId, setPendingId] = useState(null);
-  const [drillLength, setDrillLength] = useState(10);
+  const [activeTab, setActiveTab] = useState('practice');
+  const [toggleStates, setToggleStates] = useState({});
+  const [lockedMsg, setLockedMsg] = useState(null);
+  const [drillLength] = useState(10);
+
   let drillLabel = 'All ' + words.length + ' words';
   if (drillMode === 'weak') drillLabel = words.length + ' unmastered words';
   else if (drillMode === 'mastered') drillLabel = words.length + ' mastered words';
 
-  const handleCardClick = (drill) => {
-    if (drill.id === 'matching' && drillLength > 10) setDrillLength(6);
-    setPendingId(pendingId === drill.id ? null : drill.id);
+  const handleToggle = (drillKey, idx) => {
+    setToggleStates(prev => ({ ...prev, [drillKey]: idx }));
   };
 
-  const handleStart = (drill) => {
-    onStartDrill(drill.id, drillLength);
-    setPendingId(null);
+  const getActiveDrillId = (drill) => {
+    if (drill.toggle) {
+      const idx = toggleStates[drill.key] ?? drill.toggle.defaultIdx;
+      return drill.toggle.options[idx].drillId;
+    }
+    return drill.drillId;
+  };
+
+  const handleCardClick = (drill) => {
+    if (drill.locked) {
+      setLockedMsg(prev => prev === drill.key ? null : drill.key);
+      return;
+    }
+    const id = getActiveDrillId(drill);
+    const len = id === 'warmup-matching' ? 6 : drillLength;
+    onStartDrill(id, len);
   };
 
   const renderDrillCard = (drill, i) => {
-    const s = CARD_STYLES[drill.color] || CARD_STYLES.amber;
-    const isLocked = drill.id === 'past-tense' && !completedPaths.includes('path-5');
-    const isExpanded = pendingId === drill.id;
+    const drillMeta = drill.metaId ? (DRILL_META[drill.metaId] || {}) : {};
+    const color = drill.color || drillMeta.color || 'amber';
+    const s = CARD_STYLES[color] || CARD_STYLES.amber;
+    const name = drill.name || drillMeta.name || drill.key;
+    const desc = drillMeta.desc || '';
+    const activeIdx = drill.toggle ? (toggleStates[drill.key] ?? drill.toggle.defaultIdx) : null;
+    const showLockedMsg = drill.locked && lockedMsg === drill.key;
 
     return (
       <motion.div
-        key={drill.id}
+        key={drill.key}
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: i * 0.03, duration: 0.25 }}
-        className={'rounded-2xl overflow-hidden' + (isLocked ? ' opacity-50' : '')}
+        className={'rounded-2xl overflow-hidden' + (drill.locked ? ' opacity-50' : '')}
         style={{ background: s.bg }}
-        data-testid={'drill-card-' + drill.id}
+        data-testid={'drill-card-' + drill.key}
       >
-        {/* Row — always visible */}
         <div
-          className={'flex items-center gap-3 px-4 py-3' + (isLocked ? ' cursor-not-allowed' : ' cursor-pointer')}
-          onClick={isLocked ? undefined : () => handleCardClick(drill)}
+          className="flex items-center gap-3 px-4 py-3 cursor-pointer"
+          onClick={() => handleCardClick(drill)}
         >
-          {/* Number badge */}
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
             style={{ background: s.num, color: s.numText }}
           >
-            {isLocked ? '🔒' : drill.n}
+            {drill.locked ? '🔒' : i + 1}
           </div>
 
-          {/* Name + description */}
           <div className="flex-1 min-w-0">
             <div className="text-sm font-bold leading-tight" style={{ color: s.title }}>
-              {drill.name}
+              {name}
             </div>
-            <div className="text-xs leading-snug mt-0.5 truncate" style={{ color: s.desc }}>
-              {isLocked ? 'Complete Path 5 to unlock' : drill.desc}
-            </div>
+            {!drill.locked && desc && (
+              <div className="text-xs leading-snug mt-0.5 truncate" style={{ color: s.desc }}>
+                {desc}
+              </div>
+            )}
+            {drill.toggle && (
+              <div className="flex gap-1 mt-1.5">
+                {drill.toggle.options.map((opt, idx) => (
+                  <button
+                    key={opt.label}
+                    onClick={(e) => { e.stopPropagation(); handleToggle(drill.key, idx); }}
+                    className="px-2 py-0.5 rounded-full text-[10px] font-bold transition-all"
+                    style={{
+                      background: activeIdx === idx ? 'hsl(var(--primary))' : s.num,
+                      color: activeIdx === idx ? 'white' : s.numText,
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-
-          {/* Chevron */}
-          {!isLocked && (
-            <div
-              className="flex-shrink-0 text-xs transition-transform duration-200"
-              style={{
-                color: s.desc,
-                transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-              }}
-            >
-              ▾
-            </div>
-          )}
         </div>
 
-        {/* Expanded selector */}
-        {isExpanded && (
+        {showLockedMsg && (
           <div
-            className="px-4 pb-3"
-            style={{ borderTop: '1px solid ' + s.num }}
+            className="px-4 pb-3 text-xs text-center"
+            style={{ color: s.desc, borderTop: '1px solid ' + s.num }}
           >
-            <div className="text-xs font-medium mb-2 mt-2 text-center" style={{ color: s.desc }}>
-              How many words?
-            </div>
-            <div className={`grid gap-1.5 mb-2 ${drill.id === 'matching' ? 'grid-cols-4' : 'grid-cols-3'}`}>
-              {(drill.id === 'matching' ? [4, 6, 8, 10] : [10, 20, 30]).map(n => (
-                <button
-                  key={n}
-                  onClick={(e) => { e.stopPropagation(); setDrillLength(n); }}
-                  className="py-1.5 rounded-lg text-xs font-bold transition-all"
-                  style={{
-                    background: drillLength === n ? 'hsl(var(--primary))' : s.num,
-                    color: drillLength === n ? 'white' : s.numText,
-                  }}
-                >
-                  {n}
-                </button>
-              ))}
-            </div>
-            <button
-              onClick={(e) => { e.stopPropagation(); handleStart(drill); }}
-              className="w-full py-2 rounded-lg text-xs font-bold text-white"
-              style={{ background: 'hsl(var(--primary))' }}
-            >
-              Start
-            </button>
+            {drill.lockedMsg}
           </div>
         )}
       </motion.div>
     );
   };
 
-  let cardIndex = 0;
-  const categoryDrills = getDrillsForCategory(studyCategory);
-  const sectionLabel = DRILL_SECTIONS.find(({ tier }) => tier === studyCategory)?.label;
-  console.log("STATS DEBUG:", stats);
+  const currentDrills = TAB_DRILLS[activeTab] || [];
+
   return (
     <div>
-      {/* Mode filter pills — compact single row */}
+      {/* Mode filter pills */}
       <div className="flex gap-2 mb-2">
         <button
           data-testid="mode-weak-btn"
@@ -178,21 +194,27 @@ export default function DrillsGrid({
         {drillLabel} — tap a pill to filter, tap again to reset
       </p>
 
-      {/* Drill list — filtered to active study category */}
-      <div className="flex flex-col gap-1.5">
-        {sectionLabel && (
-          <h3
-            className="text-xs font-bold uppercase tracking-wide mb-2"
-            style={{ color: 'hsl(var(--muted-foreground))' }}
+      {/* Sub-tabs */}
+      <div className="flex gap-1 mb-3">
+        {SUB_TABS.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => { setActiveTab(tab.key); setLockedMsg(null); }}
+            className="flex-1 rounded-full py-1.5 text-xs font-semibold transition-all duration-200 border"
+            style={{
+              background: activeTab === tab.key ? 'hsl(var(--primary))' : 'hsl(var(--card))',
+              color: activeTab === tab.key ? 'white' : 'hsl(var(--muted-foreground))',
+              borderColor: activeTab === tab.key ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+            }}
           >
-            {sectionLabel}
-          </h3>
-        )}
-        {categoryDrills.map((drill) => {
-          const card = renderDrillCard(drill, cardIndex);
-          cardIndex += 1;
-          return card;
-        })}
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Drill list */}
+      <div className="flex flex-col gap-1.5">
+        {currentDrills.map((drill, i) => renderDrillCard(drill, i))}
       </div>
     </div>
   );
