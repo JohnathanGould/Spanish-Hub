@@ -244,8 +244,10 @@ Goes public only after: app stable on Play Store, 1,000+ MAU for 60 days, revenu
 - â 11 drill fixes shipped (Task 8A)
 - â BottomNav wired â outside app-container
 - â WordDetail modal fixed â viewport centered
-- â DrillsGrid restructured â three tiers
-- â Study tab options screen built
+- â DrillsGrid restructured â three sub-tabs Warm Up / Practice / Review
+- â Study tab options screen removed from SpanishHub.jsx (sub-tabs now internal to DrillsGrid)
+- â Drill length selector restored (4/6/8/10 for Matching, 10/20/30 for all others)
+- â Flashcard sentence routing fixed in DrillRouter
 - â HomeTab wired â daily challenges moved to home
 - â DoneScreen scroll fix + button colours
 - â Word mastery filter â tappable stat boxes
@@ -259,6 +261,7 @@ Goes public only after: app stable on Play Store, 1,000+ MAU for 60 days, revenu
 ---
 
 ## STABILIZE â STILL OPEN
+- [ ] **Bones earn logic â NEXT SESSION** â Practice drills must increment `userData.bones` in Firestore after correct answer. Confirm if ever built or is a fresh task. Wire into DrillShell or SpanishHub.jsx as appropriate.
 - [ ] Listen & Type â translation display + sentence toggle
 - [ ] Hear & Choose â show Spanish spelling after selection
 - [ ] Type It â hear word + sentence toggle
@@ -267,7 +270,6 @@ Goes public only after: app stable on Play Store, 1,000+ MAU for 60 days, revenu
 - [ ] Add theme tag field to Add Word form
 - [ ] Milo vocabulary awareness fix (test in AI Studio first)
 - [ ] Log tab â implement decision (keep/rename/remove)
-- [ ] DrillsGrid redesign â full spec and Emergent brief pending
 - [ ] Word detail page â full page spec written â, Emergent build pending
 - [ ] v0 components: MiloHeader, ProfileSheet, BadgeGrid â review and regenerate if needed
 
@@ -276,16 +278,19 @@ Goes public only after: app stable on Play Store, 1,000+ MAU for 60 days, revenu
 ## DOCUMENTS PRODUCED (save all to repo root)
 - MILO_FIREBASE_STRUCTURE.md â in repo
 - MILO_WORD_DETAIL_PAGE_SPEC.md â in repo
-- MILO_TERMS_AND_PRIVACY.md â save to repo
-- MILO_BONES_LOGIC_SPEC.md â save to repo
+- MILO_TERMS_AND_PRIVACY.md â in repo
+- MILO_BONES_LOGIC_SPEC.md â in repo
+- MILO_COMMUNITY_WORD_SPEC.md â in repo
+- DRILLSGRID_REDESIGN_SPEC.md â in repo
+- MILO_ADMIN_DASHBOARD_SPEC.md â saved locally in Milo folder (move to milo-admin repo at 500 MAU)
 - FSRS-SCHEMA-SPEC.md â from previous sessions
 - PATHS-STATE-LEDGER.md â from previous sessions
 - MILO-MASTER-REFERENCE.md â from previous sessions
 - MILO-DRILL-PROTOCOLS.md â from previous sessions
-- MILO-REWARDS-ECONOMY.md â from previous sessions
+- MILO-REWARDS-ECONOMY.md â in repo
 - MILO-CURRICULUM-ARCHITECTURE.md â from previous sessions
 - PATHS-LEARNING-DESIGN.md â from previous sessions
-- MILO-IMAGE-PROMPTS.md â from previous sessions
+- MILO-IMAGE-PROMPTS.md â in repo
 
 ---
 
@@ -295,7 +300,45 @@ Goes public only after: app stable on Play Store, 1,000+ MAU for 60 days, revenu
 - **Milo Speaks French / Italian / etc.** â same Firebase project, new repo per language. Universal Concept IDs needed before second language starts.
 
 ---
-DrillsGrid redesign spec + Emergent brief. Full drill inventory confirmed. Ready to write.
+
+## SESSION CLOSE â 2026-06-01
+
+**Completed this session:**
+- Stage 0 Tasks 2, 3, 4 complete â .gitignore clean, CURRENT_STATE_LEDGER.md created, Firebase emulator running
+- All missing spec documents recovered and committed to repo
+- CURRENT_STATE_LEDGER.md fully populated â comprehensive project memory
+- MILO_FIREBASE_STRUCTURE.md â complete Firestore schema including new collections
+- MILO_WORD_DETAIL_PAGE_SPEC.md â word detail page + add word flow + graceful degradation
+- MILO_TERMS_AND_PRIVACY.md â T&S and privacy policy
+- MILO_BONES_LOGIC_SPEC.md â full bones economy + Pioneer rewards
+- MILO-REWARDS-ECONOMY.md â rebuilt with full companion origins
+- MILO-IMAGE-PROMPTS.md â 20 batches covering all 302+ words
+- MILO_COMMUNITY_WORD_SPEC.md â full community word request pipeline
+- MILO_ADMIN_DASHBOARD_SPEC.md â saved locally in Milo folder
+- DRILLSGRID_REDESIGN_SPEC.md â spec and Claude Code prompt
+- DrillsGrid redesign shipped â three sub-tabs Warm Up / Practice / Review
+- Redundant options screen removed from SpanishHub.jsx
+- Drill length selector restored
+- Flashcard sentence routing fixed
+
+**Bugs added:**
+- Bones earn logic not yet wired into DrillShell â pre-existing gap, not a regression
+
+**Decisions made:**
+- Milo Admin Dashboard = separate app serving all Milo language apps, build at 500 MAU
+- Dev Dashboard = Milo Speaks Code, separate product for indie developers
+- Gender Drill moved to Warm Up â research confirmed
+- Custom word graceful degradation â Option A confirmed
+- Community word request system fully designed and specced
+- No user-supplied images â visual consistency maintained
+- Companion origins confirmed: Ruby, Lola, Junny = Texas rescues; Maz, Delilah, Molly = NS SPCA; Bela = friend's litter
+
+**Tools assessed:**
+- Claude Code â confirmed capable of multi-file restructuring, used successfully for DrillsGrid redesign
+- Cursor â tapped out until July 30
+
+**First task next session:**
+Wire bones earn logic into DrillShell â confirm Practice drills increment `userData.bones` in Firestore after a correct answer. Check if this was ever built or is a fresh task.
 
 ---
 *Update this file after every milestone. Paste into every new chat session.*
