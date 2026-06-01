@@ -39,6 +39,7 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
 
   useEffect(() => {
     if (picked) speak(`${item.before} ${item.blank} ${item.after}`, 'es', 0.72);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [picked]);
 
   let blankBg = 'hsl(var(--muted))';
@@ -107,3 +108,4 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
     </DrillShell>
   );
 }
+
