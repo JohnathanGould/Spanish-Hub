@@ -23,6 +23,7 @@ export default function DrillRouter(props) {
 
   switch (drillId) {
     case 'flashcard':            return <FlashcardDrill {...drillProps} />;
+    case 'flashcard-sentence':   return <FlashcardDrill sentence {...drillProps} />;
     case 'es-en':                return <ChoiceDrill mode="es-en" {...drillProps} />;
     case 'en-es':                return <ChoiceDrill mode="en-es" {...drillProps} />;
     case 'hear-choose':          return <ChoiceDrill mode="hear-choose" {...drillProps} />;

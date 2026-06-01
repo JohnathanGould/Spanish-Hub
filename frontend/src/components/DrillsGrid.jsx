@@ -49,8 +49,8 @@ const TAB_DRILLS = {
     },
   ],
   review: [
-    { key: 'flashcard',          drillId: 'review-flashcard', metaId: 'flashcard', name: 'Flashcard word' },
-    { key: 'flashcard-sentence', locked: true, color: 'stone', name: 'Flashcard sentence',
+    { key: 'flashcard',          drillId: 'review-flashcard',          metaId: 'flashcard', name: 'Flashcard word' },
+    { key: 'flashcard-sentence', drillId: 'review-flashcard-sentence', locked: true, color: 'stone', name: 'Flashcard sentence',
       lockedMsg: 'Coming soon — sentence flashcards unlock when example sentences are added 🐾',
     },
   ],
@@ -60,9 +60,10 @@ export default function DrillsGrid({
   words, stats, drillMode, setDrillMode, onStartDrill, completedPaths = [], studyCategory,
 }) {
   const [activeTab, setActiveTab] = useState('practice');
+  const [pendingId, setPendingId] = useState(null);
   const [toggleStates, setToggleStates] = useState({});
   const [lockedMsg, setLockedMsg] = useState(null);
-  const [drillLength] = useState(10);
+  const [drillLength, setDrillLength] = useState(10);
 
   let drillLabel = 'All ' + words.length + ' words';
   if (drillMode === 'weak') drillLabel = words.length + ' unmastered words';
@@ -85,9 +86,13 @@ export default function DrillsGrid({
       setLockedMsg(prev => prev === drill.key ? null : drill.key);
       return;
     }
-    const id = getActiveDrillId(drill);
-    const len = id === 'warmup-matching' ? 6 : drillLength;
-    onStartDrill(id, len);
+    if (drill.metaId === 'matching' && drillLength > 10) setDrillLength(6);
+    setPendingId(prev => prev === drill.key ? null : drill.key);
+  };
+
+  const handleStart = (drill) => {
+    onStartDrill(getActiveDrillId(drill), drillLength);
+    setPendingId(null);
   };
 
   const renderDrillCard = (drill, i) => {
@@ -97,7 +102,9 @@ export default function DrillsGrid({
     const name = drill.name || drillMeta.name || drill.key;
     const desc = drillMeta.desc || '';
     const activeIdx = drill.toggle ? (toggleStates[drill.key] ?? drill.toggle.defaultIdx) : null;
+    const isExpanded = pendingId === drill.key;
     const showLockedMsg = drill.locked && lockedMsg === drill.key;
+    const lengthOptions = drill.metaId === 'matching' ? [4, 6, 8, 10] : [10, 20, 30];
 
     return (
       <motion.div
@@ -109,9 +116,10 @@ export default function DrillsGrid({
         style={{ background: s.bg }}
         data-testid={'drill-card-' + drill.key}
       >
+        {/* Always-visible row */}
         <div
-          className="flex items-center gap-3 px-4 py-3 cursor-pointer"
-          onClick={() => handleCardClick(drill)}
+          className={'flex items-center gap-3 px-4 py-3' + (drill.locked ? ' cursor-not-allowed' : ' cursor-pointer')}
+          onClick={drill.locked ? undefined : () => handleCardClick(drill)}
         >
           <div
             className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0"
@@ -147,8 +155,49 @@ export default function DrillsGrid({
               </div>
             )}
           </div>
+
+          {!drill.locked && (
+            <div
+              className="flex-shrink-0 text-xs transition-transform duration-200"
+              style={{ color: s.desc, transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}
+            >
+              ▾
+            </div>
+          )}
         </div>
 
+        {/* Length selector — shown when card is expanded */}
+        {isExpanded && (
+          <div className="px-4 pb-3" style={{ borderTop: '1px solid ' + s.num }}>
+            <div className="text-xs font-medium mb-2 mt-2 text-center" style={{ color: s.desc }}>
+              How many words?
+            </div>
+            <div className={`grid gap-1.5 mb-2 ${drill.metaId === 'matching' ? 'grid-cols-4' : 'grid-cols-3'}`}>
+              {lengthOptions.map(n => (
+                <button
+                  key={n}
+                  onClick={(e) => { e.stopPropagation(); setDrillLength(n); }}
+                  className="py-1.5 rounded-lg text-xs font-bold transition-all"
+                  style={{
+                    background: drillLength === n ? 'hsl(var(--primary))' : s.num,
+                    color: drillLength === n ? 'white' : s.numText,
+                  }}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={(e) => { e.stopPropagation(); handleStart(drill); }}
+              className="w-full py-2 rounded-lg text-xs font-bold text-white"
+              style={{ background: 'hsl(var(--primary))' }}
+            >
+              Start
+            </button>
+          </div>
+        )}
+
+        {/* Locked message */}
         {showLockedMsg && (
           <div
             className="px-4 pb-3 text-xs text-center"
@@ -199,7 +248,7 @@ export default function DrillsGrid({
         {SUB_TABS.map(tab => (
           <button
             key={tab.key}
-            onClick={() => { setActiveTab(tab.key); setLockedMsg(null); }}
+            onClick={() => { setActiveTab(tab.key); setLockedMsg(null); setPendingId(null); }}
             className="flex-1 rounded-full py-1.5 text-xs font-semibold transition-all duration-200 border"
             style={{
               background: activeTab === tab.key ? 'hsl(var(--primary))' : 'hsl(var(--card))',
