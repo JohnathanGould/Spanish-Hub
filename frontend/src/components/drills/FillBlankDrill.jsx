@@ -95,6 +95,7 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
               <div className="text-xs mt-1 opacity-70">{getEnglishMeaning(item.blank)}</div>
             )}
           </div>
+          {item.en && <div className="text-xs mb-3 opacity-60" style={{ color: 'hsl(var(--foreground))' }}>{item.en}</div>}
           <button onClick={() => speak(`${item.before} ${item.blank} ${item.after}`, 'es', 0.72)} className="speak-btn mx-auto mb-3">
             <Volume2 size={12} /> Hear it
           </button>
