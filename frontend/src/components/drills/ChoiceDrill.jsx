@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { buildNoRepeatQueue, shuffle, speak } from '../../utils/helpers';
@@ -27,6 +27,12 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
     return shuffle([correctText, ...distractors]);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [word.es, isAsk]);
+
+  useEffect(() => {
+    if (!picked) return;
+    const t = setTimeout(() => speak(word.es, 'es'), 50);
+    return () => clearTimeout(t);
+  }, [picked]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (queue.length === 0) {
     return <DrillShell title="Drill" current={0} total={0} onBack={onBack}>
@@ -102,12 +108,22 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
           )}
           {mode === 'hear-choose' && (
             <div className="mb-3 py-3 rounded-lg" style={{ background: 'hsl(var(--muted))' }}>
-              <div className="font-serif text-2xl font-black" style={{ color: 'hsl(var(--foreground))' }}>
+              <div className="font-serif text-2xl font-black flex items-center justify-center gap-1" style={{ color: 'hsl(var(--foreground))' }}>
                 {word.es}
+                <button onClick={() => speak(word.es, 'es')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
               </div>
               <div className="text-xs mt-2" style={{ color: picked === correctText ? '#16A34A' : '#DC2626' }}>
                 {picked === correctText ? word.en : `Answer: ${correctText}`}
               </div>
+            </div>
+          )}
+          {mode !== 'hear-choose' && (
+            <div className="mb-3">
+              <div className="flex items-center justify-center gap-1 font-bold" style={{ color: 'hsl(var(--foreground))' }}>
+                {word.es}
+                <button onClick={() => speak(word.es, 'es')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
+              </div>
+              <div className="text-xs mt-1" style={{ color: '#374151' }}>{word.en}</div>
             </div>
           )}
           <button onClick={handleContinue} data-testid="choice-continue"
