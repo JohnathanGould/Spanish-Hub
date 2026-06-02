@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import DrillShell from '../DrillShell';
-import { buildNoRepeatQueue, shuffle, playCorrect } from '../../utils/helpers';
+import { buildNoRepeatQueue, shuffle, playCorrect, speak } from '../../utils/helpers';
 
 export default function MatchingDrill({ words, progress, onAnswer, onDone, onBack, drillLength = 6 }) {
   const PAIRS = Math.min(drillLength, words.length);
@@ -75,20 +75,38 @@ export default function MatchingDrill({ words, progress, onAnswer, onDone, onBac
   return (
     <DrillShell title="Matching Game" subtitle="Tap a Spanish word, then its English match"
       current={matched.size} total={pairs.length} onBack={onBack}>
+      {matched.size > 0 && (
+        <div className="mb-3 flex flex-col gap-1.5">
+          {[...matched].map(id => {
+            const pair = pairs.find(p => p.es === id);
+            return (
+              <div key={id} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium"
+                style={{ background: '#DCFCE7' }}>
+                <span style={{ color: '#16A34A', fontWeight: 'bold' }}>{id}</span>
+                <button onClick={() => speak(id, 'es')}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', padding: 0 }}>
+                  🔊
+                </button>
+                <span style={{ color: '#374151' }}>= {pair?.en}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-3 items-start">
         <div className="flex flex-col gap-2">
-          {esTiles.map(t => (
+          {esTiles.filter(t => !matched.has(t.id)).map(t => (
             <button key={t.id} data-testid={`match-es-${t.id}`}
-              disabled={matched.has(t.id) || finished} onClick={() => setSelectedEs(t.id)}
+              disabled={finished} onClick={() => setSelectedEs(t.id)}
               className={tileClass(t.id, 'es')}>
               {t.text}
             </button>
           ))}
         </div>
         <div className="flex flex-col gap-2">
-          {enTiles.map(t => (
+          {enTiles.filter(t => !matched.has(t.id)).map(t => (
             <button key={t.id + '-en'} data-testid={`match-en-${t.id}`}
-              disabled={matched.has(t.id) || finished} onClick={() => setSelectedEn(t.id)}
+              disabled={finished} onClick={() => setSelectedEn(t.id)}
               className={tileClass(t.id, 'en')}>
               {t.text}
             </button>
