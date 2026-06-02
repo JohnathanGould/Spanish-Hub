@@ -35,15 +35,17 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
   };
 
   const next = (knew) => {
-    onAnswer(word.es, knew);
-    if (knew) setCorrect(c => c + 1);
-    if (idx + 1 >= queue.length) {
-      onDone(correct + (knew ? 1 : 0), queue.length);
-    } else {
-      setIdx(idx + 1);
-      setFlipped(false);
-      setShowHint(false);
-    }
+    setFlipped(false);
+    setShowHint(false);
+    setTimeout(() => {
+      onAnswer(word.es, knew);
+      if (knew) setCorrect(c => c + 1);
+      if (idx + 1 >= queue.length) {
+        onDone(correct + (knew ? 1 : 0), queue.length);
+      } else {
+        setIdx(idx + 1);
+      }
+    }, 520); // slightly exceeds the 0.5s flip-inner CSS transition
   };
 
   const handleDirectionChange = (dir) => {
