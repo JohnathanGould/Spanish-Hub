@@ -49,9 +49,8 @@ const TAB_DRILLS = {
     },
   ],
   review: [
-    { key: 'flashcard',          drillId: 'review-flashcard',          metaId: 'flashcard', name: 'Flashcard word' },
-    { key: 'flashcard-sentence', drillId: 'review-flashcard-sentence', locked: true, color: 'stone', name: 'Flashcard sentence',
-      lockedMsg: 'Coming soon — sentence flashcards unlock when example sentences are added 🐾',
+    { key: 'flashcard', metaId: 'flashcard', name: 'Flashcard',
+      toggle: { options: [{ label: 'words', drillId: 'review-flashcard' }, { label: 'sentences', drillId: 'review-flashcard-sentence' }], defaultIdx: 0 },
     },
   ],
 };
@@ -101,7 +100,9 @@ export default function DrillsGrid({
     const color = drill.color || drillMeta.color || 'amber';
     const s = CARD_STYLES[color] || CARD_STYLES.amber;
     const name = drill.name || drillMeta.name || drill.key;
-    const desc = drillMeta.desc || '';
+    const desc = drill.toggle && getActiveDrillId(drill).includes('sentence')
+      ? 'Tap to flip · mark each sentence as known or still learning.'
+      : (drillMeta.desc || '');
     const activeIdx = drill.toggle ? (toggleStates[drill.key] ?? drill.toggle.defaultIdx) : null;
     const isExpanded = pendingId === drill.key;
     const showLockedMsg = drill.locked && lockedMsg === drill.key;
@@ -180,7 +181,7 @@ export default function DrillsGrid({
         {isExpanded && (
           <div className="px-4 pb-3" style={{ borderTop: '1px solid ' + s.num }}>
             <div className="text-xs font-medium mb-2 mt-2 text-center" style={{ color: s.desc }}>
-              How many words?
+              {getActiveDrillId(drill).includes('sentence') ? 'How many sentences?' : 'How many words?'}
             </div>
             <div className={`grid gap-1.5 mb-2 ${drill.metaId === 'matching' ? 'grid-cols-4' : 'grid-cols-3'}`}>
               {lengthOptions.map(n => (

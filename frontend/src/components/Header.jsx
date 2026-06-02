@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { LogOut } from 'lucide-react';
 import SpanishFlag from './SpanishFlag';
 
-export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onSignOut, onGoalClick, onHomeClick }) {
+export default function Header({ user, streak, xp, bones, dailyGoal, dailyProgress, onSignOut, onGoalClick, onHomeClick }) {
   const [showMenu, setShowMenu] = useState(false);
   const today = new Date().toDateString();
   const todayCount = dailyProgress?.date === today ? (dailyProgress.count || 0) : 0;
@@ -70,6 +70,12 @@ export default function Header({ user, streak, xp, dailyGoal, dailyProgress, onS
               {streakCount}d
             </span>
           </button>
+
+          {/* Bones */}
+          <div className="flex flex-col items-center" data-testid="bones-display">
+            <span className="text-base font-bold" style={{ lineHeight: 1 }}>🦴</span>
+            <span className="text-xs font-bold" style={{ color: '#D97706' }}>{bones}</span>
+          </div>
 
           {/* XP / Star — display only */}
           <div className="flex flex-col items-center" data-testid="xp-display">

@@ -482,7 +482,7 @@ export default function SpanishHub() {
             drillLength={view.drillLength || 10}
             words={activeWords}
             progress={userData.progress}
-            onAnswer={view.drillId === 'flashcard' ? recordAnswerNoXP : recordAnswer}
+            onAnswer={view.drillId.includes('flashcard') ? recordAnswerNoXP : recordAnswer}
             onDone={(c, t) => onDrillDone(view.drillId, c, t)}
             onBack={goHome}
           />
@@ -515,6 +515,7 @@ export default function SpanishHub() {
           user={effectiveUser}
           streak={userData.streak}
           xp={userData.xp}
+          bones={userData.bones || 0}
           dailyGoal={userData.dailyGoal}
           dailyProgress={userData.dailyProgress}
           onGoalClick={() => setShowGoalModal(true)}
