@@ -41,14 +41,14 @@ export function MiloChat({ userUid }) {
 
     if (mode === 'translate') {
       try {
-        const target = translateDir === 'en-es' ? 'ES' : 'EN'
-        const response = await fetch("https://spanish-hub-zeta.vercel.app/api/translate-deepl", {
+        const targetLang = translateDir === 'en-es' ? 'ES' : 'EN'
+        const response = await fetch("/api/translate-deepl", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: userMessage.content, target }),
+          body: JSON.stringify({ text: userMessage.content, targetLang }),
         })
         const data = await response.json()
-        const result = data.translation || (data.translations && data.translations[0]?.text) || data.text
+        const result = data.translatedText || data.translation || (data.translations && data.translations[0]?.text) || data.text
         setMessages((prev) => [
           ...prev,
           { role: "milo", content: result || "Translation unavailable right now." },
@@ -71,7 +71,7 @@ export function MiloChat({ userUid }) {
     }
 
     try {
-      const response = await fetch("https://spanish-hub-zeta.vercel.app/api/chat", {
+      const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

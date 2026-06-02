@@ -12,7 +12,7 @@ module.exports = async function handler(req, res) {
       body: JSON.stringify({ text: [text], target_lang: targetLang }),
     });
     const data = await response.json();
-    if (!response.ok) throw new Error(data.message || 'DeepL error');
+    if (!response.ok) throw new Error(data.message || JSON.stringify(data) || 'DeepL error')
     return res.status(200).json({ translatedText: data.translations[0].text });
   } catch (e) {
     return res.status(500).json({ error: e.message || 'Translation failed' });
