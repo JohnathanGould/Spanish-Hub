@@ -1,8 +1,19 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { shuffle, speak } from '../../utils/helpers';
 import { CONJ, PRETERITE } from '../../data/drillData';
+import { VERB_TABLE } from '../../data/words';
+
+const _PRONOUN_EN = { yo: 'I', tu: 'you', el_ella: 'he/she', nosotros: 'we', ustedes: 'they' };
+
+function getConjEnglish(item) {
+  const conjEntry = VERB_TABLE.find(v => v.inf === item.verb)?.conj.find(c => c.es === item.ans);
+  if (conjEntry) return conjEntry.en;
+  const subj = _PRONOUN_EN[item.pronoun] || '';
+  const base = (item.hint || '').replace(/^to /, '');
+  return subj ? `${subj} ${base}` : base;
+}
 
 // mode: 'present' | 'past'
 export default function ConjugationDrill({ mode, onAnswer, onDone, onBack, drillLength = 10 }) {
@@ -31,6 +42,12 @@ export default function ConjugationDrill({ mode, onAnswer, onDone, onBack, drill
     if (idx + 1 >= queue.length) onDone(correct, queue.length);
     else { setIdx(idx + 1); setPicked(null); }
   };
+
+  useEffect(() => {
+    if (!picked) return;
+    const t = setTimeout(() => speak(item.ans, 'es'), 50);
+    return () => clearTimeout(t);
+  }, [picked]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const titles = {
     present: { title: 'Conjugation — Present', sub: 'Pick the right verb form' },
@@ -70,8 +87,12 @@ export default function ConjugationDrill({ mode, onAnswer, onDone, onBack, drill
 
       {picked && (
         <div className="mt-4 text-center">
-          <div className="mb-3 text-sm font-medium" style={{ color: picked === item.ans ? '#16A34A' : '#DC2626' }}>
+          <div className="mb-3 text-sm font-medium flex items-center justify-center gap-1" style={{ color: picked === item.ans ? '#16A34A' : '#DC2626' }}>
             {picked === item.ans ? 'Correct! ✓' : `Answer: ${item.ans}`}
+            <button onClick={() => speak(item.ans, 'es')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', lineHeight: 1 }}>🔊</button>
+          </div>
+          <div className="text-xs mb-3" style={{ color: '#374151' }}>
+            {getConjEnglish(item)}
           </div>
           <button onClick={handleContinue} data-testid="conj-continue"
             className="w-full py-3 rounded-xl font-bold text-white text-sm"
