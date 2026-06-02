@@ -301,44 +301,40 @@ Goes public only after: app stable on Play Store, 1,000+ MAU for 60 days, revenu
 
 ---
 
-## SESSION CLOSE â 2026-06-01
+## SESSION CLOSE — 2026-06-02
 
 **Completed this session:**
-- Stage 0 Tasks 2, 3, 4 complete â .gitignore clean, CURRENT_STATE_LEDGER.md created, Firebase emulator running
-- All missing spec documents recovered and committed to repo
-- CURRENT_STATE_LEDGER.md fully populated â comprehensive project memory
-- MILO_FIREBASE_STRUCTURE.md â complete Firestore schema including new collections
-- MILO_WORD_DETAIL_PAGE_SPEC.md â word detail page + add word flow + graceful degradation
-- MILO_TERMS_AND_PRIVACY.md â T&S and privacy policy
-- MILO_BONES_LOGIC_SPEC.md â full bones economy + Pioneer rewards
-- MILO-REWARDS-ECONOMY.md â rebuilt with full companion origins
-- MILO-IMAGE-PROMPTS.md â 20 batches covering all 302+ words
-- MILO_COMMUNITY_WORD_SPEC.md â full community word request pipeline
-- MILO_ADMIN_DASHBOARD_SPEC.md â saved locally in Milo folder
-- DRILLSGRID_REDESIGN_SPEC.md â spec and Claude Code prompt
-- DrillsGrid redesign shipped â three sub-tabs Warm Up / Practice / Review
-- Redundant options screen removed from SpanishHub.jsx
-- Drill length selector restored
-- Flashcard sentence routing fixed
+- Full drill sweep: Gender, Flashcard, Fill in the Blank, Type It, Listen & Type, Conjugation, Multiple Choice, Matching, Sentence Builder — all audio/reveal fixes shipped
+- Sentence flashcard mode built and wired into FlashcardDrill.jsx and DrillsGrid
+- GenderDrill colour states redesigned — correct always green, noun container turns gender colour on reveal
+- HomeTab rebuilt — Milo hero card, stat cards (Continue / Daily Goal / Words Mastered), Word of Day, Daily Challenges, Ko-fi button
+- ProfileSheet built in plain JSX — stats, badges row, audio toggles, daily goal, notifications, sign out
+- BadgeGrid built — 43 badges across 8 categories, earned/locked tiles, stackable counter
+- Badge earn logic in evaluateBadges.js — pure function, idempotent, wired into recordAnswer and onDrillDone
+- Bones display added to Header
+- Chat/Translate toggle in MiloChat — direction swap, voice input respects direction, fixed bottom layout
+- vercel dev configured for local API testing
+- .env file populated with all API keys
+- Translation confirmed working end to end via DeepL
 
 **Bugs added:**
-- Bones earn logic not yet wired into DrillShell â pre-existing gap, not a regression
+- None
 
 **Decisions made:**
-- Milo Admin Dashboard = separate app serving all Milo language apps, build at 500 MAU
-- Dev Dashboard = Milo Speaks Code, separate product for indie developers
-- Gender Drill moved to Warm Up â research confirmed
-- Custom word graceful degradation â Option A confirmed
-- Community word request system fully designed and specced
-- No user-supplied images â visual consistency maintained
-- Companion origins confirmed: Ruby, Lola, Junny = Texas rescues; Maz, Delilah, Molly = NS SPCA; Bela = friend's litter
+- Badge model A (stacked ×N counter) for all badges except Milo Monday (annual collectible)
+- Mastery badges track all MASTER words not path-only words
+- Founding Paw badge implemented — awarded before 1,000 MAU
+- Ko-fi badges skipped until webhook is built
+- Hidden badges show as 🔒 mystery tiles
 
-**Tools assessed:**
-- Claude Code â confirmed capable of multi-file restructuring, used successfully for DrillsGrid redesign
-- Cursor â tapped out until July 30
+**Architecture notes:**
+- vercel dev required for local API testing (not npm start)
+- .env file at frontend/.env (not .env.local — vercel dev ignores .env.local)
+- All debug logs removed from api/translate-deepl.js and MiloChat.jsx
+- GoalModal renders outside ProfileSheet to avoid stacking context trap
 
 **First task next session:**
-Wire bones earn logic into DrillShell â confirm Practice drills increment `userData.bones` in Firestore after a correct answer. Check if this was ever built or is a fresh task.
+Commit and push all changes to GitHub, then confirm production deploy to Vercel is live.
 
 ---
 *Update this file after every milestone. Paste into every new chat session.*
