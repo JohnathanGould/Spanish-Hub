@@ -66,6 +66,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
     'type-en-es': { title: 'Type — En → Sp', sub: 'See English — type Spanish' },
     'listen-type': { title: 'Listen & Type', sub: 'Hear Spanish — spell it back' },
   };
+  if (!titles[mode]) return null;
 
   const submit = () => {
     if (feedback || !val.trim()) return;

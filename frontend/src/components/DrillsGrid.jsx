@@ -64,6 +64,7 @@ export default function DrillsGrid({
   const [toggleStates, setToggleStates] = useState({});
   const [lockedMsg, setLockedMsg] = useState(null);
   const [drillLength, setDrillLength] = useState(10);
+  const [sentenceLockedMsg, setSentenceLockedMsg] = useState(null);
 
   let drillLabel = 'All ' + words.length + ' words';
   if (drillMode === 'weak') drillLabel = words.length + ' unmastered words';
@@ -139,19 +140,28 @@ export default function DrillsGrid({
             )}
             {drill.toggle && (
               <div className="flex gap-1 mt-1.5">
-                {drill.toggle.options.map((opt, idx) => (
-                  <button
-                    key={opt.label}
-                    onClick={(e) => { e.stopPropagation(); handleToggle(drill.key, idx); }}
-                    className="px-2 py-0.5 rounded-full text-[10px] font-bold transition-all"
-                    style={{
-                      background: activeIdx === idx ? 'hsl(var(--primary))' : s.num,
-                      color: activeIdx === idx ? 'white' : s.numText,
-                    }}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
+                {drill.toggle.options.map((opt, idx) => {
+                  const isLocked = opt.drillId === 'listen-type-sentence' && completedPaths.length === 0;
+                  return (
+                    <button
+                      key={opt.label}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (isLocked) { setSentenceLockedMsg(prev => prev === drill.key ? null : drill.key); return; }
+                        handleToggle(drill.key, idx);
+                      }}
+                      className="px-2 py-0.5 rounded-full text-[10px] font-bold transition-all"
+                      style={{
+                        background: activeIdx === idx ? 'hsl(var(--primary))' : s.num,
+                        color: activeIdx === idx ? 'white' : s.numText,
+                        opacity: isLocked ? 0.4 : 1,
+                        cursor: isLocked ? 'default' : 'pointer',
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -206,6 +216,16 @@ export default function DrillsGrid({
             {drill.lockedMsg}
           </div>
         )}
+
+        {/* Sentence option locked message */}
+        {sentenceLockedMsg === drill.key && (
+          <div
+            className="px-4 pb-3 text-xs text-center"
+            style={{ color: s.desc, borderTop: '1px solid ' + s.num }}
+          >
+            Complete Path 1 to unlock Sentences 🐾
+          </div>
+        )}
       </motion.div>
     );
   };
@@ -248,7 +268,7 @@ export default function DrillsGrid({
         {SUB_TABS.map(tab => (
           <button
             key={tab.key}
-            onClick={() => { setActiveTab(tab.key); setLockedMsg(null); setPendingId(null); }}
+            onClick={() => { setActiveTab(tab.key); setLockedMsg(null); setPendingId(null); setSentenceLockedMsg(null); }}
             className="flex-1 rounded-full py-1.5 text-xs font-semibold transition-all duration-200 border"
             style={{
               background: activeTab === tab.key ? 'hsl(var(--primary))' : 'hsl(var(--card))',
