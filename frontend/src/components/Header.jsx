@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
-import { LogOut } from 'lucide-react';
+import React from 'react';
 import SpanishFlag from './SpanishFlag';
 
-export default function Header({ user, streak, xp, bones, dailyGoal, dailyProgress, onSignOut, onGoalClick, onHomeClick }) {
-  const [showMenu, setShowMenu] = useState(false);
+export default function Header({ user, streak, xp, bones, dailyGoal, dailyProgress, onAvatarClick, onGoalClick, onHomeClick }) {
   const today = new Date().toDateString();
   const todayCount = dailyProgress?.date === today ? (dailyProgress.count || 0) : 0;
   const goal = dailyGoal || 20;
@@ -85,45 +83,29 @@ export default function Header({ user, streak, xp, bones, dailyGoal, dailyProgre
             </span>
           </div>
 
-          {/* User Avatar — perfect circle, taps to open menu */}
-          <div className="relative">
-            <button data-testid="user-menu-btn" onClick={() => setShowMenu(!showMenu)}
-              className="flex items-center justify-center overflow-hidden border-2"
-              style={{
-                borderColor: 'hsl(var(--border))',
-                borderRadius: '50%',
-                width: 32,
-                height: 32,
-                padding: 0,
-              }}>
-              {user.photoURL
-                ? <img src={user.photoURL} alt=""
-                    style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
-                : <div style={{
-                    width: 32, height: 32, borderRadius: '50%',
-                    background: 'hsl(var(--primary))', color: 'white',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 14, fontWeight: 700,
-                  }}>
-                    {(user.displayName || 'U')[0]}
-                  </div>
-              }
-            </button>
-            {showMenu && (
-              <div className="absolute right-0 top-10 z-50 rounded-xl shadow-xl py-2 min-w-[160px] border"
-                style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-                <div className="px-4 py-2 border-b text-sm font-medium"
-                  style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }}>
-                  {user.displayName || 'Learner'}
+          {/* User Avatar — taps to open ProfileSheet */}
+          <button data-testid="user-menu-btn" onClick={onAvatarClick}
+            className="flex items-center justify-center overflow-hidden border-2"
+            style={{
+              borderColor: 'hsl(var(--border))',
+              borderRadius: '50%',
+              width: 32,
+              height: 32,
+              padding: 0,
+            }}>
+            {user.photoURL
+              ? <img src={user.photoURL} alt=""
+                  style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover', display: 'block' }} />
+              : <div style={{
+                  width: 32, height: 32, borderRadius: '50%',
+                  background: 'hsl(var(--primary))', color: 'white',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 14, fontWeight: 700,
+                }}>
+                  {(user.displayName || 'U')[0]}
                 </div>
-                <button data-testid="sign-out-btn" onClick={() => { setShowMenu(false); onSignOut(); }}
-                  className="w-full flex items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-muted"
-                  style={{ color: 'hsl(var(--destructive))' }}>
-                  <LogOut size={14} /> Sign out
-                </button>
-              </div>
-            )}
-          </div>
+            }
+          </button>
 
         </div>
       </div>

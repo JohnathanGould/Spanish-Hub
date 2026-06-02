@@ -1,203 +1,268 @@
-"use client"
+import React from 'react';
+import { X, ChevronRight } from 'lucide-react';
+import { BADGES } from '../data/badges';
 
-import { X, ChevronRight } from "lucide-react"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Switch } from "@/components/ui/switch"
-import { Button } from "@/components/ui/button"
-import {
-  Sheet,
-  SheetContent,
-  SheetClose,
-} from "@/components/ui/sheet"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+export default function ProfileSheet({ open, onClose, user, userData, onSignOut, onGoalClick, onNotificationsToggle, onAudioListenToggle, onAudioSpeakToggle, onViewAllBadges }) {
+  const memberSince = (() => {
+    try {
+      const t = user?.metadata?.creationTime;
+      return t ? new Date(t).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '';
+    } catch { return ''; }
+  })();
 
-export interface ProfileStats {
-  streak: number
-  totalXp: number
-  wordsMastered: number
-  bones: number
-}
+  const masteredCount = Object.keys(userData?.progress || {})
+    .filter(es => (userData.progress[es]?.s || 0) >= 6).length;
 
-export interface Badge {
-  id: string
-  emoji: string
-  name: string
-}
-
-export interface ProfileSheetProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  displayName: string
-  avatarUrl?: string
-  initials: string
-  memberSince: string
-  stats: ProfileStats
-  badges: Badge[]
-  dailyGoal: number
-  notificationsEnabled: boolean
-  onDailyGoalEdit?: () => void
-  onNotificationsToggle?: (enabled: boolean) => void
-  onViewAllBadges?: () => void
-  onSignOut?: () => void
-}
-
-export function ProfileSheet({
-  open,
-  onOpenChange,
-  displayName,
-  avatarUrl,
-  initials,
-  memberSince,
-  stats,
-  badges,
-  dailyGoal,
-  notificationsEnabled,
-  onDailyGoalEdit,
-  onNotificationsToggle,
-  onViewAllBadges,
-  onSignOut,
-}: ProfileSheetProps) {
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="bottom"
-        className="h-auto max-h-[90vh] rounded-t-3xl px-0 pb-8 pt-0 [&>button]:hidden"
+    <>
+      {open && (
+        <div
+          className="fixed inset-0 z-40"
+          style={{ background: 'rgba(0,0,0,0.5)' }}
+          onClick={onClose}
+        />
+      )}
+      <div
+        className="fixed bottom-0 left-0 right-0 z-50 overflow-y-auto"
+        style={{
+          background: 'hsl(var(--card))',
+          borderRadius: '24px 24px 0 0',
+          maxHeight: '90vh',
+          transform: open ? 'translateY(0)' : 'translateY(100%)',
+          transition: 'transform 300ms ease',
+        }}
       >
-        {/* Custom close button */}
-        <SheetClose asChild>
-          <button
-            className="absolute right-4 top-4 z-10 rounded-full bg-muted p-2 transition-colors hover:bg-muted/80"
-            aria-label="Close"
-          >
-            <X className="size-5 text-muted-foreground" />
-          </button>
-        </SheetClose>
+        {/* Drag handle */}
+        <div className="h-1.5 w-12 rounded-full bg-muted mx-auto mt-3 mb-4" />
 
-        {/* Drag handle indicator */}
-        <div className="flex justify-center py-3">
-          <div className="h-1.5 w-12 rounded-full bg-muted" />
-        </div>
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 flex items-center justify-center rounded-full"
+          style={{ width: 32, height: 32, background: 'hsl(var(--muted))' }}
+          aria-label="Close"
+        >
+          <X size={16} />
+        </button>
 
-        <div className="flex flex-col items-center px-6">
+        <div className="px-5 pb-8 flex flex-col items-center">
+
           {/* Avatar */}
-          <Avatar className="size-20 border-4 border-violet-600">
-            <AvatarImage src={avatarUrl} alt={displayName} />
-            <AvatarFallback className="bg-violet-600 text-2xl font-bold text-white">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          <div style={{
+            width: 80, height: 80,
+            borderRadius: '50%',
+            border: '4px solid #7C3AED',
+            overflow: 'hidden',
+            flexShrink: 0,
+          }}>
+            {user?.photoURL ? (
+              <img src={user.photoURL} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : (
+              <div style={{
+                width: '100%', height: '100%',
+                background: 'hsl(var(--primary))', color: 'white',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 28, fontWeight: 700,
+              }}>
+                {(user?.displayName || userData?.displayName || 'U')[0].toUpperCase()}
+              </div>
+            )}
+          </div>
 
           {/* Display name */}
-          <h2 className="mt-3 text-xl font-bold text-foreground">{displayName}</h2>
+          <div className="text-xl font-bold mt-3" style={{ color: 'hsl(var(--foreground))' }}>
+            {user?.displayName || userData?.displayName || 'Learner'}
+          </div>
 
           {/* Member since */}
-          <p className="mt-1 text-sm text-muted-foreground">
-            Member since {memberSince}
-          </p>
+          {memberSince && (
+            <div className="text-sm mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
+              Member since {memberSince}
+            </div>
+          )}
 
           {/* Learning Spanish */}
-          <div className="mt-2 flex items-center gap-1.5 text-sm text-muted-foreground">
-            <span>🇪🇸</span>
-            <span>Learning Spanish</span>
+          <div className="text-sm mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
+            🇪🇸 Learning Spanish
           </div>
-        </div>
 
-        {/* Stats row */}
-        <div className="mt-6 grid grid-cols-4 gap-2 px-4">
-          <StatItem emoji="🔥" value={stats.streak} label="Streak" />
-          <StatItem emoji="⭐" value={stats.totalXp.toLocaleString()} label="XP" />
-          <StatItem emoji="📚" value={stats.wordsMastered} label="Words" />
-          <StatItem emoji="🦴" value={stats.bones} label="Bones" />
-        </div>
-
-        {/* Badges section */}
-        <div className="mt-6 px-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-base font-semibold text-foreground">My Badges</h3>
-            <button
-              onClick={onViewAllBadges}
-              className="flex items-center gap-0.5 text-sm font-medium text-violet-600 transition-colors hover:text-violet-700"
-            >
-              View All
-              <ChevronRight className="size-4" />
-            </button>
+          {/* Stats row */}
+          <div className="grid grid-cols-4 gap-2 w-full mt-5">
+            {[
+              { emoji: '🔥', value: userData?.streak?.count || 0, label: 'Streak' },
+              { emoji: '⭐', value: userData?.xp || 0, label: 'XP' },
+              { emoji: '📚', value: masteredCount, label: 'Words' },
+              { emoji: '🦴', value: userData?.bones || 0, label: 'Bones' },
+            ].map(({ emoji, value, label }) => (
+              <div key={label} className="rounded-xl p-3 flex flex-col items-center gap-0.5"
+                style={{ background: 'hsl(var(--muted))' }}>
+                <span style={{ fontSize: 20, lineHeight: 1 }}>{emoji}</span>
+                <span className="font-bold text-sm mt-1" style={{ color: 'hsl(var(--foreground))' }}>{value}</span>
+                <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>{label}</span>
+              </div>
+            ))}
           </div>
-          <ScrollArea className="mt-3 w-full whitespace-nowrap">
-            <div className="flex gap-3">
-              {badges.map((badge) => (
-                <div
-                  key={badge.id}
-                  className="flex size-12 shrink-0 items-center justify-center rounded-full bg-muted text-xl"
-                  title={badge.name}
+
+          {/* Badges */}
+          <div className="w-full mt-5">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-bold" style={{ color: 'hsl(var(--foreground))' }}>My Badges</span>
+              {userData?.earnedBadges?.length > 0 && (
+                <button
+                  onClick={onViewAllBadges}
+                  className="text-xs font-semibold"
+                  style={{ color: 'hsl(var(--primary))' }}
                 >
-                  {badge.emoji}
-                </div>
-              ))}
+                  View All
+                </button>
+              )}
             </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-        </div>
-
-        {/* Settings section */}
-        <div className="mt-6 space-y-1 px-4">
-          {/* Daily Goal */}
-          <button
-            onClick={onDailyGoalEdit}
-            className="flex w-full items-center justify-between rounded-xl bg-muted/50 px-4 py-3.5 transition-colors hover:bg-muted"
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-lg">🎯</span>
-              <span className="font-medium text-foreground">Daily Goal</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <span className="text-sm">{dailyGoal} XP</span>
-              <ChevronRight className="size-4" />
-            </div>
-          </button>
-
-          {/* Notifications */}
-          <div className="flex items-center justify-between rounded-xl bg-muted/50 px-4 py-3.5">
-            <div className="flex items-center gap-3">
-              <span className="text-lg">🔔</span>
-              <span className="font-medium text-foreground">Notifications</span>
-            </div>
-            <Switch
-              checked={notificationsEnabled}
-              onCheckedChange={onNotificationsToggle}
-              className="data-[state=checked]:bg-violet-600"
-            />
+            {userData?.earnedBadges?.length > 0 ? (
+              <div className="flex gap-2">
+                {userData.earnedBadges.slice(0, 5).map((earnedBadge, i) => {
+                  const def = BADGES.find(b => b.id === earnedBadge.id);
+                  return (
+                    <div key={i}
+                      className="flex-shrink-0 flex items-center justify-center rounded-full"
+                      style={{ width: 48, height: 48, background: 'hsl(var(--muted))', fontSize: 24 }}>
+                      {def?.emoji || '🏅'}
+                    </div>
+                  );
+                })}
+                {userData.earnedBadges.length > 5 && (
+                  <button
+                    onClick={onViewAllBadges}
+                    className="flex-shrink-0 flex items-center justify-center rounded-full text-xs font-bold"
+                    style={{ width: 48, height: 48, background: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}
+                  >
+                    +{userData.earnedBadges.length - 5}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                No badges yet — keep learning! 🐾
+              </p>
+            )}
           </div>
-        </div>
 
-        {/* Sign Out */}
-        <div className="mt-6 px-4">
-          <Button
-            variant="ghost"
+          {/* Settings */}
+          <div className="w-full mt-5 rounded-xl overflow-hidden border" style={{ borderColor: 'hsl(var(--border))' }}>
+            {/* Daily Goal */}
+            <button
+              onClick={onGoalClick}
+              className="w-full flex items-center justify-between px-4 py-3 transition-colors hover:bg-muted"
+              style={{ borderBottom: '1px solid hsl(var(--border))' }}
+            >
+              <span className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>Daily Goal</span>
+              <div className="flex items-center gap-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                <span className="text-sm">{userData?.dailyGoal || 20} words/day</span>
+                <ChevronRight size={16} />
+              </div>
+            </button>
+
+            {/* Notifications */}
+            <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+              <span className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>Notifications</span>
+              <button
+                onClick={() => onNotificationsToggle(!userData?.reminderEnabled)}
+                aria-label="Toggle notifications"
+                style={{
+                  width: 44, height: 24,
+                  borderRadius: 12,
+                  background: userData?.reminderEnabled ? '#7C3AED' : 'hsl(var(--muted))',
+                  position: 'relative',
+                  transition: 'background 200ms',
+                  border: 'none',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                }}
+              >
+                <span style={{
+                  position: 'absolute',
+                  top: 2,
+                  left: userData?.reminderEnabled ? 22 : 2,
+                  width: 20, height: 20,
+                  borderRadius: '50%',
+                  background: 'white',
+                  transition: 'left 200ms',
+                  display: 'block',
+                }} />
+              </button>
+            </div>
+
+            {/* Play audio on reveal */}
+            <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+              <span className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>🔊 Play audio on reveal</span>
+              <button
+                onClick={() => onAudioListenToggle(!userData?.audioListenEnabled)}
+                aria-label="Toggle listen audio"
+                style={{
+                  width: 44, height: 24,
+                  borderRadius: 12,
+                  background: userData?.audioListenEnabled !== false ? '#7C3AED' : 'hsl(var(--muted))',
+                  position: 'relative',
+                  transition: 'background 200ms',
+                  border: 'none',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                }}
+              >
+                <span style={{
+                  position: 'absolute',
+                  top: 2,
+                  left: userData?.audioListenEnabled !== false ? 22 : 2,
+                  width: 20, height: 20,
+                  borderRadius: '50%',
+                  background: 'white',
+                  transition: 'left 200ms',
+                  display: 'block',
+                }} />
+              </button>
+            </div>
+
+            {/* Text-to-speech */}
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>🎤 Text-to-speech</span>
+              <button
+                onClick={() => onAudioSpeakToggle(!userData?.audioSpeakEnabled)}
+                aria-label="Toggle speak audio"
+                style={{
+                  width: 44, height: 24,
+                  borderRadius: 12,
+                  background: userData?.audioSpeakEnabled !== false ? '#7C3AED' : 'hsl(var(--muted))',
+                  position: 'relative',
+                  transition: 'background 200ms',
+                  border: 'none',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                }}
+              >
+                <span style={{
+                  position: 'absolute',
+                  top: 2,
+                  left: userData?.audioSpeakEnabled !== false ? 22 : 2,
+                  width: 20, height: 20,
+                  borderRadius: '50%',
+                  background: 'white',
+                  transition: 'left 200ms',
+                  display: 'block',
+                }} />
+              </button>
+            </div>
+          </div>
+
+          {/* Sign Out */}
+          <button
             onClick={onSignOut}
-            className="w-full text-destructive hover:bg-destructive/10 hover:text-destructive"
+            className="w-full rounded-xl py-3 mt-4 text-sm font-bold transition-colors hover:bg-muted"
+            style={{ color: 'hsl(var(--destructive))' }}
           >
             Sign Out
-          </Button>
-        </div>
-      </SheetContent>
-    </Sheet>
-  )
-}
+          </button>
 
-function StatItem({
-  emoji,
-  value,
-  label,
-}: {
-  emoji: string
-  value: string | number
-  label: string
-}) {
-  return (
-    <div className="flex flex-col items-center rounded-xl bg-muted/50 px-2 py-3">
-      <span className="text-lg">{emoji}</span>
-      <span className="mt-1 text-lg font-bold text-foreground">{value}</span>
-      <span className="text-xs text-muted-foreground">{label}</span>
-    </div>
-  )
+        </div>
+      </div>
+    </>
+  );
 }

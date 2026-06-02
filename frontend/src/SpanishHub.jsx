@@ -5,7 +5,10 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { MASTER, DEFAULT_CATEGORIES, PRESET_PACKS } from './data/words';
 import { LESSONS, DAILY_THEMES } from './data/lessons';
 import { masteryLevel, getStats, initVoice, spacedRepetitionSort, playConfetti } from './utils/helpers';
+import { evaluateBadges } from './utils/evaluateBadges';
+import BadgeGrid from './components/BadgeGrid';
 import Header from './components/Header';
+import ProfileSheet from './components/ProfileSheet';
 import BottomNav from './components/BottomNav';
 import HomeTab from './components/HomeTab';
 import WordList from './components/WordList';
@@ -125,6 +128,8 @@ export default function SpanishHub() {
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
   const [showSharedPacks, setShowSharedPacks] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+  const [showBadgeGrid, setShowBadgeGrid] = useState(false);
   const saveTimerRef = useRef(null);
   const contentRef = useRef(null);
 
@@ -165,19 +170,24 @@ export default function SpanishHub() {
   const loadUserData = async (u) => {
     try {
       const snap = await getDoc(doc(db, 'users', u.uid));
+      let merged;
       if (snap.exists()) {
         const data = snap.data();
-        const merged = {
+        merged = {
           ...DEFAULT_DATA, ...data,
           categoryEnabled: { ...DEFAULT_DATA.categoryEnabled, ...(data.categoryEnabled || {}) },
         };
-        setUserData(merged);
-        maybeRunStreakReminder(merged);
       } else {
-        const fresh = { ...DEFAULT_DATA, displayName: u.displayName || 'Learner', photoURL: u.photoURL || null };
-        setUserData(fresh);
-        await setDoc(doc(db, 'users', u.uid), fresh);
+        merged = { ...DEFAULT_DATA, displayName: u.displayName || 'Learner', photoURL: u.photoURL || null, foundingPaw: true };
+        await setDoc(doc(db, 'users', u.uid), merged);
       }
+      const { updatedBadges } = evaluateBadges({}, merged, 'login', {});
+      if (updatedBadges.length !== (merged.earnedBadges || []).length) {
+        merged = { ...merged, earnedBadges: updatedBadges };
+        setDoc(doc(db, 'users', u.uid), merged).catch(console.error);
+      }
+      setUserData(merged);
+      maybeRunStreakReminder(merged);
     } catch (e) { console.error('Load error:', e); }
   };
 
@@ -207,7 +217,7 @@ export default function SpanishHub() {
       const dailyCount = (dp.date === today ? dp.count : 0) + (isCorrect ? 1 : 0);
       const ws = getWeekStartStr();
       const sameWeek = prev.weekStart === ws;
-      const newData = {
+      let newData = {
         ...prev,
         progress: { ...prev.progress, [wordEs]: p },
         xp: (prev.xp || 0) + xpGain,
@@ -215,6 +225,8 @@ export default function SpanishHub() {
         weekStart: ws,
         dailyProgress: { count: dailyCount, date: today },
       };
+      const { updatedBadges } = evaluateBadges(prev, newData, 'answer', {});
+      newData = { ...newData, earnedBadges: updatedBadges };
       persistData(newData);
       return newData;
     });
@@ -263,7 +275,7 @@ export default function SpanishHub() {
         weakDone: (sameDay && dc.weakDone) || dailyKind === 'weak',
         themeDone: (sameDay && dc.themeDone) || dailyKind === 'theme',
       };
-      const newData = {
+      let newData = {
         ...prev,
         xp: (prev.xp || 0) + xpBonus,
         weeklyXP: (sameWeek ? (prev.weeklyXP || 0) : 0) + xpBonus,
@@ -272,6 +284,8 @@ export default function SpanishHub() {
         sessions,
         dailyChallenges: updatedChallenges,
       };
+      const { updatedBadges } = evaluateBadges(prev, newData, 'drill_complete', { drillId, correct, total, ts: Date.now() });
+      newData = { ...newData, earnedBadges: updatedBadges };
       if (isGuest) {
         try { localStorage.setItem('spanish-hub-guest', JSON.stringify(newData)); } catch (e) { console.error(e); }
       } else if (user) {
@@ -509,6 +523,7 @@ export default function SpanishHub() {
   }
 
   return (
+    <>
     <div className="app-outer overflow-visible">
       <div className="app-container overflow-visible">
         <Header
@@ -518,6 +533,7 @@ export default function SpanishHub() {
           bones={userData.bones || 0}
           dailyGoal={userData.dailyGoal}
           dailyProgress={userData.dailyProgress}
+          onAvatarClick={() => setShowProfile(true)}
           onGoalClick={() => setShowGoalModal(true)}
           onHomeClick={() => setTab('home')}
         />
@@ -531,6 +547,7 @@ export default function SpanishHub() {
               dailyProgress={userData.dailyProgress}
               dailyGoal={userData.dailyGoal}
               onStartDailyChallenge={startDailyChallenge}
+              onStartDrill={startDrill}
             />
             </div>
           )}
@@ -565,17 +582,11 @@ export default function SpanishHub() {
           )}
 
           {tab === 'milo' && (
-            <div className="pb-20">
+            <div style={{ height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
             <MiloChat userUid={effectiveUser.uid} />
             </div>
           )}
           </div>
-        {showGoalModal && (
-          <GoalModal goal={userData.dailyGoal}
-            reminderEnabled={userData.reminderEnabled}
-            onSave={(g, r) => { updateDailyGoal(g, r); setShowGoalModal(false); }}
-            onClose={() => setShowGoalModal(false)} />
-        )}
         {showCertificate && (
           <Certificate
             name={effectiveUser.displayName || userData.displayName || 'Spanish Learner'}
@@ -592,6 +603,36 @@ export default function SpanishHub() {
         )}
       </div>
       <BottomNav activeTab={tab} onTabChange={setTab} />
+      {showBadgeGrid && (
+        <BadgeGrid
+          earnedBadges={userData.earnedBadges || []}
+          onBack={() => setShowBadgeGrid(false)}
+        />
+      )}
+      <ProfileSheet
+        open={showProfile}
+        onClose={() => setShowProfile(false)}
+        user={effectiveUser}
+        userData={userData}
+        onSignOut={handleSignOut}
+        onViewAllBadges={() => { setShowProfile(false); setShowBadgeGrid(true); }}
+        onGoalClick={() => { setShowProfile(false); setShowGoalModal(true); }}
+        onNotificationsToggle={(enabled) => updateDailyGoal(userData.dailyGoal, enabled)}
+        onAudioListenToggle={(enabled) => {
+          setUserData(prev => {
+            const newData = { ...prev, audioListenEnabled: enabled };
+            persistData(newData);
+            return newData;
+          });
+        }}
+        onAudioSpeakToggle={(enabled) => {
+          setUserData(prev => {
+            const newData = { ...prev, audioSpeakEnabled: enabled };
+            persistData(newData);
+            return newData;
+          });
+        }}
+      />
       {showCategoryModal && (
         <>
           <div onClick={() => setShowCategoryModal(false)}
@@ -605,5 +646,12 @@ export default function SpanishHub() {
         <WordDetail word={selectedWord} progress={userData.progress[selectedWord.es]} onClose={() => setSelectedWord(null)} />
       )}
     </div>
+    {showGoalModal && (
+      <GoalModal goal={userData.dailyGoal}
+        reminderEnabled={userData.reminderEnabled}
+        onSave={(g, r) => { updateDailyGoal(g, r); setShowGoalModal(false); }}
+        onClose={() => setShowGoalModal(false)} />
+    )}
+    </>
   );
 }

@@ -45,8 +45,8 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
   let blankBg = 'hsl(var(--muted))';
   let blankColor = 'hsl(var(--muted-foreground))';
   if (picked) {
-    blankBg = picked === item.blank ? '#DCFCE7' : '#FEE2E2';
-    blankColor = picked === item.blank ? '#14532D' : '#991B1B';
+    blankBg = '#DCFCE7';
+    blankColor = '#14532D';
   }
 
   return (
@@ -63,7 +63,7 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
               minWidth: 80,
               fontSize: '0.95em',
             }}>
-            {picked || '____'}
+            {picked ? item.blank : '____'}
           </span>{' '}
           {item.after}
         </div>

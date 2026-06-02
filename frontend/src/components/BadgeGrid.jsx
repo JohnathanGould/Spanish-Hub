@@ -1,119 +1,90 @@
-interface Badge {
-  id: number
-  emoji: string
-  name: string
-  description: string
-  current: number
-  total: number
-  earned: boolean
-}
+import React from 'react';
+import { ChevronLeft } from 'lucide-react';
+import { BADGES } from '../data/badges';
 
-const badges: Badge[] = [
-  {
-    id: 1,
-    emoji: "🔥",
-    name: "Streak Master",
-    description: "Complete 7 days in a row",
-    current: 7,
-    total: 7,
-    earned: true,
-  },
-  {
-    id: 2,
-    emoji: "📚",
-    name: "Word Collector",
-    description: "Learn 100 new vocabulary words",
-    current: 68,
-    total: 100,
-    earned: false,
-  },
-  {
-    id: 3,
-    emoji: "🎯",
-    name: "Perfect Score",
-    description: "Get 100% on 5 quizzes",
-    current: 5,
-    total: 5,
-    earned: true,
-  },
-  {
-    id: 4,
-    emoji: "🗣️",
-    name: "Conversationalist",
-    description: "Complete 10 speaking exercises",
-    current: 4,
-    total: 10,
-    earned: false,
-  },
-  {
-    id: 5,
-    emoji: "⭐",
-    name: "Rising Star",
-    description: "Earn 500 XP total",
-    current: 320,
-    total: 500,
-    earned: false,
-  },
-  {
-    id: 6,
-    emoji: "🏆",
-    name: "Grammar Guru",
-    description: "Master all verb conjugations",
-    current: 12,
-    total: 12,
-    earned: true,
-  },
-]
+const CATEGORY_ORDER = ['xp', 'streak', 'path', 'mastery', 'drill', 'engagement', 'special'];
+const CATEGORY_LABELS = { xp: 'XP', streak: 'Streak', path: 'Path', mastery: 'Mastery', drill: 'Drills', engagement: 'Engagement', special: 'Special' };
 
-function BadgeCard({ badge }: { badge: Badge }) {
-  const progressPercent = (badge.current / badge.total) * 100
+export default function BadgeGrid({ earnedBadges = [], onBack }) {
+  const earnedMap = Object.fromEntries((earnedBadges || []).map(b => [b.id, b]));
 
   return (
-    <div
-      className={`rounded-xl bg-white p-3 shadow-sm transition-shadow hover:shadow-md ${
-        badge.earned ? "border-2 border-green-500" : "border border-gray-200"
-      }`}
-    >
-      <div className="mb-2 text-4xl">{badge.emoji}</div>
-      <h3 className="mb-1 text-sm font-bold text-gray-900 whitespace-nowrap">{badge.name}</h3>
-      <p className="mb-3 text-xs text-gray-600 line-clamp-2">{badge.description}</p>
-
-      <div className="mb-1.5 h-2 w-full overflow-hidden rounded-full bg-gray-200">
-        <div
-          className="h-full rounded-full bg-purple-500 transition-all duration-300"
-          style={{ width: `${progressPercent}%` }}
-        />
-      </div>
-
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-gray-700">
-          {badge.current}/{badge.total}
+    <div className="fixed inset-0 z-50 overflow-y-auto" style={{ background: 'hsl(var(--background))' }}>
+      <div className="sticky top-0 z-10 flex items-center px-4 py-3" style={{ background: 'hsl(var(--background))', borderBottom: '1px solid hsl(var(--border))' }}>
+        <button
+          onClick={onBack}
+          className="flex items-center gap-1 text-sm font-medium"
+          style={{ color: 'hsl(var(--primary))' }}
+        >
+          <ChevronLeft size={20} />
+          Back
+        </button>
+        <span className="flex-1 text-center font-bold text-base" style={{ color: 'hsl(var(--foreground))' }}>
+          My Badges
         </span>
-        {badge.earned && (
-          <span className="text-xs text-green-600">Earned</span>
-        )}
+        <div style={{ width: 60 }} />
+      </div>
+
+      <div className="px-4 pb-10">
+        {CATEGORY_ORDER.map(category => {
+          const categoryBadges = BADGES.filter(b => b.category === category);
+          if (categoryBadges.length === 0) return null;
+          return (
+            <div key={category} className="mt-6">
+              <div
+                className="text-xs font-bold uppercase tracking-wider mb-3"
+                style={{ color: 'hsl(var(--muted-foreground))' }}
+              >
+                {CATEGORY_LABELS[category]}
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                {categoryBadges.map(badge => {
+                  const earned = earnedMap[badge.id];
+                  if (earned) {
+                    return (
+                      <div
+                        key={badge.id}
+                        className="rounded-2xl p-3 flex flex-col items-center relative"
+                        style={{ background: 'hsl(var(--card))', border: '2px solid hsl(var(--primary))', minHeight: 88 }}
+                      >
+                        <span style={{ fontSize: 28, lineHeight: 1 }}>{badge.emoji}</span>
+                        <span
+                          className="text-xs font-bold text-center mt-1.5 leading-tight"
+                          style={{ color: 'hsl(var(--foreground))' }}
+                        >
+                          {badge.name}
+                        </span>
+                        {badge.stackable && earned.count > 1 && (
+                          <span
+                            className="absolute bottom-2 right-2 text-xs font-bold"
+                            style={{ color: 'hsl(var(--primary))' }}
+                          >
+                            ×{earned.count}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  }
+                  return (
+                    <div
+                      key={badge.id}
+                      className="rounded-2xl p-3 flex items-center justify-center"
+                      style={{
+                        background: 'hsl(var(--muted))',
+                        border: '1px solid hsl(var(--border))',
+                        opacity: 0.5,
+                        minHeight: 88,
+                      }}
+                    >
+                      <span style={{ fontSize: 28, lineHeight: 1 }}>🔒</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
-  )
-}
-
-export default function BadgeGrid() {
-  return (
-    <div className="min-h-screen bg-gray-50 px-3 py-6 overflow-x-hidden">
-      <div className="w-full">
-        <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">
-          Your Badges
-        </h1>
-        <p className="mb-5 text-center text-gray-600">
-          Keep learning Spanish to earn more badges!
-        </p>
-
-        <div className="grid grid-cols-2 gap-2">
-          {badges.map((badge) => (
-            <BadgeCard key={badge.id} badge={badge} />
-          ))}
-        </div>
-      </div>
-    </div>
-  )
+  );
 }

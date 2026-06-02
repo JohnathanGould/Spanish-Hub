@@ -14,6 +14,8 @@ export function MiloChat({ userUid }) {
   const [isRecording, setIsRecording] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [usageCount, setUsageCount] = useState(0)
+  const [mode, setMode] = useState('chat')
+  const [translateDir, setTranslateDir] = useState('en-es')
   const messagesEndRef = useRef(null)
 
   const scrollToBottom = () => {
@@ -25,7 +27,8 @@ export function MiloChat({ userUid }) {
   }, [messages, isLoading])
 
   const handleSendMessage = async () => {
-    if (!inputValue.trim() || usageCount >= 30) return
+    if (!inputValue.trim()) return
+    if (mode === 'chat' && usageCount >= 30) return
 
     const userMessage = {
       role: "user",
@@ -35,6 +38,37 @@ export function MiloChat({ userUid }) {
     setMessages((prev) => [...prev, userMessage])
     setInputValue("")
     setIsLoading(true)
+
+    if (mode === 'translate') {
+      try {
+        const target = translateDir === 'en-es' ? 'ES' : 'EN'
+        const response = await fetch("https://spanish-hub-zeta.vercel.app/api/translate-deepl", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: userMessage.content, target }),
+        })
+        const data = await response.json()
+        const result = data.translation || (data.translations && data.translations[0]?.text) || data.text
+        setMessages((prev) => [
+          ...prev,
+          { role: "milo", content: result || "Translation unavailable right now." },
+        ])
+        if (!response.ok || !result) {
+          setMessages((prev) => [
+            ...prev.slice(0, -1),
+            { role: "milo", content: "Translation unavailable right now." },
+          ])
+        }
+      } catch {
+        setMessages((prev) => [
+          ...prev,
+          { role: "milo", content: "Translation unavailable right now." },
+        ])
+      } finally {
+        setIsLoading(false)
+      }
+      return
+    }
 
     try {
       const response = await fetch("https://spanish-hub-zeta.vercel.app/api/chat", {
@@ -125,7 +159,10 @@ export function MiloChat({ userUid }) {
     }
 
     const recognition = new SpeechRecognition()
-    recognition.lang = "es-ES"
+    const lang = mode === 'translate'
+      ? (translateDir === 'en-es' ? 'en-US' : 'es-ES')
+      : 'es-ES'
+    recognition.lang = lang
     recognition.continuous = false
     recognition.interimResults = false
 
@@ -146,10 +183,14 @@ export function MiloChat({ userUid }) {
     if (!isMuted) speechSynthesis.cancel()
   }
 
-  const sendEnabled = !!inputValue.trim() && usageCount < 30;
+  const sendEnabled = !!inputValue.trim() && (mode === 'translate' || usageCount < 30)
+
+  const inputPlaceholder = mode === 'translate'
+    ? (translateDir === 'en-es' ? "Type in English..." : "Escribe en español...")
+    : "Escribe en español..."
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "80vh", background: "white" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", minHeight: 0, background: "white" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid #ede9fe", padding: "12px 16px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#7c3aed", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>
@@ -165,7 +206,7 @@ export function MiloChat({ userUid }) {
         </button>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "16px" }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "16px", minHeight: 0 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "16px", maxWidth: "512px", margin: "0 auto" }}>
           {messages.map((message, index) => (
             <div
@@ -202,9 +243,54 @@ export function MiloChat({ userUid }) {
         </div>
       </div>
 
-      <div style={{ borderTop: "1px solid #ede9fe", padding: "12px 16px 24px" }}>
+      <div style={{ borderTop: "1px solid #ede9fe", padding: "12px 16px 24px", flexShrink: 0 }}>
         <div style={{ textAlign: "center", marginBottom: "8px" }}>
           <span style={{ fontSize: "12px", color: "#9ca3af" }}>{usageCount}/30 messages today</span>
+        </div>
+
+        <div style={{ display: "flex", gap: "8px", justifyContent: "center", alignItems: "center", marginBottom: "12px" }}>
+          <button
+            onClick={() => setMode('chat')}
+            style={{
+              padding: "6px 16px", borderRadius: "999px", fontSize: "12px", fontWeight: "700",
+              border: "2px solid", cursor: "pointer", transition: "all 0.15s",
+              borderColor: mode === 'chat' ? "#7c3aed" : "#e5e7eb",
+              background: mode === 'chat' ? "#7c3aed" : "white",
+              color: mode === 'chat' ? "white" : "#6b7280",
+              boxShadow: mode === 'chat' ? "0 0 0 3px #ddd6fe" : "none",
+            }}
+          >
+            💬 Chat
+          </button>
+          <button
+            onClick={() => setMode('translate')}
+            style={{
+              padding: "6px 16px", borderRadius: "999px", fontSize: "12px", fontWeight: "700",
+              border: "2px solid", cursor: "pointer", transition: "all 0.15s",
+              borderColor: mode === 'translate' ? "#7c3aed" : "#e5e7eb",
+              background: mode === 'translate' ? "#7c3aed" : "white",
+              color: mode === 'translate' ? "white" : "#6b7280",
+              boxShadow: mode === 'translate' ? "0 0 0 3px #ddd6fe" : "none",
+            }}
+          >
+            🔄 Translate
+          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: "6px", opacity: mode === 'translate' ? 1 : 0, pointerEvents: mode === 'translate' ? "auto" : "none", transition: "opacity 0.2s" }}>
+            <span style={{ fontSize: "12px", fontWeight: "700", color: translateDir === 'en-es' ? "#7c3aed" : "#9ca3af" }}>EN</span>
+            <button
+              onClick={() => setTranslateDir((d) => d === 'en-es' ? 'es-en' : 'en-es')}
+              aria-label="Swap direction"
+              style={{
+                width: "28px", height: "28px", borderRadius: "50%", background: "#7c3aed",
+                color: "white", fontSize: "13px", fontWeight: "700", border: "none",
+                cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+              }}
+            >
+              ⇄
+            </button>
+            <span style={{ fontSize: "12px", fontWeight: "700", color: translateDir === 'es-en' ? "#7c3aed" : "#9ca3af" }}>SP</span>
+          </div>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "8px", maxWidth: "512px", margin: "0 auto" }}>
@@ -213,13 +299,13 @@ export function MiloChat({ userUid }) {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Escribe en español..."
-              disabled={usageCount >= 30}
+              placeholder={inputPlaceholder}
+              disabled={mode === 'chat' && usageCount >= 30}
               style={{ width: "100%", height: "44px", borderRadius: "22px", border: "1px solid #ddd6fe", background: "#f9fafb", padding: "0 48px 0 16px", fontSize: "14px", outline: "none", boxSizing: "border-box", color: "#111827" }}
             />
             <button
               onClick={handleSendMessage}
-              disabled={!inputValue.trim() || usageCount >= 30}
+              disabled={!sendEnabled}
               style={{ position: "absolute", right: "4px", top: "50%", transform: "translateY(-50%)", width: "36px", height: "36px", borderRadius: "50%", background: sendEnabled ? "#7c3aed" : "#c4b5fd", border: "none", cursor: sendEnabled ? "pointer" : "not-allowed", color: "white", fontSize: "16px" }}
             >
               ➤
@@ -228,14 +314,19 @@ export function MiloChat({ userUid }) {
 
           <button
             onClick={handleMicClick}
-            disabled={usageCount >= 30}
-            style={{ width: "44px", height: "44px", borderRadius: "50%", border: isRecording ? "2px solid #f87171" : "1px solid #ddd6fe", background: isRecording ? "#fef2f2" : "white", cursor: "pointer", fontSize: "20px", animation: isRecording ? "pulse 1s infinite" : "none" }}
+            disabled={mode === 'chat' && usageCount >= 30}
+            style={{ width: "44px", height: "44px", borderRadius: "50%", border: isRecording ? "2px solid #f87171" : "1px solid #ddd6fe", background: isRecording ? "#fef2f2" : "white", cursor: "pointer", fontSize: "20px", animation: isRecording ? "pulse 1s infinite" : "none", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 0 }}
           >
-            🎤
+            <span>🎤</span>
+            {mode === 'translate' && (
+              <span style={{ fontSize: "10px", color: "#9ca3af", lineHeight: 1 }}>
+                {translateDir === 'en-es' ? 'EN' : 'SP'}
+              </span>
+            )}
           </button>
         </div>
 
-        {usageCount >= 30 && (
+        {mode === 'chat' && usageCount >= 30 && (
           <p style={{ textAlign: "center", fontSize: "12px", color: "#ef4444", marginTop: "8px" }}>
             You've reached your daily message limit. Come back tomorrow!
           </p>
