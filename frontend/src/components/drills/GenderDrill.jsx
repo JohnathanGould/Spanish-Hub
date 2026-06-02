@@ -35,6 +35,23 @@ export default function GenderDrill({ words, progress, onAnswer, onDone, onBack,
   const word = nouns[idx];
   const correctLabel = word.gender === 'm' ? 'el' : 'la';
 
+  const getPillStyle = (g) => {
+    if (!picked) {
+      return g === 'm'
+        ? { background: '#DBEAFE', borderColor: '#1E40AF', color: '#1E40AF' }
+        : { background: '#FCE7F3', borderColor: '#9D174D', color: '#9D174D' };
+    }
+    if (g === word.gender) return { background: '#DCFCE7', borderColor: '#16A34A', color: '#16A34A' };
+    if (g === picked)      return { background: '#FEE2E2', borderColor: '#DC2626', color: '#DC2626' };
+    return { background: 'hsl(var(--muted))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))' };
+  };
+
+  const containerStyle = picked
+    ? (word.gender === 'f'
+        ? { background: '#FCE7F3', border: '1px solid #9D174D', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }
+        : { background: '#DBEAFE', border: '1px solid #1E40AF', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' })
+    : { background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' };
+
   const handlePick = (g) => {
     if (picked) return;
     const ok = g === word.gender;
@@ -50,35 +67,31 @@ export default function GenderDrill({ words, progress, onAnswer, onDone, onBack,
 
   return (
     <DrillShell title="Gender Drill" subtitle="el (masculine) or la (feminine)?" current={idx + 1} total={nouns.length} onBack={onBack}>
-      <div className="rounded-3xl p-8 mb-6 text-center"
-        style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
-        <div className="text-xs uppercase tracking-wider mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>Noun</div>
-        <div className="font-serif text-4xl font-black mb-2" data-testid="gender-prompt" style={{ color: 'hsl(var(--foreground))' }}>
-          ____ {word.es}
+      <div className="rounded-3xl p-8 mb-6 text-center transition-all duration-300"
+        style={containerStyle}>
+        <div className="text-xs uppercase tracking-wider mb-3"
+          style={{ color: picked ? (word.gender === 'f' ? '#9D174D' : '#1E40AF') : 'hsl(var(--muted-foreground))' }}>
+          {picked ? (word.gender === 'f' ? 'feminine' : 'masculine') : 'Noun'}
+        </div>
+        <div className="font-serif text-4xl font-black mb-2" data-testid="gender-prompt"
+          style={{ color: picked ? (word.gender === 'f' ? '#9D174D' : '#1E40AF') : 'hsl(var(--foreground))' }}>
+          {picked ? `${correctLabel} ${word.es}` : `____ ${word.es}`}
         </div>
         <div className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>= {word.en}</div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         {[
-          { g: 'm', label: 'el', sub: 'masculine', col: '#1E40AF', bg: '#DBEAFE' },
-          { g: 'f', label: 'la', sub: 'feminine', col: '#9D174D', bg: '#FCE7F3' },
-        ].map(({ g, label, sub, col, bg }) => {
-          const isCorrect = picked && g === word.gender;
-          const isWrong = picked === g && g !== word.gender;
-          return (
-            <button key={g} data-testid={`gender-${g}`} disabled={!!picked} onClick={() => handlePick(g)}
-              className={`py-6 rounded-2xl border-2 transition-all hover:-translate-y-0.5 ${isCorrect ? 'correct' : ''} ${isWrong ? 'wrong' : ''}`}
-              style={{
-                background: picked ? undefined : bg,
-                borderColor: picked ? undefined : col,
-                color: picked ? undefined : col,
-              }}>
-              <div className="font-serif text-3xl font-black mb-1">{label}</div>
-              <div className="text-xs uppercase tracking-wider opacity-80">{sub}</div>
-            </button>
-          );
-        })}
+          { g: 'm', label: 'el', sub: 'masculine' },
+          { g: 'f', label: 'la', sub: 'feminine' },
+        ].map(({ g, label, sub }) => (
+          <button key={g} data-testid={`gender-${g}`} disabled={!!picked} onClick={() => handlePick(g)}
+            className="py-6 rounded-2xl border-2 transition-all hover:-translate-y-0.5"
+            style={getPillStyle(g)}>
+            <div className="font-serif text-3xl font-black mb-1">{label}</div>
+            <div className="text-xs uppercase tracking-wider opacity-80">{sub}</div>
+          </button>
+        ))}
       </div>
 
       {picked && (
