@@ -177,22 +177,29 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
               {feedbackType === 'almost' && (
                 <>
                   <div>Almost! ✓</div>
-                  <div className="text-base font-black mt-1 flex items-center justify-center gap-1" style={{ color: '#D97706' }}>
-                    → {feedback.target}
-                    {mode === 'type-en-es' && <button onClick={() => speak(word.es, 'es')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
-                  </div>
+                  {mode !== 'type-es-en' && (
+                    <div className="text-base font-black mt-1 flex items-center justify-center gap-1" style={{ color: '#D97706' }}>
+                      → {feedback.target}
+                      {mode === 'type-en-es' && <button onClick={() => speak(word.es, 'es')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
+                    </div>
+                  )}
                 </>
               )}
               {feedbackType === 'wrong' && (
                 <>
                   <div>Answer:</div>
-                  <div className="text-base font-black mt-1 flex items-center justify-center gap-1">
-                    {feedback.target}
-                    {mode === 'type-en-es' && <button onClick={() => speak(word.es, 'es')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
-                  </div>
+                  {mode !== 'type-es-en' && (
+                    <div className="text-base font-black mt-1 flex items-center justify-center gap-1">
+                      {feedback.target}
+                      {mode === 'type-en-es' && <button onClick={() => speak(word.es, 'es')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
+                    </div>
+                  )}
                 </>
               )}
             </div>
+            {mode === 'type-es-en' && (
+              <div className="text-base font-black mt-1" style={{ color: '#14532D' }}>{word.en}</div>
+            )}
             {mode === 'listen-type' && (
               <div className="text-xs mt-2 opacity-70">{word.en}</div>
             )}
