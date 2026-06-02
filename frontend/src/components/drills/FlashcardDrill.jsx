@@ -28,10 +28,7 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
 
   const handleFlip = () => {
     setFlipped(!flipped);
-    if (!flipped) {
-      if (isEsEn) speak(word.es, 'es');
-      else speak(word.en, 'en');
-    }
+    if (!flipped) setTimeout(() => speak(word.es, 'es'), 50);
   };
 
   const next = (knew) => {
@@ -140,18 +137,20 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <button data-testid="flashcard-still-learning" onClick={() => next(false)}
-          className="py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border-2 transition-all hover:-translate-y-0.5"
-          style={{ background: '#FEE2E2', borderColor: '#FCA5A5', color: '#991B1B' }}>
-          <X size={16} /> Still learning
-        </button>
-        <button data-testid="flashcard-knew-it" onClick={() => next(true)}
-          className="py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border-2 transition-all hover:-translate-y-0.5"
-          style={{ background: '#DCFCE7', borderColor: '#86EFAC', color: '#14532D' }}>
-          <Check size={16} /> I knew it
-        </button>
-      </div>
+      {flipped && (
+        <div className="grid grid-cols-2 gap-3">
+          <button data-testid="flashcard-still-learning" onClick={() => next(false)}
+            className="py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border-2 transition-all hover:-translate-y-0.5"
+            style={{ background: '#FEE2E2', borderColor: '#FCA5A5', color: '#991B1B' }}>
+            <X size={16} /> Still learning
+          </button>
+          <button data-testid="flashcard-knew-it" onClick={() => next(true)}
+            className="py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border-2 transition-all hover:-translate-y-0.5"
+            style={{ background: '#DCFCE7', borderColor: '#86EFAC', color: '#14532D' }}>
+            <Check size={16} /> I knew it
+          </button>
+        </div>
+      )}
     </DrillShell>
   );
 }
