@@ -215,7 +215,7 @@ export function MiloChat({ userUid }) {
               onKeyDown={handleKeyDown}
               placeholder="Escribe en español..."
               disabled={usageCount >= 30}
-              style={{ width: "100%", height: "44px", borderRadius: "22px", border: "1px solid #ddd6fe", background: "#f9fafb", padding: "0 48px 0 16px", fontSize: "14px", outline: "none", boxSizing: "border-box" }}
+              style={{ width: "100%", height: "44px", borderRadius: "22px", border: "1px solid #ddd6fe", background: "#f9fafb", padding: "0 48px 0 16px", fontSize: "14px", outline: "none", boxSizing: "border-box", color: "#111827" }}
             />
             <button
               onClick={handleSendMessage}

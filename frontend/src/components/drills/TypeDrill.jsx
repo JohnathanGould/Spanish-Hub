@@ -22,7 +22,9 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   useEffect(() => { inputRef.current?.focus(); }, [idx]);
 
   useEffect(() => {
-    if (mode === 'listen-type' && feedback) speak(word.es, 'es');
+    if (!feedback) return;
+    const t = setTimeout(() => speak(word.es, 'es'), 50);
+    return () => clearTimeout(t);
   }, [feedback]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const currentWord = queue[idx];
@@ -169,19 +171,25 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
               color: feedbackColor,
             }}>
             <div className="font-bold text-sm" data-testid="type-feedback">
-              {feedbackType === 'correct' && 'Correct! ✓'}
+              {feedbackType === 'correct' && (
+                <span>Correct! ✓{mode === 'type-en-es' && <button onClick={() => speak(word.es, 'es')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', marginLeft: '6px' }}>🔊</button>}</span>
+              )}
               {feedbackType === 'almost' && (
                 <>
                   <div>Almost! ✓</div>
-                  <div className="text-base font-black mt-1" style={{ color: '#D97706' }}>
+                  <div className="text-base font-black mt-1 flex items-center justify-center gap-1" style={{ color: '#D97706' }}>
                     → {feedback.target}
+                    {mode === 'type-en-es' && <button onClick={() => speak(word.es, 'es')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
                   </div>
                 </>
               )}
               {feedbackType === 'wrong' && (
                 <>
                   <div>Answer:</div>
-                  <div className="text-base font-black mt-1">{feedback.target}</div>
+                  <div className="text-base font-black mt-1 flex items-center justify-center gap-1">
+                    {feedback.target}
+                    {mode === 'type-en-es' && <button onClick={() => speak(word.es, 'es')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
+                  </div>
                 </>
               )}
             </div>
