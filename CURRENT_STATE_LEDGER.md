@@ -100,19 +100,38 @@ Wire in this order using Cursor Composer + Wrapper Pattern:
 
 ## KNOWN BUGS (fix before adding features, in priority order)
 1. index.css — syntax error: Unexpected token (highest risk — can silently break layout)
-2. Translator tab — broken, exact error unknown (check DevTools console first)
-3. Type It drill — word/answer mismatch
-4. Listen & Type — wrong audio after correct answer
-5. Word detail card — opens at screen center (should open at tap position)
-6. Gender drill — word pool bug
-7. Sentence Builder — distractors bug
-8. Word mastery filter buttons — not wired
+2. Daily Weakest Word Challenge — won't open (reported 2026-06-03)
+3. Translator tab — broken, exact error unknown (check DevTools console first)
+4. Type It drill — word/answer mismatch
+5. Listen & Type — wrong audio after correct answer
+6. Word detail card — opens at screen center (should open at tap position)
+7. Gender drill — word pool bug
+8. Sentence Builder — distractors bug
+9. Word mastery filter buttons — not wired
 
 ---
 
 ## VERCEL ENVIRONMENT VARIABLES
 ✅ All confirmed set in Vercel (Production + Preview) — 2026-06-03
 GEMINI_API_KEY · DEEPL_KEY · FIREBASE_PROJECT_ID · FIREBASE_CLIENT_EMAIL · FIREBASE_PRIVATE_KEY · REACT_APP_POSTHOG_KEY · REACT_APP_SENTRY_DSN · OPENAI_API_KEY
+
+---
+
+## DISCORD INTEGRATIONS STATUS
+- ✅ **Linear → Discord `#linear`** — LIVE via Make scenario "Linear → Discord #linear". Message format: 🔔 action | title | identifier | url
+- ✅ **Sentry → Discord `#errors`** — LIVE direct (Sentry custom integration → discord.com webhook). Fires on new issue created + escalates + resolved becomes unresolved. Will fire when next new real error hits the app.
+- ⬜ **UptimeRobot → Discord `#ops-log`** — UptimeRobot account needed first
+- ⬜ **PostHog → Discord `#analytics`** — wire after 500+ MAU
+- ⬜ **Firebase quota → Discord `#firebase`** — wire before Play Store launch
+- ⬜ **Ko-fi → Discord `#revenue`** — wire when Ko-fi is live
+- ⬜ **Vercel → Discord `#deploys`** — blocked on Vercel paid plan (see FUTURE section)
+
+**Make:** us2.make.com — one active scenario: "Linear → Discord #linear". Unused Sentry scenario deleted.
+
+---
+
+## FUTURE — REQUIRES PAID PLAN
+- **Vercel → Discord deploy notifications** — blocked on Vercel free tier. Needs either Vercel Pro ($20/month) for webhooks/log drains, or accept 15-min polling delay via Make. Revisit when upgrading Vercel plan. Make scenario canvas already set up at us2.make.com, webhook URL ready.
 
 ---
 
