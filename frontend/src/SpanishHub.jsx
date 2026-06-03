@@ -311,7 +311,8 @@ export default function SpanishHub() {
     if (kind === 'weak') {
       const all = MASTER.filter(w => w.group === 'Core' || userData.categoryEnabled[w.group] !== false);
       const candidates = all.filter(w => masteryLevel(userData.progress, w.es) !== 'mastered');
-      const sorted = spacedRepetitionSort(candidates, userData.progress);
+      const pool = candidates.length >= 5 ? candidates : all;
+      const sorted = spacedRepetitionSort(pool, userData.progress);
       const words = sorted.slice(0, 5);
       if (words.length === 0) return;
       setView({ page: 'drill', drillId: 'es-en', overrideWords: words, dailyKind: 'weak', xpMultiplier: 2, today });
