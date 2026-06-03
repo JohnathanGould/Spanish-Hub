@@ -101,5 +101,9 @@
     "uuid@<=11.1.1": "11.1.1",
     "dompurify@<=3.4.7": "3.4.7",
     "webpack-dev-server@<=5.2.1": "5.2.1"
+  },
+  "resolutions": {
+    "dompurify": "3.4.7",
+    "webpack-dev-server": "5.2.1"
   }
 }
