@@ -243,7 +243,7 @@ export function MiloChat({ userUid }) {
         </div>
       </div>
 
-      <div style={{ borderTop: "1px solid #ede9fe", padding: "12px 16px 24px", flexShrink: 0 }}>
+      <div style={{ borderTop: "1px solid #ede9fe", padding: "12px 16px 96px", flexShrink: 0 }}>
         <div style={{ textAlign: "center", marginBottom: "8px" }}>
           <span style={{ fontSize: "12px", color: "#9ca3af" }}>{usageCount}/30 messages today</span>
         </div>
