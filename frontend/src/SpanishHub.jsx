@@ -16,7 +16,7 @@ import DrillsGrid from './components/DrillsGrid';
 import DoneScreen from './components/DoneScreen';
 
 import FriendsList from './components/FriendsList';
-import LeaderboardModal from './components/LeaderboardModal';
+import Leaderboard from './components/Leaderboard';
 import WordDetail from './components/WordDetail';
 import CategoryToggles from './components/CategoryToggles';
 import DrillRouter from './components/DrillRouter';
@@ -129,7 +129,6 @@ export default function SpanishHub() {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showSharedPacks, setShowSharedPacks] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showBadgeGrid, setShowBadgeGrid] = useState(false);
@@ -540,7 +539,7 @@ export default function SpanishHub() {
           onAvatarClick={() => setShowProfile(true)}
           onGoalClick={() => setShowGoalModal(true)}
           onHomeClick={() => setTab('home')}
-          onXpClick={() => setShowLeaderboard(true)}
+          onXpClick={() => setTab('leaderboard')}
         />
         <div ref={contentRef} className="px-4">
           {tab === 'home' && (
@@ -599,6 +598,19 @@ export default function SpanishHub() {
                 onAddFriend={addFriend}
                 onRemoveFriend={removeFriend}
                 isGuest={isGuest}
+              />
+            </div>
+          )}
+          {tab === 'leaderboard' && (
+            <div className="pb-20">
+              <Leaderboard
+                currentUserId={effectiveUser?.uid}
+                currentXP={userData.xp || 0}
+                isGuest={isGuest}
+                user={effectiveUser}
+                friends={userData.friends || []}
+                onAddFriend={addFriend}
+                onRemoveFriend={removeFriend}
               />
             </div>
           )}
@@ -667,13 +679,6 @@ export default function SpanishHub() {
         reminderEnabled={userData.reminderEnabled}
         onSave={(g, r) => { updateDailyGoal(g, r); setShowGoalModal(false); }}
         onClose={() => setShowGoalModal(false)} />
-    )}
-    {showLeaderboard && !isGuest && (
-      <LeaderboardModal
-        user={effectiveUser}
-        friends={userData.friends || []}
-        onClose={() => setShowLeaderboard(false)}
-      />
     )}
     </>
   );
