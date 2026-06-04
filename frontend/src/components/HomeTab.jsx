@@ -35,12 +35,7 @@ export default function HomeTab({ onNavigate, userData, streak, dailyProgress, d
 
   // Word of the day — seeded by date hash, from unmastered words
   const hashSeed = [...today].reduce((a, c) => a + c.charCodeAt(0), 0);
-  const unmastered = MASTER.filter(w => {
-    const p = userData?.progress?.[w.es];
-    return !p || (p.s || 0) < 6;
-  });
-  const wotdPool = unmastered.length > 0 ? unmastered : MASTER;
-  const wotd = wotdPool[hashSeed % wotdPool.length];
+  const wotd = MASTER[hashSeed % MASTER.length];
 
   const lastSession = userData?.sessions?.[0];
 
