@@ -65,10 +65,6 @@ export default function DrillsGrid({
   const [drillLength, setDrillLength] = useState(10);
   const [sentenceLockedMsg, setSentenceLockedMsg] = useState(null);
 
-  let drillLabel = 'All ' + words.length + ' words';
-  if (drillMode === 'weak') drillLabel = words.length + ' unmastered words';
-  else if (drillMode === 'mastered') drillLabel = words.length + ' mastered words';
-
   const handleToggle = (drillKey, idx) => {
     setToggleStates(prev => ({ ...prev, [drillKey]: idx }));
   };
@@ -235,35 +231,6 @@ export default function DrillsGrid({
 
   return (
     <div>
-      {/* Mode filter pills */}
-      <div className="flex gap-2 mb-2">
-        <button
-          data-testid="mode-weak-btn"
-          onClick={() => setDrillMode(drillMode === 'weak' ? 'all' : 'weak')}
-          className="flex-1 rounded-full px-3 py-1.5 border text-xs font-semibold transition-all duration-200"
-          style={{
-            background: drillMode === 'weak' ? '#FEF4E0' : 'hsl(var(--card))',
-            borderColor: drillMode === 'weak' ? '#F6D080' : 'hsl(var(--border))',
-            color: drillMode === 'weak' ? '#78350F' : 'hsl(var(--muted-foreground))',
-          }}>
-          0 not mastered
-        </button>
-        <button
-          data-testid="mode-mastered-btn"
-          onClick={() => setDrillMode(drillMode === 'mastered' ? 'all' : 'mastered')}
-          className="flex-1 rounded-full px-3 py-1.5 border text-xs font-semibold transition-all duration-200"
-          style={{
-            background: drillMode === 'mastered' ? '#DCFCE7' : 'hsl(var(--card))',
-            borderColor: drillMode === 'mastered' ? '#86EFAC' : 'hsl(var(--border))',
-            color: drillMode === 'mastered' ? '#14532D' : 'hsl(var(--muted-foreground))',
-          }}>
-          {stats.mastered} mastered
-        </button>
-      </div>
-      <p className="text-xs mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
-        {drillLabel} — tap a pill to filter, tap again to reset
-      </p>
-
       {/* Sub-tabs */}
       <div className="flex gap-1 mb-3">
         {SUB_TABS.map(tab => (

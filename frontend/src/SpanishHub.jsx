@@ -364,7 +364,7 @@ export default function SpanishHub() {
     const masterSet = new Set(filtered.map(w => w.es));
     const custom = (userData.customWords || []).filter(w => !masterSet.has(w.es));
     const all = [...filtered, ...custom];
-    if (drillMode === 'weak') return all.filter(w => masteryLevel(userData.progress, w.es) !== 'mastered');
+    if (drillMode !== 'all') return all.filter(w => masteryLevel(userData.progress, w.es) === drillMode);
     return all;
   }, [userData, drillMode, view]);
 
@@ -581,6 +581,7 @@ export default function SpanishHub() {
               onCategoryClick={() => setShowCategoryModal(true)}
               onSharedPacksClick={() => setShowSharedPacks(true)}
               categoryEnabled={userData.categoryEnabled}
+              drillMode={drillMode} setDrillMode={setDrillMode}
             />
             </div>
           )}

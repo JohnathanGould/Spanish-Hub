@@ -24,7 +24,7 @@ const STAT_TIERS = [
   ['mastered', '#16A34A', 'Mastered'],
 ];
 
-function ProgressPanel({ words, progress, tierFilter, setTierFilter }) {
+function ProgressPanel({ words, progress, drillMode, setDrillMode }) {
   const stats = getStats(words, progress);
   const total = words.length;
   const pct = total > 0 ? Math.round((stats.mastered / total) * 100) : 0;
@@ -39,9 +39,9 @@ function ProgressPanel({ words, progress, tierFilter, setTierFilter }) {
       </div>
       <div className="grid grid-cols-4 gap-2 mb-2">
         {STAT_TIERS.map(([key, color, label]) => {
-          const active = tierFilter === key;
+          const active = drillMode === key;
           return (
-            <button key={key} onClick={() => setTierFilter(active ? null : key)}
+            <button key={key} onClick={() => setDrillMode(active ? 'all' : key)}
               className="rounded-lg py-2 text-center transition-all"
               style={{
                 background: active ? `${color}20` : 'hsl(var(--muted))',
@@ -53,13 +53,16 @@ function ProgressPanel({ words, progress, tierFilter, setTierFilter }) {
           );
         })}
       </div>
-      <button onClick={() => setTierFilter(null)}
+      <button onClick={() => setDrillMode('all')}
         className="w-full py-1.5 rounded-lg text-xs font-semibold transition-all"
-        style={tierFilter === null
+        style={drillMode === 'all'
           ? { background: 'hsl(var(--foreground))', color: 'hsl(var(--background))' }
           : { background: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }}>
         All · {stats.new + stats.learning + stats.strong + stats.mastered}
       </button>
+      <p style={{ textAlign: 'center', fontSize: '0.75rem', color: 'hsl(var(--muted-foreground))', marginTop: 8 }}>
+        Tap a category to filter your drills — your selection persists until you change it
+      </p>
     </div>
   );
 }
@@ -138,19 +141,18 @@ function AddWordForm({ onAdd }) {
   );
 }
 
-export default function WordList({ words, progress, customWords, searchQuery, setSearchQuery, onAddWord, onDeleteWord, onWordClick, onCategoryClick, onSharedPacksClick, categoryEnabled }) {
-  const [tierFilter, setTierFilter] = useState(null);
+export default function WordList({ words, progress, customWords, searchQuery, setSearchQuery, onAddWord, onDeleteWord, onWordClick, onCategoryClick, onSharedPacksClick, categoryEnabled, drillMode, setDrillMode }) {
   const activePreset = getActivePreset(categoryEnabled);
   const isNonDefault = activePreset && activePreset.id !== 'all';
   const q = searchQuery.toLowerCase();
-  const matchesTier = (es) => !tierFilter || masteryLevel(progress, es) === tierFilter;
+  const matchesTier = (es) => drillMode === 'all' || masteryLevel(progress, es) === drillMode;
   const filtered = q ? words.filter(w => (w.es.includes(q) || w.en.includes(q)) && matchesTier(w.es)) : null;
   const phrases = words.filter(w => w.type === 'phrase');
   const others = words.filter(w => ['pronoun', 'article', 'adj', 'adv', 'other'].includes(w.type));
 
   return (
     <div>
-      <ProgressPanel words={words} progress={progress} tierFilter={tierFilter} setTierFilter={setTierFilter} />
+      <ProgressPanel words={words} progress={progress} drillMode={drillMode} setDrillMode={setDrillMode} />
 
       {/* Search + Community button */}
       <div className="flex gap-2 mb-3">
