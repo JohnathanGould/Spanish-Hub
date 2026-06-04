@@ -24,6 +24,7 @@ import LessonsList from './components/LessonsList';
 import LessonView from './components/LessonView';
 import LoginScreen from './components/LoginScreen';
 import GoalModal from './components/GoalModal';
+import StreakModal from './components/StreakModal';
 import Certificate from './components/Certificate';
 import SharedPacks from './components/SharedPacks';
 import Plaza from './components/Plaza';
@@ -80,6 +81,7 @@ const DEFAULT_DATA = {
   dailyGoal: 20,
   dailyProgress: { count: 0, date: null },
   sessions: [],
+  activeDays: [],
   categoryEnabled: { ...DEFAULT_CATEGORIES },
   lessonsCompleted: [],
   dailyChallenges: { date: null, weakDone: false, themeDone: false },
@@ -132,6 +134,7 @@ export default function SpanishHub() {
   const [showSharedPacks, setShowSharedPacks] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showBadgeGrid, setShowBadgeGrid] = useState(false);
+  const [streakModalOpen, setStreakModalOpen] = useState(false);
   const saveTimerRef = useRef(null);
   const contentRef = useRef(null);
 
@@ -268,6 +271,11 @@ export default function SpanishHub() {
       if (dailyKind === 'weak') sessionDrillId = 'daily-weak';
       else if (dailyKind === 'theme') sessionDrillId = 'daily-theme';
       const sessions = [{ drillId: sessionDrillId, correct, total, date: today, ts: Date.now() }, ...(prev.sessions || []).slice(0, 49)];
+      const todayISO = new Date().toISOString().split('T')[0];
+      const updatedActiveDays = prev.activeDays || [];
+      const newActiveDays = updatedActiveDays.includes(todayISO)
+        ? updatedActiveDays
+        : [...updatedActiveDays, todayISO];
       const ws = getWeekStartStr();
       const sameWeek = prev.weekStart === ws;
       const dc = prev.dailyChallenges || { date: null, weakDone: false, themeDone: false };
@@ -284,6 +292,7 @@ export default function SpanishHub() {
         weekStart: ws,
         streak: { count: newStreakCount, lastDate: today },
         sessions,
+        activeDays: newActiveDays,
         dailyChallenges: updatedChallenges,
       };
       const { updatedBadges } = evaluateBadges(prev, newData, 'drill_complete', { drillId, correct, total, ts: Date.now() });
@@ -473,6 +482,17 @@ export default function SpanishHub() {
 
   const activeWords = getActiveWords();
   const stats = getStats(activeWords, userData.progress);
+  const streakRiskLevel = (() => {
+    if (!userData.reminderEnabled) return 0;
+    const goalMet = (userData.dailyProgress?.count ?? 0) >= userData.dailyGoal &&
+      userData.dailyProgress?.date === new Date().toDateString();
+    if (goalMet) return 0;
+    const hour = new Date().getHours();
+    if (hour >= 18) return 3;
+    if (hour >= 14) return 2;
+    if (hour >= 8) return 1;
+    return 0;
+  })();
 
   if (view.page === 'lesson') {
     return (
@@ -540,6 +560,8 @@ export default function SpanishHub() {
           onGoalClick={() => setShowGoalModal(true)}
           onHomeClick={() => setTab('home')}
           onXpClick={() => setTab('leaderboard')}
+          onStreakClick={() => setStreakModalOpen(true)}
+          streakRiskLevel={streakRiskLevel}
         />
         <div ref={contentRef} className="px-4">
           {tab === 'home' && (
@@ -679,8 +701,26 @@ export default function SpanishHub() {
     {showGoalModal && (
       <GoalModal goal={userData.dailyGoal}
         reminderEnabled={userData.reminderEnabled}
+        streakCount={userData.streak?.count ?? 0}
         onSave={(g, r) => { updateDailyGoal(g, r); setShowGoalModal(false); }}
         onClose={() => setShowGoalModal(false)} />
+    )}
+    {streakModalOpen && (
+      <StreakModal
+        streak={userData.streak ?? { count: 0, lastDate: null }}
+        activeDays={userData.activeDays ?? []}
+        reminderEnabled={userData.reminderEnabled ?? false}
+        onReminderToggle={async () => {
+          if (!userData.reminderEnabled && 'Notification' in window) {
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') return;
+          }
+          const updated = { ...userData, reminderEnabled: !userData.reminderEnabled };
+          setUserData(updated);
+          persistData(updated);
+        }}
+        onClose={() => setStreakModalOpen(false)}
+      />
     )}
     </>
   );

@@ -1,6 +1,6 @@
 # CURRENT_STATE_LEDGER.md
 *Milo Speaks Spanish — compressed project memory. Update after every milestone.*
-*Last updated: 2026-06-06*
+*Last updated: 2026-06-04 (session 4)*
 
 ---
 
@@ -68,7 +68,10 @@ users/{uid}:
   earnedBadges[]
   completedStops[], completedPaths[]
   lessonsCompleted[]
+  sessions[]           ← drill history, last 50, { drillId, correct, total, date, ts }
+  activeDays[]         ← ISO date strings (YYYY-MM-DD), date-deduped, set on drill complete
   friends[]
+  reminderEnabled
   audioListenEnabled, audioSpeakEnabled
 
 leaderboard/{uid}: displayName, photoURL, xp, weeklyXP
@@ -106,7 +109,10 @@ Wire in this order using Cursor Composer + Wrapper Pattern:
 5. Word detail card — opens at screen center (should open at tap position)
 6. Gender drill — word pool bug
 7. Sentence Builder — distractors bug
-8. Word mastery filter buttons — not wired
+8. Mastery count mismatch — profile shows 374/340, Words page shows 317 (two different counting methods)
+9. Community Word Packs Import broken — words don't add to list
+10. Community Word Packs word entry form — Spanish + English fields need to be side by side
+11. Translator tab console error — not yet investigated
 
 ---
 
@@ -135,11 +141,16 @@ GEMINI_API_KEY · DEEPL_KEY · FIREBASE_PROJECT_ID · FIREBASE_CLIENT_EMAIL · F
 ---
 
 ## NEXT ACTIONS (in order)
-1. **Fix index.css syntax error** — Cursor Composer
-2. **Investigate Translator tab** — browser DevTools console, note exact error
-3. **Wire v0 components** — Cursor Composer, Wrapper Pattern, in order above
-4. **Batch-generate contextSentence** — Claude Projects (BLOCKS sentence flashcards)
-5. **Emergent sessions** — only after all above complete + State Ledger spec written first
+1. **Item 6 — Header layout redesign** — 3 horizontal lines, Milo icon left, profile icon right — TEST ON LOCALHOST before pushing
+3. **Item 7 — Continue button → "Continue Path"** — locked until Paths built
+4. **Fix index.css syntax error** — Cursor Composer
+5. **Investigate Translator tab** — browser DevTools console, note exact error
+6. **Wire v0 components** — Cursor Composer, Wrapper Pattern, in order above
+7. **Batch-generate contextSentence** — Claude Projects (BLOCKS sentence flashcards)
+8. **Emergent sessions** — only after all above complete + State Ledger spec written first
+
+Items 11/12 (Reddit + Ko-Fi), 15 (Discord community) — manual, no code.
+Item 16 (Mutual friends notification badge) — blocked on State Ledger spec.
 
 Note: DEFAULT_DATA missing fields from prior ledger are already present — completedPaths, completedStops, audioListenEnabled, audioSpeakEnabled all confirmed in DEFAULT_DATA. That item is closed.
 
@@ -199,6 +210,25 @@ Translator tab console error — open live app → Translator tab → F12 → Co
 
 ---
 
+## SESSION CLOSE — 2026-06-04 (this session)
+
+**Completed:**
+- Item 1: Theme Challenge now triggers confetti + fanfare on completion — `drillId !== 'flashcard' || dailyKind` condition in SpanishHub.jsx `onDrillDone`
+- Item 2: No change needed — 10-question queue over 5 words (2× repeat via `buildNoRepeatQueue`) is correct behaviour
+- Item 3: Mastery filter pills wired to global `drillMode` state in SpanishHub.jsx. Pills now live exclusively on Words page (ProgressPanel inside WordList.jsx). Removed from DrillsGrid.jsx. Tapping a tier filters all drills; persists across pages until changed. Five modes: all / new / learning / strong / mastered. `getActiveWords()` filtering updated to match.
+- Item 4: Daily Goal ring card removed from homepage. Homepage now shows 2-column grid (Continue + Words Mastered). Ring SVG variables cleaned up.
+- Item 8: ¡Hola, Amigo! → ¡Hola, Estudiante!
+- Item 10: Palabra del Día — word speaker button compacted to 26×26px; inline sentence speaker button added (18×18px) directly right of example sentence
+- Homepage compact pass: outer gap reduced, Palabra del Día card tightened, "Fetch this word" disabled button removed, hero section unchanged
+
+**Bugs fixed:**
+- Word mastery filter buttons not wired — CLOSED (now ProgressPanel controls global drillMode)
+
+**First task next session:**
+Item 5 — Streak loss notification: remove from Daily Goal tab, make it a function of the streak icon in Header
+
+---
+
 ## SESSION CLOSE — 2026-06-06
 
 **Completed this session:**
@@ -221,3 +251,28 @@ Translator tab console error — open live app → Translator tab → F12 → Co
 
 **First task next session:**
 Fix index.css syntax error — open in Cursor Composer, find Unexpected token, resolve.
+
+---
+
+## SESSION CLOSE — 2026-06-04 (session 4)
+
+**Completed this session:**
+- Item 5 fully built — Streak Modal (StreakModal.jsx) with monthly calendar, back/forward navigation, active days highlighted in amber
+- `activeDays[]` field added to Firestore schema and DEFAULT_DATA — ISO date strings, date-deduped, written on every drill complete via `onDrillDone`
+- Reminder toggle moved from Set Goal modal to Streak Modal — full notification permission request logic preserved; `onReminderToggle` writes to Firestore via `persistData`
+- Set Goal modal updated — minimum goal floor raised to 10 (enforced via `min={10}` + `onBlur` snap), streak explanation line added below input, dead Bell/BellOff/toggleReminder/supported code cleaned up
+- Living flame — three-level pulsing animation (`flame-risk-1/2/3`) tied to time of day (8am/2pm/6pm thresholds) + daily goal completion state; reverts instantly when goal is met. Defined in Header.jsx `<style>` block via keyframes `flamePulse1/2/3`
+- Streak icon in Header now tappable — `onClick={onStreakClick}` opens StreakModal; `streakRiskLevel` prop controls animation class
+
+**Bugs added:** None known.
+
+**Decisions made:**
+- Daily goal minimum = 10 (enforced in input)
+- Streak reminder time presets scrapped in favour of automatic three-level flame — no user configuration needed
+- Streak loss happens at midnight — 6pm is the latest reminder trigger, giving 6 hours to act
+- `activeDays` is date-deduped ISO strings, separate from `sessions` drill history
+
+**Tools assessed:** None new.
+
+**First task next session:**
+Item 6 — Header layout redesign (Milo icon left, profile icon right, 3-line horizontal layout). Test on localhost before pushing.
