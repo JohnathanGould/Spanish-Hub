@@ -118,6 +118,8 @@ function maybeRunStreakReminder(data) {
   } catch (e) { console.error(e); }
 }
 
+const TAB_ORDER = ['home', 'learn', 'words', 'study'];
+
 export default function SpanishHub() {
   const [user, setUser] = useState(null);
   const [isGuest, setIsGuest] = useState(false);
@@ -156,7 +158,6 @@ export default function SpanishHub() {
     return unsub;
   }, []);
 
-  const TAB_ORDER = ['home', 'learn', 'words', 'study'];
   useEffect(() => {
     const handleTouchStart = (e) => {
       touchStartX.current = e.touches[0].clientX;
