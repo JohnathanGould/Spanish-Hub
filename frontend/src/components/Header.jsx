@@ -1,7 +1,7 @@
 import React from 'react';
 import SpanishFlag from './SpanishFlag';
 
-export default function Header({ user, streak, xp, bones, dailyGoal, dailyProgress, onAvatarClick, onGoalClick, onHomeClick }) {
+export default function Header({ user, streak, xp, bones, dailyGoal, dailyProgress, onAvatarClick, onGoalClick, onHomeClick, onXpClick }) {
   const today = new Date().toDateString();
   const todayCount = dailyProgress?.date === today ? (dailyProgress.count || 0) : 0;
   const goal = dailyGoal || 20;
@@ -75,13 +75,13 @@ export default function Header({ user, streak, xp, bones, dailyGoal, dailyProgre
             <span className="text-xs font-bold" style={{ color: '#D97706' }}>{bones}</span>
           </div>
 
-          {/* XP / Star — display only */}
-          <div className="flex flex-col items-center" data-testid="xp-display">
+          {/* XP / Star — taps to open weekly leaderboard */}
+          <button onClick={onXpClick} className="flex flex-col items-center cursor-pointer" data-testid="xp-display">
             <span className="text-base font-bold" style={{ color: '#F5C518', lineHeight: 1 }}>⭐</span>
             <span className="text-xs font-bold" style={{ color: '#D97706' }}>
               {xp >= 1000 ? `${(xp / 1000).toFixed(1)}k` : xp}
             </span>
-          </div>
+          </button>
 
           {/* User Avatar — taps to open ProfileSheet */}
           <button data-testid="user-menu-btn" onClick={onAvatarClick}
