@@ -45,7 +45,7 @@ export default function ProfileSheet({ open, onClose, user, userData, totalWords
           <X size={16} />
         </button>
 
-        <div className="px-5 pb-8 flex flex-col items-center">
+        <div className="px-5 pb-24 flex flex-col items-center">
 
           {/* Avatar */}
           <div style={{
