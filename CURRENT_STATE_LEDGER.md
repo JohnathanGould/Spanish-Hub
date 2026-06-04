@@ -105,16 +105,15 @@ plaza/{postId}: uid, displayName, text, timestamp, likes
 
 ## KNOWN BUGS (fix before adding features, in priority order)
 1. index.css — syntax error: Unexpected token (highest risk)
-2. Translator tab — broken, exact error unknown (check DevTools console first)
-3. Type It drill — word/answer mismatch
-4. Listen & Type — wrong audio after correct answer
-5. Word detail card — opens at screen center (should open at tap position)
-6. Gender drill — word pool bug
-7. Sentence Builder — distractors bug
-8. Mastery count mismatch — profile shows different count than Words page
-9. Community Word Packs import broken — words don't add to list
-10. Community Word Packs word entry form — Spanish + English fields need to be side by side
-11. Word of the Day re-seeds mid-session — wotd hash uses filtered unmastered pool; changes when words are mastered. Fix: seed against full MASTER array using date string only. Change only once per day at midnight with streak rollover.
+2. Type It drill — word/answer mismatch
+3. Listen & Type — wrong audio after correct answer
+4. Word detail card — opens at screen center (should open at tap position)
+5. Gender drill — word pool bug
+6. Sentence Builder — distractors bug
+7. Mastery count mismatch — profile shows different count than Words page
+8. Community Word Packs import broken — words don't add to list
+9. Community Word Packs word entry form — Spanish + English fields need to be side by side
+10. Word of the Day re-seeds mid-session — wotd hash uses filtered unmastered pool; changes when words are mastered. Fix: seed against full MASTER array using date string only. Change only once per day at midnight with streak rollover.
 
 ---
 
@@ -221,12 +220,11 @@ Structurally different from Romance languages — may need 1-2 new drill types.
 ## NEXT ACTIONS (in order)
 1. Fix Word of the Day bug — seed against full MASTER array, date string only
 2. Fix index.css syntax error — Cursor Composer
-3. Investigate Translator tab — DevTools console, note exact error
-4. Wire v0 components — Cursor Composer, Wrapper Pattern, in order above
-5. Run Monorepo Prep P1 — AI Studio audit before touching anything else
-6. Monorepo Prep P2, P3, P4 — in sequence
-7. Batch-generate contextSentence — Claude Projects (BLOCKS sentence flashcards)
-8. Emergent sessions — only after all above complete + State Ledger spec written first
+3. Wire v0 components — Cursor Composer, Wrapper Pattern, in order above
+4. Run Monorepo Prep P1 — AI Studio audit before touching anything else
+5. Monorepo Prep P2, P3, P4 — in sequence
+6. Batch-generate contextSentence — Claude Projects (BLOCKS sentence flashcards)
+7. Emergent sessions — only after all above complete + State Ledger spec written first
 
 ---
 
