@@ -230,11 +230,21 @@ Structurally different from Romance languages — may need 1-2 new drill types.
 
 ---
 
-## OPEN DECISIONS (resolve before building affected features)
-- FSRS spaced repetition — decide before Paths Emergent session
-- Output drills award 2× XP? — decide before XP system touched
-- contextSentence — Claude batch-generates or written manually?
-- 5 new words/day cap — enforce in app or leave to user?
+## OPEN DECISIONS
+All Stage 1 decisions locked 2026-06-04. No open decisions remaining.
+
+| # | Decision | Outcome |
+|---|---|---|
+| 1.1 | FSRS spaced repetition | Adopt now — wire during P4 alongside progress key migration. Adds stability, difficulty, due, lastReview per word entry in Firestore. |
+| 1.2 | Output drills 2× XP | type-it, listen-type, fill-blank, sentence-builder, conjugation, gender all award 2× XP |
+| 1.3 | contextSentence generation | Claude batch-generates via Google AI Studio — one simple A1-A2 sentence per word |
+| 1.4 | 5 new words/day cap | Soft nudge only after 5 new words in a session. Never a hard block. |
+| 1.5 | Stop completion gate | Soft nudge if no output drill attempted — "You haven't practiced these words yet — want to give Type It a go before moving on? 🐾" Never blocks. |
+| 1.6 | Contextual Binding | Output drills only — contextSentence shown 2–3 seconds after correct answer before advancing |
+| 1.7 | Fetch word selection | Output-weak words only until Path 2 complete, then blended 80/20 with due words |
+| 1.8 | Mastery tier thresholds | New = no attempts / Learning = 0–3 days stability / Strong = 4–21 days / Mastered = 22+ days AND outputCorrect: true |
+| 1.9 | Output-weak tracking | FSRS + outputCorrect boolean per word. Mastery requires stability ≥ 22 days AND outputCorrect: true. A word cannot reach Mastered on recognition alone. |
+| 1.10 | FSRS rating input | Togglable Smart Scheduling, default off. Off = correct/wrong maps to Good/Again silently. On = Hard/Good/Easy continue buttons after every correct answer with message: "Tap how that felt — Milo uses it to know if you want more help learning this word 🐾". Wrong always auto-rates Again and auto-advances regardless of toggle. |
 
 ---
 

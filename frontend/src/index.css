@@ -251,7 +251,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  background: hsl(var(--muted) / 0.5);
+  background: hsla(8, 28%, 19%, 0.5);
   transition: border-color 0.15s;
 }
 
@@ -304,7 +304,7 @@
 
 .match-btn:hover:not(:disabled) {
   border-color: hsl(var(--primary));
-  background: hsl(var(--primary) / 0.05);
+  background: hsla(352, 75%, 51%, 0.05);
 }
 
 .match-btn.selected {
