@@ -297,7 +297,7 @@ export default function SpanishHub() {
       return newData;
     });
     setView({ page: 'done', drillId: dailyKind ? `daily-${dailyKind}` : drillId, correct, total });
-    if (drillId !== 'flashcard') {
+    if (drillId !== 'flashcard' || dailyKind) {
       setTimeout(() => {
         confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
         playConfetti();
