@@ -50,16 +50,16 @@ export default function HomeTab({ onNavigate, userData, streak, dailyProgress, d
       {/* Section 1 — Milo hero */}
       <div
         className="rounded-3xl p-5 flex items-center justify-between"
-        style={{ background: 'linear-gradient(135deg, #FEF3C7, #FDE68A)' }}
+        style={{ background: 'linear-gradient(135deg, #7a6000, #a07c00)' }}
       >
         <div className="flex-1 min-w-0 pr-3">
-          <div className="font-serif font-bold text-2xl leading-tight" style={{ color: '#78350F' }}>
+          <div className="font-serif font-bold text-2xl leading-tight" style={{ color: '#F5C518' }}>
             ¡Hola, {firstName}! 🐾
           </div>
-          <div className="text-sm font-medium mt-0.5" style={{ color: '#92400E' }}>
+          <div className="text-sm font-medium mt-0.5" style={{ color: '#FDE68A' }}>
             ¡Vamos! ¡Tú puedes!
           </div>
-          <div className="text-xs mt-1.5 font-medium" style={{ color: '#92400E' }}>
+          <div className="text-xs mt-1.5 font-medium" style={{ color: '#FDE68A' }}>
             {dateStr}
           </div>
         </div>
@@ -71,7 +71,7 @@ export default function HomeTab({ onNavigate, userData, streak, dailyProgress, d
             height: 120,
             objectFit: 'cover',
             borderRadius: '50%',
-            border: '3px solid #FCD34D',
+            border: '3px solid #F5C518',
             flexShrink: 0,
           }}
         />

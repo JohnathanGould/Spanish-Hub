@@ -53,11 +53,11 @@ export default function Header({ user, streak, xp, bones, dailyGoal, dailyProgre
 
         {/* CENTER: Title, stats row, tagline */}
         <div className="flex flex-col items-center flex-1 mx-3">
-          <div className="font-serif font-bold text-base leading-tight" style={{ color: 'hsl(var(--foreground))' }}>
+          <div className="font-serif font-bold text-lg leading-tight" style={{ color: 'hsl(var(--primary))' }}>
             Milo Speaks Spanish
           </div>
 
-          <div className="flex items-center gap-3 my-1">
+          <div className="flex items-center gap-3 my-1 w-full justify-center md:justify-between md:px-4">
 
             {/* Daily Goal Circle */}
             <button onClick={onGoalClick} data-testid="daily-goal-btn"
