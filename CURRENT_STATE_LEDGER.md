@@ -176,6 +176,29 @@ Note: DEFAULT_DATA missing fields from prior ledger are already present — comp
 
 ---
 
+## SESSION SUMMARY — 2026-06-04
+
+**Completed:**
+- Full smoke test of leaderboard and friends restore — all 7 items passing
+- Logout button fixed — pb-8 → pb-24 in src/components/ProfileSheet.jsx
+- Leaderboard subtitle updated — "See how your friends stack up"
+- Confirmed Claude Code agent as the tool for this workflow
+
+**Bugs fixed:**
+- Sign Out button hidden behind BottomNav — resolved
+
+**Decisions made:**
+- Path-based leaderboard matchmaking logged as v3 RFC — requires completedPaths[] populated first
+- Badge expansion confirmed as next feature after stabilization — RFC needed before any code
+
+**Tools assessed:**
+- Claude Code agent confirmed working for targeted single-file edits
+
+**First task next session:**
+Translator tab console error — open live app → Translator tab → F12 → Console → paste exact error
+
+---
+
 ## SESSION CLOSE — 2026-06-06
 
 **Completed this session:**
