@@ -137,6 +137,8 @@ export default function SpanishHub() {
   const [streakModalOpen, setStreakModalOpen] = useState(false);
   const saveTimerRef = useRef(null);
   const contentRef = useRef(null);
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
 
   // Scroll to top and open word detail
   const handleWordClick = useCallback((word) => {
@@ -153,6 +155,33 @@ export default function SpanishHub() {
     });
     return unsub;
   }, []);
+
+  const TAB_ORDER = ['home', 'learn', 'words', 'study'];
+  useEffect(() => {
+    const handleTouchStart = (e) => {
+      touchStartX.current = e.touches[0].clientX;
+      touchStartY.current = e.touches[0].clientY;
+    };
+    const handleTouchEnd = (e) => {
+      if (view.page !== 'home') return;
+      if (touchStartX.current === null) return;
+      const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+      const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+      if (Math.abs(deltaX) < 50) return;
+      if (Math.abs(deltaY) > Math.abs(deltaX)) return;
+      const currentIndex = TAB_ORDER.indexOf(tab);
+      if (deltaX < 0 && currentIndex < TAB_ORDER.length - 1) setTab(TAB_ORDER[currentIndex + 1]);
+      if (deltaX > 0 && currentIndex > 0) setTab(TAB_ORDER[currentIndex - 1]);
+      touchStartX.current = null;
+      touchStartY.current = null;
+    };
+    window.addEventListener('touchstart', handleTouchStart);
+    window.addEventListener('touchend', handleTouchEnd);
+    return () => {
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [tab, view.page]);
 
   const startGuest = () => {
     setIsGuest(true);
