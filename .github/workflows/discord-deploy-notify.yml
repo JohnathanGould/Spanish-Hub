@@ -1,0 +1,29 @@
+name: Discord Deploy Notification
+
+on:
+  deployment_status:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: github.event.deployment_status.state == 'success' || github.event.deployment_status.state == 'failure'
+    steps:
+      - name: Send Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_DEPLOYS_WEBHOOK }}
+        run: |
+          STATE="${{ github.event.deployment_status.state }}"
+          URL="${{ github.event.deployment_status.target_url }}"
+          ENV="${{ github.event.deployment.environment }}"
+
+          if [ "$STATE" = "success" ]; then
+            EMOJI="✅"
+            COLOR="3066993"
+          else
+            EMOJI="❌"
+            COLOR="15158332"
+          fi
+
+          curl -H "Content-Type: application/json" \
+               -d "{\"embeds\":[{\"title\":\"$EMOJI Milo Deploy — $STATE\",\"description\":\"Environment: $ENV\n[View Deployment]($URL)\",\"color\":$COLOR}]}" \
+               $DISCORD_WEBHOOK
