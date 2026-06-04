@@ -52,18 +52,12 @@
   max-width: 660px;
   margin: 0 auto;
   min-height: 100vh;
-  background: hsl(40 50% 97% / 0.94);
+  background: hsl(9 33% 8% / 0.94);
+  border-color: hsl(8 28% 22% / 0.5);
   backdrop-filter: blur(20px);
   border-left: 1px solid hsl(35 43% 81% / 0.5);
   border-right: 1px solid hsl(35 43% 81% / 0.5);
   position: relative;
-}
-
-@media (prefers-color-scheme: dark) {
-  .app-container {
-    background: hsl(9 33% 8% / 0.94);
-    border-color: hsl(8 28% 22% / 0.5);
-  }
 }
 
 /* ── HEADER ── */
@@ -71,17 +65,11 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: hsl(40 50% 97% / 0.85);
+  background: hsl(9 33% 8% / 0.85);
+  border-color: hsl(8 28% 22%);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid hsl(35 43% 81%);
   padding: 12px 20px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .app-header {
-    background: hsl(9 33% 8% / 0.85);
-    border-color: hsl(8 28% 22%);
-  }
 }
 
 .spain-flag-bar {
