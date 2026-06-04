@@ -38,6 +38,7 @@ export default function DailyChallenge({ challenges, onStart }) {
             : <Zap size={11} className="ml-auto opacity-80" />}
         </div>
         <div className="text-xs font-black leading-tight">5 weakest words</div>
+        {/* TODO: low contrast on Spanish word next to audio button — restyle when UI polish pass runs */}
         <div className="text-xs opacity-75 mt-0.5">{weakDone ? 'Done today!' : '2× XP'}</div>
       </motion.button>
 
