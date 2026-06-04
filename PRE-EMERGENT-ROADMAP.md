@@ -61,7 +61,15 @@
 - [ ] **3.4** Wire BadgeGrid — reads from Firestore earnedBadges[]. Wire after badge logic exists. **Tool: Cursor Composer**
 - [ ] **3.5** Wire LeaderboardNew — data-dependent. Wire last. **Tool: Cursor Composer**
 - [ ] **3.6** Ko-fi button — add KofiSupport component to HomeTab. **Tool: Cursor Composer**
-- [ ] **3.7** Milo vocabulary awareness fix — pass completedStops word list into Gemini system prompt in api/chat.js so Milo responds at the right level. **Tool: Cursor Composer**
+- [ ] **3.7** Milo vocabulary awareness fix — pass completedStops word list into Gemini system prompt in `api/chat.js` so Milo responds at the user's current level. **Tool: Cursor Composer**
+
+  Prerequisites: Paths built and `completedStops[]` being populated with real data. Do not attempt before Paths Emergent session is complete.
+
+  Implementation: Read `completedStops[]` from the user's Firestore doc in SpanishHub.jsx and pass it as a prop into MiloChat. In `api/chat.js`, inject the list into the system prompt as a new block:
+
+  *"The user has completed the following Stops: [completedStops list]. Only use vocabulary and grammar structures from these Stops in your responses. If the user uses a word or structure beyond their current level, gently simplify your response rather than matching their complexity. Never use vocabulary the user has not yet encountered in their Stops."*
+
+  This is the same api/chat.js file that holds the safety system prompt — add the vocabulary block after the safety rules, not before. The safety rules are immutable and always take precedence.
 
 ---
 

@@ -105,15 +105,13 @@ plaza/{postId}: uid, displayName, text, timestamp, likes
 
 ## KNOWN BUGS (fix before adding features, in priority order)
 1. index.css — syntax error: Unexpected token (highest risk)
-2. Type It drill — word/answer mismatch
-3. Listen & Type — wrong audio after correct answer
-4. Word detail card — opens at screen center (should open at tap position)
-5. Gender drill — word pool bug
-6. Sentence Builder — distractors bug
-7. Mastery count mismatch — profile shows different count than Words page
-8. Community Word Packs import broken — words don't add to list
-9. Community Word Packs word entry form — Spanish + English fields need to be side by side
-10. Word of the Day re-seeds mid-session — wotd hash uses filtered unmastered pool; changes when words are mastered. Fix: seed against full MASTER array using date string only. Change only once per day at midnight with streak rollover.
+2. Community modal on Words page — opens at bottom of page instead of at tap position. Should open anchored to the point where the Community button was tapped, not scroll to bottom of word list.
+3. Gender drill — word pool bug
+4. Sentence Builder — distractors bug
+5. Mastery count mismatch — profile shows different count than Words page
+6. Community Word Packs import broken — words don't add to list
+7. Community Word Packs word entry form — Spanish + English fields need to be side by side
+8. Word of the Day re-seeds mid-session — wotd hash uses filtered unmastered pool; changes when words are mastered. Fix: seed against full MASTER array using date string only. Change only once per day at midnight with streak rollover.
 
 ---
 
