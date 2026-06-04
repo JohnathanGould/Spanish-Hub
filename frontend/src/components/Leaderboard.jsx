@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Trophy, Crown, Medal } from 'lucide-react';
-import FriendsList from './FriendsList';
 
 function getWeekStart() {
   const d = new Date();
@@ -17,6 +16,7 @@ export default function Leaderboard({ currentUserId, currentXP, isGuest, user, f
   const [weekly, setWeekly] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showGlobal, setShowGlobal] = useState(false);
 
   useEffect(() => {
     if (isGuest) { setLoading(false); return; }
@@ -55,11 +55,25 @@ export default function Leaderboard({ currentUserId, currentXP, isGuest, user, f
         style={{ background: 'linear-gradient(135deg,#C60B1E,#F5C518)', boxShadow: '0 8px 24px rgba(198,11,30,0.25)' }}>
         <Trophy size={28} className="mx-auto mb-2 opacity-95" />
         <h2 className="font-serif text-xl font-bold">Leaderboard</h2>
-        <p className="text-xs opacity-90 mt-1">See how your friends stack up</p>
+        <div className="flex items-center justify-between px-4 py-2">
+          <div className="text-xs font-medium" style={{ color: 'hsl(var(--muted-foreground))' }}>
+            {showGlobal ? 'Competing with everyone worldwide' : 'Competing with your friends'}
+          </div>
+          <button
+            onClick={() => setShowGlobal(g => !g)}
+            className="text-xs font-semibold px-3 py-1 rounded-full border"
+            style={{
+              background: showGlobal ? 'hsl(var(--primary))' : 'hsl(var(--card))',
+              borderColor: 'hsl(var(--primary))',
+              color: showGlobal ? 'white' : 'hsl(var(--primary))',
+            }}>
+            {showGlobal ? '🌍 Global' : '🐾 Friends'}
+          </button>
+        </div>
       </div>
 
       <div className="flex gap-2 mb-4">
-        {[['all', 'All-time'], ['weekly', 'This week'], ['friends', 'Friends']].map(([id, label]) => (
+        {[['all', 'All-time'], ['weekly', 'This week']].map(([id, label]) => (
           <button key={id} data-testid={`leaderboard-tab-${id}`} onClick={() => setTab(id)}
             className="flex-1 py-2 px-3 rounded-xl text-xs font-semibold border transition-all"
             style={{
@@ -70,10 +84,6 @@ export default function Leaderboard({ currentUserId, currentXP, isGuest, user, f
         ))}
       </div>
 
-      {tab === 'friends' ? (
-        <FriendsList user={user} friends={friends || []} isGuest={isGuest}
-          onAddFriend={onAddFriend} onRemoveFriend={onRemoveFriend} />
-      ) : (
       <>
       {isGuest && (
         <div className="text-center py-6 px-4 rounded-xl text-sm border mb-3" data-testid="leaderboard-guest-msg"
@@ -99,7 +109,9 @@ export default function Leaderboard({ currentUserId, currentXP, isGuest, user, f
       )}
 
       <div className="space-y-2">
-        {list.map((entry, i) => {
+        {(showGlobal ? list : list.filter(entry =>
+          entry.id === currentUserId || (friends || []).includes(entry.id)
+        )).map((entry, i) => {
           const rank = i + 1;
           const isMe = entry.id === currentUserId;
           const xp = entry[xpKey] || 0;
@@ -138,7 +150,6 @@ export default function Leaderboard({ currentUserId, currentXP, isGuest, user, f
         })}
       </div>
       </>
-      )}
     </div>
   );
 }
