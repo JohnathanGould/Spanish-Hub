@@ -142,8 +142,7 @@ Spanish-Hub/
 │   │   │   ├── Certificate.jsx         — Canvas-rendered certificate
 │   │   │   ├── SharedPacks.jsx         — Community word packs
 │   │   │   ├── Plaza.jsx               — Community chat
-│   │   │   ├── Header.jsx              — OLD header — rename to Header.old.jsx before next session
-│   │   │   ├── MiloHeader.jsx          — Header (v0 generated — not yet wired)
+│   │   │   ├── Header.jsx              — App header — three-row layout, milo-icon.jpg, dark mode, live
 │   │   │   ├── HomeTab.jsx             — Home tab (v0 generated — not yet wired)
 │   │   │   ├── BottomNav.jsx           — Nav bar (v0 generated — not yet wired)
 │   │   │   ├── BadgeGrid.jsx           — Badges (v0 generated — not yet wired)
@@ -159,11 +158,13 @@ Spanish-Hub/
 │   │   │       ├── WordSortDrill.jsx        — Word Sort Spanish
 │   │   │       ├── SentenceBuilderDrill.jsx
 │   │   │       └── FillBlankDrill.jsx
+│   │   ├── config/
+│   │   │   └── languageConfig.js       — Language config object — monorepo-ready abstraction (Stage P2, not yet built)
 │   │   └── data/
-│   │       ├── words.js                — 302 words, MASTER array, PRESET_PACKS
-│   │       ├── drillData.js            — DRILLS array, CONJ, PRETERITE, FITB_POOL etc.
+│   │       ├── words.js                — 302 words, MASTER array, PRESET_PACKS (future: src/content/es-en/words.js)
+│   │       ├── drillData.js            — DRILLS array, CONJ, PRETERITE, FITB_POOL etc. (future: src/content/es-en/drillData.js)
 │   │       ├── lessons.js              — 14 lessons (being replaced by paths.js)
-│   │       └── paths.js                — ✅ COMPLETE — 5 Paths × 5 Stops, ~200 words, 125 quiz questions
+│   │       └── paths.js                — ✅ COMPLETE — 5 Paths × 5 Stops, ~200 words, 125 quiz questions (future: src/content/es-en/paths.js)
 │   └── package.json
 ├── api/
 │   ├── chat.js                         — Milo AI (Gemini) serverless function
@@ -250,6 +251,15 @@ Learn · Words · Drills · Milo · Plaza · Log
 - ⭐ Star — Leaderboard tab directly (removes need for Top tab)
 - 🤖 Avatar — Profile sheet
 
+**Swipe navigation (live):**
+- Swipe left = advance tab, swipe right = retreat tab
+- Tab order: `home` → `learn` → `words` → `study` (no wrap)
+- At `home`, swipe right does nothing. At `study`, swipe left does nothing.
+- `leaderboard`, `friends`, `milo` are never entered via swipe
+- Disabled entirely when `view.page !== 'home'` (drill or sub-page active)
+- Threshold: 50px horizontal delta; ignored if vertical delta exceeds horizontal (scroll detection)
+- `TAB_ORDER` is a module-level constant in `SpanishHub.jsx`
+
 ---
 
 ## 7. KEY DESIGN DECISIONS (Locked)
@@ -268,6 +278,8 @@ Learn · Words · Drills · Milo · Plaza · Log
 | Multi-language ready | Language-agnostic content files from day one. Don't build other languages yet. |
 | Plaza | Live as a real-time chat room now. Full community features deferred years. |
 | Ko-fi | Simple badge for donors. Cosmetics shop years away. |
+| Paths alongside Learn | Learn tab stays for v2. Paths built as new tab in v3. Learn retired after Paths validated. Tab rename (Learn→Paths) happens last. |
+| Dark mode permanent | Forced via `index.css` unconditional rules. No `prefers-color-scheme` dependency. |
 
 ---
 
@@ -386,6 +398,7 @@ Host winning clips at: `FRONTEND > PUBLIC > audio/`
 | Sentence Builder distractors | Bug — investigate | Emergent |
 | Type It word/answer mismatch | Bug | Emergent |
 | Listen & Type post-correct audio | Bug — wrong audio plays after correct answer | Emergent |
+| Word of the Day re-seeds mid-session | BUG — wotd hash uses filtered unmastered pool; changes when words are mastered. Fix: seed against full MASTER array using date string only | Cursor |
 
 ---
 
@@ -426,6 +439,7 @@ Goal: clean, bug-free, polished app ready for beta testers. Nothing half-built v
 - Drills renamed to Practice across codebase
 - Ko-fi on home screen
 - Log tab decision resolved
+- Dark mode forced permanently. Header redesigned — three-row layout, Milo icon, swipe navigation.
 
 ### v3 — Learning architecture ⏳ Planned
 Goal: make Milo genuinely better for language learning than anything else at this price point.
@@ -437,6 +451,7 @@ Goal: make Milo genuinely better for language learning than anything else at thi
 - Bones and streak freeze system
 - Badge and achievement system
 - Milo vocabulary awareness fix (completedStops into Gemini system prompt)
+- Monorepo prep stages P1–P4 complete before Paths build begins.
 
 ### v4 — Daily habit loop ⏳ Planned
 Goal: give users a reason to come back every day, rooted in v3 learning architecture.
@@ -546,6 +561,50 @@ Milo Speaks Spanish is the first app in a family — "Milo Speaks French", "Milo
 | Stars currency | Same as treats. Removed 2026-05-21 |
 | Unsplash dynamic image fetch | Adds API dependency and serverless function for a v4 feature. imageUrl lives in words.js, scaffolded empty — 2026-05-21 |
 | Definition Match drill in v2/v3 | Core 6 drills are a complete research-justified set. Definition Match is discuss-later — 2026-05-21 |
+
+---
+
+## 21. MONOREPO READINESS — Pre-Stages (Do Before Paths)
+
+Decision locked: Full Turborepo monorepo — but not yet. Spanish must reach Stage 5 first.
+Six target language pairs: es-en (current), en-es, en-fr, en-de, en-it, en-pt.
+
+Final monorepo shape:
+```
+milo-platform/
+  packages/engine/         ← shared drill logic
+  content/
+    es-en/                 ← current Spanish content
+    en-es/, en-fr/, en-de/, en-it/, en-pt/
+  apps/
+    milo-es-en/            ← thin shell, config + content
+    milo-en-es/, ...
+```
+
+Four preparatory stages — run in sequence, after bug fixes, BEFORE Paths:
+
+**P1 — Audit (AI Studio, free)**
+Paste full codebase into Google AI Studio. Produce complete list of every hardcoded
+language reference. Save as MONOREPO_AUDIT.md. No changes — diagnosis only.
+
+**P2 — Language Config Object (Windsurf)**
+Create `src/config/languageConfig.js` with all language-specific values:
+  `appId`, `sourceLanguage`, `targetLanguage`, `uiLocale`, `displayName`,
+  `drillDirectionLabel`, `deeplSourceCode`, `deeplTargetCode`, `firestoreProgressKey`
+Replace every hardcoded value from audit with config references. No logic changes.
+
+**P3 — Content File Relocation (Windsurf)**
+Move `words.js`, `paths.js`, `drillData.js` into `src/content/es-en/`
+Update all import paths. No content changes.
+
+**P4 — Firestore Progress Key Migration (Cursor Composer)**
+Change `progress.es` → `progress["es-en"]` across app and Firestore.
+Run migration function against emulator first. Then production.
+Leave old key 30 days before cleanup.
+THIS MUST COMPLETE BEFORE PATHS IS BUILT.
+
+Tagalog note: Deferred until post-Stage 5. Difficulty ~4/10 vs Spanish at 10/10.
+Structurally different from Romance languages — may require 1-2 new drill types.
 
 ---
 
