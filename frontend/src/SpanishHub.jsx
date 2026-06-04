@@ -642,6 +642,7 @@ export default function SpanishHub() {
         onClose={() => setShowProfile(false)}
         user={effectiveUser}
         userData={userData}
+        totalWords={activeWords.length}
         onSignOut={handleSignOut}
         onViewAllBadges={() => { setShowProfile(false); setShowBadgeGrid(true); }}
         onGoalClick={() => { setShowProfile(false); setShowGoalModal(true); }}

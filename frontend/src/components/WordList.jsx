@@ -1,6 +1,15 @@
 ﻿import React, { useState } from 'react';
 import { Search, Plus, Trash2, ChevronRight, Globe, Package } from 'lucide-react';
-import { VERB_TABLE, NOUN_GROUPS } from '../data/words';
+import { VERB_TABLE, NOUN_GROUPS, TOGGLEABLE_CATEGORIES, PRESET_PACKS } from '../data/words';
+
+function getActivePreset(categoryEnabled) {
+  return PRESET_PACKS.find(p =>
+    TOGGLEABLE_CATEGORIES.every(cat => {
+      const shouldBeOn = p.cats.includes('*') || p.cats.includes(cat);
+      return shouldBeOn === (categoryEnabled?.[cat] !== false);
+    })
+  ) ?? null;
+}
 import { masteryLevel, dotColor, getStats } from '../utils/helpers';
 
 function MasteryDot({ es, progress }) {
@@ -131,6 +140,8 @@ function AddWordForm({ onAdd }) {
 
 export default function WordList({ words, progress, customWords, searchQuery, setSearchQuery, onAddWord, onDeleteWord, onWordClick, onCategoryClick, onSharedPacksClick, categoryEnabled }) {
   const [tierFilter, setTierFilter] = useState(null);
+  const activePreset = getActivePreset(categoryEnabled);
+  const isNonDefault = activePreset && activePreset.id !== 'all';
   const q = searchQuery.toLowerCase();
   const matchesTier = (es) => !tierFilter || masteryLevel(progress, es) === tierFilter;
   const filtered = q ? words.filter(w => (w.es.includes(q) || w.en.includes(q)) && matchesTier(w.es)) : null;
@@ -158,11 +169,18 @@ export default function WordList({ words, progress, customWords, searchQuery, se
         )}
       </div>
 
-      {/* Add a Pack button */}
+      {/* Word pack selector — shows active pack name, amber when non-default */}
       <button data-testid="category-toggle-btn" onClick={onCategoryClick}
         className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border mb-4 text-sm font-semibold transition-all hover:-translate-y-0.5"
-        style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }}>
-        <Package size={14} /> Add a Pack
+        style={{
+          background: isNonDefault ? 'hsl(47 91% 95%)' : 'hsl(var(--card))',
+          borderColor: isNonDefault ? 'hsl(47 91% 60%)' : 'hsl(var(--border))',
+          color: 'hsl(var(--foreground))',
+        }}>
+        {activePreset
+          ? <>{activePreset.emoji} {activePreset.name}</>
+          : <><Package size={14} /> Custom pack</>}
+        <span style={{ fontWeight: 400, fontSize: '0.75rem', color: 'hsl(var(--muted-foreground))' }}>· Change</span>
       </button>
 
       <AddWordForm onAdd={onAddWord} />

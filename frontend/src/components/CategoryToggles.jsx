@@ -3,6 +3,15 @@ import { motion } from 'framer-motion';
 import { X, Check, Zap } from 'lucide-react';
 import { TOGGLEABLE_CATEGORIES, PRESET_PACKS } from '../data/words';
 
+function getActivePresetId(categoryEnabled) {
+  return PRESET_PACKS.find(p =>
+    TOGGLEABLE_CATEGORIES.every(cat => {
+      const shouldBeOn = p.cats.includes('*') || p.cats.includes(cat);
+      return shouldBeOn === (categoryEnabled?.[cat] !== false);
+    })
+  )?.id ?? null;
+}
+
 const CATEGORY_EMOJI = {
   'Food & Drink': '🥖', 'Family': '👨‍👩‍👧', 'Travel': '🧳', 'Places': '🏛️',
   'Numbers': '🔢', 'Days': '📅', 'Months': '🗓️', 'Colours': '🎨',
@@ -11,6 +20,7 @@ const CATEGORY_EMOJI = {
 };
 
 export default function CategoryToggles({ categoryEnabled, onToggle, onApplyPreset, onClose }) {
+  const activePresetId = getActivePresetId(categoryEnabled);
   return (
     <div data-testid="category-toggle-modal" onClick={onClose}
       className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3">
@@ -43,18 +53,25 @@ export default function CategoryToggles({ categoryEnabled, onToggle, onApplyPres
               </span>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              {PRESET_PACKS.map(p => (
-                <button key={p.id} data-testid={`preset-${p.id}`}
-                  onClick={() => onApplyPreset(p.id)}
-                  className="flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all hover:-translate-y-0.5"
-                  style={{ background: 'hsl(var(--muted))', borderColor: 'hsl(var(--border))' }}>
-                  <span className="text-lg flex-shrink-0">{p.emoji}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-bold text-xs leading-tight" style={{ color: 'hsl(var(--foreground))' }}>{p.name}</div>
-                    <div className="text-[10px] truncate" style={{ color: 'hsl(var(--muted-foreground))' }}>{p.desc}</div>
-                  </div>
-                </button>
-              ))}
+              {PRESET_PACKS.map(p => {
+                const isActive = activePresetId === p.id;
+                return (
+                  <button key={p.id} data-testid={`preset-${p.id}`}
+                    onClick={() => onApplyPreset(p.id)}
+                    className="flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all hover:-translate-y-0.5"
+                    style={{
+                      background: isActive ? 'hsl(47 91% 95%)' : 'hsl(var(--muted))',
+                      borderColor: isActive ? 'hsl(47 91% 60%)' : 'hsl(var(--border))',
+                    }}>
+                    <span className="text-lg flex-shrink-0">{p.emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-xs leading-tight" style={{ color: 'hsl(var(--foreground))' }}>{p.name}</div>
+                      <div className="text-[10px] truncate" style={{ color: 'hsl(var(--muted-foreground))' }}>{p.desc}</div>
+                    </div>
+                    {isActive && <Check size={13} style={{ color: '#16A34A', flexShrink: 0 }} />}
+                  </button>
+                );
+              })}
             </div>
           </div>
 

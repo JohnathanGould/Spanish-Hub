@@ -2,7 +2,7 @@ import React from 'react';
 import { X, ChevronRight } from 'lucide-react';
 import { BADGES } from '../data/badges';
 
-export default function ProfileSheet({ open, onClose, user, userData, onSignOut, onGoalClick, onNotificationsToggle, onAudioListenToggle, onAudioSpeakToggle, onViewAllBadges }) {
+export default function ProfileSheet({ open, onClose, user, userData, totalWords, onSignOut, onGoalClick, onNotificationsToggle, onAudioListenToggle, onAudioSpeakToggle, onViewAllBadges }) {
   const memberSince = (() => {
     try {
       const t = user?.metadata?.creationTime;
@@ -91,7 +91,7 @@ export default function ProfileSheet({ open, onClose, user, userData, onSignOut,
             {[
               { emoji: '🔥', value: userData?.streak?.count || 0, label: 'Streak' },
               { emoji: '⭐', value: userData?.xp || 0, label: 'XP' },
-              { emoji: '📚', value: masteredCount, label: 'Words' },
+              { emoji: '📚', value: totalWords != null ? `${masteredCount}/${totalWords}` : masteredCount, label: 'Mastered' },
               { emoji: '🦴', value: userData?.bones || 0, label: 'Bones' },
             ].map(({ emoji, value, label }) => (
               <div key={label} className="rounded-xl p-3 flex flex-col items-center gap-0.5"
