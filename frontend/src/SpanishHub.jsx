@@ -15,6 +15,7 @@ import WordList from './components/WordList';
 import DrillsGrid from './components/DrillsGrid';
 import DoneScreen from './components/DoneScreen';
 
+import FriendsList from './components/FriendsList';
 import WordDetail from './components/WordDetail';
 import CategoryToggles from './components/CategoryToggles';
 import DrillRouter from './components/DrillRouter';
@@ -585,6 +586,17 @@ export default function SpanishHub() {
           {tab === 'milo' && (
             <div style={{ height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
             <MiloChat userUid={effectiveUser.uid} />
+            </div>
+          )}
+          {tab === 'friends' && (
+            <div className="pb-20">
+              <FriendsList
+                user={effectiveUser}
+                friends={userData.friends || []}
+                onAddFriend={addFriend}
+                onRemoveFriend={removeFriend}
+                isGuest={isGuest}
+              />
             </div>
           )}
           </div>

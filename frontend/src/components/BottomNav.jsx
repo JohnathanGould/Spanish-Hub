@@ -1,4 +1,4 @@
-import { BookOpen, BookMarked, Dumbbell, Home, Bot } from 'lucide-react';
+import { BookOpen, BookMarked, Dumbbell, Home, Bot, Users } from 'lucide-react';
 
 const cn = (...classes) => classes.filter(Boolean).join(' ');
 
@@ -7,6 +7,7 @@ const tabs = [
   { id: 'learn', label: 'Learn', icon: BookOpen },
   { id: 'words', label: 'My Words', icon: BookMarked },
   { id: 'study', label: 'Study', icon: Dumbbell },
+  { id: 'friends', label: 'Friends', icon: Users },
   { id: 'milo', label: 'Milo', icon: Bot },
 ];
 
