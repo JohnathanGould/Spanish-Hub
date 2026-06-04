@@ -55,7 +55,7 @@ export default function Leaderboard({ currentUserId, currentXP, isGuest, user, f
         style={{ background: 'linear-gradient(135deg,#C60B1E,#F5C518)', boxShadow: '0 8px 24px rgba(198,11,30,0.25)' }}>
         <Trophy size={28} className="mx-auto mb-2 opacity-95" />
         <h2 className="font-serif text-xl font-bold">Leaderboard</h2>
-        <p className="text-xs opacity-90 mt-1">Top Spanish learners worldwide</p>
+        <p className="text-xs opacity-90 mt-1">See how your friends stack up</p>
       </div>
 
       <div className="flex gap-2 mb-4">

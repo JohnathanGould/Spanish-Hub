@@ -1,6 +1,6 @@
 # CURRENT_STATE_LEDGER.md
 *Milo Speaks Spanish — compressed project memory. Update after every milestone.*
-*Last updated: 2026-06-03*
+*Last updated: 2026-06-06*
 
 ---
 
@@ -100,14 +100,13 @@ Wire in this order using Cursor Composer + Wrapper Pattern:
 
 ## KNOWN BUGS (fix before adding features, in priority order)
 1. index.css — syntax error: Unexpected token (highest risk — can silently break layout)
-2. Daily Weakest Word Challenge — won't open (reported 2026-06-03)
-3. Translator tab — broken, exact error unknown (check DevTools console first)
-4. Type It drill — word/answer mismatch
-5. Listen & Type — wrong audio after correct answer
-6. Word detail card — opens at screen center (should open at tap position)
-7. Gender drill — word pool bug
-8. Sentence Builder — distractors bug
-9. Word mastery filter buttons — not wired
+2. Translator tab — broken, exact error unknown (check DevTools console first)
+3. Type It drill — word/answer mismatch
+4. Listen & Type — wrong audio after correct answer
+5. Word detail card — opens at screen center (should open at tap position)
+6. Gender drill — word pool bug
+7. Sentence Builder — distractors bug
+8. Word mastery filter buttons — not wired
 
 ---
 
@@ -136,13 +135,13 @@ GEMINI_API_KEY · DEEPL_KEY · FIREBASE_PROJECT_ID · FIREBASE_CLIENT_EMAIL · F
 ---
 
 ## NEXT ACTIONS (in order)
-1. **Windsurf housekeeping** — clean frontend/.gitignore, create this file in repo
-2. **Fix index.css syntax error** — Cursor Composer
-3. **Investigate Translator tab** — browser DevTools console, note exact error
-4. **Add missing DEFAULT_DATA fields** — Windsurf
-5. **Wire v0 components** — Cursor Composer, Wrapper Pattern, in order above
-6. **Batch-generate contextSentence** — Claude Projects (BLOCKS sentence flashcards)
-7. **Emergent sessions** — only after all above complete + State Ledger spec written first
+1. **Fix index.css syntax error** — Cursor Composer
+2. **Investigate Translator tab** — browser DevTools console, note exact error
+3. **Wire v0 components** — Cursor Composer, Wrapper Pattern, in order above
+4. **Batch-generate contextSentence** — Claude Projects (BLOCKS sentence flashcards)
+5. **Emergent sessions** — only after all above complete + State Ledger spec written first
+
+Note: DEFAULT_DATA missing fields from prior ledger are already present — completedPaths, completedStops, audioListenEnabled, audioSpeakEnabled all confirmed in DEFAULT_DATA. That item is closed.
 
 ---
 
@@ -174,3 +173,28 @@ GEMINI_API_KEY · DEEPL_KEY · FIREBASE_PROJECT_ID · FIREBASE_CLIENT_EMAIL · F
 
 ## CHARITABLE MODEL (locked)
 80% net surplus → NS SPCA Colchester (10%), ElderDog Canada (15%), Room to Read Canada (25%), UNHCR Canada (25%). 20% → developer. Activates when: stable on Play Store + 1,000 MAU for 60 days + first revenue distribution made.
+
+---
+
+## SESSION CLOSE — 2026-06-06
+
+**Completed this session:**
+- Root cleanup: deleted node_modules/ and package-lock.json at repo root; confirmed frontend/.gitignore already had all required entries
+- startDailyChallenge weak branch fixed — pool fallback added: if fewer than 5 non-mastered words, falls back to full enabled word list instead of silently bailing. Fixes "Daily Challenge won't open" bug.
+- Friends tab added to BottomNav (Users icon); FriendsList.jsx wired into SpanishHub.jsx
+- Leaderboard.jsx restored verbatim from git commit ee7aceb (had been removed in 64fac24). Now a full tab navigated to via XP star tap in Header. XP ⭐ changed from display div to tappable button → setTab('leaderboard').
+- Leaderboard has internal tabs: All-time / This week / Friends. Friends sub-tab delegates to FriendsList (no duplication).
+- Active word pack indicator added: CategoryToggles shows amber highlight + checkmark on active preset; WordList button shows active pack name and turns amber when non-Everything pack is active.
+- ProfileSheet "Words" label → "Mastered"; now shows masteredCount/totalWords (e.g. 323/396). totalWords passed from SpanishHub as activeWords.length.
+- GitHub Actions workflow created: .github/workflows/discord-deploy-notify.yml — fires on deployment_status success/failure, posts embed to Discord #deploys via DISCORD_DEPLOYS_WEBHOOK secret. (Still blocked on Vercel paid plan for webhooks — workflow is ready when that's resolved.)
+- FIREBASE_DISCORD_TASK.md created at repo root — spec for Firebase Cloud Function notifyNewUser (Firestore onCreate → Discord webhook). Webhook URL stored in env, not in file.
+
+**Bugs fixed:**
+- Daily Challenge won't open — CLOSED (pool fallback in startDailyChallenge)
+
+**Architecture notes:**
+- Leaderboard tab is accessed via XP star only — no BottomNav entry. Friends tab (BottomNav) is for managing friend codes; Leaderboard tab is for rankings. These are separate on purpose.
+- activeWords.length now flows to ProfileSheet as totalWords prop — single source of truth from SpanishHub.
+
+**First task next session:**
+Fix index.css syntax error — open in Cursor Composer, find Unexpected token, resolve.
