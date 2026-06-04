@@ -134,6 +134,7 @@ export default function SpanishHub() {
   const [showGoalModal, setShowGoalModal] = useState(false);
   const [showCertificate, setShowCertificate] = useState(false);
   const [showSharedPacks, setShowSharedPacks] = useState(false);
+  const [sharedPacksAnchorY, setSharedPacksAnchorY] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
   const [showBadgeGrid, setShowBadgeGrid] = useState(false);
   const [streakModalOpen, setStreakModalOpen] = useState(false);
@@ -631,7 +632,11 @@ export default function SpanishHub() {
               onAddWord={addCustomWord} onDeleteWord={deleteCustomWord}
               onWordClick={handleWordClick}
               onCategoryClick={() => setShowCategoryModal(true)}
-              onSharedPacksClick={() => setShowSharedPacks(true)}
+              onSharedPacksClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                setSharedPacksAnchorY(rect.top);
+                setShowSharedPacks(true);
+              }}
               categoryEnabled={userData.categoryEnabled}
               drillMode={drillMode} setDrillMode={setDrillMode}
             />
@@ -680,7 +685,8 @@ export default function SpanishHub() {
           <SharedPacks user={user} isGuest={isGuest}
             customWords={userData.customWords || []}
             onImport={importPackWords}
-            onClose={() => setShowSharedPacks(false)} />
+            anchorY={sharedPacksAnchorY}
+            onClose={() => { setShowSharedPacks(false); setSharedPacksAnchorY(null); }} />
         )}
       </div>
       <BottomNav activeTab={tab} onTabChange={setTab} />

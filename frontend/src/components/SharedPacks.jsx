@@ -4,7 +4,7 @@ import { X, Upload, Download, Globe, Trash2, Check } from 'lucide-react';
 import { collection, query, orderBy, limit, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase';
 
-export default function SharedPacks({ user, isGuest, customWords, onImport, onClose }) {
+export default function SharedPacks({ user, isGuest, customWords, onImport, onClose, anchorY }) {
   const [tab, setTab] = useState('browse');
   const [packs, setPacks] = useState([]);
   const [myPacks, setMyPacks] = useState([]);
@@ -70,13 +70,17 @@ export default function SharedPacks({ user, isGuest, customWords, onImport, onCl
 
   return (
     <div data-testid="shared-packs-modal" onClick={onClose}
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3"
-      style={{ background: 'rgba(0,0,0,0.55)' }}>
+      className="fixed inset-0 z-50 flex justify-center p-3"
+      style={{ background: 'rgba(0,0,0,0.55)', alignItems: anchorY != null ? 'flex-start' : 'center' }}>
       <motion.div initial={{ y: 60, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         onClick={e => e.stopPropagation()}
         className="rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col"
-        style={{ background: 'hsl(var(--card))', maxHeight: '85vh' }}>
+        style={{
+          background: 'hsl(var(--card))',
+          maxHeight: '85vh',
+          marginTop: anchorY != null ? Math.min(anchorY, window.innerHeight * 0.15) : 0,
+        }}>
 
         <div className="p-5 pb-3 flex items-start justify-between border-b" style={{ borderColor: 'hsl(var(--border))' }}>
           <div className="flex items-center gap-2">

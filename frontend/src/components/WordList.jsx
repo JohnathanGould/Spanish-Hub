@@ -163,7 +163,7 @@ export default function WordList({ words, progress, customWords, searchQuery, se
             style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }} />
         </div>
         {onSharedPacksClick && (
-          <button data-testid="shared-packs-btn" onClick={onSharedPacksClick}
+          <button data-testid="shared-packs-btn" onClick={(e) => onSharedPacksClick(e)}
             className="flex items-center gap-1 px-3 py-2 rounded-xl border text-xs font-medium"
             style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--muted-foreground))' }}>
             <Globe size={13} /> Community
