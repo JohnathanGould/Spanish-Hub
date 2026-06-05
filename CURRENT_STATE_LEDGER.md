@@ -393,23 +393,28 @@ Open Emergent. Paste PATHS_STOPS_STATE_LEDGER_SPEC.md as your first message. The
 ## SESSION END — 2026-06-05 (Session 8)
 
 **Completed:**
-- paths.js fully rebuilt from scratch — SUBTLEX-ESP frequency corpus validated, CEFR A1/A2 aligned (commit 442f2e4)
-- 300 words, 12 Paths, 60 Stops, zero duplicates
-- me, se, su added to words.js (top-30 frequency pronouns missing from MASTER — now at 398 words)
-- All 12 months removed from Paths — word pack / Advanced Beginner tier
-- High-frequency gaps filled: amigo, amiga, nombre, disculpe now in Paths
-- Verb conjugation sets properly threaded: yo → tú → él across consecutive Stops
-- Low-frequency words cut from Paths to standalone drills only: iglesia, museo, mercado, pez, bolso, reloj, rosa, marrón, postre, helado, mantequilla, queso, once, doce
-- Stale ledger entries cleaned: Log tab removed entry, sofia→milo rename entry, paths.js wrong count
+- paths.js fully rebuilt — SUBTLEX-ESP validated, 300 words, 12 Paths, 60 Stops, zero duplicates (commit 442f2e4)
+- words.js — added me, se, su (top-30 frequency pronouns, were missing)
+- evaluateBadges.js — fixed stopId format (path_1_stop_1 → p1s1), pathBadges map expanded to path1–path12
+- DEFAULT_DATA — added stopProgress: {} and fetchHistory: {}
+- badges.js — added path_6 through path_12
+- memory/PATHS_STOPS_STATE_LEDGER_SPEC.md — complete Emergent brief, 817 lines, four audit passes
+- memory/PRE_EMERGENT_AUDIT_PROMPT.md — reusable audit template for all future Emergent sessions
+- Windsurf removed from stack everywhere — Claude Code CLI and Claude Terminal only
+- Stale ledger entries cleaned
 
 **Decisions locked:**
-- Months out of Paths entirely — word packs and Advanced Beginner tier only
-- me, se, su are core A1 pronouns — permanently in MASTER and Paths
-- Paths sequencing is research-validated — do not reorder without a new SUBTLEX audit
+- Fetch: 70% pass, adaptive 10–20 questions, 6 drill types, custom FetchSession
+- Pool generators for FillBlank/SentenceBuilder/Conjugation — correctly formatted from contextSentence
+- FSRS: not in v2
+- Tab rename: 'learn' → 'paths', both TAB_ORDER and BottomNav
+- Lessons: StopCard access only, components preserved
+- Session drillId for Fetch: 'fetch'
+- Full system: 80 Paths, 2,000 words, A1→C2 — engine built once, serves all
 
 **Bugs added:** None
 
-**Tools assessed:** Nothing new
+**Tools assessed:** Windsurf removed. Claude Code CLI handles everything it did.
 
 **First task next session:**
-Open Emergent. Paste PATHS_STOPS_STATE_LEDGER_SPEC.md as your first message. paths.js is clean, validated, and committed. Prerequisites are done. Emergent executes — it does not plan.
+Open Emergent (tokens renew day after tomorrow). Paste memory/PATHS_STOPS_STATE_LEDGER_SPEC.md as first message.
