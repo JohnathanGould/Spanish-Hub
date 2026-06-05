@@ -26,7 +26,7 @@ function getWeekDates() {
   });
 }
 
-export default function HomeTab({ onNavigate, userData, streak, dailyProgress, dailyGoal, onStartDailyChallenge, onStartDrill }) {
+export default function HomeTab({ onNavigate, userData, streak, dailyProgress, dailyGoal, masteredCount, onStartDailyChallenge, onStartDrill }) {
   const today = new Date().toDateString();
   const firstName = userData?.displayName?.split(' ')[0] || 'Estudiante';
   const dateStr = capitalize(
@@ -98,7 +98,7 @@ export default function HomeTab({ onNavigate, userData, streak, dailyProgress, d
           style={{ background: '#EDE9FE', borderColor: '#DDD6FE' }}
         >
           <span className="text-xl font-bold leading-none" style={{ color: '#4C1D95' }}>
-            {MASTER.filter(w => (userData?.progress?.[w.es]?.s || 0) >= 6).length}
+            {masteredCount}
           </span>
           <div>
             <div className="text-xs font-bold uppercase tracking-wide" style={{ color: 'hsl(var(--muted-foreground))' }}>Words</div>

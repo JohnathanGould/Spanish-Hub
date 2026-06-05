@@ -2,16 +2,13 @@ import React from 'react';
 import { X, ChevronRight } from 'lucide-react';
 import { BADGES } from '../data/badges';
 
-export default function ProfileSheet({ open, onClose, user, userData, totalWords, onSignOut, onGoalClick, onNotificationsToggle, onAudioListenToggle, onAudioSpeakToggle, onViewAllBadges }) {
+export default function ProfileSheet({ open, onClose, user, userData, masteredCount, totalWords, onSignOut, onGoalClick, onNotificationsToggle, onAudioListenToggle, onAudioSpeakToggle, onViewAllBadges }) {
   const memberSince = (() => {
     try {
       const t = user?.metadata?.creationTime;
       return t ? new Date(t).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '';
     } catch { return ''; }
   })();
-
-  const masteredCount = Object.keys(userData?.progress || {})
-    .filter(es => (userData.progress[es]?.s || 0) >= 6).length;
 
   return (
     <>

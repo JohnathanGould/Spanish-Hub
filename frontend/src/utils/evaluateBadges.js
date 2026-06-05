@@ -88,7 +88,9 @@ export function evaluateBadges(prevData, nextData, eventType, eventPayload) {
       if (streakCount >= threshold && !has(id)) earn(id);
     }
 
-    const masteredCount = Object.values(nextData.progress || {}).filter(p => (p.s || 0) >= 6).length;
+    const masteredCount = MASTER.filter(w =>
+      (nextData.progress?.[w.es]?.s || 0) >= 6
+    ).length;
     const masteryThresholds = [[1, 'mastery_1'], [10, 'mastery_10'], [25, 'mastery_25'], [50, 'mastery_50'], [75, 'mastery_75'], [125, 'mastery_125'], [MASTER.length, 'mastery_309']];
     for (const [threshold, id] of masteryThresholds) {
       if (masteredCount >= threshold && !has(id)) earn(id);

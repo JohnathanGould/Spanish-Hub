@@ -513,6 +513,7 @@ export default function SpanishHub() {
 
   const activeWords = getActiveWords();
   const stats = getStats(activeWords, userData.progress);
+  const masteredCount = activeWords.filter(w => (userData.progress?.[w.es]?.s || 0) >= 6).length;
   const streakRiskLevel = (() => {
     if (!userData.reminderEnabled) return 0;
     const goalMet = (userData.dailyProgress?.count ?? 0) >= userData.dailyGoal &&
@@ -603,6 +604,7 @@ export default function SpanishHub() {
               streak={userData.streak}
               dailyProgress={userData.dailyProgress}
               dailyGoal={userData.dailyGoal}
+              masteredCount={masteredCount}
               onStartDailyChallenge={startDailyChallenge}
               onStartDrill={startDrill}
             />
@@ -701,6 +703,7 @@ export default function SpanishHub() {
         onClose={() => setShowProfile(false)}
         user={effectiveUser}
         userData={userData}
+        masteredCount={masteredCount}
         totalWords={activeWords.length}
         onSignOut={handleSignOut}
         onViewAllBadges={() => { setShowProfile(false); setShowBadgeGrid(true); }}
