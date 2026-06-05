@@ -51,7 +51,7 @@ SpanishHub.jsx               ← main shell, all global state
 api/chat.js                  ← Gemini serverless function (never modify casually)
 api/translate-deepl.js       ← DeepL serverless function
 data/words.js                ← 302 words, MASTER array (future: src/content/es-en/words.js)
-data/paths.js                ← COMPLETE — 5 Paths × 5 Stops
+data/paths.js                ← COMPLETE — 12 Paths × 5 Stops × 5 words (commit f0f307b)
 data/drillData.js            ← drills, conjugation, FITB pool
 src/components/Header.jsx    ← three-row layout, milo-icon.jpg, dark mode, LIVE
 src/components/HomeTab.jsx   ← dark mode hero card, live
@@ -246,7 +246,7 @@ All Stage 1 decisions locked 2026-06-04. No open decisions remaining.
 ## BLOCKED FEATURES (prerequisites not met)
 - Sentence flashcards — BLOCKED on contextSentence populated
 - Break Free / ¡Libre! — BLOCKED on Milo poses generated
-- Paths progression — BLOCKED on Monorepo Prep P4 + State Ledger spec
+- Paths progression — UNBLOCKED. paths.js complete, State Ledger spec written. Emergent session next.
 - Bones & streak freeze — BLOCKED on Paths built first
 
 ---
@@ -330,3 +330,86 @@ Fix Word of the Day bug — seed wotd against full MASTER array using date strin
 
 **First task next session:**
 2.10 — Community Word Packs import broken — reproduce and fix
+
+---
+
+## SESSION CLOSE — 2026-06-05 (Session 7)
+
+**Completed:**
+- Bug 2.10 closed — import now saves correctly as a pack unit in importedPacks[]
+- Bug 2.11 closed — publish form rebuilt as ES/EN pair input, 15 word limit
+- Community Word Packs fully rebuilt — Option B architecture (packs as units not flat merge)
+- Admin Panel built — separate /admin route, UID-gated, approve/reject with Pack Pioneer badge auto-award
+- Firestore composite index created — (status ASC, createdAt DESC) on sharedPacks
+- React Router wired in App.js for the first time
+- Pack Pioneer 🎒 badge wired to approval action
+
+**Bugs added:** None
+
+**Decisions made:**
+- Community packs store as units in importedPacks[] not flat merge into customWords[]
+- 15 word limit per pack
+- Admin approval required before packs appear in Browse
+- Admin screen is a separate /admin route, not embedded in ProfileSheet
+- Auto-moderation deferred until high user volume
+- Pack Pioneer badge awarded automatically on admin approval
+- Pack-scoped drill mode logged in Linear as v2+ backlog
+
+**Tools assessed:** Claude Code handled everything Cursor would have — no capability gap
+
+**First task next session:**
+Paths & Stops progression logic — this is the big Stage 5 Emergent task. Write the State Ledger spec in Claude first before opening Emergent.
+
+---
+
+## SESSION END — 2026-06-05
+
+**Completed:**
+- State Ledger spec written: PATHS_STOPS_STATE_LEDGER_SPEC.md — complete Emergent brief for Paths & Stops progression
+- paths.js created and committed: frontend/src/data/paths.js — 12 Paths × 5 Stops × 5 words, all 300 words assigned, videoUrl: null feature flag on every Stop, 5 helper functions exported (commit f0f307b)
+- All Emergent prerequisites confirmed complete: completedStops[] and completedPaths[] already in DEFAULT_DATA, paths.js now exists, git checkpoint ready
+- Windsurf removed from stack — replaced by Claude Code CLI and Claude Terminal everywhere
+
+**Decisions locked:**
+- Fetch scoring: % correct, 70% to pass, 90% strict mode (future toggle)
+- Fetch drill count: adaptive — early exit once 70% hit, min 10 questions, max 20
+- Fetch word pool: Stop's own words as answer targets only; prior words allowed as sentence distractors
+- FSRS: not in v2 — simple confidence scoring only
+- Learn tab: optional, no gate on Fetch
+- YouTube video: feature flag — videoUrl: null until video exists, button activates automatically, never gates Fetch
+- Path completion triggers: badge + bones + Break Free unlock message
+- Stop/Path sequencing: linear lock
+- Full system scope confirmed: 80 Paths, 20 sub-levels, 2,000 words (A1→C2) — engine built tomorrow serves all 80 without modification
+
+**Bugs added:** None this session
+
+**Tools assessed:** Windsurf removed from stack. Claude Code CLI handles all single and multi-file tasks. Claude Terminal handles git operations.
+
+**First task next session:**
+Open Emergent. Paste PATHS_STOPS_STATE_LEDGER_SPEC.md as your first message. The spec is complete, paths.js exists, prerequisites are done. Emergent executes — it does not plan.
+
+---
+
+## SESSION END — 2026-06-05 (Session 8)
+
+**Completed:**
+- paths.js fully rebuilt from scratch — SUBTLEX-ESP frequency corpus validated, CEFR A1/A2 aligned (commit 442f2e4)
+- 300 words, 12 Paths, 60 Stops, zero duplicates
+- me, se, su added to words.js (top-30 frequency pronouns missing from MASTER — now at 398 words)
+- All 12 months removed from Paths — word pack / Advanced Beginner tier
+- High-frequency gaps filled: amigo, amiga, nombre, disculpe now in Paths
+- Verb conjugation sets properly threaded: yo → tú → él across consecutive Stops
+- Low-frequency words cut from Paths to standalone drills only: iglesia, museo, mercado, pez, bolso, reloj, rosa, marrón, postre, helado, mantequilla, queso, once, doce
+- Stale ledger entries cleaned: Log tab removed entry, sofia→milo rename entry, paths.js wrong count
+
+**Decisions locked:**
+- Months out of Paths entirely — word packs and Advanced Beginner tier only
+- me, se, su are core A1 pronouns — permanently in MASTER and Paths
+- Paths sequencing is research-validated — do not reorder without a new SUBTLEX audit
+
+**Bugs added:** None
+
+**Tools assessed:** Nothing new
+
+**First task next session:**
+Open Emergent. Paste PATHS_STOPS_STATE_LEDGER_SPEC.md as your first message. paths.js is clean, validated, and committed. Prerequisites are done. Emergent executes — it does not plan.

@@ -102,11 +102,15 @@ export function evaluateBadges(prevData, nextData, eventType, eventPayload) {
   }
 
   if (eventType === 'stop_complete') {
-    if (eventPayload.stopId === 'path_1_stop_1' && !has('stop_1_1')) earn('stop_1_1');
+    if (eventPayload.stopId === 'p1s1' && !has('stop_1_1')) earn('stop_1_1');
   }
 
   if (eventType === 'path_complete') {
-    const pathBadges = { path_1: 'path_1', path_2: 'path_2', path_3: 'path_3', path_4: 'path_4', path_5: 'path_5' };
+    const pathBadges = {
+      path1: 'path_1', path2: 'path_2', path3: 'path_3', path4: 'path_4',
+      path5: 'path_5', path6: 'path_6', path7: 'path_7', path8: 'path_8',
+      path9: 'path_9', path10: 'path_10', path11: 'path_11', path12: 'path_12'
+    };
     const badgeId = pathBadges[eventPayload.pathId];
     if (badgeId && !has(badgeId)) earn(badgeId);
   }

@@ -20,6 +20,13 @@ export const BADGES = [
   { id: 'path_3',   emoji: '🗺️', name: '¡Camino Tres!',            description: 'Complete Path 3',                  category: 'path', hidden: false, stackable: false },
   { id: 'path_4',   emoji: '🗺️', name: '¡Camino Cuatro!',          description: 'Complete Path 4',                  category: 'path', hidden: false, stackable: false },
   { id: 'path_5',   emoji: '🗺️', name: '¡Camino Cinco!',           description: 'Complete Path 5 — A1 done',        category: 'path', hidden: false, stackable: false },
+  { id: 'path_6',   emoji: '🗺️', name: '¡Camino Seis!',            description: 'Complete Path 6',                  category: 'path', hidden: false, stackable: false },
+  { id: 'path_7',   emoji: '🗺️', name: '¡Camino Siete!',           description: 'Complete Path 7',                  category: 'path', hidden: false, stackable: false },
+  { id: 'path_8',   emoji: '🗺️', name: '¡Camino Ocho!',            description: 'Complete Path 8',                  category: 'path', hidden: false, stackable: false },
+  { id: 'path_9',   emoji: '🗺️', name: '¡Camino Nueve!',           description: 'Complete Path 9',                  category: 'path', hidden: false, stackable: false },
+  { id: 'path_10',  emoji: '🗺️', name: '¡Camino Diez!',            description: 'Complete Path 10',                 category: 'path', hidden: false, stackable: false },
+  { id: 'path_11',  emoji: '🗺️', name: '¡Camino Once!',            description: 'Complete Path 11',                 category: 'path', hidden: false, stackable: false },
+  { id: 'path_12',  emoji: '🗺️', name: '¡Camino Doce!',            description: 'Complete Path 12 — A2 done',       category: 'path', hidden: false, stackable: false },
 
   // Mastery
   { id: 'mastery_1',   emoji: '📚', name: 'First Word Mastered',   description: 'Master your first word', category: 'mastery', hidden: false, stackable: false },

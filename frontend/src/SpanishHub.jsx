@@ -91,6 +91,8 @@ const DEFAULT_DATA = {
   bones: 0,
   completedPaths: [],
   completedStops: [],
+  stopProgress: {},
+  fetchHistory: { totalSessions: 0, totalCorrect: 0, totalQuestions: 0 },
   audioListenEnabled: true,
   audioSpeakEnabled: true,
   earnedBadges: [],
