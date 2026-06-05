@@ -1,9 +1,10 @@
+import { languageConfig } from '../../config/languageConfig';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { buildNoRepeatQueue, shuffle, speak } from '../../utils/helpers';
 
-// mode: 'es-en' | 'en-es' | 'hear-choose'
+// mode: languageConfig.drillDirectionId | languageConfig.reverseDrillDirectionId | 'hear-choose'
 export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
   const total = drillLength;
   const queueRef = useRef(null);
@@ -16,7 +17,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
   const [correct, setCorrect] = useState(0);
 
   const word = queue[idx] || { es: '', en: '' };
-  const isAsk = mode === 'es-en' || mode === 'hear-choose';
+  const isAsk = mode === languageConfig.drillDirectionId || mode === 'hear-choose';
   const correctText = isAsk ? word.en : word.es;
   const promptText = isAsk ? word.es : word.en;
 
@@ -30,7 +31,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
 
   useEffect(() => {
     if (!picked) return;
-    const t = setTimeout(() => speak(word.es, 'es'), 50);
+    const t = setTimeout(() => speak(word.es, languageConfig.sourceLanguage), 50);
     return () => clearTimeout(t);
   }, [picked]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -41,8 +42,8 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
   }
 
   const titles = {
-    'es-en': { title: 'Spanish → English', sub: 'Pick the English meaning' },
-    'en-es': { title: 'English → Spanish', sub: 'Pick the Spanish translation' },
+    [languageConfig.drillDirectionId]: { title: `${languageConfig.sourceLanguageName} → ${languageConfig.targetLanguageName}`, sub: `Pick the ${languageConfig.targetLanguageName} meaning` },
+    [languageConfig.reverseDrillDirectionId]: { title: `${languageConfig.targetLanguageName} → ${languageConfig.sourceLanguageName}`, sub: `Pick the ${languageConfig.sourceLanguageName} translation` },
     'hear-choose': { title: 'Hear & Choose', sub: 'Listen — pick the meaning' },
   };
 
@@ -64,7 +65,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
       <div className="rounded-3xl p-8 mb-5 text-center"
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
         {mode === 'hear-choose' ? (
-          <button data-testid="choice-listen-btn" onClick={() => speak(promptText, 'es')}
+          <button data-testid="choice-listen-btn" onClick={() => speak(promptText, languageConfig.sourceLanguage)}
             className="mx-auto rounded-full w-20 h-20 flex items-center justify-center text-white"
             style={{ background: 'hsl(var(--primary))', boxShadow: '0 6px 20px rgba(198,11,30,0.35)' }}>
             <Volume2 size={28} />
@@ -72,13 +73,13 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
         ) : (
           <>
             <div className="text-xs uppercase tracking-wider mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
-              {isAsk ? 'Spanish' : 'English'}
+              {isAsk ? languageConfig.sourceLanguageName : languageConfig.targetLanguageName}
             </div>
             <div className="font-serif text-4xl font-black" data-testid="choice-prompt" style={{ color: 'hsl(var(--foreground))' }}>
               {promptText}
             </div>
             {isAsk && (
-              <button data-testid="choice-speak" onClick={() => speak(promptText, 'es')} className="speak-btn mt-4">
+              <button data-testid="choice-speak" onClick={() => speak(promptText, languageConfig.sourceLanguage)} className="speak-btn mt-4">
                 <Volume2 size={12} /> Hear it
               </button>
             )}
@@ -110,7 +111,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
             <div className="mb-3 py-3 rounded-lg" style={{ background: 'hsl(var(--muted))' }}>
               <div className="font-serif text-2xl font-black flex items-center justify-center gap-1" style={{ color: 'hsl(var(--foreground))' }}>
                 {word.es}
-                <button onClick={() => speak(word.es, 'es')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
+                <button onClick={() => speak(word.es, languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
               </div>
               <div className="text-xs mt-2" style={{ color: picked === correctText ? '#16A34A' : '#DC2626' }}>
                 {picked === correctText ? word.en : `Answer: ${correctText}`}
@@ -121,7 +122,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
             <div className="mb-3">
               <div className="flex items-center justify-center gap-1 font-bold" style={{ color: 'hsl(var(--foreground))' }}>
                 {word.es}
-                <button onClick={() => speak(word.es, 'es')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
+                <button onClick={() => speak(word.es, languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
               </div>
               <div className="text-xs mt-1" style={{ color: '#374151' }}>{word.en}</div>
             </div>

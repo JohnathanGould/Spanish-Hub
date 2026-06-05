@@ -1,3 +1,4 @@
+import { languageConfig } from '../../config/languageConfig';
 import React, { useState, useRef, useEffect } from 'react';
 import DrillShell from '../DrillShell';
 import { buildNoRepeatQueue, shuffle, playCorrect, speak } from '../../utils/helpers';
@@ -83,7 +84,7 @@ export default function MatchingDrill({ words, progress, onAnswer, onDone, onBac
               <div key={id} className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium"
                 style={{ background: '#DCFCE7' }}>
                 <span style={{ color: '#16A34A', fontWeight: 'bold' }}>{id}</span>
-                <button onClick={() => speak(id, 'es')}
+                <button onClick={() => speak(id, languageConfig.sourceLanguage)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '14px', padding: 0 }}>
                   🔊
                 </button>
@@ -98,7 +99,7 @@ export default function MatchingDrill({ words, progress, onAnswer, onDone, onBac
           {esTiles.filter(t => !matched.has(t.id)).map(t => (
             <button key={t.id} data-testid={`match-es-${t.id}`}
               disabled={finished} onClick={() => setSelectedEs(t.id)}
-              className={tileClass(t.id, 'es')}>
+              className={tileClass(t.id, languageConfig.sourceLanguage)}>
               {t.text}
             </button>
           ))}

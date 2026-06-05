@@ -1,3 +1,4 @@
+import { languageConfig } from '../config/languageConfig';
 import React from 'react';
 import { ArrowLeft, Volume2, CheckCircle2, Lightbulb, ArrowRight, BookOpen } from 'lucide-react';
 import { LESSONS } from '../data/lessons';
@@ -65,7 +66,7 @@ export default function LessonView({ lessonId, lessonsCompleted, onComplete, onP
                         <span className="font-serif font-bold text-base" style={{ color: 'hsl(var(--primary))' }}>
                           {ex.es}
                         </span>
-                        <button onClick={() => speak(ex.es, 'es')} data-testid={`lesson-example-speak-${i}-${j}`}
+                        <button onClick={() => speak(ex.es, languageConfig.sourceLanguage)} data-testid={`lesson-example-speak-${i}-${j}`}
                           className="p-1 rounded-full hover:bg-black/5 transition-colors"
                           style={{ color: 'hsl(var(--muted-foreground))' }}>
                           <Volume2 size={13} />

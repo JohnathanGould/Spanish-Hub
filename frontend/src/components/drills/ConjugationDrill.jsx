@@ -1,3 +1,4 @@
+import { languageConfig } from '../../config/languageConfig';
 import React, { useState, useMemo, useEffect } from 'react';
 import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
@@ -45,7 +46,7 @@ export default function ConjugationDrill({ mode, onAnswer, onDone, onBack, drill
 
   useEffect(() => {
     if (!picked) return;
-    const t = setTimeout(() => speak(item.ans, 'es'), 50);
+    const t = setTimeout(() => speak(item.ans, languageConfig.sourceLanguage), 50);
     return () => clearTimeout(t);
   }, [picked]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -67,7 +68,7 @@ export default function ConjugationDrill({ mode, onAnswer, onDone, onBack, drill
         <div className="text-xs italic mt-2 mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
           {item.hint}
         </div>
-        <button onClick={() => speak(item.verb, 'es')} className="speak-btn mx-auto">
+        <button onClick={() => speak(item.verb, languageConfig.sourceLanguage)} className="speak-btn mx-auto">
           <Volume2 size={12} /> Hear it
         </button>
       </div>
@@ -89,7 +90,7 @@ export default function ConjugationDrill({ mode, onAnswer, onDone, onBack, drill
         <div className="mt-4 text-center">
           <div className="mb-3 text-sm font-medium flex items-center justify-center gap-1" style={{ color: picked === item.ans ? '#16A34A' : '#DC2626' }}>
             {picked === item.ans ? 'Correct! ✓' : `Answer: ${item.ans}`}
-            <button onClick={() => speak(item.ans, 'es')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', lineHeight: 1 }}>🔊</button>
+            <button onClick={() => speak(item.ans, languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', lineHeight: 1 }}>🔊</button>
           </div>
           <div className="text-xs mb-3" style={{ color: '#374151' }}>
             {getConjEnglish(item)}

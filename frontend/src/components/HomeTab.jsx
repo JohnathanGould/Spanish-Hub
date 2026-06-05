@@ -1,3 +1,4 @@
+import { languageConfig } from '../config/languageConfig';
 import React from 'react';
 import { MASTER } from '../data/words';
 import { speak } from '../utils/helpers';
@@ -30,7 +31,7 @@ export default function HomeTab({ onNavigate, userData, streak, dailyProgress, d
   const today = new Date().toDateString();
   const firstName = userData?.displayName?.split(' ')[0] || 'Estudiante';
   const dateStr = capitalize(
-    new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    new Date().toLocaleDateString(languageConfig.dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
   );
 
   // Word of the day — seeded by date hash, from unmastered words
@@ -131,7 +132,7 @@ export default function HomeTab({ onNavigate, userData, streak, dailyProgress, d
                     {wotd.contextSentence}
                   </span>
                   <button
-                    onClick={() => speak(wotd.contextSentence, 'es')}
+                    onClick={() => speak(wotd.contextSentence, languageConfig.sourceLanguage)}
                     className="rounded-full flex items-center justify-center flex-shrink-0"
                     style={{ width: 18, height: 18, background: '#DCFCE7', border: '1px solid #86EFAC', fontSize: 10 }}
                     aria-label="Pronounce sentence"
@@ -142,7 +143,7 @@ export default function HomeTab({ onNavigate, userData, streak, dailyProgress, d
               )}
             </div>
             <button
-              onClick={() => speak(wotd.es, 'es')}
+              onClick={() => speak(wotd.es, languageConfig.sourceLanguage)}
               className="rounded-full flex items-center justify-center flex-shrink-0"
               style={{ width: 26, height: 26, background: '#DCFCE7', border: '1px solid #86EFAC', fontSize: 13 }}
               aria-label="Pronounce"

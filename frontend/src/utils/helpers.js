@@ -1,3 +1,5 @@
+import { languageConfig } from '../config/languageConfig';
+
 // === MASTERY ===
 export function masteryLevel(progress, es) {
   const p = progress?.[es];
@@ -131,27 +133,27 @@ export function gradeTypedAnswer(userAnswer, storedAnswer, strictMode = false) {
 }
 
 // === SPEECH ===
-let esVoice = null;
+let targetVoice = null;
 
 export function initVoice() {
   const load = () => {
     const vs = window.speechSynthesis?.getVoices() || [];
-    esVoice = vs.find(v => v.lang === 'es-ES') || vs.find(v => v.lang.startsWith('es')) || null;
+    targetVoice = vs.find(v => v.lang === languageConfig.sourceLanguageCode) || vs.find(v => v.lang.startsWith(languageConfig.sourceLanguage)) || null;
   };
   if (window.speechSynthesis?.getVoices().length) load();
   else if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = load;
 }
 
-export function speak(text, lang = 'es', rate = 0.85) {
+export function speak(text, lang = languageConfig.sourceLanguage, rate = 0.85) {
   if (!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  if (lang === 'es') {
-    u.lang = esVoice ? esVoice.lang : 'es-ES';
-    if (esVoice) u.voice = esVoice;
+  if (lang === languageConfig.sourceLanguage) {
+    u.lang = targetVoice ? targetVoice.lang : languageConfig.sourceLanguageCode;
+    if (targetVoice) u.voice = targetVoice;
     u.rate = rate;
   } else {
-    u.lang = 'en-US';
+    u.lang = languageConfig.targetLanguageCode;
     u.rate = rate;
   }
   window.speechSynthesis.speak(u);

@@ -1,4 +1,5 @@
-﻿import React, { useState } from 'react';
+﻿import { languageConfig } from '../config/languageConfig';
+import React, { useState } from 'react';
 import { Search, Plus, Trash2, ChevronRight, Globe, Package } from 'lucide-react';
 import { VERB_TABLE, NOUN_GROUPS, TOGGLEABLE_CATEGORIES, PRESET_PACKS } from '../data/words';
 
@@ -84,9 +85,9 @@ function AddWordForm({ onAdd }) {
       </div>
       <div className="grid grid-cols-2 gap-2 mb-2">
         <input data-testid="add-word-es" value={es} onChange={e => setEs(e.target.value)}
-          placeholder="Spanish" className="px-3 py-2 rounded-lg border text-sm" style={inp} />
+          placeholder={languageConfig.sourceLanguageName} className="px-3 py-2 rounded-lg border text-sm" style={inp} />
         <input data-testid="add-word-en" value={en} onChange={e => setEn(e.target.value)}
-          placeholder="English" className="px-3 py-2 rounded-lg border text-sm" style={inp}
+          placeholder={languageConfig.targetLanguageName} className="px-3 py-2 rounded-lg border text-sm" style={inp}
           onKeyDown={e => e.key === 'Enter' && handleAdd()} />
       </div>
       <div className="grid grid-cols-2 gap-2 mb-3">

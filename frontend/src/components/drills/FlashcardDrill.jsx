@@ -1,3 +1,4 @@
+import { languageConfig } from '../../config/languageConfig';
 import React, { useState, useMemo } from 'react';
 import { Volume2, Check, X, Image as ImageIcon } from 'lucide-react';
 import DrillShell from '../DrillShell';
@@ -6,7 +7,7 @@ import { buildNoRepeatQueue, speak } from '../../utils/helpers';
 
 export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBack, drillLength = 10, sentence = false }) {
   const [mode, setMode] = useState(sentence ? 'sentences' : 'words'); // 'words' or 'sentences'
-  const [direction, setDirection] = useState('es-en'); // 'es-en' or 'en-es'
+  const [direction, setDirection] = useState(languageConfig.drillDirectionId); // 'es-en' or 'en-es'
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [showHint, setShowHint] = useState(false);
@@ -37,15 +38,15 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
 
   const word = queue[idx] || queue[0];
   const isSentences = mode === 'sentences';
-  const isEsEn = direction === 'es-en';
-  const isEnEs = direction === 'en-es';
+  const isEsEn = direction === languageConfig.drillDirectionId;
+  const isEnEs = direction === languageConfig.reverseDrillDirectionId;
 
   const article = !isSentences && word.gender === 'm' ? 'el ' : !isSentences && word.gender === 'f' ? 'la ' : '';
   const canHint = !isSentences && (word.type === 'noun' || word.type === 'phrase');
 
-  const frontLabel = isSentences ? 'Spanish sentence' : (isEsEn ? 'Spanish' : 'English');
+  const frontLabel = isSentences ? `${languageConfig.sourceLanguageName} sentence` : (isEsEn ? languageConfig.sourceLanguageName : languageConfig.targetLanguageName);
   const frontText = isSentences ? word.contextSentence : (isEsEn ? `${article}${word.es}` : word.en);
-  const backLabel = isSentences ? 'English' : (isEsEn ? 'English' : 'Spanish');
+  const backLabel = isSentences ? languageConfig.targetLanguageName : (isEsEn ? languageConfig.targetLanguageName : languageConfig.sourceLanguageName);
   const backText = isSentences ? (word.sentence?.en || '') : (isEsEn ? word.en : `${article}${word.es}`);
   const speakText = isSentences ? word.contextSentence : word.es;
 
@@ -58,7 +59,7 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
 
   const handleFlip = () => {
     setFlipped(!flipped);
-    if (!flipped) setTimeout(() => speak(speakText, 'es'), 50);
+    if (!flipped) setTimeout(() => speak(speakText, languageConfig.sourceLanguage), 50);
   };
 
   const next = (knew) => {
@@ -109,7 +110,7 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
       {!isSentences && (
         <div className="flex gap-2 mb-4">
           <button
-            onClick={() => handleDirectionChange('es-en')}
+            onClick={() => handleDirectionChange(languageConfig.drillDirectionId)}
             className="flex-1 py-1.5 rounded-full text-xs font-bold border transition-all"
             style={{
               background: isEsEn ? 'hsl(var(--primary))' : 'hsl(var(--card))',
@@ -119,7 +120,7 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
             🇪🇸 Spanish → English
           </button>
           <button
-            onClick={() => handleDirectionChange('en-es')}
+            onClick={() => handleDirectionChange(languageConfig.reverseDrillDirectionId)}
             className="flex-1 py-1.5 rounded-full text-xs font-bold border transition-all"
             style={{
               background: isEnEs ? 'hsl(var(--primary))' : 'hsl(var(--card))',
@@ -178,7 +179,7 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
       </div>
 
       <div className="flex items-center justify-center gap-2 mb-5">
-        <button data-testid="flashcard-speak" onClick={() => speak(speakText, 'es')}
+        <button data-testid="flashcard-speak" onClick={() => speak(speakText, languageConfig.sourceLanguage)}
           className="speak-btn">
           <Volume2 size={12} /> Hear Spanish
         </button>

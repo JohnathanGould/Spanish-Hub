@@ -1,3 +1,4 @@
+import { languageConfig } from '../../config/languageConfig';
 import React, { useState, useMemo } from 'react';
 import { ArrowRight, Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
@@ -22,7 +23,7 @@ export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLe
   }, [idx, queue]);
 
   React.useEffect(() => {
-    if (feedback) speak(feedback.target, 'es', 0.72);
+    if (feedback) speak(feedback.target, languageConfig.sourceLanguage, 0.72);
   }, [feedback]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (queue.length === 0) {
@@ -106,7 +107,7 @@ export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLe
             <div className="text-sm font-bold mt-1" style={{ color: feedbackColor }}>
               {feedback.target}
             </div>
-            <button onClick={() => speak(feedback.target, 'es', 0.72)}
+            <button onClick={() => speak(feedback.target, languageConfig.sourceLanguage, 0.72)}
               className="speak-btn mt-2 mx-auto"><Volume2 size={11} /> Hear it</button>
           </div>
           <button data-testid="sent-next" onClick={next}

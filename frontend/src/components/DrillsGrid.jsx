@@ -1,3 +1,4 @@
+import { languageConfig } from '../config/languageConfig';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { DRILLS } from '../data/drillData';
@@ -44,8 +45,8 @@ const TAB_DRILLS = {
     },
     { key: 'sent-build',   drillId: 'sent-build',  metaId: 'sent-build',  name: 'Sentence Builder' },
     { key: 'conjugation',  drillId: 'conjugation', metaId: 'conjugation', name: 'Conjugation' },
-    { key: 'multi-choice',                          metaId: 'en-es',       name: 'Multiple Choice',
-      toggle: { options: [{ label: 'EN→SP', drillId: 'en-es' }, { label: 'SP→EN', drillId: 'es-en' }], defaultIdx: 0 },
+    { key: 'multi-choice',                          metaId: languageConfig.reverseDrillDirectionId,       name: 'Multiple Choice',
+      toggle: { options: [{ label: 'EN→SP', drillId: languageConfig.reverseDrillDirectionId }, { label: 'SP→EN', drillId: languageConfig.drillDirectionId }], defaultIdx: 0 },
     },
   ],
   review: [

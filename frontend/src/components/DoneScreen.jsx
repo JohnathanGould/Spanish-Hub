@@ -1,10 +1,11 @@
+import { languageConfig } from '../config/languageConfig';
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Home, RotateCcw, Trophy } from 'lucide-react';
 import { stopConfetti } from '../utils/helpers';
 
 const DRILL_NAMES = {
-  flashcard: 'Flashcards', 'es-en': 'Spanish → English', 'en-es': 'English → Spanish',
+  flashcard: 'Flashcards', [languageConfig.drillDirectionId]: `${languageConfig.sourceLanguageName} → ${languageConfig.targetLanguageName}`, [languageConfig.reverseDrillDirectionId]: `${languageConfig.targetLanguageName} → ${languageConfig.sourceLanguageName}`,
   'type-es-en': 'Type Sp→En', 'type-en-es': 'Type En→Sp',
   conjugation: 'Conjugation', 'past-tense': 'Preterite', gender: 'Gender',
   matching: 'Matching',

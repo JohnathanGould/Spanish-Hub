@@ -1,10 +1,11 @@
+import { languageConfig } from '../config/languageConfig';
 import { VERB_TABLE } from './words';
 
 // === DRILLS METADATA ===
 export const DRILLS = [
   { id: 'flashcard', n: '1', name: 'Flashcards', desc: 'Tap to flip — mark each word as known or still learning.', color: 'amber', wide: true, tier: 'review' },
-  { id: 'es-en', n: '2', name: 'Spanish → English', desc: 'See a Spanish word — pick the English meaning.', color: 'teal', wide: false, tier: 'practice' },
-  { id: 'en-es', n: '3', name: 'English → Spanish', desc: 'See an English word — pick the Spanish translation.', color: 'coral', wide: false, tier: 'practice' },
+  { id: languageConfig.drillDirectionId, n: '2', name: `${languageConfig.sourceLanguageName} → ${languageConfig.targetLanguageName}`, desc: 'See a Spanish word — pick the English meaning.', color: 'teal', wide: false, tier: 'practice' },
+  { id: languageConfig.reverseDrillDirectionId, n: '3', name: `${languageConfig.targetLanguageName} → ${languageConfig.sourceLanguageName}`, desc: 'See an English word — pick the Spanish translation.', color: 'coral', wide: false, tier: 'practice' },
   { id: 'type-es-en', n: '4', name: 'Type it — Sp → En', desc: 'See Spanish — type the English translation.', color: 'green', wide: false, tier: 'practice' },
   { id: 'type-en-es', n: '5', name: 'Type it — En → Sp', desc: 'See English — type the Spanish word.', color: 'rose', wide: false, tier: 'practice' },
   { id: 'conjugation', n: '6', name: 'Conjugation Drill', desc: 'Present tense — choose the right verb form.', color: 'purple', wide: false, tier: 'practice' },

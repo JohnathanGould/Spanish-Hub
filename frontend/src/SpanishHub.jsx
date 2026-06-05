@@ -1,3 +1,4 @@
+import { languageConfig } from './config/languageConfig';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { auth, db } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
@@ -112,7 +113,7 @@ function maybeRunStreakReminder(data) {
     if (lastDate === yesterday && dailyDate !== today && (data.streak?.count || 0) > 0) {
       if (window.__shStreakNotified) return;
       window.__shStreakNotified = true;
-      new Notification('Keep your Spanish streak alive 🇪🇸🔥', {
+      new Notification(`Keep your ${languageConfig.sourceLanguageName} streak alive 🔥`, {
         body: `${data.streak.count}-day streak — finish a quick drill to keep it going.`,
         icon: '/icon.svg',
         tag: 'streak-reminder',
@@ -191,7 +192,7 @@ export default function SpanishHub() {
   const startGuest = () => {
     setIsGuest(true);
     try {
-      const raw = localStorage.getItem('spanish-hub-guest');
+      const raw = localStorage.getItem(`${languageConfig.appId}-guest`);
       if (raw) {
         const data = JSON.parse(raw);
         const merged = {
@@ -232,7 +233,7 @@ export default function SpanishHub() {
 
   const persistData = useCallback((data) => {
     if (isGuest) {
-      try { localStorage.setItem('spanish-hub-guest', JSON.stringify(data)); } catch (e) { console.error(e); }
+      try { localStorage.setItem(`${languageConfig.appId}-guest`, JSON.stringify(data)); } catch (e) { console.error(e); }
       return;
     }
     if (!user) return;
@@ -332,7 +333,7 @@ export default function SpanishHub() {
       const { updatedBadges } = evaluateBadges(prev, newData, 'drill_complete', { drillId, correct, total, ts: Date.now() });
       newData = { ...newData, earnedBadges: updatedBadges };
       if (isGuest) {
-        try { localStorage.setItem('spanish-hub-guest', JSON.stringify(newData)); } catch (e) { console.error(e); }
+        try { localStorage.setItem(`${languageConfig.appId}-guest`, JSON.stringify(newData)); } catch (e) { console.error(e); }
       } else if (user) {
         setDoc(doc(db, 'users', user.uid), newData).catch(console.error);
         syncLeaderboard(user, newData);
@@ -360,7 +361,7 @@ export default function SpanishHub() {
       const sorted = spacedRepetitionSort(pool, userData.progress);
       const words = sorted.slice(0, 5);
       if (words.length === 0) return;
-      setView({ page: 'drill', drillId: 'es-en', overrideWords: words, dailyKind: 'weak', xpMultiplier: 2, today });
+      setView({ page: 'drill', drillId: languageConfig.drillDirectionId, overrideWords: words, dailyKind: 'weak', xpMultiplier: 2, today });
     } else {
       const theme = DAILY_THEMES[new Date().getDay()];
       const themeWords = MASTER.filter(w => w.group === theme.group);
@@ -387,7 +388,7 @@ export default function SpanishHub() {
       if (next) setView({ page: 'lesson', lessonId: next.id });
     } else {
       setView({ page: 'home' });
-      setTab('learn');
+      setTab('paths');
     }
   }, [persistData]);
 
@@ -552,7 +553,7 @@ export default function SpanishHub() {
             lessonsCompleted={userData.lessonsCompleted || []}
             onComplete={completeLesson}
             onPractice={practiceLessonWords}
-            onBack={() => { setView({ page: 'home' }); setTab('learn'); }}
+            onBack={() => { setView({ page: 'home' }); setTab('paths'); }}
           />
         </div>
       </div>

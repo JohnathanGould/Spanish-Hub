@@ -1,3 +1,4 @@
+import { languageConfig } from '../../config/languageConfig';
 import React, { useState, useRef, useEffect } from 'react';
 import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
@@ -22,7 +23,7 @@ export default function GenderDrill({ words, progress, onAnswer, onDone, onBack,
   useEffect(() => {
     if (picked && nouns[idx]) {
       const n = nouns[idx];
-      speak(`${n.gender === 'm' ? 'el' : 'la'} ${n.es}`, 'es');
+      speak(`${n.gender === 'm' ? 'el' : 'la'} ${n.es}`, languageConfig.sourceLanguage);
     }
   }, [picked]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -99,7 +100,7 @@ export default function GenderDrill({ words, progress, onAnswer, onDone, onBack,
           <div className="mb-3 text-sm font-medium" style={{ color: picked === word.gender ? '#16A34A' : '#DC2626' }}>
             {picked === word.gender ? 'Correct! ✓' : `Answer: ${correctLabel} ${word.es}`}
           </div>
-          <button onClick={() => speak(`${correctLabel} ${word.es}`, 'es')} className="speak-btn mx-auto mb-3">
+          <button onClick={() => speak(`${correctLabel} ${word.es}`, languageConfig.sourceLanguage)} className="speak-btn mx-auto mb-3">
             <Volume2 size={12} /> Hear it
           </button>
           <button onClick={handleContinue} data-testid="gender-continue"

@@ -1,4 +1,5 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import { languageConfig } from '../config/languageConfig';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X, Volume2, CheckCircle2, Mic, MicOff } from 'lucide-react';
 import { speak, levenshtein } from '../utils/helpers';
@@ -35,7 +36,7 @@ export default function WordDetail({ word, progress, onClose }) {
     if (!SR) return;
     setListening(true); setPronCheck(null);
     const rec = new SR();
-    rec.lang = 'es-ES';
+    rec.lang = languageConfig.sourceLanguageCode;
     rec.continuous = false;
     rec.interimResults = false;
     rec.maxAlternatives = 3;
@@ -104,7 +105,7 @@ export default function WordDetail({ word, progress, onClose }) {
               <h3 className="font-serif text-3xl font-black" data-testid="word-detail-es" style={{ color: 'hsl(var(--foreground))' }}>
                 {article}{word.es}
               </h3>
-              <button data-testid="word-detail-speak" onClick={() => speak(word.es, 'es')}
+              <button data-testid="word-detail-speak" onClick={() => speak(word.es, languageConfig.sourceLanguage)}
                 className="p-2 rounded-full transition-colors hover:bg-black/5"
                 style={{ color: 'hsl(var(--primary))' }}>
                 <Volume2 size={20} />
@@ -120,7 +121,7 @@ export default function WordDetail({ word, progress, onClose }) {
               </div>
               <p className="font-semibold text-base mb-1" style={{ color: 'hsl(var(--foreground))' }}>{word.sentence.es}</p>
               <p className="text-sm italic mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>{word.sentence.en}</p>
-              <button data-testid="word-detail-sentence-speak" onClick={() => speak(word.sentence.es, 'es')}
+              <button data-testid="word-detail-sentence-speak" onClick={() => speak(word.sentence.es, languageConfig.sourceLanguage)}
                 className="w-full py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 border-2 transition-all hover:-translate-y-0.5"
                 style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--primary))', color: 'hsl(var(--primary))' }}>
                 <Volume2 size={14} /> Hear example sentence

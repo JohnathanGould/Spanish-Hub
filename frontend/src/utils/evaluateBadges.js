@@ -1,8 +1,9 @@
+import { languageConfig } from '../config/languageConfig';
 import { BADGES } from '../data/badges';
 import { MASTER } from '../data/words';
 
 const PRACTICE_DRILL_IDS = new Set([
-  'es-en', 'en-es', 'type-es-en', 'type-en-es',
+  languageConfig.drillDirectionId, languageConfig.reverseDrillDirectionId, 'type-es-en', 'type-en-es',
   'conjugation', 'listen-type', 'sent-build', 'fill-blank', 'gender',
 ]);
 

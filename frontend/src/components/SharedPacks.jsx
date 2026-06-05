@@ -1,3 +1,4 @@
+import { languageConfig } from '../config/languageConfig';
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Upload, Download, Globe, Trash2, Check, Plus } from 'lucide-react';
@@ -219,13 +220,13 @@ export default function SharedPacks({ user, isGuest, customWords, importedPacks,
                     <input
                       value={pair.es}
                       onChange={e => updateWordPair(i, 'es', e.target.value)}
-                      placeholder="Spanish"
+                      placeholder={languageConfig.sourceLanguageName}
                       className="flex-1 p-2 rounded-lg border text-sm"
                       style={inp} />
                     <input
                       value={pair.en}
                       onChange={e => updateWordPair(i, 'en', e.target.value)}
-                      placeholder="English"
+                      placeholder={languageConfig.targetLanguageName}
                       className="flex-1 p-2 rounded-lg border text-sm"
                       style={inp} />
                     {wordPairs.length > 1 && (

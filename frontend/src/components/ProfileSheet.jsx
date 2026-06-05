@@ -1,3 +1,4 @@
+import { languageConfig } from '../config/languageConfig';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { X, ChevronRight } from 'lucide-react';
@@ -11,7 +12,7 @@ export default function ProfileSheet({ open, onClose, user, userData, masteredCo
   const memberSince = (() => {
     try {
       const t = user?.metadata?.creationTime;
-      return t ? new Date(t).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '';
+      return t ? new Date(t).toLocaleDateString(languageConfig.targetLanguageCode, { month: 'long', year: 'numeric' }) : '';
     } catch { return ''; }
   })();
 

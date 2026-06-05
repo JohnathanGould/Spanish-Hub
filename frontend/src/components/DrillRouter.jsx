@@ -1,3 +1,4 @@
+import { languageConfig } from '../config/languageConfig';
 import React from 'react';
 import FlashcardDrill from './drills/FlashcardDrill';
 import ChoiceDrill from './drills/ChoiceDrill';
@@ -24,8 +25,8 @@ export default function DrillRouter(props) {
   switch (drillId) {
     case 'flashcard':            return <FlashcardDrill {...drillProps} />;
     case 'flashcard-sentence':   return <FlashcardDrill sentence {...drillProps} />;
-    case 'es-en':                return <ChoiceDrill mode="es-en" {...drillProps} />;
-    case 'en-es':                return <ChoiceDrill mode="en-es" {...drillProps} />;
+    case languageConfig.drillDirectionId:                return <ChoiceDrill mode={languageConfig.drillDirectionId} {...drillProps} />;
+    case languageConfig.reverseDrillDirectionId:                return <ChoiceDrill mode={languageConfig.reverseDrillDirectionId} {...drillProps} />;
     case 'hear-choose':          return <ChoiceDrill mode="hear-choose" {...drillProps} />;
     case 'type-es-en':           return <TypeDrill mode="type-es-en" {...drillProps} />;
     case 'type-en-es':           return <TypeDrill mode="type-en-es" {...drillProps} />;

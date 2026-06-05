@@ -1,3 +1,4 @@
+import { languageConfig } from '../../config/languageConfig';
 import React, { useState, useMemo, useEffect } from 'react';
 import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
@@ -38,7 +39,7 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
   };
 
   useEffect(() => {
-    if (picked) speak(`${item.before} ${item.blank} ${item.after}`, 'es', 0.72);
+    if (picked) speak(`${item.before} ${item.blank} ${item.after}`, languageConfig.sourceLanguage, 0.72);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [picked]);
 
@@ -96,7 +97,7 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
             )}
           </div>
           {item.en && <div className="text-xs mb-3" style={{ color: '#374151' }}>{item.en}</div>}
-          <button onClick={() => speak(`${item.before} ${item.blank} ${item.after}`, 'es', 0.72)} className="speak-btn mx-auto mb-3">
+          <button onClick={() => speak(`${item.before} ${item.blank} ${item.after}`, languageConfig.sourceLanguage, 0.72)} className="speak-btn mx-auto mb-3">
             <Volume2 size={12} /> Hear it
           </button>
           <button onClick={handleContinue} data-testid="fitb-continue"

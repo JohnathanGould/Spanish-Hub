@@ -1,3 +1,4 @@
+import { languageConfig } from './config/languageConfig';
 import { useState, useRef, useEffect } from "react"
 
 const initialMessages = [
@@ -15,7 +16,7 @@ export function MiloChat({ userUid }) {
   const [isMuted, setIsMuted] = useState(false)
   const [usageCount, setUsageCount] = useState(0)
   const [mode, setMode] = useState('chat')
-  const [translateDir, setTranslateDir] = useState('en-es')
+  const [translateDir, setTranslateDir] = useState(languageConfig.reverseDrillDirectionId)
   const messagesEndRef = useRef(null)
 
   const scrollToBottom = () => {
@@ -41,7 +42,7 @@ export function MiloChat({ userUid }) {
 
     if (mode === 'translate') {
       try {
-        const targetLang = translateDir === 'en-es' ? 'ES' : 'EN'
+        const targetLang = translateDir === languageConfig.reverseDrillDirectionId ? 'ES' : 'EN'
         const response = await fetch("/api/translate-deepl", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -124,7 +125,7 @@ export function MiloChat({ userUid }) {
           if (translationText) {
             const englishUtterance = new SpeechSynthesisUtterance(translationText)
             if (englishVoice) englishUtterance.voice = englishVoice
-            englishUtterance.lang = "en-US"
+            englishUtterance.lang = languageConfig.targetLanguageCode
             spanishUtterance.onend = () => speechSynthesis.speak(englishUtterance)
           }
         }
@@ -160,8 +161,8 @@ export function MiloChat({ userUid }) {
 
     const recognition = new SpeechRecognition()
     const lang = mode === 'translate'
-      ? (translateDir === 'en-es' ? 'en-US' : 'es-ES')
-      : 'es-ES'
+      ? (translateDir === languageConfig.reverseDrillDirectionId ? languageConfig.targetLanguageCode : languageConfig.sourceLanguageCode)
+      : languageConfig.sourceLanguageCode
     recognition.lang = lang
     recognition.continuous = false
     recognition.interimResults = false
@@ -186,7 +187,7 @@ export function MiloChat({ userUid }) {
   const sendEnabled = !!inputValue.trim() && (mode === 'translate' || usageCount < 30)
 
   const inputPlaceholder = mode === 'translate'
-    ? (translateDir === 'en-es' ? "Type in English..." : "Escribe en español...")
+    ? (translateDir === languageConfig.reverseDrillDirectionId ? "Type in English..." : "Escribe en español...")
     : "Escribe en español..."
 
   return (
@@ -276,9 +277,9 @@ export function MiloChat({ userUid }) {
             🔄 Translate
           </button>
           <div style={{ display: "flex", alignItems: "center", gap: "6px", opacity: mode === 'translate' ? 1 : 0, pointerEvents: mode === 'translate' ? "auto" : "none", transition: "opacity 0.2s" }}>
-            <span style={{ fontSize: "12px", fontWeight: "700", color: translateDir === 'en-es' ? "#7c3aed" : "#9ca3af" }}>EN</span>
+            <span style={{ fontSize: "12px", fontWeight: "700", color: translateDir === languageConfig.reverseDrillDirectionId ? "#7c3aed" : "#9ca3af" }}>EN</span>
             <button
-              onClick={() => setTranslateDir((d) => d === 'en-es' ? 'es-en' : 'en-es')}
+              onClick={() => setTranslateDir((d) => d === languageConfig.reverseDrillDirectionId ? languageConfig.drillDirectionId : languageConfig.reverseDrillDirectionId)}
               aria-label="Swap direction"
               style={{
                 width: "28px", height: "28px", borderRadius: "50%", background: "#7c3aed",
@@ -289,7 +290,7 @@ export function MiloChat({ userUid }) {
             >
               ⇄
             </button>
-            <span style={{ fontSize: "12px", fontWeight: "700", color: translateDir === 'es-en' ? "#7c3aed" : "#9ca3af" }}>SP</span>
+            <span style={{ fontSize: "12px", fontWeight: "700", color: translateDir === languageConfig.drillDirectionId ? "#7c3aed" : "#9ca3af" }}>SP</span>
           </div>
         </div>
 
@@ -320,7 +321,7 @@ export function MiloChat({ userUid }) {
             <span>🎤</span>
             {mode === 'translate' && (
               <span style={{ fontSize: "10px", color: "#9ca3af", lineHeight: 1 }}>
-                {translateDir === 'en-es' ? 'EN' : 'SP'}
+                {translateDir === languageConfig.reverseDrillDirectionId ? 'EN' : 'SP'}
               </span>
             )}
           </button>
