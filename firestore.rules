@@ -4,6 +4,7 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == 'BEeiVtpSVWZuHYbo97InnqmI1DC2';
     }
 
     match /leaderboard/{userId} {
@@ -30,6 +31,7 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow create: if request.auth != null;
       allow update, delete: if request.auth != null && request.auth.uid == resource.data.authorId;
+      allow update: if request.auth != null && request.auth.uid == 'BEeiVtpSVWZuHYbo97InnqmI1DC2';
     }
 
   }
