@@ -107,11 +107,10 @@ plaza/{postId}: uid, displayName, text, timestamp, likes
 1. index.css — syntax error: Unexpected token (highest risk)
 2. Community modal on Words page — opens at bottom of page instead of at tap position. Should open anchored to the point where the Community button was tapped, not scroll to bottom of word list.
 3. Gender drill — word pool bug
-4. Sentence Builder — distractors bug
-5. Mastery count mismatch — profile shows different count than Words page
-6. Community Word Packs import broken — words don't add to list
-7. Community Word Packs word entry form — Spanish + English fields need to be side by side
-8. Word of the Day re-seeds mid-session — wotd hash uses filtered unmastered pool; changes when words are mastered. Fix: seed against full MASTER array using date string only. Change only once per day at midnight with streak rollover.
+4. Mastery count mismatch — profile shows different count than Words page
+5. Community Word Packs import broken — words don't add to list
+6. Community Word Packs word entry form — Spanish + English fields need to be side by side
+7. Word of the Day re-seeds mid-session — wotd hash uses filtered unmastered pool; changes when words are mastered. Fix: seed against full MASTER array using date string only. Change only once per day at midnight with streak rollover.
 
 ---
 
@@ -290,3 +289,44 @@ All Stage 1 decisions locked 2026-06-04. No open decisions remaining.
 
 **First task next session:**
 Fix Word of the Day bug — seed wotd against full MASTER array using date string only
+
+---
+
+## SESSION CLOSE — 2026-06-04 (session 6)
+
+**Completed:**
+- Stage 0 fully complete — Firebase emulator running from repo root, warnings resolved, firestore.rules + firestore.indexes.json created, firebase.json updated
+- Firebase CLI updated 15.19.0 → 15.19.1
+- Stage 1 fully complete — all 10 architecture decisions locked (see OPEN DECISIONS section)
+- 2.1 — index.css syntax error fixed (lines 254, 307 — hsl slash-alpha syntax)
+- 2.2 — Word of the Day reseeding fixed — full MASTER array, date string only
+- 2.3 — Translator tab closed — feature lives inside MiloChat as toggle, no component to fix
+- 2.4 — Type It drill — confirmed already fixed, closed
+- 2.5 — Listen & Type — confirmed already fixed, closed
+- 2.6 — Gender drill — confirmed already fixed, closed
+- 2.7 — Sentence Builder distractors — confirmed working, closed
+- 2.8 — Community modal tap position — fixed, anchors near tap using getBoundingClientRect
+- 2.9 — Mastery count mismatch — fixed, single source of truth in SpanishHub, activeWords intersection, 332 across all three displays
+- Milo chat safety system prompt — 8 safety blocks added (identity lock, topic restriction, family-safe language, explicit content, personal info, external contact, distress recognition, manipulation resistance)
+- Milo correction language — corrections now in English except quoted Spanish
+- MiloChat input padding — 24px → 96px, clears BottomNav
+- Leaderboard — friends-only default with 🌍 Global toggle, dead FriendsList import removed
+- Windsurf removed from dev stack — Claude Code CLI handles all those tasks
+- Claude Code terminal set up alongside normal terminal in VS Code split screen
+- TAB_ORDER ESLint fix pushed — module level constant
+
+**Bugs closed this session:**
+- 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9 — 9 bugs resolved
+
+**Bugs remaining:**
+- 2.10 — Community Word Packs import broken
+- 2.11 — Community Word Packs entry form layout
+
+**Decisions made:**
+- All Stage 1 decisions locked — FSRS adopt now, 2× XP output drills, Claude batch-generates contextSentence, soft nudge for 5-word cap and Stop gate, Contextual Binding output drills only, Fetch blended 80/20 from Path 2, mastery thresholds 0-3/4-21/22+ days, outputCorrect boolean required for Mastered, Smart Scheduling togglable default off
+- Leaderboard is friends-only by default, global toggle available
+- Friends exchanged in real life only — no in-app sharing mechanism needed
+- Mastery count canonical source = activeWords intersection in SpanishHub
+
+**First task next session:**
+2.10 — Community Word Packs import broken — reproduce and fix

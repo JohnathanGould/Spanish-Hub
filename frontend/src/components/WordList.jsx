@@ -141,7 +141,13 @@ function AddWordForm({ onAdd }) {
   );
 }
 
-export default function WordList({ words, progress, customWords, searchQuery, setSearchQuery, onAddWord, onDeleteWord, onWordClick, onCategoryClick, onSharedPacksClick, categoryEnabled, drillMode, setDrillMode }) {
+export default function WordList({ words, progress, customWords, importedPacks = [], searchQuery, setSearchQuery, onAddWord, onDeleteWord, onWordClick, onCategoryClick, onSharedPacksClick, categoryEnabled, drillMode, setDrillMode }) {
+  const [expandedPackIds, setExpandedPackIds] = useState(new Set());
+  const togglePack = (id) => setExpandedPackIds(prev => {
+    const next = new Set(prev);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    return next;
+  });
   const activePreset = getActivePreset(categoryEnabled);
   const isNonDefault = activePreset && activePreset.id !== 'all';
   const q = searchQuery.toLowerCase();
@@ -216,6 +222,38 @@ export default function WordList({ words, progress, customWords, searchQuery, se
                     className="p-1 rounded transition-colors hover:text-red-500" style={{ color: 'hsl(var(--muted-foreground))' }}>
                     <Trash2 size={13} />
                   </button>
+                </div>
+              ))}
+            </Section>
+          )}
+
+          {/* Imported packs */}
+          {importedPacks.length > 0 && (
+            <Section title="Imported Packs">
+              {importedPacks.map(pack => (
+                <div key={pack.id} className="mb-1">
+                  <div
+                    className="flex items-center justify-between px-3 py-2 rounded-lg border text-sm cursor-pointer"
+                    style={{ background: 'hsl(var(--muted))', borderColor: 'hsl(var(--border))' }}
+                    onClick={() => togglePack(pack.id)}>
+                    <span className="font-semibold">{pack.title}</span>
+                    <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                      {pack.words?.length || 0} words
+                    </span>
+                  </div>
+                  {expandedPackIds.has(pack.id) && (
+                    <div className="mt-1 pl-2">
+                      {(pack.words || []).map((w, i) => (
+                        <div key={`${pack.id}-${w.es}-${i}`}
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border mb-1 text-sm"
+                          style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+                          <MasteryDot es={w.es} progress={progress} />
+                          <strong>{w.es}</strong>
+                          <span style={{ color: 'hsl(var(--muted-foreground))' }}>— {w.en}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </Section>

@@ -73,6 +73,7 @@ const DEFAULT_DATA = {
   displayName: '',
   photoURL: null,
   customWords: [],
+  importedPacks: [],
   progress: {},
   xp: 0,
   weeklyXP: 0,
@@ -401,11 +402,16 @@ export default function SpanishHub() {
       return view.overrideWords;
     }
     const filtered = MASTER.filter(w => w.group === 'Core' || userData.categoryEnabled[w.group] !== false);
-    const masterSet = new Set(filtered.map(w => w.es));
-    const custom = (userData.customWords || []).filter(w => !masterSet.has(w.es));
+    const filteredSet = new Set(filtered.map(w => w.es));
+    const custom = (userData.customWords || []).filter(w => !filteredSet.has(w.es));
     const all = [...filtered, ...custom];
-    if (drillMode !== 'all') return all.filter(w => masteryLevel(userData.progress, w.es) === drillMode);
-    return all;
+    const masterSet = new Set(MASTER.map(w => w.es));
+    const customSet = new Set((userData.customWords || []).map(w => w.es));
+    const importedPackWords = (userData.importedPacks || [])
+      .flatMap(p => p.words)
+      .filter(w => !masterSet.has(w.es) && !customSet.has(w.es));
+    if (drillMode !== 'all') return [...all.filter(w => masteryLevel(userData.progress, w.es) === drillMode), ...importedPackWords];
+    return [...all, ...importedPackWords];
   }, [userData, drillMode, view]);
 
   const addCustomWord = useCallback((wordData) => {
@@ -471,11 +477,20 @@ export default function SpanishHub() {
     });
   }, [persistData]);
 
-  const importPackWords = useCallback((words) => {
+  const importPackWords = useCallback((pack) => {
     setUserData(prev => {
-      const existing = new Set((prev.customWords || []).map(w => w.es));
-      const fresh = words.filter(w => !existing.has(w.es));
-      const newData = { ...prev, customWords: [...(prev.customWords || []), ...fresh] };
+      const already = (prev.importedPacks || []).some(p => p.id === pack.id);
+      if (already) return prev;
+      const newData = {
+        ...prev,
+        importedPacks: [...(prev.importedPacks || []), {
+          id: pack.id,
+          title: pack.title,
+          authorName: pack.authorName,
+          words: pack.words,
+          importedAt: new Date().toISOString()
+        }]
+      };
       persistData(newData);
       return newData;
     });
@@ -630,6 +645,7 @@ export default function SpanishHub() {
             <WordList
               words={activeWords} progress={userData.progress}
               customWords={userData.customWords || []}
+              importedPacks={userData.importedPacks || []}
               searchQuery={searchQuery} setSearchQuery={setSearchQuery}
               onAddWord={addCustomWord} onDeleteWord={deleteCustomWord}
               onWordClick={handleWordClick}
@@ -686,6 +702,7 @@ export default function SpanishHub() {
         {showSharedPacks && (
           <SharedPacks user={user} isGuest={isGuest}
             customWords={userData.customWords || []}
+            importedPacks={userData.importedPacks || []}
             onImport={importPackWords}
             anchorY={sharedPacksAnchorY}
             onClose={() => { setShowSharedPacks(false); setSharedPacksAnchorY(null); }} />
