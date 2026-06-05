@@ -229,7 +229,7 @@ export default function WordList({ words, progress, customWords, importedPacks =
 
           {/* Imported packs */}
           {importedPacks.length > 0 && (
-            <Section title="Imported Packs">
+            <Section title="Community Packs">
               {importedPacks.map(pack => (
                 <div key={pack.id} className="mb-1">
                   <div
