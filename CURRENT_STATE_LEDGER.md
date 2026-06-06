@@ -133,18 +133,6 @@ GEMINI_API_KEY · DEEPL_KEY · FIREBASE_PROJECT_ID · FIREBASE_CLIENT_EMAIL · F
 
 ---
 
-## V0 COMPONENTS — NOT YET WIRED
-Wire in this order using Cursor Composer + Wrapper Pattern:
-1. BottomNav
-2. HomeTab
-3. ProfileSheet
-4. BadgeGrid
-5. LeaderboardNew
-
-Note: MiloHeader is retired — Header.jsx handles the header directly.
-
----
-
 ## PATHS ARCHITECTURE (locked)
 - Learn tab stays as-is for v2
 - Paths built as a new tab alongside Learn in v3
@@ -393,7 +381,7 @@ Open Emergent. Paste PATHS_STOPS_STATE_LEDGER_SPEC.md as your first message. The
 - paths.js fully rebuilt — SUBTLEX-ESP validated, 300 words, 12 Paths, 60 Stops, zero duplicates (commit 442f2e4)
 - words.js — added me, se, su (top-30 frequency pronouns, were missing)
 - evaluateBadges.js — fixed stopId format (path_1_stop_1 → p1s1), pathBadges map expanded to path1–path12
-- DEFAULT_DATA — added stopProgress: {} and fetchHistory: {}
+- DEFAULT_DATA — added stopProgress: {} and fetchHistory: { totalSessions: 0, totalCorrect: 0, totalQuestions: 0 }
 - badges.js — added path_6 through path_12
 - memory/PATHS_STOPS_STATE_LEDGER_SPEC.md — complete Emergent brief, 817 lines, four audit passes
 - memory/PRE_EMERGENT_AUDIT_PROMPT.md — reusable audit template for all future Emergent sessions
