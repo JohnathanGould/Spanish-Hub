@@ -336,12 +336,19 @@
 
   .about-inner .paw { font-size: 3rem; margin-bottom: 1rem; display: block; }
 
-  .milo-gif {
-    width: 220px;
-    height: auto;
+  .milo-container {
+    background: white;
+    border-radius: 50%;
+    padding: 1.5rem;
+    display: inline-block;
     margin: 0 auto 1rem;
+  }
+
+  .milo-gif {
     display: block;
-    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.4));
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
   }
 
   .about-inner h2 {
@@ -570,7 +577,9 @@
 <!-- ABOUT -->
 <div class="about-strip" id="about">
   <div class="about-inner">
-    <img src="/animations/milo_idle.gif" alt="Milo the black lab" class="milo-gif">
+    <div class="milo-container">
+      <img src="/animations/milo_idle.gif" alt="Milo the black lab" class="milo-gif">
+    </div>
     <h2>Who is Milo?</h2>
     <p>Milo was a real black lab who crashed every Monday morning conference call for years. He had boundless energy, zero filter, and saw only goodness in everyone he met.</p>
     <p>The Milo Speaks apps carry his name. Every language, every learner, every feature built — it's all in his memory.</p>
