@@ -207,6 +207,9 @@ Structurally different from Romance languages — may need 1-2 new drill types.
 5. Monorepo Prep P2, P3, P4 — in sequence
 6. Batch-generate contextSentence — Claude Projects (BLOCKS sentence flashcards)
 7. Emergent sessions — only after all above complete + State Ledger spec written first
+8. Content audit — review contextSentence values against Stop-sequenced vocabulary. Sentences used in Fill in the Blank drills are highest priority. Flag any sentence that uses vocabulary not yet introduced at that Stop. Stage 4 task, after Paths is built.
+9. Build milo-speaks.com landing page — static Vercel deployment, separate repo. One card per language app, Milo photo, Ko-fi link, "more languages coming soon". Point milo-speaks.com domain at Vercel when live. Build after Paths is stable.
+10. Add Firebase Auth providers — Facebook, Apple, Email/password. Dedicated session only. Emulator required. Do after Emergent session and any resulting bug fixes are resolved.
 
 ---
 
@@ -425,3 +428,55 @@ Open Emergent (tokens renew day after tomorrow). Paste memory/PATHS_STOPS_STATE_
 
 **First task next session:**
 Open Emergent (tokens renew tomorrow). Paste memory/PATHS_STOPS_STATE_LEDGER_SPEC.md as first message. Prerequisites all confirmed complete.
+
+---
+
+## SESSION END — 2026-06-06 (Session 10)
+
+**Completed:**
+- PathsView v0 component built and committed — three layer navigation (overview → path focus → stop detail), time of day auto-detected from device, no toggle buttons
+- Stop detail design finalised — Learn/Watch tabs, 5 word cards with expandable image, green Fetch button, YouTube coming soon state
+- Word card detail design finalised — type badge, image top right, meaning, example sentence with audio, mini tip, progress stats
+- ¡Prueba! review node added as 6th node on every Path — dashed connector, red when active, trophy when complete
+- paths.js needs updating — add 6th review stop per Path with type:'review' flag (Claude Code task before Emergent)
+
+**Decisions locked:**
+- No Learn tab — Stop IS the lesson, word cards replace lesson content
+- Watch/Listen is a proper tab alongside Learn — YouTube embed when videoUrl exists, coming soon state otherwise
+- Fetch button is green (#2D9E5F) — green for go
+- Time of day theming is silent — no UI, auto-detected from device clock
+- ¡Prueba! node — 6th stop per Path, type:'review', pulls all 25 Path words, 70% to pass
+
+**First task next session:**
+Update paths.js — add 6th review stop per Path with type:'review' and id format 'p1r' through 'p12r'
+Then open Emergent — paste memory/PATHS_STOPS_STATE_LEDGER_SPEC.md as first message
+
+---
+
+## SESSION END — 2026-06-06 (Session 11)
+
+**Completed:**
+- Ruled out Google Flow for Lottie (wrong format, wrong approach)
+- Ruled out Viggle (broken dog motion)
+- Confirmed Flow image-to-video as the animation pipeline
+- Confirmed idle wag GIF — correct style, collar, tag, loops cleanly
+- Confirmed green screen workflow: Flow → Unscreen.com → transparent GIF
+- Locked character canon: purple collar, gold MILO tag, no bandana, tie for special events only
+- Designed two-beat wrong answer animation: uncertain head tilt → encouraging recovery
+- Defined in-app state names: milo_uncertain → milo_encouraging
+
+**Decisions locked:**
+- Animation format: transparent GIF via green screen removal
+- Animation tool: Google Flow exclusively
+- Character canon: purple collar, gold MILO tag locked
+
+**Tools assessed:**
+- Google Flow ✅ — confirmed pipeline tool for all Milo animation
+- Viggle ❌ — ruled out, broken quadruped motion
+- Lottie ❌ — ruled out, wrong format for rendered character
+- Unscreen.com — untested, test tomorrow with green screen clip
+
+**Bugs added:** None
+
+**First task next session:**
+Generate the idle wag with green background → run through Unscreen.com → confirm transparent output is clean → then build the full pose spec and batch all prompts
