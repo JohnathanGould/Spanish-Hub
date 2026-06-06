@@ -55,8 +55,17 @@ export default function ProfileSheet({ open, onClose, user, userData, masteredCo
             href="https://milo-speaks.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-semibold mb-3"
-            style={{ color: 'hsl(var(--muted-foreground))', textDecoration: 'none', letterSpacing: '0.5px' }}
+            style={{
+              background: '#F5C518',
+              color: '#3D2B1F',
+              fontWeight: 700,
+              borderRadius: '50px',
+              padding: '0.3rem 1rem',
+              fontSize: '0.85rem',
+              textDecoration: 'none',
+              display: 'inline-block',
+              marginBottom: '1rem',
+            }}
           >
             🐾 milo-speaks.com
           </a>
