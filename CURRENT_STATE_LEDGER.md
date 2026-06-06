@@ -203,11 +203,8 @@ Replace every hardcoded value from audit with config references. No logic change
 Move words.js, paths.js, drillData.js → src/content/es-en/
 Update all import paths. No content changes.
 
-**P4 — Firestore Progress Key Migration (Cursor Composer)**
-Change progress.es → progress["es-en"] across app and Firestore.
-Run migration against emulator first. Then production once verified.
-Leave old key 30 days before cleanup.
-**THIS MUST COMPLETE BEFORE PATHS IS BUILT.**
+**P4 — Firestore Progress Key Migration**
+P4 is deferred — progress is already flat and word-keyed. No migration needed until a second language is actively being built. Do not run P4 until monorepo structure exists and emulator testing is complete.
 
 Tagalog note: Deferred until post-Stage 5. Difficulty ~4/10 vs Spanish 10/10.
 Structurally different from Romance languages — may need 1-2 new drill types.
@@ -418,3 +415,25 @@ Open Emergent. Paste PATHS_STOPS_STATE_LEDGER_SPEC.md as your first message. The
 
 **First task next session:**
 Open Emergent (tokens renew day after tomorrow). Paste memory/PATHS_STOPS_STATE_LEDGER_SPEC.md as first message.
+
+---
+
+## SESSION END — 2026-06-05 (Session 9)
+
+**Completed:**
+- P1 ✅ — MONOREPO_AUDIT.md committed — 66 hardcoded language references across 14 files, all LOW-MEDIUM effort
+- P2 ✅ — languageConfig.js created at src/config/languageConfig.js, all 66 references migrated across 15 files
+- P3 ✅ — content files moved to src/content/es-en/ (words.js, lessons.js, drillData.js, paths.js), all import paths updated, build verified clean
+- memory/PATHS_STOPS_STATE_LEDGER_SPEC.md committed — 817 lines, four audit passes, ready for Emergent
+- memory/PRE_EMERGENT_AUDIT_PROMPT.md committed — reusable template for all future Emergent sessions
+
+**Decisions locked:**
+- P4 (Firestore progress key migration) — dedicated session only, emulator required, never rushed
+- Original files in src/data/ — kept intact pending app verification before removal
+
+**Bugs added:** None
+
+**Tools assessed:** Nothing new
+
+**First task next session:**
+Open Emergent (tokens renew tomorrow). Paste memory/PATHS_STOPS_STATE_LEDGER_SPEC.md as first message. Prerequisites all confirmed complete.
