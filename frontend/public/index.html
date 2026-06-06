@@ -1,134 +1,627 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="theme-color" content="#F5C518" />
-        <meta name="description" content="Learn Spanish with Milo 🐾 15 drills, lessons, AI conversation practice and 300+ words. Free forever — no ads, no subscriptions." />
-        <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-        <link rel="icon" type="image/jpeg" href="%PUBLIC_URL%/milo-icon.jpg" />
-        <link rel="apple-touch-icon" href="%PUBLIC_URL%/milo-icon.jpg" />
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Milo Speaks — Free Language Learning Apps</title>
+<meta name="description" content="Free language learning apps named in memory of Milo 🐾 No ads. No subscriptions. No limits on learning.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        <!-- Open Graph (Facebook, iMessage, LinkedIn, Slack, Discord) -->
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Milo Speaks Spanish" />
-        <meta property="og:title" content="Milo Speaks Spanish — Learn Spanish for Free" />
-        <meta property="og:description" content="15 drills · lessons · AI conversation practice · 300+ words · daily challenges. Free forever — no ads, no subscriptions. Named in memory of our dog Milo 🐾" />
-        <meta property="og:image" content="https://spanish-hub-zeta.vercel.app/milo-banner.jpg" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="Milo Speaks Spanish — free Spanish learning app" />
-        <meta property="og:url" content="https://spanish-hub-zeta.vercel.app/" />
-        <meta property="og:locale" content="en_US" />
+  :root {
+    --yellow: #F5C518;
+    --yellow-dark: #D4A017;
+    --yellow-light: #FFF8D6;
+    --brown: #3D2B1F;
+    --brown-mid: #6B4226;
+    --white: #FFFFFF;
+    --off-white: #FFFDF5;
+    --gray-light: #F5F0E8;
+    --gray-mid: #C8BEA8;
+    --green: #2D9E5F;
+    --green-dark: #1E7A46;
+    --blue: #1A73C8;
+    --red: #D64535;
+    --shadow: 0 4px 24px rgba(61,43,31,0.12);
+    --shadow-hover: 0 8px 32px rgba(61,43,31,0.2);
+    --radius: 20px;
+    --radius-sm: 12px;
+  }
 
-        <!-- Twitter / X card -->
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Milo Speaks Spanish — Learn Spanish for Free" />
-        <meta name="twitter:description" content="15 drills · lessons · AI conversation practice · 300+ words. Free forever 🐾" />
-        <meta name="twitter:image" content="https://spanish-hub-zeta.vercel.app/milo-banner.jpg" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap" rel="stylesheet" />
-        <!--
-        manifest.json provides metadata used when your web app is installed on a
-        user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-        -->
-        <!--
-        Notice the use of %PUBLIC_URL% in the tags above.
-        It will be replaced with the URL of the `public` folder during the build.
-        Only files inside the `public` folder can be referenced from the HTML.
+  html { scroll-behavior: smooth; }
 
-        Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-        work correctly both with client-side routing and a non-root public URL.
-        Learn how to configure a non-root public URL by running `npm run build`.
-        -->
-        <title>Milo Speaks Spanish — Learn Spanish for Free</title>
-        <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
-        <script src="https://assets.emergent.sh/scripts/emergent-main.js"></script>
-    </head>
-    <body>
-        <noscript>You need to enable JavaScript to run this app.</noscript>
-        <div id="root"></div>
-        <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--off-white);
+    color: var(--brown);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
 
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
+  /* ── HEADER ── */
+  header {
+    background: var(--yellow);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--yellow-dark);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
 
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
-        <script>
-            !(function (t, e) {
-                var o, n, p, r;
-                e.__SV ||
-                    ((window.posthog = e),
-                    (e._i = []),
-                    (e.init = function (i, s, a) {
-                        function g(t, e) {
-                            var o = e.split(".");
-                            2 == o.length && ((t = t[o[0]]), (e = o[1])),
-                                (t[e] = function () {
-                                    t.push(
-                                        [e].concat(
-                                            Array.prototype.slice.call(
-                                                arguments,
-                                                0,
-                                            ),
-                                        ),
-                                    );
-                                });
-                        }
-                        ((p = t.createElement("script")).type =
-                            "text/javascript"),
-                            (p.crossOrigin = "anonymous"),
-                            (p.async = !0),
-                            (p.src =
-                                s.api_host.replace(
-                                    ".i.posthog.com",
-                                    "-assets.i.posthog.com",
-                                ) + "/static/array.js"),
-                            (r =
-                                t.getElementsByTagName(
-                                    "script",
-                                )[0]).parentNode.insertBefore(p, r);
-                        var u = e;
-                        for (
-                            void 0 !== a ? (u = e[a] = []) : (a = "posthog"),
-                                u.people = u.people || [],
-                                u.toString = function (t) {
-                                    var e = "posthog";
-                                    return (
-                                        "posthog" !== a && (e += "." + a),
-                                        t || (e += " (stub)"),
-                                        e
-                                    );
-                                },
-                                u.people.toString = function () {
-                                    return u.toString(1) + ".people (stub)";
-                                },
-                                o =
-                                    "init me ws ys ps bs capture je Di ks register register_once register_for_session unregister unregister_for_session Ps getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Es $s createPersonProfile Is opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing Ss debug xs getPageViewId captureTraceFeedback captureTraceMetric".split(
-                                        " ",
-                                    ),
-                                n = 0;
-                            n < o.length;
-                            n++
-                        )
-                            g(u, o[n]);
-                        e._i.push([i, s, a]);
-                    }),
-                    (e.__SV = 1));
-            })(document, window.posthog || []);
-            posthog.init("phc_xAvL2Iq4tFmANRE7kzbKwaSqp1HJjN7x48s3vr0CMjs", {
-                api_host: "https://us.i.posthog.com",
-                person_profiles: "identified_only",
-                session_recording: {
-                    recordCrossOriginIframes: true,
-                    capturePerformance: false,
-                },
-            });
-        </script>
-    </body>
+  .header-logo {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--brown);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+  }
+
+  .header-logo span { color: var(--brown-mid); }
+
+  nav { display: flex; gap: 1rem; align-items: center; }
+
+  nav a {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--brown);
+    text-decoration: none;
+    padding: 0.4rem 0.9rem;
+    border-radius: 50px;
+    transition: background 0.2s;
+  }
+
+  nav a:hover { background: rgba(61,43,31,0.1); }
+
+  .btn-support {
+    background: var(--brown) !important;
+    color: var(--yellow) !important;
+    padding: 0.45rem 1.1rem !important;
+    border-radius: 50px !important;
+  }
+
+  .btn-support:hover { background: var(--brown-mid) !important; }
+
+  /* ── HERO ── */
+  .hero {
+    width: 100%;
+    max-height: 480px;
+    overflow: hidden;
+    display: block;
+  }
+
+  .hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+  }
+
+  /* ── TAGLINE STRIP ── */
+  .tagline-strip {
+    background: var(--brown);
+    color: var(--yellow);
+    text-align: center;
+    padding: 1.4rem 2rem;
+  }
+
+  .tagline-strip p {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .tagline-strip .sub {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--gray-mid);
+    margin-top: 0.3rem;
+  }
+
+  /* ── PROMISE BAR ── */
+  .promise-bar {
+    background: var(--yellow-light);
+    border-top: 2px solid var(--yellow);
+    border-bottom: 2px solid var(--yellow);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .promise-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--brown);
+  }
+
+  .promise-item .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--green);
+    flex-shrink: 0;
+  }
+
+  /* ── SECTION ── */
+  section { padding: 4rem 2rem; max-width: 1100px; margin: 0 auto; }
+
+  .section-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--brown);
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-sub {
+    text-align: center;
+    color: var(--brown-mid);
+    font-size: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  /* ── APP CARDS ── */
+  .apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .app-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .app-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .app-card-header {
+    padding: 1.5rem 1.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .app-flag {
+    font-size: 2.8rem;
+    line-height: 1;
+  }
+
+  .app-card-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--brown);
+  }
+
+  .app-card-subtitle {
+    font-size: 0.85rem;
+    color: var(--brown-mid);
+    font-weight: 600;
+  }
+
+  .app-card-body {
+    padding: 0 1.5rem 1rem;
+    flex: 1;
+  }
+
+  .app-card-body p {
+    font-size: 0.95rem;
+    color: var(--brown);
+    line-height: 1.6;
+  }
+
+  .app-features {
+    list-style: none;
+    margin-top: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .app-features li {
+    font-size: 0.88rem;
+    color: var(--brown-mid);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .app-features li::before {
+    content: '🐾';
+    font-size: 0.75rem;
+  }
+
+  .app-card-footer {
+    padding: 1rem 1.5rem 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .btn-primary {
+    flex: 1;
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 0.7rem 1rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    transition: background 0.2s, transform 0.15s;
+    display: block;
+  }
+
+  .btn-primary:hover { background: var(--green-dark); transform: scale(1.02); }
+
+  .btn-coming {
+    flex: 1;
+    background: var(--gray-light);
+    color: var(--gray-mid);
+    border: 2px dashed var(--gray-mid);
+    border-radius: 50px;
+    padding: 0.7rem 1rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    text-align: center;
+    cursor: default;
+  }
+
+  .badge-live {
+    display: inline-block;
+    background: var(--green);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 50px;
+    letter-spacing: 0.5px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+
+  .badge-soon {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--brown);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.6rem;
+    border-radius: 50px;
+    letter-spacing: 0.5px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+
+  /* ── ABOUT STRIP ── */
+  .about-strip {
+    background: var(--brown);
+    color: var(--white);
+    padding: 4rem 2rem;
+  }
+
+  .about-inner {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .about-inner .paw { font-size: 3rem; margin-bottom: 1rem; display: block; }
+
+  .milo-gif {
+    width: 220px;
+    height: auto;
+    margin: 0 auto 1rem;
+    display: block;
+    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.4));
+  }
+
+  .about-inner h2 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--yellow);
+    margin-bottom: 1rem;
+  }
+
+  .about-inner p {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+  }
+
+  .about-inner p strong { color: var(--yellow); }
+
+  /* ── COMMUNITY ── */
+  .community-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .community-card {
+    background: var(--white);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    text-align: center;
+    text-decoration: none;
+    color: var(--brown);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .community-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .community-icon { font-size: 2.2rem; }
+
+  .community-card h3 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .community-card p {
+    font-size: 0.85rem;
+    color: var(--brown-mid);
+    font-weight: 500;
+  }
+
+  /* ── SUPPORT ── */
+  .support-section {
+    background: var(--yellow-light);
+    border-top: 3px solid var(--yellow);
+    border-bottom: 3px solid var(--yellow);
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+
+  .support-section h2 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--brown);
+    margin-bottom: 0.75rem;
+  }
+
+  .support-section p {
+    font-size: 1rem;
+    color: var(--brown-mid);
+    max-width: 560px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.7;
+  }
+
+  .btn-kofi {
+    display: inline-block;
+    background: #FF5E5B;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.85rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    box-shadow: 0 4px 16px rgba(255,94,91,0.3);
+  }
+
+  .btn-kofi:hover { background: #e04845; transform: scale(1.03); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--brown);
+    color: rgba(255,255,255,0.6);
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.85rem;
+  }
+
+  footer a { color: var(--yellow); text-decoration: none; }
+  footer .paw { color: var(--yellow); font-size: 1.2rem; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    header { padding: 0.8rem 1rem; }
+    .header-logo { font-size: 1.2rem; }
+    nav a { font-size: 0.8rem; padding: 0.3rem 0.6rem; }
+    .tagline-strip p { font-size: 1.2rem; }
+    .promise-bar { gap: 1rem; }
+    section { padding: 2.5rem 1rem; }
+    .hero { max-height: 220px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <a href="#" class="header-logo">Milo<span> Speaks</span></a>
+  <nav>
+    <a href="#apps">Apps</a>
+    <a href="#about">About</a>
+    <a href="#community">Community</a>
+    <a href="https://ko-fi.com/milospeaks" class="btn-support">Support Milo ☕</a>
+  </nav>
+</header>
+
+<!-- HERO BANNER -->
+<div class="hero">
+  <img src="MiloSpeaks_Banner.png" alt="Milo Speaks — free language learning apps with Milo the black lab">
+</div>
+
+<!-- TAGLINE STRIP -->
+<div class="tagline-strip">
+  <p>Free language learning. For everyone. Forever.</p>
+  <p class="sub">Named in memory of a good boy who saw only goodness in everyone he met 🐾</p>
+</div>
+
+<!-- PROMISE BAR -->
+<div class="promise-bar">
+  <div class="promise-item"><span class="dot"></span> No interrupting ads</div>
+  <div class="promise-item"><span class="dot"></span> No paywalls</div>
+  <div class="promise-item"><span class="dot"></span> No limits on learning</div>
+  <div class="promise-item"><span class="dot"></span> Always free</div>
+</div>
+
+<!-- APPS -->
+<section id="apps">
+  <h2 class="section-title">Choose your language</h2>
+  <p class="section-sub">Milo learns alongside you — one language at a time.</p>
+
+  <div class="apps-grid">
+
+    <!-- Spanish — LIVE -->
+    <div class="app-card">
+      <div class="app-card-header">
+        <div class="app-flag">🇲🇽</div>
+        <div>
+          <div class="app-card-title">Milo Speaks Spanish <span class="badge-live">LIVE</span></div>
+          <div class="app-card-subtitle">English speakers · Latin American Spanish</div>
+        </div>
+      </div>
+      <div class="app-card-body">
+        <p>Learn Spanish from zero with Milo. Drills, lessons, AI conversation practice, and a full structured curriculum taking you from beginner to conversational.</p>
+        <ul class="app-features">
+          <li>300+ words across 12 learning paths</li>
+          <li>15 drill types including listening and typing</li>
+          <li>AI tutor powered by Gemini</li>
+          <li>Leaderboard, streaks, and badges</li>
+        </ul>
+      </div>
+      <div class="app-card-footer">
+        <a href="https://spanish-hub-zeta.vercel.app/" class="btn-primary" target="_blank">Start learning free →</a>
+      </div>
+    </div>
+
+    <!-- English for Spanish speakers — Coming -->
+    <div class="app-card">
+      <div class="app-card-header">
+        <div class="app-flag">🇺🇸</div>
+        <div>
+          <div class="app-card-title">Milo habla inglés <span class="badge-soon">COMING</span></div>
+          <div class="app-card-subtitle">Hablantes de español · Inglés americano</div>
+        </div>
+      </div>
+      <div class="app-card-body">
+        <p>El mismo Milo, aprendiendo inglés contigo. Lecciones, ejercicios, práctica con IA — todo gratis, sin anuncios, sin límites.</p>
+      </div>
+      <div class="app-card-footer">
+        <div class="btn-coming">En desarrollo</div>
+      </div>
+    </div>
+
+    <!-- French — Coming -->
+    <div class="app-card">
+      <div class="app-card-header">
+        <div class="app-flag">🇫🇷</div>
+        <div>
+          <div class="app-card-title">Milo Speaks French <span class="badge-soon">COMING</span></div>
+          <div class="app-card-subtitle">English speakers · European French</div>
+        </div>
+      </div>
+      <div class="app-card-body">
+        <p>The same Milo you know — learning French alongside you. Full curriculum, AI practice, and everything you love from the Spanish app.</p>
+      </div>
+      <div class="app-card-footer">
+        <div class="btn-coming">In development</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<div class="about-strip" id="about">
+  <div class="about-inner">
+    <img src="/animations/milo_idle.gif" alt="Milo the black lab" class="milo-gif">
+    <h2>Who is Milo?</h2>
+    <p>Milo was a real black lab who crashed every Monday morning conference call for years. He had boundless energy, zero filter, and saw only goodness in everyone he met.</p>
+    <p>The Milo Speaks apps carry his name. Every language, every learner, every feature built — it's all in his memory.</p>
+    <p><strong>No ads that interrupt. No subscriptions. No paywalls.</strong> Learning a language should be free. Milo would have had it no other way.</p>
+  </div>
+</div>
+
+<!-- COMMUNITY -->
+<section id="community">
+  <h2 class="section-title">Join the community</h2>
+  <p class="section-sub">Follow the build, share your progress, and help shape what Milo becomes.</p>
+
+  <div class="community-grid">
+    <a href="https://www.reddit.com/r/MiloSpeaksSpanish/" class="community-card" target="_blank">
+      <div class="community-icon">🟠</div>
+      <h3>Reddit</h3>
+      <p>r/MiloSpeaksSpanish — updates, feedback, and the community</p>
+    </a>
+
+    <a href="#" class="community-card" target="_blank">
+      <div class="community-icon">💬</div>
+      <h3>Discord</h3>
+      <p>Dev server, bug reports, and language practice — coming soon</p>
+    </a>
+
+    <a href="https://spanish-hub-zeta.vercel.app/" class="community-card" target="_blank">
+      <div class="community-icon">🌎</div>
+      <h3>Milo Speaks Spanish</h3>
+      <p>The live app — free, no account required to explore</p>
+    </a>
+  </div>
+</section>
+
+<!-- SUPPORT -->
+<div class="support-section">
+  <h2>Keep Milo running 🐾</h2>
+  <p>Building free apps costs real money — AI tools, hosting, and development credits. Every treat goes directly toward keeping the apps free and building new features.</p>
+  <a href="https://ko-fi.com/milospeaks" class="btn-kofi" target="_blank">☕ Buy Milo a treat on Ko-fi</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p class="paw">🐾</p>
+  <p style="margin-top: 0.5rem;">Milo Speaks — free language learning, built with love.</p>
+  <p style="margin-top: 0.5rem;">
+    <a href="https://spanish-hub-zeta.vercel.app/">Milo Speaks Spanish</a> ·
+    <a href="https://www.reddit.com/r/MiloSpeaksSpanish/">Reddit</a> ·
+    <a href="https://ko-fi.com/milospeaks">Ko-fi</a>
+  </p>
+  <p style="margin-top: 1rem; font-size: 0.8rem; opacity: 0.5;">In memory of Milo — a very good boy.</p>
+</footer>
+
+</body>
 </html>
