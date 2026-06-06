@@ -241,28 +241,38 @@ All Stage 1 decisions locked 2026-06-04. No open decisions remaining.
 
 ## MILO ANIMATION PIPELINE
 
-All Milo animations are generated in Google Flow. Two-step pipeline:
+**Pipeline:** All Milo animations generated in Google Flow. Two steps:
+1. Generate pose PNG with white background.
+2. Animate PNG to GIF in Flow with white background. No post-processing, no transparency needed.
 
-1. **Generate pose PNG in Flow** — solid background matching the target screen colour. No transparency needed.
-2. **Animate PNG to GIF in Flow** — same solid background colour. No post-processing required.
+**File storage:**
+- Spanish-Hub repo: `frontend/public/animations/`
+- milo-speaks repo: `animations/`
 
-**Background colours:**
-- About section: dark brown `#3D2B1F`
-- App screens: white `#FFFFFF`
-- App off-white: `#FFFDF5`
+**Naming convention:** `milo_[pose].gif`
 
-**File storage:** `frontend/public/animations/`
+**Character canon:** Black lab, purple collar, gold MILO bone tag, no bandana, tie only for special event poses. Senior dog feel — greying muzzle, warm brown eyes.
 
-**Naming convention:** `milo_[pose].gif` — e.g. `milo_idle.gif`, `milo_wrong_tilt.gif`, `milo_encouraging.gif`
+**Display pattern:** All Milo GIFs wrapped in `.milo-container` white circle div. CSS: `background: white; border-radius: 50%; padding: 1.5rem; box-shadow: 0 4px 24px rgba(0,0,0,0.3)`. Works on any background colour.
 
-**Character canon:** black lab, purple collar, gold MILO bone tag, no bandana, tie only for special event poses
+**Poses complete:**
+- `milo_idle.gif` — sitting, tail wagging, subtle breathing. Live on milo-speaks.com/#about.
 
-**GIF display pattern:** Always wrap in `.milo-container` div — `background: white; border-radius: 50%; padding: 1.5rem`. Works on any background colour. No transparency needed.
+**Poses pending:**
+- `milo_wrong_tilt.gif`, `milo_encouraging.gif` — two-beat wrong answer sequence.
+- All other poses — full pose spec not yet built.
 
 **Ruled out:**
 - Viggle ❌ — broken quadruped motion
 - Lottie ❌ — wrong format for rendered character style
-- CSS keyframes — supplemental minor motion only if needed
+- Google Flow video → Lottie conversion ❌ — wrong format
+
+**Repos:** Landing page lives in `JohnathanGould/milo-speaks` repo, NOT in Spanish-Hub.
+⚠️ `frontend/public/index.html` in Spanish-Hub is the React app entry point — never edit it for landing page purposes.
+
+**Banner:** Needs regenerating in Flow — current banner Milo looks too young and cartoony vs the animated GIF style. Match `milo_default.jpg` style.
+
+**First task next session:** Regenerate `milo_idle.gif` with correct senior dog style matching banner. Then build full pose spec and batch all Flow prompts.
 
 ---
 
