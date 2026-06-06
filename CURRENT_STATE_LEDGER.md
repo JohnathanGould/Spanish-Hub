@@ -257,6 +257,8 @@ All Milo animations are generated in Google Flow. Two-step pipeline:
 
 **Character canon:** black lab, purple collar, gold MILO bone tag, no bandana, tie only for special event poses
 
+**GIF display pattern:** Always wrap in `.milo-container` div — `background: white; border-radius: 50%; padding: 1.5rem`. Works on any background colour. No transparency needed.
+
 **Ruled out:**
 - Viggle ❌ — broken quadruped motion
 - Lottie ❌ — wrong format for rendered character style
@@ -481,27 +483,25 @@ Then open Emergent — paste memory/PATHS_STOPS_STATE_LEDGER_SPEC.md as first me
 ## SESSION END — 2026-06-06 (Session 11)
 
 **Completed:**
-- Ruled out Google Flow for Lottie (wrong format, wrong approach)
-- Ruled out Viggle (broken dog motion)
-- Confirmed Flow image-to-video as the animation pipeline
-- Confirmed idle wag GIF — correct style, collar, tag, loops cleanly
-- Confirmed green screen workflow: Flow → Unscreen.com → transparent GIF
-- Locked character canon: purple collar, gold MILO tag, no bandana, tie for special events only
-- Designed two-beat wrong answer animation: uncertain head tilt → encouraging recovery
-- Defined in-app state names: milo_uncertain → milo_encouraging
+- Full animation pipeline proven end to end
+- Milo live on milo-speaks.com/#about, tail wagging
+- GIF file location confirmed: frontend/public/animations/milo_idle.gif
+- Background colour strategy confirmed: bake target screen colour into Flow prompt, no post-processing
+- Bandana lore fixed in index.html
+- vercel.json routing updated with filesystem handler
 
 **Decisions locked:**
-- Animation format: transparent GIF via green screen removal
-- Animation tool: Google Flow exclusively
-- Character canon: purple collar, gold MILO tag locked
+- Animation format: GIF with baked background colour matched to target screen
+- No transparency pipeline needed
+- Idle animation background needs regenerating with #3D2B1F tomorrow
 
 **Tools assessed:**
 - Google Flow ✅ — confirmed pipeline tool for all Milo animation
 - Viggle ❌ — ruled out, broken quadruped motion
 - Lottie ❌ — ruled out, wrong format for rendered character
-- Unscreen.com — untested, test tomorrow with green screen clip
+- Unscreen.com ❌ — not needed, baked background approach eliminates green screen step
 
 **Bugs added:** None
 
 **First task next session:**
-Generate the idle wag with green background → run through Unscreen.com → confirm transparent output is clean → then build the full pose spec and batch all prompts
+Regenerate milo_idle.gif with #3D2B1F background in Flow → push → white box gone → then build full pose spec
