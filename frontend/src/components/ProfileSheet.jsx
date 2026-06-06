@@ -50,6 +50,17 @@ export default function ProfileSheet({ open, onClose, user, userData, masteredCo
 
         <div className="px-5 pb-24 flex flex-col items-center">
 
+          {/* Milo Speaks link */}
+          <a
+            href="https://milo-speaks.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-semibold mb-3"
+            style={{ color: 'hsl(var(--muted-foreground))', textDecoration: 'none', letterSpacing: '0.5px' }}
+          >
+            🐾 milo-speaks.com
+          </a>
+
           {/* Avatar */}
           <div style={{
             width: 80, height: 80,
