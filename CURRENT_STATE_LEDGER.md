@@ -239,6 +239,31 @@ All Stage 1 decisions locked 2026-06-04. No open decisions remaining.
 
 ---
 
+## MILO ANIMATION PIPELINE
+
+All Milo animations are generated in Google Flow. Two-step pipeline:
+
+1. **Generate pose PNG in Flow** — solid background matching the target screen colour. No transparency needed.
+2. **Animate PNG to GIF in Flow** — same solid background colour. No post-processing required.
+
+**Background colours:**
+- About section: dark brown `#3D2B1F`
+- App screens: white `#FFFFFF`
+- App off-white: `#FFFDF5`
+
+**File storage:** `frontend/public/animations/`
+
+**Naming convention:** `milo_[pose].gif` — e.g. `milo_idle.gif`, `milo_wrong_tilt.gif`, `milo_encouraging.gif`
+
+**Character canon:** black lab, purple collar, gold MILO bone tag, no bandana, tie only for special event poses
+
+**Ruled out:**
+- Viggle ❌ — broken quadruped motion
+- Lottie ❌ — wrong format for rendered character style
+- CSS keyframes — supplemental minor motion only if needed
+
+---
+
 ## TOOL ASSIGNMENT RULES
 - Claude Code CLI — free (Claude Pro), single and multi-file edits, config files, content relocation, component wiring, bug fixes
 - Cursor Composer — free, Wrapper Pattern wiring, bug fixes, multi-file bounded changes
