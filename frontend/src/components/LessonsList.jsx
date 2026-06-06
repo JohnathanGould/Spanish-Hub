@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Lock, Clock, BookOpen, Award } from 'lucide-react';
-import { LESSONS } from '../data/lessons';
+import { LESSONS } from '../content/es-en/lessons';
 
 export default function LessonsList({ lessonsCompleted = [], onOpenLesson, onShowCertificate }) {
   const completedSet = new Set(lessonsCompleted);

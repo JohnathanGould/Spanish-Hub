@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Flame, Sparkles, Check, Zap } from 'lucide-react';
-import { DAILY_THEMES } from '../data/lessons';
+import { DAILY_THEMES } from '../content/es-en/lessons';
 
 export default function DailyChallenge({ challenges, onStart }) {
   const today = new Date().toDateString();

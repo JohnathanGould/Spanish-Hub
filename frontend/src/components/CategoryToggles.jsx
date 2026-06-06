@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { X, Check, Zap } from 'lucide-react';
-import { TOGGLEABLE_CATEGORIES, PRESET_PACKS } from '../data/words';
+import { TOGGLEABLE_CATEGORIES, PRESET_PACKS } from '../content/es-en/words';
 
 function getActivePresetId(categoryEnabled) {
   return PRESET_PACKS.find(p =>

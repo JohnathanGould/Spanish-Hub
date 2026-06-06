@@ -1,6 +1,6 @@
 import { languageConfig } from '../config/languageConfig';
 import React from 'react';
-import { MASTER } from '../data/words';
+import { MASTER } from '../content/es-en/words';
 import { speak } from '../utils/helpers';
 import DailyChallenge from './DailyChallenge';
 import { KofiSupport } from './KofiSupport';

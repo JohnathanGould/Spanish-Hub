@@ -1,7 +1,7 @@
 import { languageConfig } from '../config/languageConfig';
 import React from 'react';
 import { ArrowLeft, Volume2, CheckCircle2, Lightbulb, ArrowRight, BookOpen } from 'lucide-react';
-import { LESSONS } from '../data/lessons';
+import { LESSONS } from '../content/es-en/lessons';
 import { speak } from '../utils/helpers';
 
 export default function LessonView({ lessonId, lessonsCompleted, onComplete, onPractice, onBack }) {

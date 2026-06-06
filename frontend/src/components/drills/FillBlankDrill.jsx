@@ -3,8 +3,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { shuffle, speak } from '../../utils/helpers';
-import { FITB_POOL } from '../../data/drillData';
-import { VERB_TABLE } from '../../data/words';
+import { FITB_POOL } from '../../content/es-en/drillData';
+import { VERB_TABLE } from '../../content/es-en/words';
 
 export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength = 10 }) {
   const total = drillLength;

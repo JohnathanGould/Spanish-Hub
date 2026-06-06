@@ -1,7 +1,7 @@
 ﻿import { languageConfig } from '../config/languageConfig';
 import React, { useState } from 'react';
 import { Search, Plus, Trash2, ChevronRight, Globe, Package } from 'lucide-react';
-import { VERB_TABLE, NOUN_GROUPS, TOGGLEABLE_CATEGORIES, PRESET_PACKS } from '../data/words';
+import { VERB_TABLE, NOUN_GROUPS, TOGGLEABLE_CATEGORIES, PRESET_PACKS } from '../content/es-en/words';
 
 function getActivePreset(categoryEnabled) {
   return PRESET_PACKS.find(p =>

@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { ArrowRight, Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { shuffle, speak, playCorrect } from '../../utils/helpers';
-import { SENT_POOL } from '../../data/drillData';
+import { SENT_POOL } from '../../content/es-en/drillData';
 
 export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLength = 10 }) {
   const total = Math.min(drillLength, SENT_POOL.length);

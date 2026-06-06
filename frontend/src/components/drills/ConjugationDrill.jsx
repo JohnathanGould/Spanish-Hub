@@ -3,8 +3,8 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { shuffle, speak } from '../../utils/helpers';
-import { CONJ, PRETERITE } from '../../data/drillData';
-import { VERB_TABLE } from '../../data/words';
+import { CONJ, PRETERITE } from '../../content/es-en/drillData';
+import { VERB_TABLE } from '../../content/es-en/words';
 
 const _PRONOUN_EN = { yo: 'I', tu: 'you', el_ella: 'he/she', nosotros: 'we', ustedes: 'they' };
 

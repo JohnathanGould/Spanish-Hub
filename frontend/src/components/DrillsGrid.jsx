@@ -1,7 +1,7 @@
 import { languageConfig } from '../config/languageConfig';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { DRILLS } from '../data/drillData';
+import { DRILLS } from '../content/es-en/drillData';
 
 const CARD_STYLES = {
   amber:   { bg: '#FEF3C7', num: '#FDE68A', numText: '#78350F', title: '#451A03', desc: '#92400E' },
