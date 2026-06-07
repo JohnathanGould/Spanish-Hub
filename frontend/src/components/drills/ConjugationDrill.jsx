@@ -56,7 +56,14 @@ export default function ConjugationDrill({ mode, onAnswer, onDone, onBack, drill
   };
 
   return (
-    <DrillShell title={titles[mode].title} subtitle={titles[mode].sub} current={idx + 1} total={queue.length} onBack={onBack}>
+    <DrillShell title={titles[mode].title} subtitle={titles[mode].sub} current={idx + 1} total={queue.length} onBack={onBack}
+      footer={picked && (
+        <button onClick={handleContinue} data-testid="conj-continue"
+          className="w-full py-3 rounded-xl font-bold text-white text-sm"
+          style={{ background: 'hsl(var(--primary))' }}>
+          {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
+        </button>
+      )}>
       <div className="rounded-3xl p-7 mb-5 text-center"
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
         <div className="text-xs uppercase tracking-wider mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
@@ -95,11 +102,6 @@ export default function ConjugationDrill({ mode, onAnswer, onDone, onBack, drill
           <div className="text-xs mb-3" style={{ color: '#374151' }}>
             {getConjEnglish(item)}
           </div>
-          <button onClick={handleContinue} data-testid="conj-continue"
-            className="w-full py-3 rounded-xl font-bold text-white text-sm"
-            style={{ background: 'hsl(var(--primary))' }}>
-            {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
-          </button>
         </div>
       )}
     </DrillShell>

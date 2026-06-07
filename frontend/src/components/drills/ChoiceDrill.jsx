@@ -65,7 +65,14 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
   };
 
   return (
-    <DrillShell title={titles[mode].title} subtitle={titles[mode].sub} current={idx + 1} total={queue.length} onBack={onBack}>
+    <DrillShell title={titles[mode].title} subtitle={titles[mode].sub} current={idx + 1} total={queue.length} onBack={onBack}
+      footer={picked && (
+        <button onClick={handleContinue} data-testid="choice-continue"
+          className="w-full py-3 rounded-xl font-bold text-white text-sm"
+          style={{ background: 'hsl(var(--primary))' }}>
+          {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
+        </button>
+      )}>
       <div className="rounded-3xl p-8 mb-5 text-center"
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
         {(mode === 'hear-choose' || mode === 'hear-choose-en-es') ? (
@@ -138,11 +145,6 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
               <div className="text-xs mt-1" style={{ color: '#374151' }}>{word.en}</div>
             </div>
           )}
-          <button onClick={handleContinue} data-testid="choice-continue"
-            className="w-full py-3 rounded-xl font-bold text-white text-sm"
-            style={{ background: 'hsl(var(--primary))' }}>
-            {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
-          </button>
         </div>
       )}
     </DrillShell>

@@ -67,7 +67,14 @@ export default function GenderDrill({ words, progress, onAnswer, onDone, onBack,
   };
 
   return (
-    <DrillShell title="Gender Drill" subtitle="el (masculine) or la (feminine)?" current={idx + 1} total={nouns.length} onBack={onBack}>
+    <DrillShell title="Gender Drill" subtitle="el (masculine) or la (feminine)?" current={idx + 1} total={nouns.length} onBack={onBack}
+      footer={picked && (
+        <button onClick={handleContinue} data-testid="gender-continue"
+          className="w-full py-3 rounded-xl font-bold text-white text-sm"
+          style={{ background: 'hsl(var(--primary))' }}>
+          {idx + 1 >= nouns.length ? 'Finish ✓' : 'Continue →'}
+        </button>
+      )}>
       <div className="rounded-3xl p-8 mb-6 text-center transition-all duration-300"
         style={containerStyle}>
         <div className="text-xs uppercase tracking-wider mb-3"
@@ -102,11 +109,6 @@ export default function GenderDrill({ words, progress, onAnswer, onDone, onBack,
           </div>
           <button onClick={() => speak(`${correctLabel} ${word.es}`, languageConfig.sourceLanguage)} className="speak-btn mx-auto mb-3">
             <Volume2 size={12} /> Hear it
-          </button>
-          <button onClick={handleContinue} data-testid="gender-continue"
-            className="w-full py-3 rounded-xl font-bold text-white text-sm"
-            style={{ background: 'hsl(var(--primary))' }}>
-            {idx + 1 >= nouns.length ? 'Finish ✓' : 'Continue →'}
           </button>
         </div>
       )}

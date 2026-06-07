@@ -52,7 +52,14 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
 
   return (
     <DrillShell title="Fill in the Blank" subtitle="Pick the missing word"
-      current={idx + 1} total={queue.length} onBack={onBack}>
+      current={idx + 1} total={queue.length} onBack={onBack}
+      footer={picked && (
+        <button onClick={handleContinue} data-testid="fitb-continue"
+          className="w-full py-3 rounded-xl font-bold text-white text-sm"
+          style={{ background: 'hsl(var(--primary))' }}>
+          {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
+        </button>
+      )}>
       <div className="rounded-3xl p-7 mb-4 text-center"
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
         <div className="font-serif text-xl sm:text-2xl font-bold leading-relaxed" data-testid="fitb-prompt" style={{ color: 'hsl(var(--foreground))' }}>
@@ -99,11 +106,6 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
           {item.en && <div className="text-xs mb-3" style={{ color: '#374151' }}>{item.en}</div>}
           <button onClick={() => speak(`${item.before} ${item.blank} ${item.after}`, languageConfig.sourceLanguage, 0.72)} className="speak-btn mx-auto mb-3">
             <Volume2 size={12} /> Hear it
-          </button>
-          <button onClick={handleContinue} data-testid="fitb-continue"
-            className="w-full py-3 rounded-xl font-bold text-white text-sm"
-            style={{ background: 'hsl(var(--primary))' }}>
-            {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
           </button>
         </div>
       )}
