@@ -461,43 +461,27 @@ function StopView({
     const isLast = currentWordIndex === words.length - 1;
 
     return (
-      <div className="flex flex-col p-4">
-        <button
-          type="button"
-          data-testid="stop-view-back-btn"
-          onClick={onBack}
-          className="inline-flex items-center gap-1 text-sm font-medium mb-4 flex-shrink-0"
-          style={{ color: 'hsl(var(--primary))' }}
-        >
-          ← Back to Paths
-        </button>
-
-        <p
-          className="text-xs uppercase tracking-wider mb-3 flex-shrink-0"
-          style={{ color: 'hsl(var(--muted-foreground))' }}
-          data-testid="word-intro-progress"
-        >
-          {stop.title} · Word {currentWordIndex + 1} of {words.length}
-        </p>
-
-        <div className="flex-1 flex flex-col justify-center">
-          <WordIntroCard
-            key={word.es}
-            word={word}
-            isLast={isLast}
-            onNext={handleNext}
-          />
+      <div style={{ paddingBottom: '116px' }}>
+        <div className="p-4">
+          <button type="button" data-testid="stop-view-back-btn" onClick={onBack}
+            className="inline-flex items-center gap-1 text-sm font-medium mb-4"
+            style={{ color: 'hsl(var(--primary))' }}>
+            ← Back to Paths
+          </button>
+          <p className="text-xs uppercase tracking-wider mb-3"
+            style={{ color: 'hsl(var(--muted-foreground))' }}
+            data-testid="word-intro-progress">
+            {stop.title} · Word {currentWordIndex + 1} of {words.length}
+          </p>
+          <WordIntroCard key={word.es} word={word} isLast={isLast} onNext={handleNext} />
         </div>
-
-        <button
-          type="button"
-          data-testid="word-intro-next-btn"
-          onClick={handleNext}
-          className="w-full rounded-full py-3 mt-3 text-white font-bold transition-transform active:scale-95 sticky bottom-4"
-          style={{ background: 'hsl(var(--primary))' }}
-        >
-          {isLast ? 'Ready to Practice →' : 'Next →'}
-        </button>
+        <div style={{ position: 'fixed', bottom: '60px', left: 0, right: 0, padding: '8px 16px', zIndex: 50 }}>
+          <button type="button" data-testid="word-intro-next-btn" onClick={handleNext}
+            className="w-full rounded-full py-3 text-white font-bold transition-transform active:scale-95"
+            style={{ background: 'hsl(var(--primary))' }}>
+            {isLast ? 'Ready to Practice →' : 'Next →'}
+          </button>
+        </div>
       </div>
     );
   }
