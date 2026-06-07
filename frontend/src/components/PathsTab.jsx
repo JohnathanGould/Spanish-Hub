@@ -198,8 +198,6 @@ function StopView({
   // (words state initialised at top; reordered by fetchStopWords on Begin tap)
 
   const startIntro = () => {
-    const orderedWords = fetchStopWords ? fetchStopWords(stopId) : words;
-    setWords(orderedWords);
     setCurrentWordIndex(0);
     setPhase('intro');
   };
