@@ -64,60 +64,37 @@ function WordIntroCard({ word, isLast, onNext }) {
   }, [word.es]);
 
   return (
-    <div
-      className="rounded-2xl p-6 flex flex-col items-center text-center"
-      style={{
-        background: 'hsl(var(--card))',
-        border: '1px solid hsl(var(--border))',
-      }}
-      data-testid={`word-intro-card-${word.es}`}
-    >
-      {/* Image */}
-      <div
-        className="w-full rounded-2xl overflow-hidden flex items-center justify-center mb-6"
-        style={{
-          background: 'hsl(var(--muted))',
-          maxHeight: '7rem',
-        }}
-      >
-        {!imgErr && word.imageUrl ? (
-          <img
-            src={word.imageUrl}
-            alt={word.es}
-            onError={() => setImgErr(true)}
-            className="rounded-2xl w-full max-h-48 object-cover"
-            data-testid={`word-intro-image-${word.es}`}
-          />
-        ) : (
-          <div
-            className="flex items-center justify-center w-full"
-            style={{ height: '12rem', color: 'hsl(var(--muted-foreground))' }}
-            data-testid={`word-intro-image-fallback-${word.es}`}
-          >
-            <ImageOff className="w-10 h-10" />
-          </div>
-        )}
-      </div>
+    <div className="flex flex-col items-center text-center pt-4">
+      {/* Square image */}
+      {!imgErr && word.imageUrl && (
+        <img
+          src={word.imageUrl}
+          alt={word.es}
+          onError={() => setImgErr(true)}
+          data-testid={`word-intro-image-${word.es}`}
+          style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: '16px' }}
+        />
+      )}
 
       {/* Spanish word */}
       <p
-        className="text-3xl font-bold"
+        className="text-4xl font-bold mt-6"
         style={{ color: 'hsl(var(--foreground))' }}
         data-testid={`word-intro-es-${word.es}`}
       >
         {word.es}
       </p>
 
-      {/* English label — only screen in the Paths flow where English appears */}
+      {/* English translation */}
       <p
-        className="text-sm mt-1"
+        className="text-base mt-2"
         style={{ color: 'hsl(var(--muted-foreground))' }}
         data-testid={`word-intro-en-${word.es}`}
       >
         {word.en}
       </p>
 
-      {/* Speaker button */}
+      {/* Audio button */}
       <button
         type="button"
         aria-label={`Hear ${word.es}`}
