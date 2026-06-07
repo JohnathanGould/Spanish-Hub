@@ -66,18 +66,18 @@ function WordIntroCard({ word, isLast, onNext }) {
   return (
     <div className="flex flex-row items-center gap-4 pt-4">
       {/* Left — square image */}
-      <div style={{ flexShrink: 0, width: '140px', height: '140px' }}>
+      <div style={{ flexShrink: 0, width: '160px', height: '160px' }}>
         {!imgErr && word.imageUrl ? (
           <img
             src={word.imageUrl}
             alt={word.es}
             onError={() => setImgErr(true)}
             data-testid={`word-intro-image-${word.es}`}
-            style={{ width: '140px', height: '140px', objectFit: 'cover', borderRadius: '16px' }}
+            style={{ width: '160px', height: '160px', objectFit: 'cover', borderRadius: '16px' }}
           />
         ) : (
           <div
-            style={{ width: '140px', height: '140px', borderRadius: '16px', background: 'hsl(var(--muted))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ width: '160px', height: '160px', borderRadius: '16px', background: 'hsl(var(--muted))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             data-testid={`word-intro-image-fallback-${word.es}`}
           >
             <ImageOff className="w-10 h-10" style={{ color: 'hsl(var(--muted-foreground))' }} />
