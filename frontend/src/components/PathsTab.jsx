@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, Lock, Check } from 'lucide-react';
+import { ChevronDown, ChevronRight, Lock, Check, Volume2 } from 'lucide-react';
 import {
   PATHS,
   getPath,
   getStop,
   getPathIdForStop,
+  getStopWords,
   isPathComplete,
 } from '../content/es-en/paths';
+import { MASTER } from '../content/es-en/words';
+import { speak } from '../utils/helpers';
 
 // ─────────────────────────────────────────────
 // Lock logic
@@ -47,9 +50,10 @@ function isPathUnlocked(pathId, completedStops) {
 }
 
 // ─────────────────────────────────────────────
-// Placeholder StopView (replaced in Session 2)
+// StopView — Stop detail screen
+// Replaces the Session 1 placeholder. Drill logic comes in a future session.
 // ─────────────────────────────────────────────
-function StopPlaceholder({ stopId, onBack }) {
+function StopView({ stopId, onBack, onBegin }) {
   const stop = getStop(stopId);
   const pathId = getPathIdForStop(stopId);
   const path = getPath(pathId);
@@ -59,7 +63,7 @@ function StopPlaceholder({ stopId, onBack }) {
       <div className="p-6">
         <button
           type="button"
-          data-testid="stop-placeholder-back-btn"
+          data-testid="stop-view-back-btn"
           onClick={onBack}
           className="text-sm font-medium underline"
           style={{ color: 'hsl(var(--primary))' }}
@@ -73,38 +77,98 @@ function StopPlaceholder({ stopId, onBack }) {
     );
   }
 
+  // Resolve word strings into full MASTER entries; fall back to {es, en: es} if missing
+  const wordStrings = getStopWords(stopId);
+  const words = wordStrings.map((es) => {
+    const entry = MASTER.find((w) => w.es === es);
+    return entry || { es, en: es };
+  });
+
   return (
-    <div className="p-4" data-testid={`stop-placeholder-${stopId}`}>
+    <div className="p-4 pb-24" data-testid={`stop-view-${stopId}`}>
       <button
         type="button"
-        data-testid="stop-placeholder-back-btn"
+        data-testid="stop-view-back-btn"
         onClick={onBack}
-        className="inline-flex items-center gap-1 text-sm font-medium mb-6"
+        className="inline-flex items-center gap-1 text-sm font-medium mb-4"
         style={{ color: 'hsl(var(--primary))' }}
       >
         ← Back to Paths
       </button>
 
+      {/* Header card — matches Path header gradient style */}
       <div
-        className="rounded-2xl p-5 mb-4 text-white relative overflow-hidden"
-        style={{ background: 'hsl(var(--primary))' }}
-      >
-        <p className="text-xs uppercase tracking-wider opacity-80">{path.title}</p>
-        <h2 className="text-2xl font-semibold mt-1">{stop.title}</h2>
-        <p className="text-sm opacity-90 mt-1">{stop.titleEn}</p>
-      </div>
-
-      <div
-        className="drill-card"
+        className="rounded-2xl p-5 mb-5 text-white relative overflow-hidden"
         style={{
-          background: 'hsl(var(--card))',
-          border: '1px solid hsl(var(--border))',
+          background:
+            'linear-gradient(135deg, hsl(var(--primary)), hsl(352 75% 65%))',
         }}
       >
-        <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
-          Stop content coming soon 🐾
+        <p className="text-[11px] uppercase tracking-wider opacity-80">
+          {path.title}
+        </p>
+        <h2 className="text-2xl font-semibold mt-1" data-testid="stop-view-title">
+          {stop.title}
+        </h2>
+        <p className="text-sm opacity-90 mt-1" data-testid="stop-view-subtitle">
+          {stop.titleEn}
         </p>
       </div>
+
+      {/* Word list */}
+      <div className="flex flex-col gap-2 mb-6" data-testid="stop-view-word-list">
+        {words.map((word, idx) => (
+          <div
+            key={`${word.es}-${idx}`}
+            className="rounded-2xl p-4 flex items-center justify-between gap-3"
+            style={{
+              background: 'hsl(var(--card))',
+              border: '1px solid hsl(var(--border))',
+            }}
+            data-testid={`stop-view-word-${word.es}`}
+          >
+            <div className="flex-1 min-w-0">
+              <p
+                className="text-lg font-bold truncate"
+                style={{ color: 'hsl(var(--foreground))' }}
+              >
+                {word.es}
+              </p>
+              <p
+                className="text-sm truncate"
+                style={{ color: 'hsl(var(--muted-foreground))' }}
+              >
+                {word.en}
+              </p>
+            </div>
+            <button
+              type="button"
+              aria-label={`Hear ${word.es}`}
+              data-testid={`stop-view-speak-${word.es}`}
+              onClick={() => speak(word.es)}
+              className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-transform active:scale-95"
+              style={{
+                background: 'hsl(var(--muted))',
+                color: 'hsl(var(--primary))',
+                border: '1px solid hsl(var(--border))',
+              }}
+            >
+              <Volume2 className="w-5 h-5" />
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Begin button — no-op for now, drill logic in a future session */}
+      <button
+        type="button"
+        data-testid="stop-view-begin-btn"
+        onClick={onBegin}
+        className="w-full rounded-full py-3 text-white font-bold transition-transform active:scale-95"
+        style={{ background: 'hsl(var(--primary))' }}
+      >
+        Begin
+      </button>
     </div>
   );
 }
@@ -121,12 +185,13 @@ export default function PathsTab({
   const [selectedStopId, setSelectedStopId] = useState(null);
   const [lockedMessageStopId, setLockedMessageStopId] = useState(null);
 
-  // Render placeholder StopView when a stop is selected
+  // Render StopView when a stop is selected
   if (selectedStopId) {
     return (
-      <StopPlaceholder
+      <StopView
         stopId={selectedStopId}
         onBack={() => setSelectedStopId(null)}
+        onBegin={() => {}}
       />
     );
   }
