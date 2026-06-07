@@ -239,6 +239,40 @@ All Stage 1 decisions locked 2026-06-04. No open decisions remaining.
 
 ---
 
+## QUEUED TASKS & DECISIONS
+
+### Tomorrow's session order
+1. ✅ Claude Code: Replace milo-icon.jpg in Header.jsx with `/animations/milo_idle.gif` (48px circular styling)
+2. ✅ Claude Code: Replace Milo avatar in HomeTab.jsx with `/animations/milo_idle.gif`
+3. ✅ Claude Code: Add yellow pill link to milo-speaks.com in ProfileSheet.jsx header. Style: background #F5C518, color #3D2B1F, font-weight 700, border-radius 50px, padding 0.3rem 1rem, font-size 0.85rem, centered above user name, opens in new tab
+4. Windsurf: Change 'No ads' text near Ko-fi button to 'No interrupting ads'
+5. Windsurf: Lower confetti music volume
+6. Windsurf: Set default drill count to 10
+7. Cursor Composer: Remove language toggles and 10/20/30 toggles from drill buttons. Replace with 2 pills (EN>SP | SP>EN) for the 3 drills that have direction split. Other 3 drills full width. Drill starts when pill is tapped from practice page.
+8. Cursor Composer: Split review drills — Words and Sentences on separate lines, each with 2 direction pills
+9. Cursor Composer: Make streak reminder stand out more visually
+10. Flow: Regenerate milo_idle.gif with white background, senior dog style matching milo-banner.png
+
+### Emergent tasks (do not build before Emergent)
+- Paths in BottomNav replacing Learning tab
+- Path Certificates
+- Continue button → Paths progress indicator showing where user is on Paths
+- Friend added notification
+- Admin alert notification (community pack submissions + future admin functions)
+- Clicking friend in friends list opens that friend's profile card
+- More badges
+
+### Needs RFC before anyone touches it
+- Review drills split (Words/Sentences separate lines with direction pills) — UX redesign, spec first
+
+### Deferred — revisit at 1,000 MAU
+- Bones button → in-app purchases. Bones are earned never purchased per non-negotiables. Reframe bones button as How To Earn Bones explainer screen for now. Full purchase RFC needed before any payment infrastructure is built. Touches RevenueCat/Stripe/Google Play Billing, Firestore security rules, server-side verification, legal T&S.
+
+### Haptics
+Research whether haptics are supported in React PWA before building. If yes, Cursor Composer task for correct answer feedback.
+
+---
+
 ## MILO ANIMATION PIPELINE
 
 **Pipeline:** All Milo animations generated in Google Flow. Two steps:
