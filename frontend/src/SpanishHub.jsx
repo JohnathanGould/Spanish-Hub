@@ -24,6 +24,7 @@ import CategoryToggles from './components/CategoryToggles';
 import DrillRouter from './components/DrillRouter';
 import LessonsList from './components/LessonsList';
 import LessonView from './components/LessonView';
+import PathsTab from './components/PathsTab';
 import LoginScreen from './components/LoginScreen';
 import GoalModal from './components/GoalModal';
 import StreakModal from './components/StreakModal';
@@ -123,7 +124,7 @@ function maybeRunStreakReminder(data) {
   } catch (e) { console.error(e); }
 }
 
-const TAB_ORDER = ['home', 'learn', 'words', 'study'];
+const TAB_ORDER = ['home', 'paths', 'words', 'study'];
 
 export default function SpanishHub() {
   const [user, setUser] = useState(null);
@@ -144,6 +145,7 @@ export default function SpanishHub() {
   const [showBadgeGrid, setShowBadgeGrid] = useState(false);
   const [showMasteryModal, setShowMasteryModal] = useState(false);
   const [streakModalOpen, setStreakModalOpen] = useState(false);
+  const [activeStop, setActiveStop] = useState(null);
   const saveTimerRef = useRef(null);
   const contentRef = useRef(null);
   const touchStartX = useRef(null);
@@ -646,6 +648,15 @@ export default function SpanishHub() {
             <LessonsList lessonsCompleted={userData.lessonsCompleted || []}
               onOpenLesson={openLesson}
               onShowCertificate={() => setShowCertificate(true)} />
+            </div>
+          )}
+          {tab === 'paths' && (
+            <div className="pb-20">
+              <PathsTab
+                completedStops={userData.completedStops || []}
+                completedPaths={userData.completedPaths || []}
+                onSelectStop={(stopId) => setActiveStop(stopId)}
+              />
             </div>
           )}
           {tab === 'words' && (
