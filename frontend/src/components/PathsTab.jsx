@@ -461,7 +461,7 @@ function StopView({
     const isLast = currentWordIndex === words.length - 1;
 
     return (
-      <div className="flex flex-col p-4" style={{ height: 'calc(100dvh - 200px)' }}>
+      <div className="flex flex-col p-4" style={{ height: 'calc(100dvh - 200px)', paddingBottom: '16px' }}>
         <button
           type="button"
           data-testid="stop-view-back-btn"
@@ -493,7 +493,7 @@ function StopView({
           type="button"
           data-testid="word-intro-next-btn"
           onClick={handleNext}
-          className="w-full rounded-full py-3 mt-3 text-white font-bold transition-transform active:scale-95 flex-shrink-0"
+          className="w-full rounded-full py-3 mt-3 text-white font-bold transition-transform active:scale-95 flex-shrink-0 relative z-10"
           style={{ background: 'hsl(var(--primary))' }}
         >
           {isLast ? 'Ready to Practice →' : 'Next →'}
