@@ -1,60 +1,42 @@
 import React, { useState } from 'react';
 import FlashcardDrill from './drills/FlashcardDrill';
 
-const ROWS = [
-  {
-    label: 'Multiple Choice',
-    pills: [
-      { label: 'SP→EN', drillId: 'es-en' },
-      { label: 'EN→SP', drillId: 'en-es' },
-    ],
-  },
-  {
-    label: 'Type It',
-    pills: [
-      { label: 'SP→EN', drillId: 'type-es-en' },
-      { label: 'EN→SP', drillId: 'type-en-es' },
-    ],
-  },
-  {
-    label: 'Hear & Choose',
-    pills: [
-      { label: 'SP→EN', drillId: 'hear-choose' },
-      { label: 'EN→SP', drillId: 'hear-choose-en-es' },
-    ],
-  },
-  {
-    label: 'Listen & Type — Words',
-    pills: [
-      { label: 'SP→EN', drillId: 'listen-type' },
-      { label: 'EN→SP', drillId: 'listen-type-en-es' },
-    ],
-  },
-  {
-    label: 'Listen & Type — Sentences',
-    pills: [
-      { label: 'SP→EN', drillId: 'listen-type-sentence' },
-      { label: 'EN→SP', drillId: 'listen-type-sentence-en-es' },
-    ],
-  },
-];
+const PILL_CLASS = 'rounded-full border px-4 py-2 font-semibold text-sm transition-all hover:opacity-90 active:scale-95';
+const PILL_STYLE = {
+  background: 'hsl(var(--card))',
+  color: 'hsl(var(--foreground))',
+  borderColor: 'hsl(var(--border))',
+};
+const FREDOKA = { fontFamily: "'Fredoka', sans-serif" };
 
-const FLASHCARD_ROWS = [
-  {
-    label: 'Flashcards — Words',
-    pills: [
-      { label: 'SP→EN', initialDirection: 'es-en', sentence: false },
-      { label: 'EN→SP', initialDirection: 'en-es', sentence: false },
-    ],
-  },
-  {
-    label: 'Flashcards — Sentences',
-    pills: [
-      { label: 'SP→EN', initialDirection: 'es-en', sentence: true },
-      { label: 'EN→SP', initialDirection: 'en-es', sentence: true },
-    ],
-  },
-];
+function SectionHeader({ title, sub, muted = false }) {
+  return (
+    <div className="mb-3">
+      <div className="text-xl font-bold leading-tight"
+        style={{ ...FREDOKA, color: muted ? 'hsl(var(--muted-foreground))' : 'hsl(var(--foreground))' }}>
+        {title}
+      </div>
+      {sub && (
+        <div className="text-xs mt-0.5" style={{ color: 'hsl(var(--muted-foreground))' }}>
+          {sub}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RowLabel({ label }) {
+  return (
+    <div className="text-xs font-medium mb-1.5 uppercase tracking-wider"
+      style={{ color: 'hsl(var(--muted-foreground))' }}>
+      {label}
+    </div>
+  );
+}
+
+function Divider() {
+  return <hr className="my-5" style={{ borderColor: 'hsl(var(--border))' }} />;
+}
 
 export default function DrillsGrid({
   words, stats, drillMode, setDrillMode, onStartDrill, completedPaths = [], studyCategory,
@@ -77,56 +59,102 @@ export default function DrillsGrid({
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      {ROWS.map(({ label, pills }) => (
-        <div key={label}>
-          <div className="text-xs font-medium mb-1.5 uppercase tracking-wider"
-            style={{ color: 'hsl(var(--muted-foreground))' }}>
-            {label}
-          </div>
-          <div className="flex gap-2">
-            {pills.map(({ label: pillLabel, drillId }) => (
-              <button
-                key={pillLabel}
-                onClick={() => onStartDrill(drillId, 10)}
-                className="flex-1 rounded-full border px-4 py-2 font-semibold text-sm transition-all hover:opacity-90 active:scale-95"
-                style={{
-                  background: 'hsl(var(--card))',
-                  color: 'hsl(var(--foreground))',
-                  borderColor: 'hsl(var(--border))',
-                }}
-              >
-                {pillLabel}
-              </button>
-            ))}
-          </div>
-        </div>
-      ))}
+    <div className="flex flex-col gap-2">
 
-      {FLASHCARD_ROWS.map(({ label, pills }) => (
-        <div key={label}>
-          <div className="text-xs font-medium mb-1.5 uppercase tracking-wider"
-            style={{ color: 'hsl(var(--muted-foreground))' }}>
-            {label}
-          </div>
-          <div className="flex gap-2">
-            {pills.map(({ label: pillLabel, initialDirection, sentence }) => (
-              <button
-                key={pillLabel}
-                onClick={() => setActiveFlashcard({ initialDirection, sentence })}
-                className="flex-1 rounded-full border px-4 py-2 font-semibold text-sm transition-all hover:opacity-90 active:scale-95"
-                style={{
-                  background: 'hsl(var(--card))',
-                  color: 'hsl(var(--foreground))',
-                  borderColor: 'hsl(var(--border))',
-                }}
-              >
-                {pillLabel}
-              </button>
-            ))}
-          </div>
+      {/* ── SECTION 1: WARM UP ── */}
+      <SectionHeader title="Warm Up" sub="No XP · No bones · Low stakes practice" muted />
+
+      <button onClick={() => onStartDrill('matching', 10)}
+        className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
+        Matching
+      </button>
+      <button onClick={() => onStartDrill('word-sort', 10)}
+        className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
+        Word Sort
+      </button>
+      <button onClick={() => onStartDrill('gender', 10)}
+        className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
+        Gender el/la
+      </button>
+
+      <Divider />
+
+      {/* ── SECTION 2: PRACTICE ── */}
+      <SectionHeader title="Practice" />
+
+      <div>
+        <RowLabel label="Multiple Choice" />
+        <div className="flex gap-2">
+          <button onClick={() => onStartDrill('es-en', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+          <button onClick={() => onStartDrill('en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
         </div>
-      ))}
+      </div>
+
+      <div>
+        <RowLabel label="Type It" />
+        <div className="flex gap-2">
+          <button onClick={() => onStartDrill('type-es-en', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+          <button onClick={() => onStartDrill('type-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+        </div>
+      </div>
+
+      <div>
+        <RowLabel label="Hear & Choose" />
+        <div className="flex gap-2">
+          <button onClick={() => onStartDrill('hear-choose', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+          <button onClick={() => onStartDrill('hear-choose-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+        </div>
+      </div>
+
+      <div>
+        <RowLabel label="Listen & Type — Words" />
+        <div className="flex gap-2">
+          <button onClick={() => onStartDrill('listen-type', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+          <button onClick={() => onStartDrill('listen-type-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+        </div>
+      </div>
+
+      <div>
+        <RowLabel label="Listen & Type — Sentences" />
+        <div className="flex gap-2">
+          <button onClick={() => onStartDrill('listen-type-sentence', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+          <button onClick={() => onStartDrill('listen-type-sentence-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+        </div>
+      </div>
+
+      <div>
+        <RowLabel label="Conjugation" />
+        <button onClick={() => onStartDrill('conjugation', 10)}
+          className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
+          Present Tense
+        </button>
+      </div>
+
+      <Divider />
+
+      {/* ── SECTION 3: REVIEW ── */}
+      <SectionHeader title="Review" sub="Passive review · No XP · No bones" muted />
+
+      <div>
+        <RowLabel label="Flashcards — Words" />
+        <div className="flex gap-2">
+          <button onClick={() => setActiveFlashcard({ initialDirection: 'es-en', sentence: false })}
+            className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+          <button onClick={() => setActiveFlashcard({ initialDirection: 'en-es', sentence: false })}
+            className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+        </div>
+      </div>
+
+      <div>
+        <RowLabel label="Flashcards — Sentences" />
+        <div className="flex gap-2">
+          <button onClick={() => setActiveFlashcard({ initialDirection: 'es-en', sentence: true })}
+            className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+          <button onClick={() => setActiveFlashcard({ initialDirection: 'en-es', sentence: true })}
+            className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+        </div>
+      </div>
+
     </div>
   );
 }
