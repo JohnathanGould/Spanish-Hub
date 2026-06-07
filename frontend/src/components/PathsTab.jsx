@@ -64,29 +64,51 @@ function WordIntroCard({ word, isLast, onNext }) {
   }, [word.es]);
 
   return (
-    <div className="flex flex-row items-center gap-4 pt-4">
-      {/* Left — square image */}
-      <div style={{ flexShrink: 0, width: '160px', height: '160px' }}>
+    <div className="flex flex-col items-center pt-4 gap-4">
+      {/* Image with overlaid audio button */}
+      <div style={{ position: 'relative', width: '100%' }}>
         {!imgErr && word.imageUrl ? (
           <img
             src={word.imageUrl}
             alt={word.es}
             onError={() => setImgErr(true)}
             data-testid={`word-intro-image-${word.es}`}
-            style={{ width: '160px', height: '160px', objectFit: 'cover', borderRadius: '16px' }}
+            style={{ width: '100%', height: '220px', objectFit: 'cover', borderRadius: '16px', display: 'block' }}
           />
         ) : (
           <div
-            style={{ width: '160px', height: '160px', borderRadius: '16px', background: 'hsl(var(--muted))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ width: '100%', height: '220px', borderRadius: '16px', background: 'hsl(var(--muted))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             data-testid={`word-intro-image-fallback-${word.es}`}
           >
             <ImageOff className="w-10 h-10" style={{ color: 'hsl(var(--muted-foreground))' }} />
           </div>
         )}
+        {/* Audio button overlaid bottom-right */}
+        <button
+          type="button"
+          aria-label={`Hear ${word.es}`}
+          onClick={() => speak(word.es)}
+          data-testid={`word-intro-speak-${word.es}`}
+          className="flex items-center justify-center transition-transform active:scale-95"
+          style={{
+            position: 'absolute',
+            bottom: '10px',
+            right: '10px',
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            background: 'rgba(0,0,0,0.55)',
+            color: 'white',
+            border: 'none',
+            backdropFilter: 'blur(4px)',
+          }}
+        >
+          <Volume2 className="w-5 h-5" />
+        </button>
       </div>
 
-      {/* Right — word, translation, audio */}
-      <div className="flex flex-col justify-center gap-2">
+      {/* Word and translation below image */}
+      <div className="text-center">
         <p
           className="text-3xl font-bold"
           style={{ color: 'hsl(var(--foreground))' }}
@@ -95,26 +117,12 @@ function WordIntroCard({ word, isLast, onNext }) {
           {word.es}
         </p>
         <p
-          className="text-base"
+          className="text-base mt-1"
           style={{ color: 'hsl(var(--muted-foreground))' }}
           data-testid={`word-intro-en-${word.es}`}
         >
           {word.en}
         </p>
-        <button
-          type="button"
-          aria-label={`Hear ${word.es}`}
-          onClick={() => speak(word.es)}
-          data-testid={`word-intro-speak-${word.es}`}
-          className="w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-95"
-          style={{
-            background: 'hsl(var(--muted))',
-            color: 'hsl(var(--primary))',
-            border: '1px solid hsl(var(--border))',
-          }}
-        >
-          <Volume2 className="w-6 h-6" />
-        </button>
       </div>
     </div>
   );
