@@ -10,6 +10,7 @@ import {
 } from '../content/es-en/paths';
 import { MASTER } from '../content/es-en/words';
 import { speak } from '../utils/helpers';
+import ChoiceDrill from './drills/ChoiceDrill';
 
 // ─────────────────────────────────────────────
 // Lock logic
@@ -178,11 +179,41 @@ function StopView({ stopId, onBack }) {
 
   const handleNext = () => {
     if (currentWordIndex >= words.length - 1) {
-      setPhase('intro-complete');
+      setPhase('hear-choose');
     } else {
       setCurrentWordIndex((i) => i + 1);
     }
   };
+
+  // ── Phase: hear-choose (Phase 2 Recognise — audio prompt) ──
+  if (phase === 'hear-choose') {
+    return (
+      <ChoiceDrill
+        mode="hear-choose"
+        words={words}
+        progress={{}}
+        drillLength={words.length}
+        onAnswer={() => {}}
+        onDone={() => setPhase('multiple-choice')}
+        onBack={() => setPhase('intro-complete')}
+      />
+    );
+  }
+
+  // ── Phase: multiple-choice (Phase 2 Recognise — SP→EN) ──
+  if (phase === 'multiple-choice') {
+    return (
+      <ChoiceDrill
+        mode="es-en"
+        words={words}
+        progress={{}}
+        drillLength={words.length}
+        onAnswer={() => {}}
+        onDone={() => setPhase('intro-complete')}
+        onBack={() => setPhase('hear-choose')}
+      />
+    );
+  }
 
   // ── Phase: intro-complete ───────────────────
   if (phase === 'intro-complete') {
