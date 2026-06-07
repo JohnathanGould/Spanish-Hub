@@ -34,13 +34,16 @@ function RowLabel({ label }) {
   );
 }
 
-function Divider() {
-  return <hr className="my-5" style={{ borderColor: 'hsl(var(--border))' }} />;
-}
+const TABS = [
+  { key: 'warmup',   label: 'Warm Up' },
+  { key: 'practice', label: 'Practice' },
+  { key: 'review',   label: 'Review' },
+];
 
 export default function DrillsGrid({
   words, stats, drillMode, setDrillMode, onStartDrill, completedPaths = [], studyCategory,
 }) {
+  const [activeSection, setActiveSection] = useState('practice');
   const [activeFlashcard, setActiveFlashcard] = useState(null);
 
   if (activeFlashcard) {
@@ -61,99 +64,124 @@ export default function DrillsGrid({
   return (
     <div className="flex flex-col gap-2">
 
-      {/* ── SECTION 1: WARM UP ── */}
-      <SectionHeader title="Warm Up" sub="No XP · No bones · Low stakes practice" muted />
-
-      <button onClick={() => onStartDrill('matching', 10)}
-        className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
-        Matching
-      </button>
-      <button onClick={() => onStartDrill('word-sort', 10)}
-        className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
-        Word Sort
-      </button>
-      <button onClick={() => onStartDrill('gender', 10)}
-        className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
-        Gender el/la
-      </button>
-
-      <Divider />
-
-      {/* ── SECTION 2: PRACTICE ── */}
-      <SectionHeader title="Practice" />
-
-      <div>
-        <RowLabel label="Multiple Choice" />
-        <div className="flex gap-2">
-          <button onClick={() => onStartDrill('es-en', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
-          <button onClick={() => onStartDrill('en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
-        </div>
+      {/* Tab bar */}
+      <div className="flex gap-1 mb-3">
+        {TABS.map(tab => (
+          <button
+            key={tab.key}
+            onClick={() => setActiveSection(tab.key)}
+            className="flex-1 rounded-full py-1.5 text-xs font-semibold transition-all duration-200 border"
+            style={{
+              background: activeSection === tab.key ? 'hsl(var(--primary))' : 'hsl(var(--card))',
+              color: activeSection === tab.key ? 'white' : 'hsl(var(--muted-foreground))',
+              borderColor: activeSection === tab.key ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+            }}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      <div>
-        <RowLabel label="Type It" />
-        <div className="flex gap-2">
-          <button onClick={() => onStartDrill('type-es-en', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
-          <button onClick={() => onStartDrill('type-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
-        </div>
-      </div>
+      {/* ── WARM UP ── */}
+      {activeSection === 'warmup' && (
+        <>
+          <SectionHeader title="Warm Up" sub="No XP · No bones · Low stakes practice" muted />
+          <button onClick={() => onStartDrill('matching', 10)}
+            className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
+            Matching
+          </button>
+          <button onClick={() => onStartDrill('word-sort', 10)}
+            className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
+            Word Sort
+          </button>
+          <button onClick={() => onStartDrill('gender', 10)}
+            className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
+            Gender el/la
+          </button>
+        </>
+      )}
 
-      <div>
-        <RowLabel label="Hear & Choose" />
-        <div className="flex gap-2">
-          <button onClick={() => onStartDrill('hear-choose', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
-          <button onClick={() => onStartDrill('hear-choose-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
-        </div>
-      </div>
+      {/* ── PRACTICE ── */}
+      {activeSection === 'practice' && (
+        <>
+          <SectionHeader title="Practice" />
 
-      <div>
-        <RowLabel label="Listen & Type — Words" />
-        <div className="flex gap-2">
-          <button onClick={() => onStartDrill('listen-type', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
-          <button onClick={() => onStartDrill('listen-type-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
-        </div>
-      </div>
+          <div>
+            <RowLabel label="Multiple Choice" />
+            <div className="flex gap-2">
+              <button onClick={() => onStartDrill('es-en', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+              <button onClick={() => onStartDrill('en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+            </div>
+          </div>
 
-      <div>
-        <RowLabel label="Listen & Type — Sentences" />
-        <div className="flex gap-2">
-          <button onClick={() => onStartDrill('listen-type-sentence', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
-          <button onClick={() => onStartDrill('listen-type-sentence-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
-        </div>
-      </div>
+          <div>
+            <RowLabel label="Type It" />
+            <div className="flex gap-2">
+              <button onClick={() => onStartDrill('type-es-en', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+              <button onClick={() => onStartDrill('type-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+            </div>
+          </div>
 
-      <div>
-        <RowLabel label="Conjugation" />
-        <button onClick={() => onStartDrill('conjugation', 10)}
-          className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
-          Present Tense
-        </button>
-      </div>
+          <div>
+            <RowLabel label="Hear & Choose" />
+            <div className="flex gap-2">
+              <button onClick={() => onStartDrill('hear-choose', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+              <button onClick={() => onStartDrill('hear-choose-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+            </div>
+          </div>
 
-      <Divider />
+          <div>
+            <RowLabel label="Listen & Type — Words" />
+            <div className="flex gap-2">
+              <button onClick={() => onStartDrill('listen-type', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+              <button onClick={() => onStartDrill('listen-type-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+            </div>
+          </div>
 
-      {/* ── SECTION 3: REVIEW ── */}
-      <SectionHeader title="Review" sub="Passive review · No XP · No bones" muted />
+          <div>
+            <RowLabel label="Listen & Type — Sentences" />
+            <div className="flex gap-2">
+              <button onClick={() => onStartDrill('listen-type-sentence', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+              <button onClick={() => onStartDrill('listen-type-sentence-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+            </div>
+          </div>
 
-      <div>
-        <RowLabel label="Flashcards — Words" />
-        <div className="flex gap-2">
-          <button onClick={() => setActiveFlashcard({ initialDirection: 'es-en', sentence: false })}
-            className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
-          <button onClick={() => setActiveFlashcard({ initialDirection: 'en-es', sentence: false })}
-            className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
-        </div>
-      </div>
+          <div>
+            <RowLabel label="Conjugation" />
+            <button onClick={() => onStartDrill('conjugation', 10)}
+              className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
+              Present Tense
+            </button>
+          </div>
+        </>
+      )}
 
-      <div>
-        <RowLabel label="Flashcards — Sentences" />
-        <div className="flex gap-2">
-          <button onClick={() => setActiveFlashcard({ initialDirection: 'es-en', sentence: true })}
-            className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
-          <button onClick={() => setActiveFlashcard({ initialDirection: 'en-es', sentence: true })}
-            className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
-        </div>
-      </div>
+      {/* ── REVIEW ── */}
+      {activeSection === 'review' && (
+        <>
+          <SectionHeader title="Review" sub="Passive review · No XP · No bones" muted />
+
+          <div>
+            <RowLabel label="Flashcards — Words" />
+            <div className="flex gap-2">
+              <button onClick={() => setActiveFlashcard({ initialDirection: 'es-en', sentence: false })}
+                className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+              <button onClick={() => setActiveFlashcard({ initialDirection: 'en-es', sentence: false })}
+                className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+            </div>
+          </div>
+
+          <div>
+            <RowLabel label="Flashcards — Sentences" />
+            <div className="flex gap-2">
+              <button onClick={() => setActiveFlashcard({ initialDirection: 'es-en', sentence: true })}
+                className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+              <button onClick={() => setActiveFlashcard({ initialDirection: 'en-es', sentence: true })}
+                className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+            </div>
+          </div>
+        </>
+      )}
 
     </div>
   );
