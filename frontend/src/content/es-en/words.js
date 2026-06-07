@@ -15,7 +15,7 @@ export const PRESET_PACKS = [
 export const DEFAULT_CATEGORIES = Object.fromEntries(TOGGLEABLE_CATEGORIES.map(c => [c, true]));
 
 export const MASTER = [
-  { es: 'hola', en: 'hello', type: 'phrase', group: 'Core', sentence: { es: '¡Hola! ¿Cómo estás?', en: 'Hello! How are you?' }, contextSentence: "¡Hola! ¿Cómo estás?", imageUrl: "https://picsum.photos/seed/hello/400/400", theme: "greetings" },
+  { es: 'hola', en: 'hello', type: 'phrase', group: 'Core', sentence: { es: '¡Hola! ¿Cómo estás?', en: 'Hello! How are you?' }, contextSentence: "¡Hola! ¿Cómo estás?", imageUrl: "https://i.imgur.com/xWxDWJ0.jpg", theme: "greetings" },
   { es: 'adiós', en: 'goodbye', type: 'phrase', group: 'Core', sentence: { es: 'Adiós, hasta mañana.', en: 'Goodbye, see you tomorrow.' }, contextSentence: "Adiós, hasta mañana.", imageUrl: "https://picsum.photos/seed/goodbye/400/400", theme: "greetings" },
   { es: 'gracias', en: 'thank you', type: 'phrase', group: 'Core', sentence: { es: 'Muchas gracias por tu ayuda.', en: 'Thank you very much for your help.' }, contextSentence: "Muchas gracias por tu ayuda.", imageUrl: "https://picsum.photos/seed/thank+you/400/400", theme: "greetings" },
   { es: 'de nada', en: "you're welcome", type: 'phrase', group: 'Core', sentence: { es: 'De nada, fue un placer.', en: "You're welcome, it was a pleasure." }, contextSentence: "De nada, fue un placer.", imageUrl: "https://picsum.photos/seed/welcome/400/400", theme: "greetings" },
