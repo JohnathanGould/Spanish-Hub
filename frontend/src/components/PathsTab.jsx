@@ -461,7 +461,7 @@ function StopView({
     const isLast = currentWordIndex === words.length - 1;
 
     return (
-      <div className="flex flex-col p-4" style={{ height: 'calc(100dvh - 130px)' }}>
+      <div className="flex flex-col p-4" style={{ height: 'calc(100dvh - 200px)' }}>
         <button
           type="button"
           data-testid="stop-view-back-btn"
