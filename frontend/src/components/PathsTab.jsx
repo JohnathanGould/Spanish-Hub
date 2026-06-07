@@ -584,6 +584,7 @@ export default function PathsTab({
   completedStops = [],
   completedPaths = [],
   progress = {},
+  initialStopId = null,
   onSelectStop,
   onUpdateWordProgress,
   onAwardBones,
@@ -591,7 +592,8 @@ export default function PathsTab({
   fetchStopWords,
 }) {
   const [expandedPathId, setExpandedPathId] = useState(null);
-  const [selectedStopId, setSelectedStopId] = useState(null);
+  // Auto-open Stop on mount when parent passes initialStopId (e.g. Home → Continue)
+  const [selectedStopId, setSelectedStopId] = useState(() => initialStopId || null);
   const [lockedMessageStopId, setLockedMessageStopId] = useState(null);
 
   // Render StopView when a stop is selected

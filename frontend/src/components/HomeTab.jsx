@@ -1,6 +1,7 @@
 import { languageConfig } from '../config/languageConfig';
 import React from 'react';
 import { MASTER } from '../content/es-en/words';
+import { getStop } from '../content/es-en/paths';
 import { speak } from '../utils/helpers';
 import DailyChallenge from './DailyChallenge';
 import { KofiSupport } from './KofiSupport';
@@ -27,7 +28,7 @@ function getWeekDates() {
   });
 }
 
-export default function HomeTab({ onNavigate, userData, streak, dailyProgress, dailyGoal, masteredCount, onStartDailyChallenge, onStartDrill, onShowMastery }) {
+export default function HomeTab({ onNavigate, userData, streak, dailyProgress, dailyGoal, masteredCount, onStartDailyChallenge, onStartDrill, onShowMastery, onContinue, currentStopId }) {
   const today = new Date().toDateString();
   const firstName = userData?.displayName?.split(' ')[0] || 'Estudiante';
   const dateStr = capitalize(
@@ -78,17 +79,20 @@ export default function HomeTab({ onNavigate, userData, streak, dailyProgress, d
 
         {/* Card 1 — Continue */}
         <button
-          onClick={() => onNavigate('study')}
+          data-testid="home-continue-btn"
+          onClick={() => (onContinue ? onContinue() : onNavigate('study'))}
           className="rounded-2xl border px-3 py-2.5 text-left flex items-center gap-2"
           style={{ background: '#DCFCE7', borderColor: '#86EFAC' }}
         >
           <span className="text-lg" style={{ lineHeight: 1 }}>▶️</span>
           <div className="min-w-0">
             <div className="text-xs font-bold uppercase tracking-wide" style={{ color: '#14532D' }}>
-              {lastSession ? 'Continue' : 'Start'}
+              {currentStopId ? 'Continue' : (lastSession ? 'Continue' : 'Start')}
             </div>
             <div className="text-xs font-bold truncate" style={{ color: '#166534' }}>
-              {lastSession ? drillLabel(lastSession.drillId) : 'First drill 🐾'}
+              {currentStopId
+                ? (getStop(currentStopId)?.title || 'Next Stop 🐾')
+                : (lastSession ? drillLabel(lastSession.drillId) : 'First drill 🐾')}
             </div>
           </div>
         </button>

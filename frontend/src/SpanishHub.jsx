@@ -5,7 +5,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { MASTER, DEFAULT_CATEGORIES, PRESET_PACKS } from './content/es-en/words';
 import { LESSONS, DAILY_THEMES } from './content/es-en/lessons';
-import { getPathIdForStop, isPathComplete, getStopWords } from './content/es-en/paths';
+import { PATHS, getPathIdForStop, isPathComplete, getStopWords } from './content/es-en/paths';
 import { masteryLevel, getStats, initVoice, initAudio, spacedRepetitionSort, playConfetti } from './utils/helpers';
 import { evaluateBadges } from './utils/evaluateBadges';
 import BadgeGrid from './components/BadgeGrid';
@@ -295,6 +295,29 @@ export default function SpanishHub() {
       return (progA.outputCorrect || 0) - (progB.outputCorrect || 0);
     });
   }, [userData.progress]);
+
+  // ── Returns the first incomplete Stop ID across all Paths (null if all complete) ──
+  const getCurrentStop = useCallback(() => {
+    for (const path of PATHS) {
+      for (const stop of path.stops) {
+        if (!(userData.completedStops || []).includes(stop.id)) {
+          return stop.id;
+        }
+      }
+    }
+    return null;
+  }, [userData.completedStops]);
+
+  // ── Continue button handler: jump straight into current Stop's StopView ──
+  const continueToCurrentStop = useCallback(() => {
+    const stopId = getCurrentStop();
+    if (stopId) {
+      setActiveStop(stopId);
+      setTab('paths');
+    } else {
+      setTab('paths');
+    }
+  }, [getCurrentStop]);
   const updateWordProgress = useCallback((wordEs, isCorrect, wasFirstAttempt) => {
     setUserData(prev => {
       const currentProgress = prev.progress[wordEs] || { ...DEFAULT_WORD_PROGRESS };
@@ -714,6 +737,8 @@ export default function SpanishHub() {
               onStartDailyChallenge={startDailyChallenge}
               onStartDrill={startDrill}
               onShowMastery={() => setShowMasteryModal(true)}
+              onContinue={continueToCurrentStop}
+              currentStopId={getCurrentStop()}
             />
             </div>
           )}
@@ -738,6 +763,7 @@ export default function SpanishHub() {
                 completedStops={userData.completedStops || []}
                 completedPaths={userData.completedPaths || []}
                 progress={userData.progress}
+                initialStopId={activeStop}
                 onSelectStop={(stopId) => setActiveStop(stopId)}
                 onUpdateWordProgress={updateWordProgress}
                 onAwardBones={awardBones}
