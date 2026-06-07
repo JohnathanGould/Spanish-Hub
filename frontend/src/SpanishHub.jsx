@@ -5,7 +5,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { MASTER, DEFAULT_CATEGORIES, PRESET_PACKS } from './content/es-en/words';
 import { LESSONS, DAILY_THEMES } from './content/es-en/lessons';
-import { masteryLevel, getStats, initVoice, spacedRepetitionSort, playConfetti } from './utils/helpers';
+import { masteryLevel, getStats, initVoice, initAudio, spacedRepetitionSort, playConfetti } from './utils/helpers';
 import { evaluateBadges } from './utils/evaluateBadges';
 import BadgeGrid from './components/BadgeGrid';
 import Header from './components/Header';
@@ -155,6 +155,7 @@ export default function SpanishHub() {
 
   useEffect(() => {
     initVoice();
+    initAudio();
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
       if (u) { setIsGuest(false); await loadUserData(u); }

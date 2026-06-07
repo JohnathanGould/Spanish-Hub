@@ -262,6 +262,11 @@ All Stage 1 decisions locked 2026-06-04. No open decisions remaining.
 - Clicking friend in friends list opens that friend's profile card
 - More badges
 
+### Post-Emergent diagnostics (run after Session 1 complete)
+- **Drill game sounds not playing in ChoiceDrill (never wired) and possibly broken in TypeDrill.** Diagnosis prompt:
+  "Open frontend/src/utils/helpers.js. Find the audio buffer initialisation for correctBuffer and almostBuffer. Report: (a) where and when they are initialised, (b) whether initialisation could silently fail, (c) whether the AudioContext requires a user gesture to resume and whether that resume is being handled. Do not fix anything — report only."
+  Note: Today's ChoiceDrill/TypeDrill changes did not cause this — TypeDrill sound triggers are unconditional and untouched; ChoiceDrill never had sounds wired. Root cause is likely buffer init failure or suspended AudioContext.
+
 ### Needs RFC before anyone touches it
 - Review drills split (Words/Sentences separate lines with direction pills) — UX redesign, spec first
 

@@ -192,8 +192,7 @@ function getAudioContext() {
   } catch (e) { return null; }
 }
 
-// Preload audio buffers on first user tap
-document.addEventListener('click', async () => {
+export async function initAudio() {
   try {
     const ctx = getAudioContext();
     if (!ctx) return;
@@ -203,11 +202,11 @@ document.addEventListener('click', async () => {
       if (!res.ok) return null;
       return ctx.decodeAudioData(await res.arrayBuffer());
     };
-    if (!confettiBuffer) confettiBuffer = await load('/audio/fanfare.mp3');
-    if (!correctBuffer)  correctBuffer  = await load('/audio/correct.wav');
-    if (!almostBuffer)   almostBuffer   = await load('/audio/almost.wav');
+    confettiBuffer = await load('/audio/fanfare.mp3');
+    correctBuffer  = await load('/audio/correct.wav');
+    almostBuffer   = await load('/audio/almost.wav');
   } catch (e) {}
-}, { once: false });
+}
 
 export function playConfetti() {
   try {
