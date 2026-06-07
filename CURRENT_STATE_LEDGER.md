@@ -549,3 +549,26 @@ Then open Emergent — paste memory/PATHS_STOPS_STATE_LEDGER_SPEC.md as first me
 
 **First task next session:**
 Regenerate milo_idle.gif with #3D2B1F background in Flow → push → white box gone → then build full pose spec
+
+---
+
+## SESSION END — 2026-06-07 (Session 12)
+
+**Completed:**
+- Drill separation complete — all drills now directional with pill UI, Warm Up / Practice / Review tab sections restored, 10/20/30 length toggles removed, drillLength fixed at 10 everywhere
+- New drill modes added: hear-choose-en-es, listen-type-en-es, listen-type-sentence-en-es — wired in ChoiceDrill, TypeDrill, and DrillRouter
+- listen-type-sentence silent bug fixed — was routed by DrillRouter but missing from TypeDrill titles causing silent null return
+- FlashcardDrill initialDirection prop added — useState now uses initialDirection || languageConfig.drillDirectionId
+- ChoiceDrill and TypeDrill updated to support EN→SP audio modes — correct TTS language used per mode in prompt auto-play, feedback reveal, and replay buttons
+- DrillsGrid progress={{}} fix — inline flashcards use shuffle order only; spaced-rep ordering deferred until userData.progress is passed from SpanishHub (notes in memory ledger)
+- Three pre-Emergent audits complete — 33 audit points across all areas, all flags resolved or documented
+- EMERGENT-SESSION-1-PATHS-SHELL.md ready at repo root — Emergent tokens reset in 3 hours, Session 1 ready to run
+
+**Decisions locked:**
+- DrillsGrid inline FlashcardDrill uses progress={{}} — shuffle order only until userData.progress plumbed through SpanishHub
+- DrillsGrid tab default: Practice
+
+**Bugs added:** None
+
+**First task next session:**
+Open Emergent — paste EMERGENT-SESSION-1-PATHS-SHELL.md as first message. Session 1: PathsTab shell, BottomNav swap, SpanishHub wiring.

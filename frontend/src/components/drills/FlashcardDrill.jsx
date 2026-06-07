@@ -13,11 +13,6 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
   const [showHint, setShowHint] = useState(false);
   const [correct, setCorrect] = useState(0);
 
-  const hasSentences = useMemo(
-    () => words.some(w => w.contextSentence && w.contextSentence.trim()),
-    [words]
-  );
-
   const wordQueue = useMemo(
     () => buildNoRepeatQueue(words, progress, drillLength),
     [words, progress, drillLength]
@@ -39,7 +34,6 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
   const word = queue[idx] || queue[0];
   const isSentences = mode === 'sentences';
   const isEsEn = direction === languageConfig.drillDirectionId;
-  const isEnEs = direction === languageConfig.reverseDrillDirectionId;
 
   const article = !isSentences && word.gender === 'm' ? 'el ' : !isSentences && word.gender === 'f' ? 'la ' : '';
   const canHint = !isSentences && (word.type === 'noun' || word.type === 'phrase');
@@ -49,13 +43,6 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
   const backLabel = isSentences ? languageConfig.targetLanguageName : (isEsEn ? languageConfig.targetLanguageName : languageConfig.sourceLanguageName);
   const backText = isSentences ? (word.sentence?.en || '') : (isEsEn ? word.en : `${article}${word.es}`);
   const speakText = isSentences ? word.contextSentence : word.es;
-
-  const handleModeChange = (newMode) => {
-    setMode(newMode);
-    setIdx(0);
-    setFlipped(false);
-    setShowHint(false);
-  };
 
   const handleFlip = () => {
     setFlipped(!flipped);
@@ -76,61 +63,9 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
     }, 520);
   };
 
-  const handleDirectionChange = (dir) => {
-    setDirection(dir);
-    setFlipped(false);
-    setShowHint(false);
-  };
-
   return (
     <DrillShell title="Flashcards" subtitle={`Tap to flip · mark each ${sentence ? 'sentence' : 'word'} as known or learning`}
       current={idx + 1} total={queue.length} onBack={onBack}>
-
-      {/* Mode toggle */}
-      {/* TODO: re-lock when Paths built — requires completedPaths.length >= 1 */}
-      {hasSentences && !sentence && (
-        <div className="flex gap-2 mb-3">
-          {[['words', '📝 Words'], ['sentences', '💬 Sentences']].map(([m, label]) => (
-            <button
-              key={m}
-              onClick={() => handleModeChange(m)}
-              className="flex-1 py-1.5 rounded-full text-xs font-bold border transition-all"
-              style={{
-                background: mode === m ? 'hsl(var(--primary))' : 'hsl(var(--card))',
-                color: mode === m ? 'white' : 'hsl(var(--muted-foreground))',
-                borderColor: mode === m ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-              }}>
-              {label}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Direction toggle — hidden in sentences mode */}
-      {!isSentences && (
-        <div className="flex gap-2 mb-4">
-          <button
-            onClick={() => handleDirectionChange(languageConfig.drillDirectionId)}
-            className="flex-1 py-1.5 rounded-full text-xs font-bold border transition-all"
-            style={{
-              background: isEsEn ? 'hsl(var(--primary))' : 'hsl(var(--card))',
-              color: isEsEn ? 'white' : 'hsl(var(--muted-foreground))',
-              borderColor: isEsEn ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-            }}>
-            🇪🇸 Spanish → English
-          </button>
-          <button
-            onClick={() => handleDirectionChange(languageConfig.reverseDrillDirectionId)}
-            className="flex-1 py-1.5 rounded-full text-xs font-bold border transition-all"
-            style={{
-              background: isEnEs ? 'hsl(var(--primary))' : 'hsl(var(--card))',
-              color: isEnEs ? 'white' : 'hsl(var(--muted-foreground))',
-              borderColor: isEnEs ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-            }}>
-            🇬🇧 English → Spanish
-          </button>
-        </div>
-      )}
 
       <div className="flip-card mb-5" style={{ minHeight: 280 }}>
         <div className={`flip-inner ${flipped ? 'flipped' : ''}`} style={{ minHeight: 280 }}
