@@ -60,7 +60,7 @@ export default function HomeTab({ onNavigate, userData, streak, dailyProgress, d
           </div>
         </div>
         <img
-          src="/images/milo-icon.jpg"
+          src="/animations/milo_idle.gif"
           alt="Milo"
           style={{
             width: 120,

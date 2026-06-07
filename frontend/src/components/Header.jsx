@@ -45,7 +45,7 @@ export default function Header({ user, streak, xp, bones, dailyGoal, dailyProgre
           style={{ padding: 0, border: 'none', background: 'none' }}
         >
           <img
-            src="/images/milo-icon.jpg"
+            src="/animations/milo_idle.gif"
             alt="Milo"
             style={{ width: 48, height: 48, borderRadius: '50%', objectFit: 'cover', display: 'block' }}
           />
