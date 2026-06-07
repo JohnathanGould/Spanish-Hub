@@ -66,18 +66,18 @@ function WordIntroCard({ word, isLast, onNext }) {
   return (
     <div className="flex flex-col items-center pt-2 gap-2">
       {/* Image with overlaid audio button */}
-      <div style={{ position: 'relative', width: '100%' }}>
+      <div style={{ position: 'relative', width: '100%', maxWidth: '320px', margin: '0 auto' }}>
         {!imgErr && word.imageUrl ? (
           <img
             src={word.imageUrl}
             alt={word.es}
             onError={() => setImgErr(true)}
             data-testid={`word-intro-image-${word.es}`}
-            style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '16px', display: 'block' }}
+            style={{ width: '100%', maxHeight: '55vw', objectFit: 'cover', borderRadius: '16px', display: 'block' }}
           />
         ) : (
           <div
-            style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: '16px', background: 'hsl(var(--muted))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ width: '100%', maxHeight: '55vw', borderRadius: '16px', background: 'hsl(var(--muted))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             data-testid={`word-intro-image-fallback-${word.es}`}
           >
             <ImageOff className="w-10 h-10" style={{ color: 'hsl(var(--muted-foreground))' }} />
