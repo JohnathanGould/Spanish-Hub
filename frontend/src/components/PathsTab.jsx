@@ -77,7 +77,7 @@ function WordIntroCard({ word, isLast, onNext }) {
         className="w-full rounded-2xl overflow-hidden flex items-center justify-center mb-6"
         style={{
           background: 'hsl(var(--muted))',
-          maxHeight: '12rem',
+          maxHeight: '7rem',
         }}
       >
         {!imgErr && word.imageUrl ? (
