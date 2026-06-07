@@ -139,7 +139,7 @@ function WordIntroCard({ word, isLast, onNext }) {
 // ─────────────────────────────────────────────
 // StopView — Stop detail screen + Phase 1 word introduction flow
 // ─────────────────────────────────────────────
-function StopView({ stopId, onBack }) {
+function StopView({ stopId, onBack, onUpdateWordProgress, onAwardBones }) {
   const stop = getStop(stopId);
   const pathId = getPathIdForStop(stopId);
   const path = getPath(pathId);
@@ -224,7 +224,10 @@ function StopView({ stopId, onBack }) {
         words={words}
         progress={{}}
         drillLength={words.length}
-        onAnswer={() => {}}
+        onAnswer={(wordEs, isCorrect) => {
+          onUpdateWordProgress(wordEs, isCorrect, true);
+          if (isCorrect) onAwardBones(1);
+        }}
         onDone={() => setPhase('type-en-es')}
         onBack={() => setPhase('multiple-choice')}
       />
@@ -239,7 +242,10 @@ function StopView({ stopId, onBack }) {
         words={words}
         progress={{}}
         drillLength={words.length}
-        onAnswer={() => {}}
+        onAnswer={(wordEs, isCorrect) => {
+          onUpdateWordProgress(wordEs, isCorrect, true);
+          if (isCorrect) onAwardBones(1);
+        }}
         onDone={() => setPhase('intro-complete')}
         onBack={() => setPhase('hear-choose-en-es')}
       />
@@ -439,6 +445,8 @@ export default function PathsTab({
   completedStops = [],
   completedPaths = [],
   onSelectStop,
+  onUpdateWordProgress,
+  onAwardBones,
 }) {
   const [expandedPathId, setExpandedPathId] = useState(null);
   const [selectedStopId, setSelectedStopId] = useState(null);
@@ -450,6 +458,8 @@ export default function PathsTab({
       <StopView
         stopId={selectedStopId}
         onBack={() => setSelectedStopId(null)}
+        onUpdateWordProgress={onUpdateWordProgress}
+        onAwardBones={onAwardBones}
       />
     );
   }

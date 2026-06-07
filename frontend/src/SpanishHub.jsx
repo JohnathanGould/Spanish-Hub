@@ -35,6 +35,7 @@ import MiloChat from './MiloChat';
 import SpanishFlag from './components/SpanishFlag';
 import { KofiSupport } from './components/KofiSupport';
 import confetti from 'canvas-confetti';
+import { fsrs, Rating, generatorParameters } from 'ts-fsrs';
 
 function getWeekStartStr() {
   const d = new Date();
@@ -248,6 +249,52 @@ export default function SpanishHub() {
       syncLeaderboard(user, data);
     }, 1500);
   }, [user, isGuest]);
+
+  // ── Paths bones reward (Phase 3 only) ──
+  const awardBones = useCallback((n) => {
+    setUserData(prev => {
+      const newData = { ...prev, bones: (prev.bones || 0) + n };
+      persistData(newData);
+      return newData;
+    });
+  }, [persistData]);
+
+  // ── Paths FSRS update (Phase 3 only) ──
+  const updateWordProgress = useCallback((wordEs, isCorrect, wasFirstAttempt) => {
+    setUserData(prev => {
+      const currentProgress = prev.progress[wordEs] || { ...DEFAULT_WORD_PROGRESS };
+      const card = {
+        stability: currentProgress.stability || 0,
+        difficulty: currentProgress.difficulty || 0,
+        due: currentProgress.due ? new Date(currentProgress.due) : new Date(),
+        last_review: currentProgress.lastReview ? new Date(currentProgress.lastReview) : null,
+        reps: currentProgress.c || 0,
+        lapses: currentProgress.w || 0,
+        state: currentProgress.stability > 0 ? 2 : 0,
+      };
+      const f = fsrs(generatorParameters());
+      const rating = isCorrect
+        ? (wasFirstAttempt ? Rating.Good : Rating.Hard)
+        : Rating.Again;
+      const result = f.next(card, new Date(), rating);
+      const updatedProgress = {
+        ...currentProgress,
+        stability: result.card.stability,
+        difficulty: result.card.difficulty,
+        due: result.card.due.toISOString(),
+        lastReview: new Date().toISOString(),
+        c: isCorrect ? currentProgress.c + 1 : currentProgress.c,
+        w: isCorrect ? currentProgress.w : currentProgress.w + 1,
+        outputCorrect: isCorrect ? (currentProgress.outputCorrect || 0) + 1 : (currentProgress.outputCorrect || 0),
+      };
+      const newData = {
+        ...prev,
+        progress: { ...prev.progress, [wordEs]: updatedProgress },
+      };
+      persistData(newData);
+      return newData;
+    });
+  }, [persistData]);
 
   const recordAnswer = useCallback((wordEs, isCorrect) => {
     setUserData(prev => {
@@ -656,6 +703,8 @@ export default function SpanishHub() {
                 completedStops={userData.completedStops || []}
                 completedPaths={userData.completedPaths || []}
                 onSelectStop={(stopId) => setActiveStop(stopId)}
+                onUpdateWordProgress={updateWordProgress}
+                onAwardBones={awardBones}
               />
             </div>
           )}
