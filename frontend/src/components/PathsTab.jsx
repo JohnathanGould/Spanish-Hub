@@ -64,7 +64,7 @@ function WordIntroCard({ word, isLast, onNext }) {
   }, [word.es]);
 
   return (
-    <div className="flex flex-col items-center pt-4 gap-4">
+    <div className="flex flex-col items-center pt-2 gap-2">
       {/* Image with overlaid audio button */}
       <div style={{ position: 'relative', width: '100%' }}>
         {!imgErr && word.imageUrl ? (
