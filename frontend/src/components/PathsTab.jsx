@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronRight, Lock, Check, Volume2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronDown, ChevronRight, Lock, Check, Volume2, ImageOff } from 'lucide-react';
 import {
   PATHS,
   getPath,
@@ -50,13 +50,100 @@ function isPathUnlocked(pathId, completedStops) {
 }
 
 // ─────────────────────────────────────────────
-// StopView — Stop detail screen
-// Replaces the Session 1 placeholder. Drill logic comes in a future session.
+// WordIntroCard — Phase 1 single-word introduction card
+// Audio plays automatically 50ms after mount
 // ─────────────────────────────────────────────
-function StopView({ stopId, onBack, onBegin }) {
+function WordIntroCard({ word, isLast, onNext }) {
+  const [imgErr, setImgErr] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => speak(word.es), 50);
+    return () => clearTimeout(t);
+  }, [word.es]);
+
+  return (
+    <div
+      className="rounded-2xl p-6 flex flex-col items-center text-center"
+      style={{
+        background: 'hsl(var(--card))',
+        border: '1px solid hsl(var(--border))',
+      }}
+      data-testid={`word-intro-card-${word.es}`}
+    >
+      {/* Image */}
+      <div
+        className="w-full rounded-2xl overflow-hidden flex items-center justify-center mb-6"
+        style={{
+          background: 'hsl(var(--muted))',
+          maxHeight: '12rem',
+        }}
+      >
+        {!imgErr && word.imageUrl ? (
+          <img
+            src={word.imageUrl}
+            alt={word.es}
+            onError={() => setImgErr(true)}
+            className="rounded-2xl w-full max-h-48 object-cover"
+            data-testid={`word-intro-image-${word.es}`}
+          />
+        ) : (
+          <div
+            className="flex items-center justify-center w-full"
+            style={{ height: '12rem', color: 'hsl(var(--muted-foreground))' }}
+            data-testid={`word-intro-image-fallback-${word.es}`}
+          >
+            <ImageOff className="w-10 h-10" />
+          </div>
+        )}
+      </div>
+
+      {/* Spanish word */}
+      <p
+        className="text-3xl font-bold"
+        style={{ color: 'hsl(var(--foreground))' }}
+        data-testid={`word-intro-es-${word.es}`}
+      >
+        {word.es}
+      </p>
+
+      {/* English label — only screen in the Paths flow where English appears */}
+      <p
+        className="text-sm mt-1"
+        style={{ color: 'hsl(var(--muted-foreground))' }}
+        data-testid={`word-intro-en-${word.es}`}
+      >
+        {word.en}
+      </p>
+
+      {/* Speaker button */}
+      <button
+        type="button"
+        aria-label={`Hear ${word.es}`}
+        onClick={() => speak(word.es)}
+        data-testid={`word-intro-speak-${word.es}`}
+        className="w-12 h-12 rounded-full flex items-center justify-center mt-6 transition-transform active:scale-95"
+        style={{
+          background: 'hsl(var(--muted))',
+          color: 'hsl(var(--primary))',
+          border: '1px solid hsl(var(--border))',
+        }}
+      >
+        <Volume2 className="w-6 h-6" />
+      </button>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────
+// StopView — Stop detail screen + Phase 1 word introduction flow
+// ─────────────────────────────────────────────
+function StopView({ stopId, onBack }) {
   const stop = getStop(stopId);
   const pathId = getPathIdForStop(stopId);
   const path = getPath(pathId);
+
+  const [phase, setPhase] = useState('preview'); // 'preview' | 'intro' | 'intro-complete'
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
   if (!stop || !path) {
     return (
@@ -84,6 +171,116 @@ function StopView({ stopId, onBack, onBegin }) {
     return entry || { es, en: es };
   });
 
+  const startIntro = () => {
+    setCurrentWordIndex(0);
+    setPhase('intro');
+  };
+
+  const handleNext = () => {
+    if (currentWordIndex >= words.length - 1) {
+      setPhase('intro-complete');
+    } else {
+      setCurrentWordIndex((i) => i + 1);
+    }
+  };
+
+  // ── Phase: intro-complete ───────────────────
+  if (phase === 'intro-complete') {
+    return (
+      <div className="p-4 pb-24" data-testid="stop-view-intro-complete">
+        <button
+          type="button"
+          data-testid="stop-view-back-btn"
+          onClick={onBack}
+          className="inline-flex items-center gap-1 text-sm font-medium mb-4"
+          style={{ color: 'hsl(var(--primary))' }}
+        >
+          ← Back to Paths
+        </button>
+
+        <div
+          className="rounded-2xl p-8 flex flex-col items-center text-center"
+          style={{
+            background: 'hsl(var(--card))',
+            border: '1px solid hsl(var(--border))',
+          }}
+        >
+          <p
+            className="text-xl font-semibold"
+            style={{ color: 'hsl(var(--foreground))' }}
+          >
+            You&apos;ve met all the words in this Stop 🐾
+          </p>
+          <p
+            className="text-sm mt-2"
+            style={{ color: 'hsl(var(--muted-foreground))' }}
+          >
+            Drills coming soon
+          </p>
+
+          <button
+            type="button"
+            data-testid="stop-view-back-to-stop-btn"
+            onClick={() => {
+              setPhase('preview');
+              setCurrentWordIndex(0);
+            }}
+            className="mt-8 inline-flex items-center gap-1 text-sm font-medium"
+            style={{ color: 'hsl(var(--primary))' }}
+          >
+            ← Back to Stop
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Phase: intro (Phase 1 word cards) ───────
+  if (phase === 'intro') {
+    const word = words[currentWordIndex];
+    const isLast = currentWordIndex === words.length - 1;
+
+    return (
+      <div className="p-4 pb-24" data-testid={`stop-view-intro-${stopId}`}>
+        <button
+          type="button"
+          data-testid="stop-view-back-btn"
+          onClick={onBack}
+          className="inline-flex items-center gap-1 text-sm font-medium mb-4"
+          style={{ color: 'hsl(var(--primary))' }}
+        >
+          ← Back to Paths
+        </button>
+
+        <p
+          className="text-xs uppercase tracking-wider mb-3"
+          style={{ color: 'hsl(var(--muted-foreground))' }}
+          data-testid="word-intro-progress"
+        >
+          {stop.title} · Word {currentWordIndex + 1} of {words.length}
+        </p>
+
+        <WordIntroCard
+          key={word.es}
+          word={word}
+          isLast={isLast}
+          onNext={handleNext}
+        />
+
+        <button
+          type="button"
+          data-testid="word-intro-next-btn"
+          onClick={handleNext}
+          className="w-full rounded-full py-3 mt-6 text-white font-bold transition-transform active:scale-95"
+          style={{ background: 'hsl(var(--primary))' }}
+        >
+          {isLast ? 'Ready to Practice →' : 'Next →'}
+        </button>
+      </div>
+    );
+  }
+
+  // ── Phase: preview (default — word list + Begin) ─────
   return (
     <div className="p-4 pb-24" data-testid={`stop-view-${stopId}`}>
       <button
@@ -159,11 +356,11 @@ function StopView({ stopId, onBack, onBegin }) {
         ))}
       </div>
 
-      {/* Begin button — no-op for now, drill logic in a future session */}
+      {/* Begin button — starts Phase 1 word introduction */}
       <button
         type="button"
         data-testid="stop-view-begin-btn"
-        onClick={onBegin}
+        onClick={startIntro}
         className="w-full rounded-full py-3 text-white font-bold transition-transform active:scale-95"
         style={{ background: 'hsl(var(--primary))' }}
       >
@@ -191,7 +388,6 @@ export default function PathsTab({
       <StopView
         stopId={selectedStopId}
         onBack={() => setSelectedStopId(null)}
-        onBegin={() => {}}
       />
     );
   }
