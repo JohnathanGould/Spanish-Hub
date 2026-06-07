@@ -73,11 +73,11 @@ function WordIntroCard({ word, isLast, onNext }) {
             alt={word.es}
             onError={() => setImgErr(true)}
             data-testid={`word-intro-image-${word.es}`}
-            style={{ width: '100%', height: '220px', objectFit: 'cover', borderRadius: '16px', display: 'block' }}
+            style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '16px', display: 'block' }}
           />
         ) : (
           <div
-            style={{ width: '100%', height: '220px', borderRadius: '16px', background: 'hsl(var(--muted))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ width: '100%', aspectRatio: '1 / 1', borderRadius: '16px', background: 'hsl(var(--muted))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             data-testid={`word-intro-image-fallback-${word.es}`}
           >
             <ImageOff className="w-10 h-10" style={{ color: 'hsl(var(--muted-foreground))' }} />
