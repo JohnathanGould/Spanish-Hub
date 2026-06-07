@@ -139,7 +139,15 @@ function WordIntroCard({ word, isLast, onNext }) {
 // ─────────────────────────────────────────────
 // StopView — Stop detail screen + Phase 1 word introduction flow
 // ─────────────────────────────────────────────
-function StopView({ stopId, onBack, onUpdateWordProgress, onAwardBones }) {
+function StopView({
+  stopId,
+  onBack,
+  onUpdateWordProgress,
+  onAwardBones,
+  onCompleteStop,
+  completedStops = [],
+  completedPaths = [],
+}) {
   const stop = getStop(stopId);
   const pathId = getPathIdForStop(stopId);
   const path = getPath(pathId);
@@ -246,13 +254,105 @@ function StopView({ stopId, onBack, onUpdateWordProgress, onAwardBones }) {
           onUpdateWordProgress(wordEs, isCorrect, true);
           if (isCorrect) onAwardBones(1);
         }}
-        onDone={() => setPhase('intro-complete')}
+        onDone={() => {
+          if (onCompleteStop) onCompleteStop(stopId);
+          if (onAwardBones) onAwardBones(2);
+          setPhase('stop-complete');
+        }}
         onBack={() => setPhase('hear-choose-en-es')}
       />
     );
   }
 
-  // ── Phase: intro-complete ───────────────────
+  // ── Phase: stop-complete (after Phase 3 Type It EN→SP) ────────────
+  if (phase === 'stop-complete') {
+    // Detect path completion deterministically (don't rely on prop-update timing)
+    const pathDoneNow =
+      isPathComplete(path.id, [...completedStops, stopId]) ||
+      completedPaths.includes(path.id);
+
+    return (
+      <div className="p-4 pb-24" data-testid="stop-complete">
+        <button
+          type="button"
+          data-testid="stop-view-back-btn"
+          onClick={onBack}
+          className="inline-flex items-center gap-1 text-sm font-medium mb-4"
+          style={{ color: 'hsl(var(--primary))' }}
+        >
+          ← Back to Paths
+        </button>
+
+        <div
+          className="rounded-2xl p-8 flex flex-col items-center text-center"
+          style={{
+            background: 'hsl(var(--card))',
+            border: '1px solid hsl(var(--border))',
+          }}
+        >
+          <p
+            className="text-2xl font-bold"
+            style={{ color: 'hsl(var(--foreground))' }}
+            data-testid="stop-complete-title"
+          >
+            Stop Complete! 🐾
+          </p>
+          <p
+            className="text-base mt-2"
+            style={{ color: 'hsl(var(--muted-foreground))' }}
+            data-testid="stop-complete-stop-title"
+          >
+            {stop.title}
+          </p>
+
+          <p
+            className="text-base font-semibold mt-6"
+            style={{ color: 'hsl(var(--foreground))' }}
+            data-testid="stop-complete-bones"
+          >
+            You earned 2 bones 🦴
+          </p>
+          <p
+            className="text-sm mt-2"
+            style={{ color: 'hsl(var(--muted-foreground))' }}
+          >
+            Keep going — the next Stop is unlocked
+          </p>
+
+          {pathDoneNow && (
+            <p
+              className="text-base font-semibold mt-6"
+              style={{ color: 'hsl(var(--primary))' }}
+              data-testid="stop-complete-path-done"
+            >
+              🎉 You completed {path.title}!
+            </p>
+          )}
+
+          <button
+            type="button"
+            data-testid="stop-complete-continue-btn"
+            onClick={onBack}
+            className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
+            style={{ background: 'hsl(var(--primary))' }}
+          >
+            Continue to Next Stop →
+          </button>
+          <button
+            type="button"
+            data-testid="stop-complete-back-btn"
+            onClick={onBack}
+            className="mt-3 text-sm font-medium"
+            style={{ color: 'hsl(var(--muted-foreground))' }}
+          >
+            Back to Paths
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Phase: intro-complete (reachable via Hear & Choose back) ─────
   if (phase === 'intro-complete') {
     return (
       <div className="p-4 pb-24" data-testid="stop-view-intro-complete">
@@ -447,6 +547,7 @@ export default function PathsTab({
   onSelectStop,
   onUpdateWordProgress,
   onAwardBones,
+  onCompleteStop,
 }) {
   const [expandedPathId, setExpandedPathId] = useState(null);
   const [selectedStopId, setSelectedStopId] = useState(null);
@@ -460,6 +561,9 @@ export default function PathsTab({
         onBack={() => setSelectedStopId(null)}
         onUpdateWordProgress={onUpdateWordProgress}
         onAwardBones={onAwardBones}
+        onCompleteStop={onCompleteStop}
+        completedStops={completedStops}
+        completedPaths={completedPaths}
       />
     );
   }

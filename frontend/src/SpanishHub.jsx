@@ -5,6 +5,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { MASTER, DEFAULT_CATEGORIES, PRESET_PACKS } from './content/es-en/words';
 import { LESSONS, DAILY_THEMES } from './content/es-en/lessons';
+import { getPathIdForStop, isPathComplete } from './content/es-en/paths';
 import { masteryLevel, getStats, initVoice, initAudio, spacedRepetitionSort, playConfetti } from './utils/helpers';
 import { evaluateBadges } from './utils/evaluateBadges';
 import BadgeGrid from './components/BadgeGrid';
@@ -259,7 +260,22 @@ export default function SpanishHub() {
     });
   }, [persistData]);
 
-  // ── Paths FSRS update (Phase 3 only) ──
+  // ── Paths Stop completion (writes Stop to completedStops, optionally Path to completedPaths) ──
+  const completeStop = useCallback((stopId) => {
+    setUserData(prev => {
+      const already = (prev.completedStops || []).includes(stopId);
+      if (already) return prev;
+      const completedStops = [...(prev.completedStops || []), stopId];
+      const pathId = getPathIdForStop(stopId);
+      const pathDone = pathId && isPathComplete(pathId, completedStops);
+      const completedPaths = pathDone && !(prev.completedPaths || []).includes(pathId)
+        ? [...(prev.completedPaths || []), pathId]
+        : (prev.completedPaths || []);
+      const newData = { ...prev, completedStops, completedPaths };
+      persistData(newData);
+      return newData;
+    });
+  }, [persistData]);
   const updateWordProgress = useCallback((wordEs, isCorrect, wasFirstAttempt) => {
     setUserData(prev => {
       const currentProgress = prev.progress[wordEs] || { ...DEFAULT_WORD_PROGRESS };
@@ -705,6 +721,7 @@ export default function SpanishHub() {
                 onSelectStop={(stopId) => setActiveStop(stopId)}
                 onUpdateWordProgress={updateWordProgress}
                 onAwardBones={awardBones}
+                onCompleteStop={completeStop}
               />
             </div>
           )}
