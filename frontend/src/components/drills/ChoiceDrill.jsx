@@ -31,7 +31,10 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
 
   useEffect(() => {
     if (!picked) return;
-    const t = setTimeout(() => speak(word.es, languageConfig.sourceLanguage), 50);
+    const t = setTimeout(() => {
+      if (mode === 'hear-choose-en-es') speak(word.en, languageConfig.targetLanguage);
+      else speak(word.es, languageConfig.sourceLanguage);
+    }, 50);
     return () => clearTimeout(t);
   }, [picked]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -45,6 +48,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
     [languageConfig.drillDirectionId]: { title: `${languageConfig.sourceLanguageName} → ${languageConfig.targetLanguageName}`, sub: `Pick the ${languageConfig.targetLanguageName} meaning` },
     [languageConfig.reverseDrillDirectionId]: { title: `${languageConfig.targetLanguageName} → ${languageConfig.sourceLanguageName}`, sub: `Pick the ${languageConfig.sourceLanguageName} translation` },
     'hear-choose': { title: 'Hear & Choose', sub: 'Listen — pick the meaning' },
+    'hear-choose-en-es': { title: 'Hear & Choose', sub: `Listen — pick the ${languageConfig.sourceLanguageName} word` },
   };
 
   const handlePick = (ans) => {
@@ -64,8 +68,11 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
     <DrillShell title={titles[mode].title} subtitle={titles[mode].sub} current={idx + 1} total={queue.length} onBack={onBack}>
       <div className="rounded-3xl p-8 mb-5 text-center"
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
-        {mode === 'hear-choose' ? (
-          <button data-testid="choice-listen-btn" onClick={() => speak(promptText, languageConfig.sourceLanguage)}
+        {(mode === 'hear-choose' || mode === 'hear-choose-en-es') ? (
+          <button data-testid="choice-listen-btn"
+            onClick={() => mode === 'hear-choose-en-es'
+              ? speak(word.en, languageConfig.targetLanguage)
+              : speak(promptText, languageConfig.sourceLanguage)}
             className="mx-auto rounded-full w-20 h-20 flex items-center justify-center text-white"
             style={{ background: 'hsl(var(--primary))', boxShadow: '0 6px 20px rgba(198,11,30,0.35)' }}>
             <Volume2 size={28} />
@@ -107,18 +114,22 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
               Correct! ✓
             </div>
           )}
-          {mode === 'hear-choose' && (
+          {(mode === 'hear-choose' || mode === 'hear-choose-en-es') && (
             <div className="mb-3 py-3 rounded-lg" style={{ background: 'hsl(var(--muted))' }}>
               <div className="font-serif text-2xl font-black flex items-center justify-center gap-1" style={{ color: 'hsl(var(--foreground))' }}>
-                {word.es}
-                <button onClick={() => speak(word.es, languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
+                {mode === 'hear-choose-en-es' ? word.en : word.es}
+                <button
+                  onClick={() => mode === 'hear-choose-en-es'
+                    ? speak(word.en, languageConfig.targetLanguage)
+                    : speak(word.es, languageConfig.sourceLanguage)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
               </div>
               <div className="text-xs mt-2" style={{ color: picked === correctText ? '#16A34A' : '#DC2626' }}>
-                {picked === correctText ? word.en : `Answer: ${correctText}`}
+                {picked === correctText ? (mode === 'hear-choose-en-es' ? word.es : word.en) : `Answer: ${correctText}`}
               </div>
             </div>
           )}
-          {mode !== 'hear-choose' && (
+          {mode !== 'hear-choose' && mode !== 'hear-choose-en-es' && (
             <div className="mb-3">
               <div className="flex items-center justify-center gap-1 font-bold" style={{ color: 'hsl(var(--foreground))' }}>
                 {word.es}

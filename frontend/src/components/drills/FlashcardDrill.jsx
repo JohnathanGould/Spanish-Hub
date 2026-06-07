@@ -5,9 +5,9 @@ import DrillShell from '../DrillShell';
 import WordImage from '../WordImage';
 import { buildNoRepeatQueue, speak } from '../../utils/helpers';
 
-export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBack, drillLength = 10, sentence = false }) {
+export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBack, drillLength = 10, sentence = false, initialDirection }) {
   const [mode, setMode] = useState(sentence ? 'sentences' : 'words'); // 'words' or 'sentences'
-  const [direction, setDirection] = useState(languageConfig.drillDirectionId); // 'es-en' or 'en-es'
+  const [direction, setDirection] = useState(initialDirection || languageConfig.drillDirectionId); // 'es-en' or 'en-es'
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [showHint, setShowHint] = useState(false);

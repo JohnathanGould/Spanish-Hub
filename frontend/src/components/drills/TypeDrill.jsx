@@ -33,9 +33,12 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   // Only speak when idx changes and word hasn't been spoken yet
   // Prevents audio replaying after a correct answer on Listen & Type
   useEffect(() => {
-    if (mode === 'listen-type' && currentWord && !hasSpokenRef.current) {
+    const isListenMode = mode === 'listen-type' || mode === 'listen-type-sentence' || mode === 'listen-type-en-es' || mode === 'listen-type-sentence-en-es';
+    if (isListenMode && currentWord && !hasSpokenRef.current) {
       hasSpokenRef.current = true;
-      setTimeout(() => speak(currentWord.es, languageConfig.sourceLanguage), 200);
+      const isEnMode = mode === 'listen-type-en-es' || mode === 'listen-type-sentence-en-es';
+      if (isEnMode) setTimeout(() => speak(currentWord.en, languageConfig.targetLanguage), 200);
+      else setTimeout(() => speak(currentWord.es, languageConfig.sourceLanguage), 200);
     }
   }, [idx, mode, currentWord]);
 
@@ -53,8 +56,9 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   const isRelaxed = !strictMode;
   const isPromptEs = mode === 'type-es-en';
   const target = (mode === 'type-es-en') ? word.en : word.es;
+  const isListenMode = mode === 'listen-type' || mode === 'listen-type-sentence' || mode === 'listen-type-en-es' || mode === 'listen-type-sentence-en-es';
   let promptText = '';
-  if (mode !== 'listen-type') promptText = isPromptEs ? word.es : word.en;
+  if (!isListenMode) promptText = isPromptEs ? word.es : word.en;
   let inputBorderColor = 'hsl(var(--border))';
   if (feedback) inputBorderColor = feedback.ok ? '#86EFAC' : '#FCA5A5';
   const feedbackBg    = feedback?.ok ? '#DCFCE7' : '#FEE2E2';
@@ -66,6 +70,9 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
     'type-es-en': { title: `Type — ${languageConfig.drillDirectionLabel}`, sub: `See ${languageConfig.sourceLanguageName} — type ${languageConfig.targetLanguageName}` },
     'type-en-es': { title: `Type — ${languageConfig.reverseDrillDirectionLabel}`, sub: `See ${languageConfig.targetLanguageName} — type ${languageConfig.sourceLanguageName}` },
     'listen-type': { title: 'Listen & Type', sub: `Hear ${languageConfig.sourceLanguageName} — spell it back` },
+    'listen-type-sentence': { title: 'Listen & Type', sub: `Hear ${languageConfig.sourceLanguageName} — type it back` },
+    'listen-type-en-es': { title: 'Listen & Type', sub: `Hear ${languageConfig.targetLanguageName} — type ${languageConfig.sourceLanguageName}` },
+    'listen-type-sentence-en-es': { title: 'Listen & Type', sub: `Hear ${languageConfig.targetLanguageName} — type ${languageConfig.sourceLanguageName}` },
   };
   if (!titles[mode]) return null;
 
@@ -128,8 +135,11 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
       {/* Word card — compact padding for mobile */}
       <div className="rounded-2xl p-4 mb-3 text-center"
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
-        {mode === 'listen-type' ? (
-          <button data-testid="listen-type-replay" onClick={() => speak(word.es, languageConfig.sourceLanguage)}
+        {isListenMode ? (
+          <button data-testid="listen-type-replay"
+            onClick={() => (mode === 'listen-type-en-es' || mode === 'listen-type-sentence-en-es')
+              ? speak(word.en, languageConfig.targetLanguage)
+              : speak(word.es, languageConfig.sourceLanguage)}
             className="mx-auto rounded-full w-16 h-16 flex items-center justify-center text-white"
             style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 14px rgba(198,11,30,0.35)' }}>
             <Volume2 size={24} />
@@ -202,8 +212,11 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
             {mode === 'type-es-en' && (
               <div className="text-base font-black mt-1" style={{ color: '#14532D' }}>{word.en}</div>
             )}
-            {mode === 'listen-type' && (
+            {(mode === 'listen-type' || mode === 'listen-type-sentence') && (
               <div className="text-xs mt-2 opacity-70">{word.en}</div>
+            )}
+            {(mode === 'listen-type-en-es' || mode === 'listen-type-sentence-en-es') && (
+              <div className="text-xs mt-2 opacity-70">{word.es}</div>
             )}
           </div>
           <button data-testid="type-next" onClick={next}
