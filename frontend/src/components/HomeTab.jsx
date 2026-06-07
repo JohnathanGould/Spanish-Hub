@@ -27,7 +27,7 @@ function getWeekDates() {
   });
 }
 
-export default function HomeTab({ onNavigate, userData, streak, dailyProgress, dailyGoal, masteredCount, onStartDailyChallenge, onStartDrill }) {
+export default function HomeTab({ onNavigate, userData, streak, dailyProgress, dailyGoal, masteredCount, onStartDailyChallenge, onStartDrill, onShowMastery }) {
   const today = new Date().toDateString();
   const firstName = userData?.displayName?.split(' ')[0] || 'Estudiante';
   const dateStr = capitalize(
@@ -95,7 +95,7 @@ export default function HomeTab({ onNavigate, userData, streak, dailyProgress, d
 
         {/* Card 2 — Words Mastered */}
         <div
-          onClick={() => onNavigate('words')}
+          onClick={() => onShowMastery()}
           className="rounded-2xl border px-3 py-2.5 flex items-center gap-2 cursor-pointer"
           style={{ background: '#EDE9FE', borderColor: '#DDD6FE' }}
         >

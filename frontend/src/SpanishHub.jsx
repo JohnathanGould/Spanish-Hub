@@ -8,6 +8,7 @@ import { LESSONS, DAILY_THEMES } from './content/es-en/lessons';
 import { masteryLevel, getStats, initVoice, initAudio, spacedRepetitionSort, playConfetti } from './utils/helpers';
 import { evaluateBadges } from './utils/evaluateBadges';
 import BadgeGrid from './components/BadgeGrid';
+import MasteryModal from './components/MasteryModal';
 import Header from './components/Header';
 import ProfileSheet from './components/ProfileSheet';
 import BottomNav from './components/BottomNav';
@@ -141,6 +142,7 @@ export default function SpanishHub() {
   const [sharedPacksAnchorY, setSharedPacksAnchorY] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
   const [showBadgeGrid, setShowBadgeGrid] = useState(false);
+  const [showMasteryModal, setShowMasteryModal] = useState(false);
   const [streakModalOpen, setStreakModalOpen] = useState(false);
   const saveTimerRef = useRef(null);
   const contentRef = useRef(null);
@@ -350,7 +352,8 @@ export default function SpanishHub() {
     }
   }, [user, isGuest, view.dailyKind, view.xpMultiplier]);
 
-  const startDrill = useCallback((drillId, drillLength = 10) => setView({ page: 'drill', drillId, drillLength }), []);
+  const startDrill = useCallback((drillId, drillLength = 10, filteredWords = null) =>
+    setView({ page: 'drill', drillId, drillLength, ...(filteredWords ? { overrideWords: filteredWords } : {}) }), []);
   const goHome = useCallback(() => setView({ page: 'home' }), []);
 
   const startDailyChallenge = useCallback((kind) => {
@@ -626,6 +629,7 @@ export default function SpanishHub() {
               masteredCount={masteredCount}
               onStartDailyChallenge={startDailyChallenge}
               onStartDrill={startDrill}
+              onShowMastery={() => setShowMasteryModal(true)}
             />
             </div>
           )}
@@ -717,6 +721,14 @@ export default function SpanishHub() {
         <BadgeGrid
           earnedBadges={userData.earnedBadges || []}
           onBack={() => setShowBadgeGrid(false)}
+        />
+      )}
+      {showMasteryModal && (
+        <MasteryModal
+          userData={userData}
+          words={activeWords}
+          onStartDrill={startDrill}
+          onClose={() => setShowMasteryModal(false)}
         />
       )}
       <ProfileSheet
