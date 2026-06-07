@@ -461,26 +461,26 @@ function StopView({
     const isLast = currentWordIndex === words.length - 1;
 
     return (
-      <div className="flex flex-col p-4" style={{ minHeight: 'calc(100dvh - 160px)' }} data-testid={`stop-view-intro-${stopId}`}>
+      <div className="flex flex-col p-4" style={{ height: 'calc(100dvh - 130px)' }}>
         <button
           type="button"
           data-testid="stop-view-back-btn"
           onClick={onBack}
-          className="inline-flex items-center gap-1 text-sm font-medium mb-4"
+          className="inline-flex items-center gap-1 text-sm font-medium mb-4 flex-shrink-0"
           style={{ color: 'hsl(var(--primary))' }}
         >
           ← Back to Paths
         </button>
 
         <p
-          className="text-xs uppercase tracking-wider mb-3"
+          className="text-xs uppercase tracking-wider mb-3 flex-shrink-0"
           style={{ color: 'hsl(var(--muted-foreground))' }}
           data-testid="word-intro-progress"
         >
           {stop.title} · Word {currentWordIndex + 1} of {words.length}
         </p>
 
-        <div className="flex-1 flex flex-col justify-center">
+        <div className="flex-1 overflow-y-auto">
           <WordIntroCard
             key={word.es}
             word={word}
@@ -493,7 +493,7 @@ function StopView({
           type="button"
           data-testid="word-intro-next-btn"
           onClick={handleNext}
-          className="w-full rounded-full py-3 mt-6 text-white font-bold transition-transform active:scale-95"
+          className="w-full rounded-full py-3 mt-3 text-white font-bold transition-transform active:scale-95 flex-shrink-0"
           style={{ background: 'hsl(var(--primary))' }}
         >
           {isLast ? 'Ready to Practice →' : 'Next →'}
