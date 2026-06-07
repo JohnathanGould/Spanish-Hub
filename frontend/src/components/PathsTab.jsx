@@ -480,7 +480,7 @@ function StopView({
           {stop.title} · Word {currentWordIndex + 1} of {words.length}
         </p>
 
-        <div className="flex-1 flex flex-col justify-center">
+        <div className="flex flex-col justify-center min-h-0" style={{ flex: '1 1 0' }}>
           <WordIntroCard
             key={word.es}
             word={word}
