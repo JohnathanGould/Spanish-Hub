@@ -95,7 +95,8 @@ export default function HomeTab({ onNavigate, userData, streak, dailyProgress, d
 
         {/* Card 2 — Words Mastered */}
         <div
-          className="rounded-2xl border px-3 py-2.5 flex items-center gap-2"
+          onClick={() => onNavigate('words')}
+          className="rounded-2xl border px-3 py-2.5 flex items-center gap-2 cursor-pointer"
           style={{ background: '#EDE9FE', borderColor: '#DDD6FE' }}
         >
           <span className="text-xl font-bold leading-none" style={{ color: '#4C1D95' }}>
