@@ -137,7 +137,22 @@ function WordIntroCard({ word, isLast, onNext }) {
 }
 
 // ─────────────────────────────────────────────
-// StopView — Stop detail screen + Phase 1 word introduction flow
+// buildDrillQueue — assigns drill type per word based on FSRS stability
+//   stability === 0   → 'type-en-es'        (Produce, written)
+//   stability < 7     → 'hear-choose-en-es' (Produce, recognition)
+//   stability ≥ 7     → 'es-en'             (Recognition, SP→EN)
+// ─────────────────────────────────────────────
+function buildDrillQueue(words, progress) {
+  return words.map((word) => {
+    const prog = progress[word.es] || { stability: 0, outputCorrect: 0 };
+    if (prog.stability === 0) return { word, drillType: 'type-en-es' };
+    if (prog.stability < 7) return { word, drillType: 'hear-choose-en-es' };
+    return { word, drillType: 'es-en' };
+  });
+}
+
+// ─────────────────────────────────────────────
+// StopView — Stop detail screen + Phase 1 word introduction + dynamic drill flow
 // ─────────────────────────────────────────────
 function StopView({
   stopId,
@@ -145,6 +160,8 @@ function StopView({
   onUpdateWordProgress,
   onAwardBones,
   onCompleteStop,
+  fetchStopWords,
+  progress = {},
   completedStops = [],
   completedPaths = [],
 }) {
@@ -152,8 +169,18 @@ function StopView({
   const pathId = getPathIdForStop(stopId);
   const path = getPath(pathId);
 
-  const [phase, setPhase] = useState('preview'); // 'preview' | 'intro' | 'intro-complete'
+  const [phase, setPhase] = useState('preview'); // 'preview' | 'intro' | 'dynamic-drill' | 'stop-complete' | 'intro-complete'
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [drillQueue, setDrillQueue] = useState([]);
+  const [drillQueueIndex, setDrillQueueIndex] = useState(0);
+
+  // ── Initial word list (for preview screen, before Begin reorders by FSRS weakness) ──
+  const initialWordStrings = getStopWords(stopId);
+  const initialWords = initialWordStrings.map((es) => {
+    const entry = MASTER.find((w) => w.es === es);
+    return entry || { es, en: es };
+  });
+  const [words, setWords] = useState(initialWords);
 
   if (!stop || !path) {
     return (
@@ -175,91 +202,103 @@ function StopView({
   }
 
   // Resolve word strings into full MASTER entries; fall back to {es, en: es} if missing
-  const wordStrings = getStopWords(stopId);
-  const words = wordStrings.map((es) => {
-    const entry = MASTER.find((w) => w.es === es);
-    return entry || { es, en: es };
-  });
+  // (words state initialised at top; reordered by fetchStopWords on Begin tap)
 
   const startIntro = () => {
+    const orderedWords = fetchStopWords ? fetchStopWords(stopId) : words;
+    setWords(orderedWords);
     setCurrentWordIndex(0);
     setPhase('intro');
   };
 
   const handleNext = () => {
     if (currentWordIndex >= words.length - 1) {
-      setPhase('hear-choose');
+      const queue = buildDrillQueue(words, progress);
+      setDrillQueue(queue);
+      setDrillQueueIndex(0);
+      setPhase('dynamic-drill');
     } else {
       setCurrentWordIndex((i) => i + 1);
     }
   };
 
-  // ── Phase: hear-choose (Phase 2 Recognise — audio prompt) ──
-  if (phase === 'hear-choose') {
-    return (
-      <ChoiceDrill
-        mode="hear-choose"
-        words={words}
-        progress={{}}
-        drillLength={words.length}
-        onAnswer={() => {}}
-        onDone={() => setPhase('multiple-choice')}
-        onBack={() => setPhase('intro-complete')}
-      />
-    );
-  }
+  // ── Phase: dynamic-drill (FSRS-driven per-word drill selection) ──
+  if (phase === 'dynamic-drill') {
+    const currentDrill = drillQueue[drillQueueIndex];
+    if (!currentDrill) {
+      // Defensive: empty queue → bounce back to intro-complete
+      setPhase('intro-complete');
+      return null;
+    }
 
-  // ── Phase: multiple-choice (Phase 2 Recognise — SP→EN) ──
-  if (phase === 'multiple-choice') {
+    const isLast = drillQueueIndex >= drillQueue.length - 1;
+
+    const handleAnswer = (wordEs, isCorrect) => {
+      if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true);
+      if (isCorrect && onAwardBones) onAwardBones(1);
+    };
+
+    const handleDone = () => {
+      if (isLast) {
+        if (onCompleteStop) onCompleteStop(stopId);
+        if (onAwardBones) onAwardBones(2);
+        setPhase('stop-complete');
+      } else {
+        setDrillQueueIndex((i) => i + 1);
+      }
+    };
+
+    const handleDrillBack = () => {
+      if (drillQueueIndex > 0) {
+        setDrillQueueIndex((i) => i - 1);
+      } else {
+        setPhase('intro-complete');
+      }
+    };
+
+    const singleWord = [currentDrill.word];
+
+    if (currentDrill.drillType === 'type-en-es') {
+      return (
+        <TypeDrill
+          key={`drill-${drillQueueIndex}-${currentDrill.word.es}`}
+          mode="type-en-es"
+          words={singleWord}
+          progress={{}}
+          drillLength={1}
+          onAnswer={handleAnswer}
+          onDone={handleDone}
+          onBack={handleDrillBack}
+        />
+      );
+    }
+
+    if (currentDrill.drillType === 'hear-choose-en-es') {
+      return (
+        <ChoiceDrill
+          key={`drill-${drillQueueIndex}-${currentDrill.word.es}`}
+          mode="hear-choose-en-es"
+          words={singleWord}
+          progress={{}}
+          drillLength={1}
+          onAnswer={handleAnswer}
+          onDone={handleDone}
+          onBack={handleDrillBack}
+        />
+      );
+    }
+
+    // 'es-en' (recognition, SP→EN)
     return (
       <ChoiceDrill
+        key={`drill-${drillQueueIndex}-${currentDrill.word.es}`}
         mode="es-en"
-        words={words}
+        words={singleWord}
         progress={{}}
-        drillLength={words.length}
-        onAnswer={() => {}}
-        onDone={() => setPhase('hear-choose-en-es')}
-        onBack={() => setPhase('hear-choose')}
-      />
-    );
-  }
-
-  // ── Phase: hear-choose-en-es (Phase 3 Produce — hear English, choose Spanish) ──
-  if (phase === 'hear-choose-en-es') {
-    return (
-      <ChoiceDrill
-        mode="hear-choose-en-es"
-        words={words}
-        progress={{}}
-        drillLength={words.length}
-        onAnswer={(wordEs, isCorrect) => {
-          onUpdateWordProgress(wordEs, isCorrect, true);
-          if (isCorrect) onAwardBones(1);
-        }}
-        onDone={() => setPhase('type-en-es')}
-        onBack={() => setPhase('multiple-choice')}
-      />
-    );
-  }
-
-  // ── Phase: type-en-es (Phase 3 Produce — see image, type Spanish) ──
-  if (phase === 'type-en-es') {
-    return (
-      <TypeDrill
-        mode="type-en-es"
-        words={words}
-        progress={{}}
-        drillLength={words.length}
-        onAnswer={(wordEs, isCorrect) => {
-          onUpdateWordProgress(wordEs, isCorrect, true);
-          if (isCorrect) onAwardBones(1);
-        }}
-        onDone={() => {
-          if (onCompleteStop) onCompleteStop(stopId);
-          if (onAwardBones) onAwardBones(2);
-          setPhase('stop-complete');
-        }}
-        onBack={() => setPhase('hear-choose-en-es')}
+        drillLength={1}
+        onAnswer={handleAnswer}
+        onDone={handleDone}
+        onBack={handleDrillBack}
       />
     );
   }
@@ -544,10 +583,12 @@ function StopView({
 export default function PathsTab({
   completedStops = [],
   completedPaths = [],
+  progress = {},
   onSelectStop,
   onUpdateWordProgress,
   onAwardBones,
   onCompleteStop,
+  fetchStopWords,
 }) {
   const [expandedPathId, setExpandedPathId] = useState(null);
   const [selectedStopId, setSelectedStopId] = useState(null);
@@ -562,6 +603,8 @@ export default function PathsTab({
         onUpdateWordProgress={onUpdateWordProgress}
         onAwardBones={onAwardBones}
         onCompleteStop={onCompleteStop}
+        fetchStopWords={fetchStopWords}
+        progress={progress}
         completedStops={completedStops}
         completedPaths={completedPaths}
       />

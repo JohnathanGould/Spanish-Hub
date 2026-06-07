@@ -737,6 +737,7 @@ export default function SpanishHub() {
               <PathsTab
                 completedStops={userData.completedStops || []}
                 completedPaths={userData.completedPaths || []}
+                progress={userData.progress}
                 onSelectStop={(stopId) => setActiveStop(stopId)}
                 onUpdateWordProgress={updateWordProgress}
                 onAwardBones={awardBones}
