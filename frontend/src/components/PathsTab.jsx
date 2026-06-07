@@ -467,7 +467,7 @@ function StopView({
           </p>
           <WordIntroCard key={word.es} word={word} isLast={isLast} onNext={handleNext} />
         </div>
-        <div style={{ position: 'fixed', bottom: '60px', left: 0, right: 0, padding: '8px 16px', zIndex: 50 }}>
+        <div style={{ position: 'fixed', bottom: '72px', left: 0, right: 0, padding: '12px 16px', zIndex: 50 }}>
           <button type="button" data-testid="word-intro-next-btn" onClick={handleNext}
             className="w-full rounded-full py-3 text-white font-bold transition-transform active:scale-95"
             style={{ background: 'hsl(var(--primary))' }}>
