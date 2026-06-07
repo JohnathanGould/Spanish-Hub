@@ -64,51 +64,58 @@ function WordIntroCard({ word, isLast, onNext }) {
   }, [word.es]);
 
   return (
-    <div className="flex flex-col items-center text-center pt-4">
-      {/* Square image */}
-      {!imgErr && word.imageUrl && (
-        <img
-          src={word.imageUrl}
-          alt={word.es}
-          onError={() => setImgErr(true)}
-          data-testid={`word-intro-image-${word.es}`}
-          style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: '16px' }}
-        />
-      )}
+    <div className="flex flex-row items-center gap-4 pt-4">
+      {/* Left — square image */}
+      <div style={{ flexShrink: 0, width: '140px', height: '140px' }}>
+        {!imgErr && word.imageUrl ? (
+          <img
+            src={word.imageUrl}
+            alt={word.es}
+            onError={() => setImgErr(true)}
+            data-testid={`word-intro-image-${word.es}`}
+            style={{ width: '140px', height: '140px', objectFit: 'cover', borderRadius: '16px' }}
+          />
+        ) : (
+          <div
+            style={{ width: '140px', height: '140px', borderRadius: '16px', background: 'hsl(var(--muted))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            data-testid={`word-intro-image-fallback-${word.es}`}
+          >
+            <ImageOff className="w-10 h-10" style={{ color: 'hsl(var(--muted-foreground))' }} />
+          </div>
+        )}
+      </div>
 
-      {/* Spanish word */}
-      <p
-        className="text-4xl font-bold mt-6"
-        style={{ color: 'hsl(var(--foreground))' }}
-        data-testid={`word-intro-es-${word.es}`}
-      >
-        {word.es}
-      </p>
-
-      {/* English translation */}
-      <p
-        className="text-base mt-2"
-        style={{ color: 'hsl(var(--muted-foreground))' }}
-        data-testid={`word-intro-en-${word.es}`}
-      >
-        {word.en}
-      </p>
-
-      {/* Audio button */}
-      <button
-        type="button"
-        aria-label={`Hear ${word.es}`}
-        onClick={() => speak(word.es)}
-        data-testid={`word-intro-speak-${word.es}`}
-        className="w-12 h-12 rounded-full flex items-center justify-center mt-6 transition-transform active:scale-95"
-        style={{
-          background: 'hsl(var(--muted))',
-          color: 'hsl(var(--primary))',
-          border: '1px solid hsl(var(--border))',
-        }}
-      >
-        <Volume2 className="w-6 h-6" />
-      </button>
+      {/* Right — word, translation, audio */}
+      <div className="flex flex-col justify-center gap-2">
+        <p
+          className="text-3xl font-bold"
+          style={{ color: 'hsl(var(--foreground))' }}
+          data-testid={`word-intro-es-${word.es}`}
+        >
+          {word.es}
+        </p>
+        <p
+          className="text-base"
+          style={{ color: 'hsl(var(--muted-foreground))' }}
+          data-testid={`word-intro-en-${word.es}`}
+        >
+          {word.en}
+        </p>
+        <button
+          type="button"
+          aria-label={`Hear ${word.es}`}
+          onClick={() => speak(word.es)}
+          data-testid={`word-intro-speak-${word.es}`}
+          className="w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-95"
+          style={{
+            background: 'hsl(var(--muted))',
+            color: 'hsl(var(--primary))',
+            border: '1px solid hsl(var(--border))',
+          }}
+        >
+          <Volume2 className="w-6 h-6" />
+        </button>
+      </div>
     </div>
   );
 }
