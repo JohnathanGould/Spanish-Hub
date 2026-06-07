@@ -11,6 +11,7 @@ import {
 import { MASTER } from '../content/es-en/words';
 import { speak } from '../utils/helpers';
 import ChoiceDrill from './drills/ChoiceDrill';
+import TypeDrill from './drills/TypeDrill';
 
 // ─────────────────────────────────────────────
 // Lock logic
@@ -209,8 +210,38 @@ function StopView({ stopId, onBack }) {
         progress={{}}
         drillLength={words.length}
         onAnswer={() => {}}
-        onDone={() => setPhase('intro-complete')}
+        onDone={() => setPhase('hear-choose-en-es')}
         onBack={() => setPhase('hear-choose')}
+      />
+    );
+  }
+
+  // ── Phase: hear-choose-en-es (Phase 3 Produce — hear English, choose Spanish) ──
+  if (phase === 'hear-choose-en-es') {
+    return (
+      <ChoiceDrill
+        mode="hear-choose-en-es"
+        words={words}
+        progress={{}}
+        drillLength={words.length}
+        onAnswer={() => {}}
+        onDone={() => setPhase('type-en-es')}
+        onBack={() => setPhase('multiple-choice')}
+      />
+    );
+  }
+
+  // ── Phase: type-en-es (Phase 3 Produce — see image, type Spanish) ──
+  if (phase === 'type-en-es') {
+    return (
+      <TypeDrill
+        mode="type-en-es"
+        words={words}
+        progress={{}}
+        drillLength={words.length}
+        onAnswer={() => {}}
+        onDone={() => setPhase('intro-complete')}
+        onBack={() => setPhase('hear-choose-en-es')}
       />
     );
   }
