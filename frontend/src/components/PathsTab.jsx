@@ -175,16 +175,6 @@ function StopView({
   const [drillQueue, setDrillQueue] = useState([]);
   const [drillQueueIndex, setDrillQueueIndex] = useState(0);
 
-  const [availableHeight, setAvailableHeight] = React.useState('80dvh');
-
-  React.useEffect(() => {
-    const header = document.querySelector('.app-container > *:first-child');
-    const nav = document.querySelector('nav.fixed');
-    const headerH = header ? header.getBoundingClientRect().height : 80;
-    const navH = nav ? nav.getBoundingClientRect().height : 60;
-    setAvailableHeight(`calc(100dvh - ${headerH + navH}px)`);
-  }, []);
-
   // ── Initial word list (for preview screen, before Begin reorders by FSRS weakness) ──
   const initialWordStrings = getStopWords(stopId);
   const initialWords = initialWordStrings.map((es) => {
@@ -471,7 +461,7 @@ function StopView({
     const isLast = currentWordIndex === words.length - 1;
 
     return (
-      <div className="flex flex-col p-4 pt-0" style={{ height: availableHeight }}>
+      <div className="flex flex-col p-4">
         <button
           type="button"
           data-testid="stop-view-back-btn"
@@ -490,7 +480,7 @@ function StopView({
           {stop.title} · Word {currentWordIndex + 1} of {words.length}
         </p>
 
-        <div className="flex flex-col justify-center min-h-0" style={{ flex: '1 1 0' }}>
+        <div className="flex-1 flex flex-col justify-center">
           <WordIntroCard
             key={word.es}
             word={word}
@@ -503,7 +493,7 @@ function StopView({
           type="button"
           data-testid="word-intro-next-btn"
           onClick={handleNext}
-          className="w-full rounded-full py-3 mt-3 text-white font-bold transition-transform active:scale-95 flex-shrink-0 relative z-10"
+          className="w-full rounded-full py-3 mt-3 text-white font-bold transition-transform active:scale-95 sticky bottom-4"
           style={{ background: 'hsl(var(--primary))' }}
         >
           {isLast ? 'Ready to Practice →' : 'Next →'}
