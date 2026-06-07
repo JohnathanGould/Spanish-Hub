@@ -5,7 +5,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { MASTER, DEFAULT_CATEGORIES, PRESET_PACKS } from './content/es-en/words';
 import { LESSONS, DAILY_THEMES } from './content/es-en/lessons';
-import { getPathIdForStop, isPathComplete } from './content/es-en/paths';
+import { getPathIdForStop, isPathComplete, getStopWords } from './content/es-en/paths';
 import { masteryLevel, getStats, initVoice, initAudio, spacedRepetitionSort, playConfetti } from './utils/helpers';
 import { evaluateBadges } from './utils/evaluateBadges';
 import BadgeGrid from './components/BadgeGrid';
@@ -276,6 +276,25 @@ export default function SpanishHub() {
       return newData;
     });
   }, [persistData]);
+
+  // ── Fetch: returns Stop word objects sorted by FSRS weakness (weakest first) ──
+  const fetchStopWords = useCallback((stopId) => {
+    const wordStrings = getStopWords(stopId);
+    const wordObjects = wordStrings
+      .map(es => MASTER.find(w => w.es === es))
+      .filter(Boolean);
+
+    return wordObjects.sort((a, b) => {
+      const progA = userData.progress[a.es] || { stability: 0, outputCorrect: 0 };
+      const progB = userData.progress[b.es] || { stability: 0, outputCorrect: 0 };
+      // Sort by stability ascending — lowest stability (weakest) first
+      // Break ties by outputCorrect ascending
+      if (progA.stability !== progB.stability) {
+        return progA.stability - progB.stability;
+      }
+      return (progA.outputCorrect || 0) - (progB.outputCorrect || 0);
+    });
+  }, [userData.progress]);
   const updateWordProgress = useCallback((wordEs, isCorrect, wasFirstAttempt) => {
     setUserData(prev => {
       const currentProgress = prev.progress[wordEs] || { ...DEFAULT_WORD_PROGRESS };
@@ -722,6 +741,7 @@ export default function SpanishHub() {
                 onUpdateWordProgress={updateWordProgress}
                 onAwardBones={awardBones}
                 onCompleteStop={completeStop}
+                fetchStopWords={fetchStopWords}
               />
             </div>
           )}
