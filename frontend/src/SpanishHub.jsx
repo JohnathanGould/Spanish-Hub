@@ -148,6 +148,7 @@ export default function SpanishHub() {
   const [showMasteryModal, setShowMasteryModal] = useState(false);
   const [streakModalOpen, setStreakModalOpen] = useState(false);
   const [activeStop, setActiveStop] = useState(null);
+  const [showPathCertificate, setShowPathCertificate] = useState(null); // stores pathId or null
   const saveTimerRef = useRef(null);
   const contentRef = useRef(null);
   const touchStartX = useRef(null);
@@ -769,6 +770,7 @@ export default function SpanishHub() {
                 onAwardBones={awardBones}
                 onCompleteStop={completeStop}
                 fetchStopWords={fetchStopWords}
+                onShowCertificate={(pathId) => setShowPathCertificate(pathId)}
               />
             </div>
           )}
@@ -830,6 +832,15 @@ export default function SpanishHub() {
             streakCount={userData.streak?.count || 0}
             completedDate={new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
             onClose={() => setShowCertificate(false)} />
+        )}
+        {showPathCertificate && (
+          <Certificate
+            name={userData.displayName || 'Estudiante'}
+            xp={0}
+            streakCount={userData.streak?.count || 0}
+            completedDate={new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}
+            onClose={() => setShowPathCertificate(null)}
+          />
         )}
         {showSharedPacks && (
           <SharedPacks user={user} isGuest={isGuest}

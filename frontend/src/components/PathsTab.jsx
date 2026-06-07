@@ -164,6 +164,7 @@ function StopView({
   progress = {},
   completedStops = [],
   completedPaths = [],
+  onShowCertificate,
 }) {
   const stop = getStop(stopId);
   const pathId = getPathIdForStop(stopId);
@@ -366,6 +367,18 @@ function StopView({
             >
               🎉 You completed {path.title}!
             </p>
+          )}
+
+          {pathDoneNow && onShowCertificate && (
+            <button
+              type="button"
+              onClick={() => onShowCertificate(path.id)}
+              className="w-full rounded-full font-bold py-3 mt-2"
+              style={{ background: 'hsl(var(--primary))', color: 'white' }}
+              data-testid="stop-complete-certificate-btn"
+            >
+              🎓 View Certificate →
+            </button>
           )}
 
           <button
@@ -590,6 +603,7 @@ export default function PathsTab({
   onAwardBones,
   onCompleteStop,
   fetchStopWords,
+  onShowCertificate,
 }) {
   const [expandedPathId, setExpandedPathId] = useState(null);
   // Auto-open Stop on mount when parent passes initialStopId (e.g. Home → Continue)
@@ -609,6 +623,7 @@ export default function PathsTab({
         progress={progress}
         completedStops={completedStops}
         completedPaths={completedPaths}
+        onShowCertificate={onShowCertificate}
       />
     );
   }
@@ -702,6 +717,21 @@ export default function PathsTab({
                   </div>
                 </div>
               </button>
+
+              {/* Certificate button — completed Paths only */}
+              {completedPaths.includes(path.id) && onShowCertificate && (
+                <div className="flex justify-end mb-2">
+                  <button
+                    type="button"
+                    onClick={() => onShowCertificate(path.id)}
+                    className="text-xs font-bold px-3 py-1 rounded-full"
+                    style={{ background: 'hsl(var(--primary))', color: 'white' }}
+                    data-testid={`path-certificate-btn-${path.id}`}
+                  >
+                    🎓 Certificate
+                  </button>
+                </div>
+              )}
 
               {/* Stops list (only when expanded and unlocked) */}
               {unlocked && expanded && (
