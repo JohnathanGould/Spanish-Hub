@@ -175,6 +175,16 @@ function StopView({
   const [drillQueue, setDrillQueue] = useState([]);
   const [drillQueueIndex, setDrillQueueIndex] = useState(0);
 
+  const [availableHeight, setAvailableHeight] = React.useState('80dvh');
+
+  React.useEffect(() => {
+    const header = document.querySelector('.app-container > *:first-child');
+    const nav = document.querySelector('nav.fixed');
+    const headerH = header ? header.getBoundingClientRect().height : 80;
+    const navH = nav ? nav.getBoundingClientRect().height : 60;
+    setAvailableHeight(`calc(100dvh - ${headerH + navH}px)`);
+  }, []);
+
   // ── Initial word list (for preview screen, before Begin reorders by FSRS weakness) ──
   const initialWordStrings = getStopWords(stopId);
   const initialWords = initialWordStrings.map((es) => {
@@ -461,7 +471,7 @@ function StopView({
     const isLast = currentWordIndex === words.length - 1;
 
     return (
-      <div className="flex flex-col p-4 pt-0" style={{ height: '100dvh', paddingTop: 'env(safe-area-inset-top)', boxSizing: 'border-box' }}>
+      <div className="flex flex-col p-4 pt-0" style={{ height: availableHeight }}>
         <button
           type="button"
           data-testid="stop-view-back-btn"
