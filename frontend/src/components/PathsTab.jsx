@@ -461,7 +461,7 @@ function StopView({
     const isLast = currentWordIndex === words.length - 1;
 
     return (
-      <div className="p-4 pb-24" data-testid={`stop-view-intro-${stopId}`}>
+      <div className="flex flex-col p-4" style={{ minHeight: 'calc(100dvh - 130px)' }} data-testid={`stop-view-intro-${stopId}`}>
         <button
           type="button"
           data-testid="stop-view-back-btn"
@@ -480,12 +480,14 @@ function StopView({
           {stop.title} · Word {currentWordIndex + 1} of {words.length}
         </p>
 
-        <WordIntroCard
-          key={word.es}
-          word={word}
-          isLast={isLast}
-          onNext={handleNext}
-        />
+        <div className="flex-1 flex flex-col justify-center">
+          <WordIntroCard
+            key={word.es}
+            word={word}
+            isLast={isLast}
+            onNext={handleNext}
+          />
+        </div>
 
         <button
           type="button"
