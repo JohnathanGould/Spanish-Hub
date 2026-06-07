@@ -73,22 +73,23 @@ export default function MasteryModal({ userData, words, onStartDrill, onClose })
   const activeTierWords = activeTier ? tierWords[activeTier] : [];
 
   return (
-    <>
-      {/* Backdrop */}
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{ background: 'rgba(0,0,0,0.6)' }}
+      onClick={onClose}
+    >
+      {/* Card */}
       <div
-        className="fixed inset-0 z-40"
-        style={{ background: 'rgba(0,0,0,0.6)' }}
-        onClick={onClose}
-      />
-
-      {/* Sheet */}
-      <div
-        className="fixed bottom-0 left-0 right-0 z-50 overflow-y-auto"
+        className="relative overflow-y-auto"
         style={{
           background: 'hsl(var(--card))',
-          borderRadius: '24px 24px 0 0',
+          borderRadius: '1.5rem',
           maxHeight: '80vh',
+          width: 'calc(100% - 2rem)',
+          maxWidth: '480px',
+          padding: '1.5rem',
         }}
+        onClick={e => e.stopPropagation()}
       >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-4 border-b"
@@ -176,6 +177,6 @@ export default function MasteryModal({ userData, words, onStartDrill, onClose })
 
       </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -727,7 +727,7 @@ export default function SpanishHub() {
         />
         <div ref={contentRef} className="px-4">
           {tab === 'home' && (
-            <div className="pb-20">
+            <div className="pb-[76px]">
             <HomeTab
               onNavigate={setTab}
               userData={userData}
@@ -744,7 +744,7 @@ export default function SpanishHub() {
             </div>
           )}
           {tab === 'study' && (
-            <div className="pb-20">
+            <div className="pb-[76px]">
               <DrillsGrid words={activeWords} stats={stats} drillMode={drillMode}
                 setDrillMode={setDrillMode} onStartDrill={startDrill}
                 completedPaths={userData.completedPaths || []} />
@@ -752,14 +752,14 @@ export default function SpanishHub() {
             </div>
           )}
           {tab === 'learn' && (
-            <div className="pb-20">
+            <div className="pb-[76px]">
             <LessonsList lessonsCompleted={userData.lessonsCompleted || []}
               onOpenLesson={openLesson}
               onShowCertificate={() => setShowCertificate(true)} />
             </div>
           )}
           {tab === 'paths' && (
-            <div className="pb-20">
+            <div className="pb-[76px]">
               <PathsTab
                 completedStops={userData.completedStops || []}
                 completedPaths={userData.completedPaths || []}
@@ -775,7 +775,7 @@ export default function SpanishHub() {
             </div>
           )}
           {tab === 'words' && (
-            <div className="pb-20">
+            <div className="pb-[76px]">
             <WordList
               words={activeWords} progress={userData.progress}
               customWords={userData.customWords || []}
@@ -801,7 +801,7 @@ export default function SpanishHub() {
             </div>
           )}
           {tab === 'friends' && (
-            <div className="pb-20">
+            <div className="pb-[76px]">
               <FriendsList
                 user={effectiveUser}
                 friends={userData.friends || []}
@@ -812,7 +812,7 @@ export default function SpanishHub() {
             </div>
           )}
           {tab === 'leaderboard' && (
-            <div className="pb-20">
+            <div className="pb-[76px]">
               <Leaderboard
                 currentUserId={effectiveUser?.uid}
                 currentXP={userData.xp || 0}
