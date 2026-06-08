@@ -266,7 +266,7 @@ function StopView({
       return null;
     }
 
-    const isLast = gauntletIndex >= gauntletQueue.length - 1;
+    const isLast = gauntletQueue.length > 0 && gauntletIndex >= gauntletQueue.length - 1;
 
     const handleGauntletAnswer = (wordEs, isCorrect) => {
       if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true);
@@ -274,6 +274,7 @@ function StopView({
     };
 
     const handleGauntletDone = () => {
+      if (gauntletQueue.length === 0) return;
       if (isLast) {
         setPhase('results');
       } else {
