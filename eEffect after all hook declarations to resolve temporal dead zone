@@ -1,0 +1,26 @@
+[1mdiff --git a/frontend/src/components/PathsTab.jsx b/frontend/src/components/PathsTab.jsx[m
+[1mindex 1d11c16..d27bfff 100644[m
+[1m--- a/frontend/src/components/PathsTab.jsx[m
+[1m+++ b/frontend/src/components/PathsTab.jsx[m
+[36m@@ -169,10 +169,6 @@[m [mfunction StopView({[m
+ [m
+   const [phase, setPhase] = useState('preview'); // 'preview' | 'intro' | 'transition' | 'gauntlet' | 'results' | 'stop-complete' | 'intro-complete'[m
+   const [currentWordIndex, setCurrentWordIndex] = useState(0);[m
+[31m-[m
+[31m-  useEffect(() => {[m
+[31m-    console.log('[StopView] phase changed to:', phase, '| gauntletQueueRef.length:', gauntletQueueRef.current.length, '| gauntletIndex:', gauntletIndex);[m
+[31m-  }, [phase, gauntletIndex]);[m
+   const [gauntletQueue, setGauntletQueue] = useState([]);[m
+   const [gauntletIndex, setGauntletIndex] = useState(0);[m
+   const [gauntletCorrect, setGauntletCorrect] = useState(0);[m
+[36m@@ -186,6 +182,10 @@[m [mfunction StopView({[m
+   });[m
+   const [words, setWords] = useState(initialWords);[m
+ [m
+[32m+[m[32m  useEffect(() => {[m
+[32m+[m[32m    console.log('[StopView] phase changed to:', phase, '| gauntletQueueRef.length:', gauntletQueueRef.current.length, '| gauntletIndex:', gauntletIndex);[m
+[32m+[m[32m  }, [phase, gauntletIndex]);[m
+[32m+[m
+   if (!stop || !path) {[m
+     return ([m
+       <div className="p-6">[m
