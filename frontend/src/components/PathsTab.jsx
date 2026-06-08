@@ -295,14 +295,14 @@ function StopView({
       }
     };
 
-    const singleWord = [currentItem.word];
+    const drillWords = [currentItem.word, ...words.filter(w => w.es !== currentItem.word.es)];
 
     if (currentItem.drillType === 'type-en-es') {
       return (
         <TypeDrill
           key={`gauntlet-${gauntletIndex}-${currentItem.word.es}`}
           mode="type-en-es"
-          words={singleWord}
+          words={drillWords}
           progress={{}}
           drillLength={1}
           onAnswer={handleGauntletAnswer}
@@ -316,7 +316,7 @@ function StopView({
       <ChoiceDrill
         key={`gauntlet-${gauntletIndex}-${currentItem.word.es}`}
         mode={currentItem.drillType}
-        words={singleWord}
+        words={drillWords}
         progress={{}}
         drillLength={1}
         onAnswer={handleGauntletAnswer}
