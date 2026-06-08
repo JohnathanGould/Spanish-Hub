@@ -129,22 +129,27 @@ function WordIntroCard({ word, isLast, onNext }) {
 }
 
 // ─────────────────────────────────────────────
-// buildDrillQueue — assigns drill type per word based on FSRS stability
-//   stability === 0   → 'type-en-es'        (Produce, written)
-//   stability < 7     → 'hear-choose-en-es' (Produce, recognition)
-//   stability ≥ 7     → 'es-en'             (Recognition, SP→EN)
+// buildGauntletQueue — 20-item interleaved drill queue
+// 4 rounds × 5 words, shuffled within each round
 // ─────────────────────────────────────────────
-function buildDrillQueue(words, progress) {
-  return words.map((word) => {
-    const prog = progress[word.es] || { stability: 0, outputCorrect: 0 };
-    if (prog.stability === 0) return { word, drillType: 'type-en-es' };
-    if (prog.stability < 7) return { word, drillType: 'hear-choose-en-es' };
-    return { word, drillType: 'es-en' };
-  });
+function buildGauntletQueue(words) {
+  const drillTypes = ['es-en', 'en-es', 'hear-choose', 'type-en-es'];
+  const queue = [];
+  for (const drillType of drillTypes) {
+    const round = words.map((word) => ({ wordId: word.es, drillType, word }));
+    for (let i = round.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [round[i], round[j]] = [round[j], round[i]];
+    }
+    queue.push(...round);
+  }
+  return queue;
 }
 
+const PASS_THRESHOLD = 0.80;
+
 // ─────────────────────────────────────────────
-// StopView — Stop detail screen + Phase 1 word introduction + dynamic drill flow
+// StopView — Stop detail screen + intro + gauntlet drill flow
 // ─────────────────────────────────────────────
 function StopView({
   stopId,
@@ -162,10 +167,11 @@ function StopView({
   const pathId = getPathIdForStop(stopId);
   const path = getPath(pathId);
 
-  const [phase, setPhase] = useState('preview'); // 'preview' | 'intro' | 'dynamic-drill' | 'stop-complete' | 'intro-complete'
+  const [phase, setPhase] = useState('preview'); // 'preview' | 'intro' | 'transition' | 'gauntlet' | 'results' | 'stop-complete' | 'intro-complete'
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [drillQueue, setDrillQueue] = useState([]);
-  const [drillQueueIndex, setDrillQueueIndex] = useState(0);
+  const [gauntletQueue, setGauntletQueue] = useState([]);
+  const [gauntletIndex, setGauntletIndex] = useState(0);
+  const [gauntletCorrect, setGauntletCorrect] = useState(0);
 
   // ── Initial word list (for preview screen, before Begin reorders by FSRS weakness) ──
   const initialWordStrings = getStopWords(stopId);
@@ -204,97 +210,194 @@ function StopView({
 
   const handleNext = () => {
     if (currentWordIndex >= words.length - 1) {
-      const queue = buildDrillQueue(words, progress);
-      setDrillQueue(queue);
-      setDrillQueueIndex(0);
-      setPhase('dynamic-drill');
+      setPhase('transition');
     } else {
       setCurrentWordIndex((i) => i + 1);
     }
   };
 
-  // ── Phase: dynamic-drill (FSRS-driven per-word drill selection) ──
-  if (phase === 'dynamic-drill') {
-    const currentDrill = drillQueue[drillQueueIndex];
-    if (!currentDrill) {
-      // Defensive: empty queue → bounce back to intro-complete
-      setPhase('intro-complete');
+  // ── Phase: transition ──────────────────────────────────────────────
+  if (phase === 'transition') {
+    const startGauntlet = () => {
+      const queue = buildGauntletQueue(words);
+      setGauntletQueue(queue);
+      setGauntletIndex(0);
+      setGauntletCorrect(0);
+      setPhase('gauntlet');
+    };
+
+    return (
+      <div className="p-4 pb-24" data-testid="stop-view-transition">
+        <button
+          type="button"
+          data-testid="stop-view-back-btn"
+          onClick={onBack}
+          className="inline-flex items-center gap-1 text-sm font-medium mb-4"
+          style={{ color: 'hsl(var(--primary))' }}
+        >
+          ← Back to Paths
+        </button>
+        <div
+          className="rounded-2xl p-8 flex flex-col items-center text-center"
+          style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
+        >
+          <p className="text-2xl font-bold" style={{ color: 'hsl(var(--foreground))' }}>
+            Now let&apos;s practice!
+          </p>
+          <button
+            type="button"
+            data-testid="stop-view-lets-go-btn"
+            onClick={startGauntlet}
+            className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
+            style={{ background: 'hsl(var(--primary))' }}
+          >
+            Let&apos;s Go 🐾
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Phase: gauntlet ────────────────────────────────────────────────
+  if (phase === 'gauntlet') {
+    const currentItem = gauntletQueue[gauntletIndex];
+    if (!currentItem) {
+      setPhase('results');
       return null;
     }
 
-    const isLast = drillQueueIndex >= drillQueue.length - 1;
+    const isLast = gauntletIndex >= gauntletQueue.length - 1;
 
-    const handleAnswer = (wordEs, isCorrect) => {
+    const handleGauntletAnswer = (wordEs, isCorrect) => {
       if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true);
-      if (isCorrect && onAwardBones) onAwardBones(1);
+      if (isCorrect) setGauntletCorrect((n) => n + 1);
     };
 
-    const handleDone = () => {
+    const handleGauntletDone = () => {
       if (isLast) {
-        if (onCompleteStop) onCompleteStop(stopId);
-        if (onAwardBones) onAwardBones(2);
-        setPhase('stop-complete');
+        setPhase('results');
       } else {
-        setDrillQueueIndex((i) => i + 1);
+        setGauntletIndex((i) => i + 1);
       }
     };
 
-    const handleDrillBack = () => {
-      if (drillQueueIndex > 0) {
-        setDrillQueueIndex((i) => i - 1);
+    const handleGauntletBack = () => {
+      if (gauntletIndex > 0) {
+        setGauntletIndex((i) => i - 1);
       } else {
-        setPhase('intro-complete');
+        setPhase('transition');
       }
     };
 
-    const singleWord = [currentDrill.word];
+    const singleWord = [currentItem.word];
 
-    if (currentDrill.drillType === 'type-en-es') {
+    if (currentItem.drillType === 'type-en-es') {
       return (
         <TypeDrill
-          key={`drill-${drillQueueIndex}-${currentDrill.word.es}`}
+          key={`gauntlet-${gauntletIndex}-${currentItem.word.es}`}
           mode="type-en-es"
           words={singleWord}
           progress={{}}
           drillLength={1}
-          onAnswer={handleAnswer}
-          onDone={handleDone}
-          onBack={handleDrillBack}
+          onAnswer={handleGauntletAnswer}
+          onDone={handleGauntletDone}
+          onBack={handleGauntletBack}
         />
       );
     }
 
-    if (currentDrill.drillType === 'hear-choose-en-es') {
-      return (
-        <ChoiceDrill
-          key={`drill-${drillQueueIndex}-${currentDrill.word.es}`}
-          mode="hear-choose-en-es"
-          words={singleWord}
-          progress={{}}
-          drillLength={1}
-          onAnswer={handleAnswer}
-          onDone={handleDone}
-          onBack={handleDrillBack}
-        />
-      );
-    }
-
-    // 'es-en' (recognition, SP→EN)
     return (
       <ChoiceDrill
-        key={`drill-${drillQueueIndex}-${currentDrill.word.es}`}
-        mode="es-en"
+        key={`gauntlet-${gauntletIndex}-${currentItem.word.es}`}
+        mode={currentItem.drillType}
         words={singleWord}
         progress={{}}
         drillLength={1}
-        onAnswer={handleAnswer}
-        onDone={handleDone}
-        onBack={handleDrillBack}
+        onAnswer={handleGauntletAnswer}
+        onDone={handleGauntletDone}
+        onBack={handleGauntletBack}
       />
     );
   }
 
-  // ── Phase: stop-complete (after Phase 3 Type It EN→SP) ────────────
+  // ── Phase: results ─────────────────────────────────────────────────
+  if (phase === 'results') {
+    const passed = gauntletQueue.length > 0 &&
+      (gauntletCorrect / gauntletQueue.length) >= PASS_THRESHOLD;
+
+    const handleContinue = () => {
+      if (onCompleteStop) onCompleteStop(stopId);
+      if (onAwardBones) onAwardBones(2);
+      setPhase('stop-complete');
+    };
+
+    const handleRetry = () => {
+      const queue = buildGauntletQueue(words);
+      setGauntletQueue(queue);
+      setGauntletIndex(0);
+      setGauntletCorrect(0);
+      setPhase('transition');
+    };
+
+    return (
+      <div className="p-4 pb-24" data-testid="stop-view-results">
+        <button
+          type="button"
+          data-testid="stop-view-back-btn"
+          onClick={onBack}
+          className="inline-flex items-center gap-1 text-sm font-medium mb-4"
+          style={{ color: 'hsl(var(--primary))' }}
+        >
+          ← Back to Paths
+        </button>
+        <div
+          className="rounded-2xl p-8 flex flex-col items-center text-center"
+          style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
+        >
+          <p
+            className="text-2xl font-bold"
+            style={{ color: 'hsl(var(--foreground))' }}
+            data-testid="results-title"
+          >
+            {passed ? 'Great work! 🐾' : 'Almost there! 🐾'}
+          </p>
+          <p
+            className="text-base mt-3"
+            style={{ color: passed ? 'hsl(142 71% 45%)' : 'hsl(var(--muted-foreground))' }}
+            data-testid="results-score"
+          >
+            {passed
+              ? `You got ${gauntletCorrect} of ${gauntletQueue.length} correct`
+              : `You got ${gauntletCorrect} of ${gauntletQueue.length} correct — you need 80% to advance`}
+          </p>
+
+          {passed ? (
+            <button
+              type="button"
+              data-testid="results-continue-btn"
+              onClick={handleContinue}
+              className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
+              style={{ background: 'hsl(var(--primary))' }}
+            >
+              Continue →
+            </button>
+          ) : (
+            <button
+              type="button"
+              data-testid="results-retry-btn"
+              onClick={handleRetry}
+              className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
+              style={{ background: 'hsl(var(--primary))' }}
+            >
+              Try Again
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Phase: stop-complete (only reachable on pass) ─────────────────
   if (phase === 'stop-complete') {
     // Detect path completion deterministically (don't rely on prop-update timing)
     const pathDoneNow =
@@ -445,7 +548,7 @@ function StopView({
     );
   }
 
-  // ── Phase: intro (Phase 1 word cards) ───────
+  // ── Phase: intro (word cards) ────────────────────────────────────
   if (phase === 'intro') {
     const word = words[currentWordIndex];
     const isLast = currentWordIndex === words.length - 1;
@@ -476,7 +579,7 @@ function StopView({
     );
   }
 
-  // ── Phase: preview (default — word list + Begin) ─────
+  // ── Phase: preview (default — word list + Begin) ─────────────────
   return (
     <div className="p-4 pb-24" data-testid={`stop-view-${stopId}`}>
       <button
@@ -552,7 +655,7 @@ function StopView({
         ))}
       </div>
 
-      {/* Begin button — starts Phase 1 word introduction */}
+      {/* Begin button — starts word introduction */}
       <button
         type="button"
         data-testid="stop-view-begin-btn"
