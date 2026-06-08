@@ -186,10 +186,6 @@ function StopView({
   });
   const [words, setWords] = useState(initialWords);
 
-  useEffect(() => {
-    console.log('[StopView] phase changed to:', phase, '| gauntletQueueRef.length:', gauntletQueueRef.current.length, '| gauntletIndex:', gauntletIndex);
-  }, [phase, gauntletIndex]);
-
   if (!stop || !path) {
     return (
       <div className="p-6">
