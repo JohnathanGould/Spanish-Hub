@@ -169,6 +169,10 @@ function StopView({
 
   const [phase, setPhase] = useState('preview'); // 'preview' | 'intro' | 'transition' | 'gauntlet' | 'results' | 'stop-complete' | 'intro-complete'
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
+
+  useEffect(() => {
+    console.log('[StopView] phase changed to:', phase, '| gauntletQueueRef.length:', gauntletQueueRef.current.length, '| gauntletIndex:', gauntletIndex);
+  }, [phase, gauntletIndex]);
   const [gauntletQueue, setGauntletQueue] = useState([]);
   const [gauntletIndex, setGauntletIndex] = useState(0);
   const [gauntletCorrect, setGauntletCorrect] = useState(0);
