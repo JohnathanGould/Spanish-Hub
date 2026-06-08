@@ -26,7 +26,7 @@ export const PATHS = [
         title: 'Hola y Adiós',
         titleEn: 'Hello and Goodbye',
         videoUrl: null,
-        words: ['hola', 'adiós', 'buenos días', 'buenas noches', 'buenas tardes'],
+        words: ['hola', 'adiós', 'buenos días', 'buenas tardes', 'buenas noches'],
       },
       {
         id: 'p1s2',
