@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronDown, ChevronRight, Lock, Check, Volume2, ImageOff } from 'lucide-react';
 import {
   PATHS,
@@ -172,6 +172,7 @@ function StopView({
   const [gauntletQueue, setGauntletQueue] = useState([]);
   const [gauntletIndex, setGauntletIndex] = useState(0);
   const [gauntletCorrect, setGauntletCorrect] = useState(0);
+  const gauntletQueueRef = useRef([]);
 
   // ── Initial word list (for preview screen, before Begin reorders by FSRS weakness) ──
   const initialWordStrings = getStopWords(stopId);
@@ -220,6 +221,7 @@ function StopView({
   if (phase === 'transition') {
     const startGauntlet = () => {
       const queue = buildGauntletQueue(words);
+      gauntletQueueRef.current = queue;
       setGauntletQueue(queue);
       setGauntletIndex(0);
       setGauntletCorrect(0);
@@ -260,13 +262,13 @@ function StopView({
 
   // ── Phase: gauntlet ────────────────────────────────────────────────
   if (phase === 'gauntlet') {
-    const currentItem = gauntletQueue[gauntletIndex];
+    const currentItem = gauntletQueueRef.current[gauntletIndex];
     if (!currentItem) {
       setPhase('results');
       return null;
     }
 
-    const isLast = gauntletQueue.length > 0 && gauntletIndex >= gauntletQueue.length - 1;
+    const isLast = gauntletQueueRef.current.length > 0 && gauntletIndex >= gauntletQueueRef.current.length - 1;
 
     const handleGauntletAnswer = (wordEs, isCorrect) => {
       if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true);
@@ -274,7 +276,7 @@ function StopView({
     };
 
     const handleGauntletDone = () => {
-      if (gauntletQueue.length === 0) return;
+      if (gauntletQueueRef.current.length === 0) return;
       if (isLast) {
         setPhase('results');
       } else {
