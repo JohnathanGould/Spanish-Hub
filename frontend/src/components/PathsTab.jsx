@@ -264,7 +264,6 @@ function StopView({
   if (phase === 'gauntlet') {
     const currentItem = gauntletQueueRef.current[gauntletIndex];
     if (!currentItem) {
-      setPhase('results');
       return null;
     }
 
