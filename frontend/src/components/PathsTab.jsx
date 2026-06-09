@@ -333,16 +333,18 @@ function StopView({
     const passed = gauntletQueue.length > 0 &&
       (gauntletCorrect / gauntletQueue.length) >= PASS_THRESHOLD;
 
-    const handleContinue = () => {
+    if (passed) {
       setFinalScore(gauntletCorrect);
       setFinalTotal(gauntletQueue.length);
       if (onCompleteStop) onCompleteStop(stopId);
       if (onAwardBones) onAwardBones(2);
       setPhase('stop-complete');
-    };
+      return null;
+    }
 
     const handleRetry = () => {
       const queue = buildGauntletQueue(words);
+      gauntletQueueRef.current = queue;
       setGauntletQueue(queue);
       setGauntletIndex(0);
       setGauntletCorrect(0);
@@ -351,57 +353,26 @@ function StopView({
 
     return (
       <div className="p-4 pb-24" data-testid="stop-view-results">
-        <button
-          type="button"
-          data-testid="stop-view-back-btn"
-          onClick={onBack}
+        <button type="button" data-testid="stop-view-back-btn" onClick={onBack}
           className="inline-flex items-center gap-1 text-sm font-medium mb-4"
-          style={{ color: 'hsl(var(--primary))' }}
-        >
+          style={{ color: 'hsl(var(--primary))' }}>
           ← Back to Paths
         </button>
-        <div
-          className="rounded-2xl p-8 flex flex-col items-center text-center"
-          style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
-        >
-          <p
-            className="text-2xl font-bold"
-            style={{ color: 'hsl(var(--foreground))' }}
-            data-testid="results-title"
-          >
-            {passed ? 'Great work! 🐾' : 'Almost there! 🐾'}
+        <div className="rounded-2xl p-8 flex flex-col items-center text-center"
+          style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}>
+          <p className="text-2xl font-bold" style={{ color: 'hsl(var(--foreground))' }}
+            data-testid="results-title">
+            Almost there! 🐾
           </p>
-          <p
-            className="text-base mt-3"
-            style={{ color: passed ? 'hsl(142 71% 45%)' : 'hsl(var(--muted-foreground))' }}
-            data-testid="results-score"
-          >
-            {passed
-              ? `You got ${gauntletCorrect} of ${gauntletQueue.length} correct`
-              : `You got ${gauntletCorrect} of ${gauntletQueue.length} correct — you need 80% to advance`}
+          <p className="text-base mt-3" style={{ color: 'hsl(var(--muted-foreground))' }}
+            data-testid="results-score">
+            You got {gauntletCorrect} of {gauntletQueue.length} correct — you need 80% to advance
           </p>
-
-          {passed ? (
-            <button
-              type="button"
-              data-testid="results-continue-btn"
-              onClick={handleContinue}
-              className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
-              style={{ background: 'hsl(var(--primary))' }}
-            >
-              Continue →
-            </button>
-          ) : (
-            <button
-              type="button"
-              data-testid="results-retry-btn"
-              onClick={handleRetry}
-              className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
-              style={{ background: 'hsl(var(--primary))' }}
-            >
-              Try Again
-            </button>
-          )}
+          <button type="button" data-testid="results-retry-btn" onClick={handleRetry}
+            className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
+            style={{ background: 'hsl(var(--primary))' }}>
+            Try Again
+          </button>
         </div>
       </div>
     );
