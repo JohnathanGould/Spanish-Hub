@@ -177,6 +177,8 @@ function StopView({
   const [gauntletIndex, setGauntletIndex] = useState(0);
   const [gauntletCorrect, setGauntletCorrect] = useState(0);
   const gauntletQueueRef = useRef([]);
+  const [finalScore, setFinalScore] = useState(null);
+  const [finalTotal, setFinalTotal] = useState(null);
 
   // ── Initial word list (for preview screen, before Begin reorders by FSRS weakness) ──
   const initialWordStrings = getStopWords(stopId);
@@ -332,6 +334,8 @@ function StopView({
       (gauntletCorrect / gauntletQueue.length) >= PASS_THRESHOLD;
 
     const handleContinue = () => {
+      setFinalScore(gauntletCorrect);
+      setFinalTotal(gauntletQueue.length);
       if (onCompleteStop) onCompleteStop(stopId);
       if (onAwardBones) onAwardBones(2);
       setPhase('stop-complete');
@@ -451,6 +455,11 @@ function StopView({
           >
             You earned 2 bones 🦴
           </p>
+          {finalScore !== null && (
+            <p className="text-sm mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
+              You scored {finalScore} of {finalTotal} — {Math.round((finalScore/finalTotal)*100)}%
+            </p>
+          )}
           <p
             className="text-sm mt-2"
             style={{ color: 'hsl(var(--muted-foreground))' }}
