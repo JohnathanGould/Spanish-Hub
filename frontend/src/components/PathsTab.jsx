@@ -158,6 +158,7 @@ const PASS_THRESHOLD = 0.80;
 function StopView({
   stopId,
   onBack,
+  onNextStop,
   onUpdateWordProgress,
   onAwardBones,
   onCompleteStop,
@@ -463,7 +464,7 @@ function StopView({
           <button
             type="button"
             data-testid="stop-complete-continue-btn"
-            onClick={onBack}
+            onClick={onNextStop || onBack}
             className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
             style={{ background: 'hsl(var(--primary))' }}
           >
@@ -675,12 +676,30 @@ export default function PathsTab({
   const [selectedStopId, setSelectedStopId] = useState(() => initialStopId || null);
   const [lockedMessageStopId, setLockedMessageStopId] = useState(null);
 
+  const getNextStopId = (currentStopId) => {
+    for (const path of PATHS) {
+      for (let i = 0; i < path.stops.length - 1; i++) {
+        if (path.stops[i].id === currentStopId) return path.stops[i + 1].id;
+      }
+      if (path.stops[path.stops.length - 1].id === currentStopId) {
+        const pathIndex = PATHS.indexOf(path);
+        if (pathIndex < PATHS.length - 1) return PATHS[pathIndex + 1].stops[0].id;
+      }
+    }
+    return null;
+  };
+
   // Render StopView when a stop is selected
   if (selectedStopId) {
     return (
       <StopView
         stopId={selectedStopId}
         onBack={() => setSelectedStopId(null)}
+        onNextStop={() => {
+          const nextId = getNextStopId(selectedStopId);
+          if (nextId) setSelectedStopId(nextId);
+          else setSelectedStopId(null);
+        }}
         onUpdateWordProgress={onUpdateWordProgress}
         onAwardBones={onAwardBones}
         onCompleteStop={onCompleteStop}
