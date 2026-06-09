@@ -696,7 +696,10 @@ export default function PathsTab({
         stopId={selectedStopId}
         onBack={() => setSelectedStopId(null)}
         onNextStop={() => {
-          const nextId = getNextStopId(selectedStopId);
+          let nextId = getNextStopId(selectedStopId);
+          while (nextId && completedStops.includes(nextId)) {
+            nextId = getNextStopId(nextId);
+          }
           if (nextId) setSelectedStopId(nextId);
           else setSelectedStopId(null);
         }}
