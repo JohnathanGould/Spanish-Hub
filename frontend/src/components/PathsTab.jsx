@@ -197,11 +197,14 @@ function buildFetchQueue(words, progress = {}) {
   let wordDeck = [];
   let drillDeck = [];
 
+  // Deduplicate words by es field to prevent repeats from duplicate entries
+  const uniqueWords = words.filter((w, i, arr) => arr.findIndex(x => x.es === w.es) === i);
+
   for (let i = 0; i < FETCH_LENGTH; i++) {
     // Reshuffle word deck when exhausted
-    if (wordDeck.length === 0) wordDeck = buildWordDeck(words, progress);
+    if (wordDeck.length === 0) wordDeck = buildWordDeck(uniqueWords, progress);
     // Reshuffle drill deck when exhausted
-    if (drillDeck.length === 0) drillDeck = buildDrillDeck(progress, words);
+    if (drillDeck.length === 0) drillDeck = buildDrillDeck(progress, uniqueWords);
 
     const word = wordDeck.shift();
     const drillType = drillDeck.shift();
