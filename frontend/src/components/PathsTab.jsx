@@ -172,6 +172,7 @@ function buildWordDeck(words) {
     const j = Math.floor(Math.random() * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
+  console.log('[Fetch] wordDeck:', shuffled.map(w => w.es));
   return shuffled;
 }
 
