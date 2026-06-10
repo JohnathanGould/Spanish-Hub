@@ -115,7 +115,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
       </div>
 
       {picked && (
-        <div className="mt-4 text-center">
+        <div className="mt-2 text-center">
           {picked === correctText && (
             <div className="mb-3 text-sm font-medium" style={{ color: '#16A34A' }}>
               Correct! ✓
@@ -134,15 +134,6 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
               <div className="text-xs mt-2" style={{ color: picked === correctText ? '#16A34A' : '#DC2626' }}>
                 {picked === correctText ? (mode === 'hear-choose-en-es' ? word.es : word.en) : `Answer: ${correctText}`}
               </div>
-            </div>
-          )}
-          {mode !== 'hear-choose' && mode !== 'hear-choose-en-es' && (
-            <div className="mb-3">
-              <div className="flex items-center justify-center gap-1 font-bold" style={{ color: 'hsl(var(--foreground))' }}>
-                {word.es}
-                <button onClick={() => speak(word.es, languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
-              </div>
-              <div className="text-xs mt-1" style={{ color: '#374151' }}>{word.en}</div>
             </div>
           )}
         </div>
