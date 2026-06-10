@@ -73,7 +73,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
           {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
         </button>
       )}>
-      <div className="rounded-3xl p-4 mb-3 text-center"
+      <div className="rounded-3xl p-4 mb-2 text-center"
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
         {(mode === 'hear-choose' || mode === 'hear-choose-en-es') ? (
           <button data-testid="choice-listen-btn"
@@ -93,7 +93,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
               {promptText}
             </div>
             {isAsk && (
-              <button data-testid="choice-speak" onClick={() => speak(promptText, languageConfig.sourceLanguage)} className="speak-btn mt-4">
+              <button data-testid="choice-speak" onClick={() => speak(promptText, languageConfig.sourceLanguage)} className="speak-btn mt-2">
                 <Volume2 size={12} /> Hear it
               </button>
             )}
