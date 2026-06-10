@@ -1,18 +1,10 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 
 export default function DrillShell({ title, subtitle, current, total, onBack, children, footer, headerOffset = 0 }) {
-  const containerRef = useRef(null);
-  useEffect(() => {
-    if (containerRef.current) {
-      console.log('[DrillShell] container height:', containerRef.current.offsetHeight);
-      console.log('[DrillShell] window.innerHeight:', window.innerHeight);
-      console.log('[DrillShell] headerOffset:', headerOffset);
-    }
-  }, [headerOffset]);
   const pct = total > 0 ? Math.min((current / total) * 100, 100) : 0;
   return (
-    <div ref={containerRef} className="flex flex-col" style={{ height: `calc(100dvh - ${60 + headerOffset}px)` }}>
+    <div className="flex flex-col" style={{ height: `calc(100dvh - ${60 + headerOffset}px)` }}>
       <div className="flex-shrink-0 px-4 py-3 border-b backdrop-blur-xl"
         style={{ background: 'hsl(var(--background) / 0.92)', borderColor: 'hsl(var(--border))' }}>
         <div className="flex items-center gap-2 mb-2">
@@ -40,9 +32,6 @@ export default function DrillShell({ title, subtitle, current, total, onBack, ch
         </div>
       </div>
       <div className="flex-1 overflow-y-auto px-4 py-5 pb-4">
-        <div style={{ fontSize: '10px', color: 'red', padding: '2px' }}>
-          h:{typeof window !== 'undefined' ? window.innerHeight : '?'} ho:{headerOffset}
-        </div>
         {children}
       </div>
       <div className="flex-shrink-0 px-4 pb-4 pt-2">
