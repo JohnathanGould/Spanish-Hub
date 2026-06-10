@@ -171,10 +171,7 @@ function buildWordDeck(words, progress) {
     const stability = progress[w.es]?.stability || 0;
     return Math.max(1, 10 - stability);
   });
-  console.log('[Fetch] buildWordDeck weights:', words.map((w, i) => `${w.es}=${weights[i]}`));
-  const result = weightedShuffle(words, weights);
-  console.log('[Fetch] buildWordDeck result:', result.map(w => w.es));
-  return result;
+  return weightedShuffle(words, weights);
 }
 
 function buildDrillDeck(progress, words) {
@@ -192,9 +189,7 @@ function buildDrillDeck(progress, words) {
     if (total === 0) return 1;
     return Math.max(0.1, totalW / total);
   });
-  const result = weightedShuffle(DRILL_TYPES, weights);
-  console.log('[Fetch] buildDrillDeck result:', result);
-  return result;
+  return weightedShuffle(DRILL_TYPES, weights);
 }
 
 function reshuffleWithNoBoundaryRepeat(buildDeck, lastItem, getKey) {
@@ -239,7 +234,6 @@ function buildFetchQueue(words, progress = {}) {
     queue.push({ wordId: word.es, drillType, word });
   }
 
-  console.log('[Fetch] full queue:', queue.map((item, i) => `${i+1}. ${item.word.es} — ${item.drillType}`));
   return queue;
 }
 
