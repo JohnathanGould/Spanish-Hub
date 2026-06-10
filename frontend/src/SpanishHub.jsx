@@ -783,7 +783,7 @@ export default function SpanishHub() {
             </div>
           )}
           {tab === 'paths' && (
-            <div className="pb-[76px]">
+            <div>
               <PathsTab
                 completedStops={userData.completedStops || []}
                 completedPaths={userData.completedPaths || []}
