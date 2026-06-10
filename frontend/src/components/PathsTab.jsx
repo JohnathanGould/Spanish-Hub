@@ -393,11 +393,15 @@ function StopView({
     // drillWords: target word first, then distractors for choice display
     const drillWords = [currentItem.word, ...words.filter(w => w.es !== currentItem.word.es)];
 
-    // forcedProgress: give every word except the target artificially high stability
-    // so buildNoRepeatQueue inside the drill always picks currentItem.word first
+    // forcedProgress: give the target word a very high wrong count so spacedRepetitionSort
+    // always scores it highest (weight 5 via p.w > p.c * 0.5 branch).
+    // Distractors get s:6 so they score 0.5. Max distractor score = 0.5 * 1.0 = 0.5.
+    // Min target score = 5 * 0.0001 = 0.0005 — target always wins.
     const forcedProgress = {};
     drillWords.forEach((w, i) => {
-      forcedProgress[w.es] = i === 0 ? { s: 0, c: 0, w: 0 } : { s: 99, c: 99, w: 0 };
+      forcedProgress[w.es] = i === 0
+        ? { s: 0, c: 0, w: 999 }   // target: weight 5, always drawn first
+        : { s: 6, c: 99, w: 0 };   // distractor: weight 0.5, never drawn first
     });
 
     if (currentItem.drillType === 'type-en-es') {
