@@ -175,9 +175,9 @@ function StopView({
 
   const [phase, setPhase] = useState('preview'); // 'preview' | 'intro' | 'transition' | 'fetch' | 'results' | 'stop-complete' | 'intro-complete'
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [fetchQueue, setGauntletQueue] = useState([]);
-  const [fetchIndex, setGauntletIndex] = useState(0);
-  const [fetchCorrect, setGauntletCorrect] = useState(0);
+  const [fetchQueue, setFetchQueue] = useState([]);
+  const [fetchIndex, setFetchIndex] = useState(0);
+  const [fetchCorrect, setFetchCorrect] = useState(0);
   const fetchQueueRef = useRef([]);
   const [finalScore, setFinalScore] = useState(null);
   const [finalTotal, setFinalTotal] = useState(null);
@@ -227,12 +227,12 @@ function StopView({
 
   // ── Phase: transition ──────────────────────────────────────────────
   if (phase === 'transition') {
-    const startGauntlet = () => {
+    const startFetch = () => {
       const queue = buildFetchQueue(words);
       fetchQueueRef.current = queue;
-      setGauntletQueue(queue);
-      setGauntletIndex(0);
-      setGauntletCorrect(0);
+      setFetchQueue(queue);
+      setFetchIndex(0);
+      setFetchCorrect(0);
       setPhase('fetch');
     };
 
@@ -257,7 +257,7 @@ function StopView({
           <button
             type="button"
             data-testid="stop-view-lets-go-btn"
-            onClick={startGauntlet}
+            onClick={startFetch}
             className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
             style={{ background: 'hsl(var(--primary))' }}
           >
@@ -277,24 +277,24 @@ function StopView({
 
     const isLast = fetchQueueRef.current.length > 0 && fetchIndex >= fetchQueueRef.current.length - 1;
 
-    const handleGauntletAnswer = (wordEs, isCorrect) => {
+    const handleFetchAnswer = (wordEs, isCorrect) => {
       if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true);
       if (onDrillAnswer) onDrillAnswer(isCorrect);
-      if (isCorrect) setGauntletCorrect((n) => n + 1);
+      if (isCorrect) setFetchCorrect((n) => n + 1);
     };
 
-    const handleGauntletDone = () => {
+    const handleFetchDone = () => {
       if (fetchQueueRef.current.length === 0) return;
       if (isLast) {
         setPhase('results');
       } else {
-        setGauntletIndex((i) => i + 1);
+        setFetchIndex((i) => i + 1);
       }
     };
 
-    const handleGauntletBack = () => {
+    const handleFetchBack = () => {
       if (fetchIndex > 0) {
-        setGauntletIndex((i) => i - 1);
+        setFetchIndex((i) => i - 1);
       } else {
         setPhase('transition');
       }
@@ -310,9 +310,9 @@ function StopView({
           words={drillWords}
           progress={{}}
           drillLength={1}
-          onAnswer={handleGauntletAnswer}
-          onDone={handleGauntletDone}
-          onBack={handleGauntletBack}
+          onAnswer={handleFetchAnswer}
+          onDone={handleFetchDone}
+          onBack={handleFetchBack}
         />
       );
     }
@@ -324,9 +324,9 @@ function StopView({
         words={drillWords}
         progress={{}}
         drillLength={1}
-        onAnswer={handleGauntletAnswer}
-        onDone={handleGauntletDone}
-        onBack={handleGauntletBack}
+        onAnswer={handleFetchAnswer}
+        onDone={handleFetchDone}
+        onBack={handleFetchBack}
       />
     );
   }
@@ -348,9 +348,9 @@ function StopView({
     const handleRetry = () => {
       const queue = buildFetchQueue(words);
       fetchQueueRef.current = queue;
-      setGauntletQueue(queue);
-      setGauntletIndex(0);
-      setGauntletCorrect(0);
+      setFetchQueue(queue);
+      setFetchIndex(0);
+      setFetchCorrect(0);
       setPhase('transition');
     };
 
