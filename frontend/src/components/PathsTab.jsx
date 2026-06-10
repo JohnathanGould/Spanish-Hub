@@ -436,7 +436,7 @@ function StopView({
           onAnswer={handleFetchAnswer}
           onDone={handleFetchDone}
           onBack={handleFetchBack}
-          headerOffset={80}
+          headerOffset={90}
         />
       );
     }
@@ -672,7 +672,7 @@ function StopView({
         style={{
           display: 'flex',
           flexDirection: 'column',
-          height: 'calc(100vh - 136px)',
+          height: 'calc(100vh - 160px)',
           padding: '16px',
           boxSizing: 'border-box',
         }}
