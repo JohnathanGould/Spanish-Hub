@@ -129,10 +129,10 @@ function WordIntroCard({ word, isLast, onNext }) {
 }
 
 // ─────────────────────────────────────────────
-// buildGauntletQueue — 20-item interleaved drill queue
+// buildFetchQueue — 20-item interleaved drill queue
 // 4 rounds × 5 words, shuffled within each round
 // ─────────────────────────────────────────────
-function buildGauntletQueue(words) {
+function buildFetchQueue(words) {
   const drillTypes = ['es-en', 'en-es', 'hear-choose', 'type-en-es'];
   const queue = [];
   for (const drillType of drillTypes) {
@@ -153,7 +153,7 @@ function buildGauntletQueue(words) {
 const PASS_THRESHOLD = 0.80;
 
 // ─────────────────────────────────────────────
-// StopView — Stop detail screen + intro + gauntlet drill flow
+// StopView — Stop detail screen + intro + fetch drill flow
 // ─────────────────────────────────────────────
 function StopView({
   stopId,
@@ -173,12 +173,12 @@ function StopView({
   const pathId = getPathIdForStop(stopId);
   const path = getPath(pathId);
 
-  const [phase, setPhase] = useState('preview'); // 'preview' | 'intro' | 'transition' | 'gauntlet' | 'results' | 'stop-complete' | 'intro-complete'
+  const [phase, setPhase] = useState('preview'); // 'preview' | 'intro' | 'transition' | 'fetch' | 'results' | 'stop-complete' | 'intro-complete'
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [gauntletQueue, setGauntletQueue] = useState([]);
-  const [gauntletIndex, setGauntletIndex] = useState(0);
-  const [gauntletCorrect, setGauntletCorrect] = useState(0);
-  const gauntletQueueRef = useRef([]);
+  const [fetchQueue, setGauntletQueue] = useState([]);
+  const [fetchIndex, setGauntletIndex] = useState(0);
+  const [fetchCorrect, setGauntletCorrect] = useState(0);
+  const fetchQueueRef = useRef([]);
   const [finalScore, setFinalScore] = useState(null);
   const [finalTotal, setFinalTotal] = useState(null);
 
@@ -228,12 +228,12 @@ function StopView({
   // ── Phase: transition ──────────────────────────────────────────────
   if (phase === 'transition') {
     const startGauntlet = () => {
-      const queue = buildGauntletQueue(words);
-      gauntletQueueRef.current = queue;
+      const queue = buildFetchQueue(words);
+      fetchQueueRef.current = queue;
       setGauntletQueue(queue);
       setGauntletIndex(0);
       setGauntletCorrect(0);
-      setPhase('gauntlet');
+      setPhase('fetch');
     };
 
     return (
@@ -268,14 +268,14 @@ function StopView({
     );
   }
 
-  // ── Phase: gauntlet ────────────────────────────────────────────────
-  if (phase === 'gauntlet') {
-    const currentItem = gauntletQueueRef.current[gauntletIndex];
+  // ── Phase: fetch ────────────────────────────────────────────────
+  if (phase === 'fetch') {
+    const currentItem = fetchQueueRef.current[fetchIndex];
     if (!currentItem) {
       return null;
     }
 
-    const isLast = gauntletQueueRef.current.length > 0 && gauntletIndex >= gauntletQueueRef.current.length - 1;
+    const isLast = fetchQueueRef.current.length > 0 && fetchIndex >= fetchQueueRef.current.length - 1;
 
     const handleGauntletAnswer = (wordEs, isCorrect) => {
       if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true);
@@ -284,7 +284,7 @@ function StopView({
     };
 
     const handleGauntletDone = () => {
-      if (gauntletQueueRef.current.length === 0) return;
+      if (fetchQueueRef.current.length === 0) return;
       if (isLast) {
         setPhase('results');
       } else {
@@ -293,7 +293,7 @@ function StopView({
     };
 
     const handleGauntletBack = () => {
-      if (gauntletIndex > 0) {
+      if (fetchIndex > 0) {
         setGauntletIndex((i) => i - 1);
       } else {
         setPhase('transition');
@@ -305,7 +305,7 @@ function StopView({
     if (currentItem.drillType === 'type-en-es') {
       return (
         <TypeDrill
-          key={`gauntlet-${gauntletIndex}-${currentItem.word.es}`}
+          key={`fetch-${fetchIndex}-${currentItem.word.es}`}
           mode="type-en-es"
           words={drillWords}
           progress={{}}
@@ -319,7 +319,7 @@ function StopView({
 
     return (
       <ChoiceDrill
-        key={`gauntlet-${gauntletIndex}-${currentItem.word.es}`}
+        key={`fetch-${fetchIndex}-${currentItem.word.es}`}
         mode={currentItem.drillType}
         words={drillWords}
         progress={{}}
@@ -333,12 +333,12 @@ function StopView({
 
   // ── Phase: results ─────────────────────────────────────────────────
   if (phase === 'results') {
-    const passed = gauntletQueue.length > 0 &&
-      (gauntletCorrect / gauntletQueue.length) >= PASS_THRESHOLD;
+    const passed = fetchQueue.length > 0 &&
+      (fetchCorrect / fetchQueue.length) >= PASS_THRESHOLD;
 
     if (passed) {
-      setFinalScore(gauntletCorrect);
-      setFinalTotal(gauntletQueue.length);
+      setFinalScore(fetchCorrect);
+      setFinalTotal(fetchQueue.length);
       if (onCompleteStop) onCompleteStop(stopId);
       if (onAwardBones) onAwardBones(2);
       setPhase('stop-complete');
@@ -346,8 +346,8 @@ function StopView({
     }
 
     const handleRetry = () => {
-      const queue = buildGauntletQueue(words);
-      gauntletQueueRef.current = queue;
+      const queue = buildFetchQueue(words);
+      fetchQueueRef.current = queue;
       setGauntletQueue(queue);
       setGauntletIndex(0);
       setGauntletCorrect(0);
@@ -369,7 +369,7 @@ function StopView({
           </p>
           <p className="text-base mt-3" style={{ color: 'hsl(var(--muted-foreground))' }}
             data-testid="results-score">
-            You got {gauntletCorrect} of {gauntletQueue.length} correct — you need 80% to advance
+            You got {fetchCorrect} of {fetchQueue.length} correct — you need 80% to advance
           </p>
           <button type="button" data-testid="results-retry-btn" onClick={handleRetry}
             className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
