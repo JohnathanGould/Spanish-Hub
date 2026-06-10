@@ -192,7 +192,9 @@ function buildDrillDeck(progress, words) {
     if (total === 0) return 1;
     return Math.max(0.1, totalW / total);
   });
-  return weightedShuffle(DRILL_TYPES, weights);
+  const result = weightedShuffle(DRILL_TYPES, weights);
+  console.log('[Fetch] buildDrillDeck result:', result);
+  return result;
 }
 
 function reshuffleWithNoBoundaryRepeat(buildDeck, lastItem, getKey) {
