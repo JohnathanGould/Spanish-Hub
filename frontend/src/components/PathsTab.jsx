@@ -199,9 +199,6 @@ function buildFetchQueue(words, progress = {}) {
 
   // Deduplicate words by es field to prevent repeats from duplicate entries
   const uniqueWords = words.filter((w, i, arr) => arr.findIndex(x => x.es === w.es) === i);
-  console.log('[Fetch] uniqueWords:', uniqueWords.map(w => w.es));
-  const testDeck = buildWordDeck(uniqueWords, progress);
-  console.log('[Fetch] first wordDeck:', testDeck.map(w => w.es));
 
   for (let i = 0; i < FETCH_LENGTH; i++) {
     // Reshuffle word deck when exhausted
@@ -213,6 +210,8 @@ function buildFetchQueue(words, progress = {}) {
     const drillType = drillDeck.shift();
     queue.push({ wordId: word.es, drillType, word });
   }
+
+  console.log('[Fetch] full queue:', queue.map((item, i) => `${i+1}. ${item.word.es} — ${item.drillType}`));
   return queue;
 }
 
