@@ -213,6 +213,7 @@ function buildFetchQueue(words, progress = {}) {
 
   // Deduplicate words by es field to prevent repeats from duplicate entries
   const uniqueWords = words.filter((w, i, arr) => arr.findIndex(x => x.es === w.es) === i);
+  console.log('[Fetch] buildFetchQueue called with', uniqueWords.length, 'unique words:', uniqueWords.map(w => w.es));
 
   for (let i = 0; i < FETCH_LENGTH; i++) {
     // Reshuffle word deck when exhausted — prevent boundary repeat
