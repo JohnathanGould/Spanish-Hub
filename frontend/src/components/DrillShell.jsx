@@ -9,7 +9,7 @@ export default function DrillShell({ title, subtitle, current, total, onBack, ch
       console.log('[DrillShell] window.innerHeight:', window.innerHeight);
       console.log('[DrillShell] headerOffset:', headerOffset);
     }
-  }, []);
+  }, [headerOffset]);
   const pct = total > 0 ? Math.min((current / total) * 100, 100) : 0;
   return (
     <div ref={containerRef} className="flex flex-col" style={{ height: `calc(100dvh - ${60 + headerOffset}px)` }}>
