@@ -742,7 +742,7 @@ function StopView({
         {words.map((word, idx) => (
           <div
             key={`${word.es}-${idx}`}
-            className="rounded-2xl p-4 flex items-center justify-between gap-3"
+            className="rounded-xl px-3 py-2 flex items-center justify-between gap-2"
             style={{
               background: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
@@ -751,7 +751,7 @@ function StopView({
           >
             <div className="flex-1 min-w-0">
               <p
-                className="text-lg font-bold truncate"
+                className="text-base font-bold truncate"
                 style={{ color: 'hsl(var(--foreground))' }}
               >
                 {word.es}
@@ -768,14 +768,14 @@ function StopView({
               aria-label={`Hear ${word.es}`}
               data-testid={`stop-view-speak-${word.es}`}
               onClick={() => speak(word.es)}
-              className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-transform active:scale-95"
+              className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform active:scale-95"
               style={{
                 background: 'hsl(var(--muted))',
                 color: 'hsl(var(--primary))',
                 border: '1px solid hsl(var(--border))',
               }}
             >
-              <Volume2 className="w-5 h-5" />
+              <Volume2 className="w-4 h-4" />
             </button>
           </div>
         ))}
