@@ -235,6 +235,19 @@ function buildFetchQueue(words, progress = {}) {
     queue.push({ wordId: word.es, drillType, word });
   }
 
+  // Dedup pass — prevent same word appearing consecutively
+  for (let i = 1; i < queue.length; i++) {
+    if (queue[i].wordId === queue[i - 1].wordId) {
+      // Find next item with a different wordId to swap with
+      for (let j = i + 1; j < queue.length; j++) {
+        if (queue[j].wordId !== queue[i - 1].wordId) {
+          [queue[i], queue[j]] = [queue[j], queue[i]];
+          break;
+        }
+      }
+    }
+  }
+
   return queue;
 }
 
