@@ -129,23 +129,83 @@ function WordIntroCard({ word, isLast, onNext }) {
 }
 
 // ─────────────────────────────────────────────
-// buildFetchQueue — 20-item interleaved drill queue
-// 4 rounds × 5 words, shuffled within each round
+// buildFetchQueue — two shuffled decks, drawn in parallel
+//
+// Word deck:  5 Stop words, reshuffled when exhausted.
+//   On reshuffle, words are weighted by FSRS weakness —
+//   lower stability = higher weight = appears more often.
+//
+// Drill deck: 4 drill types, reshuffled when exhausted.
+//   On reshuffle, drill types are weighted by desirable difficulty —
+//   higher failure rate in drillStats = higher weight = appears more often.
+//   On first session (no drillStats yet) all drill types are equal weight.
+//
+// Produces exactly FETCH_LENGTH items.
 // ─────────────────────────────────────────────
-function buildFetchQueue(words) {
-  const drillTypes = ['es-en', 'en-es', 'hear-choose', 'type-en-es'];
-  const queue = [];
-  for (const drillType of drillTypes) {
-    const round = words.map((word) => ({ wordId: word.es, drillType, word }));
-    for (let i = round.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [round[i], round[j]] = [round[j], round[i]];
+const FETCH_LENGTH = 20;
+const DRILL_TYPES = ['es-en', 'en-es', 'hear-choose', 'type-en-es'];
+
+function weightedShuffle(items, weights) {
+  // Returns a new array of items ordered by weighted random draw without replacement.
+  // Each item's probability of being drawn next is proportional to its weight.
+  const pool = items.map((item, i) => ({ item, weight: weights[i] }));
+  const result = [];
+  while (pool.length > 0) {
+    const total = pool.reduce((sum, e) => sum + e.weight, 0);
+    let r = Math.random() * total;
+    let idx = 0;
+    for (let i = 0; i < pool.length; i++) {
+      r -= pool[i].weight;
+      if (r <= 0) { idx = i; break; }
     }
-    queue.push(...round);
+    result.push(pool[idx].item);
+    pool.splice(idx, 1);
   }
-  for (let i = queue.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [queue[i], queue[j]] = [queue[j], queue[i]];
+  return result;
+}
+
+function buildWordDeck(words, progress) {
+  // Weight each word inversely by FSRS stability — weaker words get higher weight.
+  // Minimum weight of 1 so every word always has a chance.
+  const weights = words.map((w) => {
+    const stability = progress[w.es]?.stability || 0;
+    return Math.max(1, 10 - stability);
+  });
+  return weightedShuffle(words, weights);
+}
+
+function buildDrillDeck(progress, words) {
+  // Weight each drill type by its aggregate failure rate across the Stop's words.
+  // failure rate = w / (c + w) from drillStats[drillType].
+  // No drillStats yet → equal weight of 1 for all types.
+  const weights = DRILL_TYPES.map((dt) => {
+    let totalC = 0;
+    let totalW = 0;
+    for (const word of words) {
+      const stats = progress[word.es]?.drillStats?.[dt];
+      if (stats) { totalC += stats.c || 0; totalW += stats.w || 0; }
+    }
+    const total = totalC + totalW;
+    if (total === 0) return 1;
+    return Math.max(0.1, totalW / total);
+  });
+  return weightedShuffle(DRILL_TYPES, weights);
+}
+
+function buildFetchQueue(words, progress = {}) {
+  const queue = [];
+  let wordDeck = [];
+  let drillDeck = [];
+
+  for (let i = 0; i < FETCH_LENGTH; i++) {
+    // Reshuffle word deck when exhausted
+    if (wordDeck.length === 0) wordDeck = buildWordDeck(words, progress);
+    // Reshuffle drill deck when exhausted
+    if (drillDeck.length === 0) drillDeck = buildDrillDeck(progress, words);
+
+    const word = wordDeck.shift();
+    const drillType = drillDeck.shift();
+    queue.push({ wordId: word.es, drillType, word });
   }
   return queue;
 }
@@ -228,7 +288,7 @@ function StopView({
   // ── Phase: transition ──────────────────────────────────────────────
   if (phase === 'transition') {
     const startFetch = () => {
-      const queue = buildFetchQueue(words);
+      const queue = buildFetchQueue(words, progress);
       fetchQueueRef.current = queue;
       setFetchQueue(queue);
       setFetchIndex(0);
@@ -278,7 +338,7 @@ function StopView({
     const isLast = fetchQueueRef.current.length > 0 && fetchIndex >= fetchQueueRef.current.length - 1;
 
     const handleFetchAnswer = (wordEs, isCorrect) => {
-      if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true);
+      if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true, currentItem.drillType);
       if (onDrillAnswer) onDrillAnswer(isCorrect);
       if (isCorrect) setFetchCorrect((n) => n + 1);
     };
@@ -346,7 +406,7 @@ function StopView({
     }
 
     const handleRetry = () => {
-      const queue = buildFetchQueue(words);
+      const queue = buildFetchQueue(words, progress);
       fetchQueueRef.current = queue;
       setFetchQueue(queue);
       setFetchIndex(0);

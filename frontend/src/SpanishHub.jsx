@@ -72,6 +72,7 @@ const DEFAULT_WORD_PROGRESS = {
   difficulty: 0,
   due: new Date().toISOString(),
   lastReview: null,
+  drillStats: {},
 };
 
 const DEFAULT_DATA = {
@@ -332,7 +333,7 @@ export default function SpanishHub() {
       setTab('paths');
     }
   }, [getCurrentStop]);
-  const updateWordProgress = useCallback((wordEs, isCorrect, wasFirstAttempt) => {
+  const updateWordProgress = useCallback((wordEs, isCorrect, wasFirstAttempt, drillType = null) => {
     setUserData(prev => {
       const currentProgress = prev.progress[wordEs] || { ...DEFAULT_WORD_PROGRESS };
       const card = {
@@ -349,6 +350,15 @@ export default function SpanishHub() {
         ? (wasFirstAttempt ? Rating.Good : Rating.Hard)
         : Rating.Again;
       const result = f.next(card, new Date(), rating);
+      // ── drillStats: only written when a drillType is provided (Fetch sessions only) ──
+      const existingDrillStats = currentProgress.drillStats || {};
+      const updatedDrillStats = drillType ? {
+        ...existingDrillStats,
+        [drillType]: {
+          c: (existingDrillStats[drillType]?.c || 0) + (isCorrect ? 1 : 0),
+          w: (existingDrillStats[drillType]?.w || 0) + (isCorrect ? 0 : 1),
+        },
+      } : existingDrillStats;
       const updatedProgress = {
         ...currentProgress,
         stability: result.card.stability,
@@ -358,6 +368,7 @@ export default function SpanishHub() {
         c: isCorrect ? currentProgress.c + 1 : currentProgress.c,
         w: isCorrect ? currentProgress.w : currentProgress.w + 1,
         outputCorrect: isCorrect ? (currentProgress.outputCorrect || 0) + 1 : (currentProgress.outputCorrect || 0),
+        drillStats: updatedDrillStats,
       };
       const newData = {
         ...prev,
