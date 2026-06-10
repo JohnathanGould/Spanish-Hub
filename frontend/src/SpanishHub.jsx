@@ -261,6 +261,19 @@ export default function SpanishHub() {
     });
   }, [persistData]);
 
+  // ── Paths drill answer — increments dailyProgress so gauntlet answers count toward daily goal ──
+  const onDrillAnswer = useCallback((isCorrect) => {
+    if (!isCorrect) return;
+    setUserData(prev => {
+      const today = new Date().toDateString();
+      const dp = prev.dailyProgress || { count: 0, date: null };
+      const dailyCount = (dp.date === today ? dp.count : 0) + 1;
+      const newData = { ...prev, dailyProgress: { count: dailyCount, date: today } };
+      persistData(newData);
+      return newData;
+    });
+  }, [persistData]);
+
   // ── Paths Stop completion (writes Stop to completedStops, optionally Path to completedPaths) ──
   const completeStop = useCallback((stopId) => {
     setUserData(prev => {
@@ -771,6 +784,7 @@ export default function SpanishHub() {
                 onCompleteStop={completeStop}
                 fetchStopWords={fetchStopWords}
                 onShowCertificate={(pathId) => setShowPathCertificate(pathId)}
+                onDrillAnswer={onDrillAnswer}
               />
             </div>
           )}

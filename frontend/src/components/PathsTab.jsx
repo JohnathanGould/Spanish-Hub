@@ -167,6 +167,7 @@ function StopView({
   completedStops = [],
   completedPaths = [],
   onShowCertificate,
+  onDrillAnswer,
 }) {
   const stop = getStop(stopId);
   const pathId = getPathIdForStop(stopId);
@@ -278,6 +279,7 @@ function StopView({
 
     const handleGauntletAnswer = (wordEs, isCorrect) => {
       if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true);
+      if (onDrillAnswer) onDrillAnswer(isCorrect);
       if (isCorrect) setGauntletCorrect((n) => n + 1);
     };
 
@@ -541,8 +543,16 @@ function StopView({
     const isLast = currentWordIndex === words.length - 1;
 
     return (
-      <div style={{ paddingBottom: '116px' }}>
-        <div className="p-4">
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          height: 'calc(100vh - 136px)',
+          padding: '16px',
+          boxSizing: 'border-box',
+        }}
+      >
+        <div>
           <button type="button" data-testid="stop-view-back-btn" onClick={onBack}
             className="inline-flex items-center gap-1 text-sm font-medium mb-4"
             style={{ color: 'hsl(var(--primary))' }}>
@@ -553,9 +563,13 @@ function StopView({
             data-testid="word-intro-progress">
             {stop.title} · Word {currentWordIndex + 1} of {words.length}
           </p>
-          <WordIntroCard key={word.es} word={word} isLast={isLast} onNext={handleNext} />
         </div>
-        <div style={{ position: 'fixed', bottom: '72px', left: 0, right: 0, padding: '12px 16px', zIndex: 50 }}>
+        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', alignItems: 'center' }}>
+          <div style={{ width: '100%' }}>
+            <WordIntroCard key={word.es} word={word} isLast={isLast} onNext={handleNext} />
+          </div>
+        </div>
+        <div style={{ paddingTop: '12px' }}>
           <button type="button" data-testid="word-intro-next-btn" onClick={handleNext}
             className="w-full rounded-full py-3 text-white font-bold transition-transform active:scale-95"
             style={{ background: 'hsl(var(--primary))' }}>
@@ -670,6 +684,7 @@ export default function PathsTab({
   onCompleteStop,
   fetchStopWords,
   onShowCertificate,
+  onDrillAnswer,
 }) {
   const [expandedPathId, setExpandedPathId] = useState(null);
   // Auto-open Stop on mount when parent passes initialStopId (e.g. Home → Continue)
@@ -711,6 +726,7 @@ export default function PathsTab({
         completedStops={completedStops}
         completedPaths={completedPaths}
         onShowCertificate={onShowCertificate}
+        onDrillAnswer={onDrillAnswer}
       />
     );
   }
