@@ -164,14 +164,15 @@ function weightedShuffle(items, weights) {
   return result;
 }
 
-function buildWordDeck(words, progress) {
-  // Weight each word inversely by FSRS stability — weaker words get higher weight.
-  // Minimum weight of 1 so every word always has a chance.
-  const weights = words.map((w) => {
-    const stability = progress[w.es]?.stability || 0;
-    return Math.max(1, 10 - stability);
-  });
-  return weightedShuffle(words, weights);
+function buildWordDeck(words) {
+  // Inside a Stop all words are new — equal weight, plain shuffle.
+  // FSRS weighting applies only to off-leash Fetch (future feature).
+  const shuffled = [...words];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
 }
 
 function buildDrillDeck(progress, words) {
@@ -212,15 +213,13 @@ function buildFetchQueue(words, progress = {}) {
 
   // Deduplicate words by es field to prevent repeats from duplicate entries
   const uniqueWords = words.filter((w, i, arr) => arr.findIndex(x => x.es === w.es) === i);
-  console.log('[Fetch] words in:', words.length, words.map(w => w.es));
-  console.log('[Fetch] uniqueWords:', uniqueWords.length, uniqueWords.map(w => w.es));
 
   for (let i = 0; i < FETCH_LENGTH; i++) {
     // Reshuffle word deck when exhausted — prevent boundary repeat
     if (wordDeck.length === 0) {
       wordDeck = lastWord
-        ? reshuffleWithNoBoundaryRepeat(() => buildWordDeck(uniqueWords, progress), lastWord, w => w.es)
-        : buildWordDeck(uniqueWords, progress);
+        ? reshuffleWithNoBoundaryRepeat(() => buildWordDeck(uniqueWords), lastWord, w => w.es)
+        : buildWordDeck(uniqueWords);
     }
     // Reshuffle drill deck when exhausted — prevent boundary repeat
     if (drillDeck.length === 0) {
