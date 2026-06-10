@@ -171,7 +171,10 @@ function buildWordDeck(words, progress) {
     const stability = progress[w.es]?.stability || 0;
     return Math.max(1, 10 - stability);
   });
-  return weightedShuffle(words, weights);
+  console.log('[Fetch] buildWordDeck weights:', words.map((w, i) => `${w.es}=${weights[i]}`));
+  const result = weightedShuffle(words, weights);
+  console.log('[Fetch] buildWordDeck result:', result.map(w => w.es));
+  return result;
 }
 
 function buildDrillDeck(progress, words) {
