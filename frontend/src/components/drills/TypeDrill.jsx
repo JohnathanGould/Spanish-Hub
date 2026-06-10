@@ -5,7 +5,7 @@ import DrillShell from '../DrillShell';
 import { buildNoRepeatQueue, speak, stripAccents, playCorrect, playAlmost, gradeTypedAnswer } from '../../utils/helpers';
 
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
-export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
+export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0 }) {
   const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
@@ -44,7 +44,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
 
   if (queue.length === 0) {
     return (
-      <DrillShell title="Drill" current={0} total={0} onBack={onBack}>
+      <DrillShell title="Drill" current={0} total={0} onBack={onBack} headerOffset={headerOffset}>
         <div className="text-center py-10" style={{ color: 'hsl(var(--muted-foreground))' }}>
           No words available
         </div>
@@ -104,7 +104,8 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
       subtitle={titles[mode].sub}
       current={idx + 1}
       total={queue.length}
-      onBack={onBack}>
+      onBack={onBack}
+      headerOffset={headerOffset}>
 
       {/* Relaxed / Strict toggle — compact for mobile */}
       <div className="flex items-center justify-center gap-2 mb-3">

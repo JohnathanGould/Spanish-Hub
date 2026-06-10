@@ -436,6 +436,7 @@ function StopView({
           onAnswer={handleFetchAnswer}
           onDone={handleFetchDone}
           onBack={handleFetchBack}
+          headerOffset={80}
         />
       );
     }
@@ -450,6 +451,7 @@ function StopView({
         onAnswer={handleFetchAnswer}
         onDone={handleFetchDone}
         onBack={handleFetchBack}
+        headerOffset={80}
       />
     );
   }

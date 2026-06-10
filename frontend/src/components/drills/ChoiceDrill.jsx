@@ -5,7 +5,7 @@ import DrillShell from '../DrillShell';
 import { buildNoRepeatQueue, shuffle, speak } from '../../utils/helpers';
 
 // mode: languageConfig.drillDirectionId | languageConfig.reverseDrillDirectionId | 'hear-choose'
-export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
+export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0 }) {
   const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
@@ -39,7 +39,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
   }, [picked]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (queue.length === 0) {
-    return <DrillShell title="Drill" current={0} total={0} onBack={onBack}>
+    return <DrillShell title="Drill" current={0} total={0} onBack={onBack} headerOffset={headerOffset}>
       <div className="text-center py-10" style={{ color: 'hsl(var(--muted-foreground))' }}>No words available</div>
     </DrillShell>;
   }
@@ -65,7 +65,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
   };
 
   return (
-    <DrillShell title={titles[mode].title} subtitle={titles[mode].sub} current={idx + 1} total={queue.length} onBack={onBack}
+    <DrillShell title={titles[mode].title} subtitle={titles[mode].sub} current={idx + 1} total={queue.length} onBack={onBack} headerOffset={headerOffset}
       footer={picked && (
         <button onClick={handleContinue} data-testid="choice-continue"
           className="w-full py-3 rounded-xl font-bold text-white text-sm"

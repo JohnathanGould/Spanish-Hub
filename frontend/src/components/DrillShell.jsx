@@ -1,10 +1,10 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 
-export default function DrillShell({ title, subtitle, current, total, onBack, children, footer }) {
+export default function DrillShell({ title, subtitle, current, total, onBack, children, footer, headerOffset = 0 }) {
   const pct = total > 0 ? Math.min((current / total) * 100, 100) : 0;
   return (
-    <div className="flex flex-col" style={{ height: 'calc(100dvh - 60px)' }}>
+    <div className="flex flex-col" style={{ height: `calc(100dvh - ${60 + headerOffset}px)` }}>
       <div className="flex-shrink-0 px-4 py-3 border-b backdrop-blur-xl"
         style={{ background: 'hsl(var(--background) / 0.92)', borderColor: 'hsl(var(--border))' }}>
         <div className="flex items-center gap-2 mb-2">
