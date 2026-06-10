@@ -390,7 +390,15 @@ function StopView({
       }
     };
 
+    // drillWords: target word first, then distractors for choice display
     const drillWords = [currentItem.word, ...words.filter(w => w.es !== currentItem.word.es)];
+
+    // forcedProgress: give every word except the target artificially high stability
+    // so buildNoRepeatQueue inside the drill always picks currentItem.word first
+    const forcedProgress = {};
+    drillWords.forEach((w, i) => {
+      forcedProgress[w.es] = i === 0 ? { s: 0, c: 0, w: 0 } : { s: 99, c: 99, w: 0 };
+    });
 
     if (currentItem.drillType === 'type-en-es') {
       return (
@@ -398,7 +406,7 @@ function StopView({
           key={`fetch-${fetchIndex}-${currentItem.word.es}`}
           mode="type-en-es"
           words={drillWords}
-          progress={{}}
+          progress={forcedProgress}
           drillLength={1}
           onAnswer={handleFetchAnswer}
           onDone={handleFetchDone}
@@ -412,7 +420,7 @@ function StopView({
         key={`fetch-${fetchIndex}-${currentItem.word.es}`}
         mode={currentItem.drillType}
         words={drillWords}
-        progress={{}}
+        progress={forcedProgress}
         drillLength={1}
         onAnswer={handleFetchAnswer}
         onDone={handleFetchDone}
