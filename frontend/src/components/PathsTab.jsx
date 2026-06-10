@@ -192,22 +192,45 @@ function buildDrillDeck(progress, words) {
   return weightedShuffle(DRILL_TYPES, weights);
 }
 
+function reshuffleWithNoBoundaryRepeat(buildDeck, lastItem, getKey) {
+  // Builds a new deck and swaps the first item if it matches the last item
+  // from the previous deck — prevents repeats at deck boundaries.
+  const deck = buildDeck();
+  if (deck.length > 1 && getKey(deck[0]) === getKey(lastItem)) {
+    const swapIdx = Math.floor(Math.random() * (deck.length - 1)) + 1;
+    [deck[0], deck[swapIdx]] = [deck[swapIdx], deck[0]];
+  }
+  return deck;
+}
+
 function buildFetchQueue(words, progress = {}) {
   const queue = [];
   let wordDeck = [];
   let drillDeck = [];
+  let lastWord = null;
+  let lastDrillType = null;
 
   // Deduplicate words by es field to prevent repeats from duplicate entries
   const uniqueWords = words.filter((w, i, arr) => arr.findIndex(x => x.es === w.es) === i);
 
   for (let i = 0; i < FETCH_LENGTH; i++) {
-    // Reshuffle word deck when exhausted
-    if (wordDeck.length === 0) wordDeck = buildWordDeck(uniqueWords, progress);
-    // Reshuffle drill deck when exhausted
-    if (drillDeck.length === 0) drillDeck = buildDrillDeck(progress, uniqueWords);
+    // Reshuffle word deck when exhausted — prevent boundary repeat
+    if (wordDeck.length === 0) {
+      wordDeck = lastWord
+        ? reshuffleWithNoBoundaryRepeat(() => buildWordDeck(uniqueWords, progress), lastWord, w => w.es)
+        : buildWordDeck(uniqueWords, progress);
+    }
+    // Reshuffle drill deck when exhausted — prevent boundary repeat
+    if (drillDeck.length === 0) {
+      drillDeck = lastDrillType
+        ? reshuffleWithNoBoundaryRepeat(() => buildDrillDeck(progress, uniqueWords), lastDrillType, dt => dt)
+        : buildDrillDeck(progress, uniqueWords);
+    }
 
     const word = wordDeck.shift();
     const drillType = drillDeck.shift();
+    lastWord = word;
+    lastDrillType = drillType;
     queue.push({ wordId: word.es, drillType, word });
   }
 
