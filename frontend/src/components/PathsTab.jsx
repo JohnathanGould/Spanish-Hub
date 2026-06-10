@@ -235,15 +235,25 @@ function buildFetchQueue(words, progress = {}) {
     queue.push({ wordId: word.es, drillType, word });
   }
 
-  // Dedup pass — prevent same word appearing consecutively
-  for (let i = 1; i < queue.length; i++) {
-    if (queue[i].wordId === queue[i - 1].wordId) {
-      // Find next item with a different wordId to swap with
-      for (let j = i + 1; j < queue.length; j++) {
-        if (queue[j].wordId !== queue[i - 1].wordId) {
-          [queue[i], queue[j]] = [queue[j], queue[i]];
-          break;
+  // Spacing pass — ensure minimum gap of 3 between same word
+  const minGap = 3;
+  for (let i = 0; i < queue.length; i++) {
+    // Check if this word appeared too recently
+    for (let lookBack = Math.max(0, i - minGap); lookBack < i; lookBack++) {
+      if (queue[i].wordId === queue[lookBack].wordId) {
+        // Find a swap candidate that won't violate spacing
+        for (let j = i + 1; j < queue.length; j++) {
+          const candidateWord = queue[j].wordId;
+          let candidateOk = true;
+          for (let lb = Math.max(0, i - minGap); lb < i; lb++) {
+            if (queue[lb].wordId === candidateWord) { candidateOk = false; break; }
+          }
+          if (candidateOk) {
+            [queue[i], queue[j]] = [queue[j], queue[i]];
+            break;
+          }
         }
+        break;
       }
     }
   }
