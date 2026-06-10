@@ -73,14 +73,14 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
           {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'}
         </button>
       )}>
-      <div className="rounded-3xl p-4 mb-2 text-center"
+      <div className="rounded-3xl p-3 mb-2 text-center"
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
         {(mode === 'hear-choose' || mode === 'hear-choose-en-es') ? (
           <button data-testid="choice-listen-btn"
             onClick={() => mode === 'hear-choose-en-es'
               ? speak(word.en, languageConfig.targetLanguage)
               : speak(promptText, languageConfig.sourceLanguage)}
-            className="mx-auto rounded-full w-20 h-20 flex items-center justify-center text-white"
+            className="mx-auto rounded-full w-14 h-14 flex items-center justify-center text-white"
             style={{ background: 'hsl(var(--primary))', boxShadow: '0 6px 20px rgba(198,11,30,0.35)' }}>
             <Volume2 size={28} />
           </button>
