@@ -122,8 +122,8 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
             </div>
           )}
           {(mode === 'hear-choose' || mode === 'hear-choose-en-es') && (
-            <div className="mb-3 py-3 rounded-lg" style={{ background: 'hsl(var(--muted))' }}>
-              <div className="font-serif text-2xl font-black flex items-center justify-center gap-1" style={{ color: 'hsl(var(--foreground))' }}>
+            <div className="mb-1 py-2 rounded-lg" style={{ background: 'hsl(var(--muted))' }}>
+              <div className="font-serif text-lg font-black flex items-center justify-center gap-1" style={{ color: 'hsl(var(--foreground))' }}>
                 {mode === 'hear-choose-en-es' ? word.en : word.es}
                 <button
                   onClick={() => mode === 'hear-choose-en-es'
@@ -131,7 +131,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
                     : speak(word.es, languageConfig.sourceLanguage)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
               </div>
-              <div className="text-xs mt-2" style={{ color: picked === correctText ? '#16A34A' : '#DC2626' }}>
+              <div className="text-xs mt-1" style={{ color: picked === correctText ? '#16A34A' : '#DC2626' }}>
                 {picked === correctText ? (mode === 'hear-choose-en-es' ? word.es : word.en) : `Answer: ${correctText}`}
               </div>
             </div>
