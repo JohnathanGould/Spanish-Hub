@@ -153,10 +153,10 @@ function weightedShuffle(items, weights) {
   while (pool.length > 0) {
     const total = pool.reduce((sum, e) => sum + e.weight, 0);
     let r = Math.random() * total;
-    let idx = 0;
+    let idx = pool.length - 1; // fallback to last item if floating point never hits 0
     for (let i = 0; i < pool.length; i++) {
+      if (r < pool[i].weight) { idx = i; break; }
       r -= pool[i].weight;
-      if (r <= 0) { idx = i; break; }
     }
     result.push(pool[idx].item);
     pool.splice(idx, 1);
