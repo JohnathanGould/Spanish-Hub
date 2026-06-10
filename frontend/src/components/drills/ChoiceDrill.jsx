@@ -89,7 +89,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
             <div className="text-xs uppercase tracking-wider mb-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
               {isAsk ? languageConfig.sourceLanguageName : languageConfig.targetLanguageName}
             </div>
-            <div className="font-serif text-2xl font-black leading-tight" data-testid="choice-prompt" style={{ color: 'hsl(var(--foreground))' }}>
+            <div className="font-serif text-2xl font-black leading-tight break-words w-full" data-testid="choice-prompt" style={{ color: 'hsl(var(--foreground))' }}>
               {promptText}
             </div>
             {isAsk && (
