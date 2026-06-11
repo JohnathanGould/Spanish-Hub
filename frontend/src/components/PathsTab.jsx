@@ -708,7 +708,7 @@ function StopView({
   // ── Phase: preview (default — word list + Begin) ─────────────────
   return (
     <>
-    <div className="p-4 pb-[120px]" data-testid={`stop-view-${stopId}`}>
+    <div className="p-4 pb-[140px]" data-testid={`stop-view-${stopId}`}>
       <button
         type="button"
         data-testid="stop-view-back-btn"
@@ -782,7 +782,7 @@ function StopView({
         ))}
       </div>
     </div>
-    <div style={{ position: 'fixed', bottom: '64px', left: 0, right: 0, padding: '8px 16px', zIndex: 50 }}>
+    <div style={{ position: 'fixed', bottom: '72px', left: 0, right: 0, padding: '8px 16px', zIndex: 50 }}>
       <button
         type="button"
         data-testid="stop-view-begin-btn"
