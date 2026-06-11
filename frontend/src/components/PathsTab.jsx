@@ -743,7 +743,7 @@ function StopView({
         {words.map((word, idx) => (
           <div
             key={`${word.es}-${idx}`}
-            className="rounded-xl px-3 py-2 flex items-center justify-between gap-2"
+            className="rounded-xl px-3 py-1 flex items-center justify-between gap-2"
             style={{
               background: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
@@ -752,13 +752,13 @@ function StopView({
           >
             <div className="flex-1 min-w-0">
               <p
-                className="text-base font-bold truncate"
+                className="text-sm font-bold truncate"
                 style={{ color: 'hsl(var(--foreground))' }}
               >
                 {word.es}
               </p>
               <p
-                className="text-sm truncate"
+                className="text-xs truncate"
                 style={{ color: 'hsl(var(--muted-foreground))' }}
               >
                 {word.en}
