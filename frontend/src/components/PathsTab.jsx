@@ -707,7 +707,7 @@ function StopView({
 
   // ── Phase: preview (default — word list + Begin) ─────────────────
   return (
-    <div className="p-4 pb-24" data-testid={`stop-view-${stopId}`}>
+    <div className="p-4 pb-4" data-testid={`stop-view-${stopId}`}>
       <button
         type="button"
         data-testid="stop-view-back-btn"
@@ -720,7 +720,7 @@ function StopView({
 
       {/* Header card — matches Path header gradient style */}
       <div
-        className="rounded-2xl p-5 mb-5 text-white relative overflow-hidden"
+        className="rounded-2xl p-3 mb-3 text-white relative overflow-hidden"
         style={{
           background:
             'linear-gradient(135deg, hsl(var(--primary)), hsl(352 75% 65%))',
@@ -738,7 +738,7 @@ function StopView({
       </div>
 
       {/* Word list */}
-      <div className="flex flex-col gap-2 mb-6" data-testid="stop-view-word-list">
+      <div className="flex flex-col gap-1 mb-3" data-testid="stop-view-word-list">
         {words.map((word, idx) => (
           <div
             key={`${word.es}-${idx}`}
