@@ -13,7 +13,6 @@ import { speak } from '../utils/helpers';
 import ChoiceDrill from './drills/ChoiceDrill';
 import TypeDrill from './drills/TypeDrill';
 import FillBlankDrill from './drills/FillBlankDrill';
-import ConjugationDrill from './drills/ConjugationDrill';
 import GenderDrill from './drills/GenderDrill';
 import SentenceBuilderDrill from './drills/SentenceBuilderDrill';
 
@@ -156,7 +155,6 @@ const DRILL_TYPES = [
   'type-en-es',               // produce
   'listen-type-en',           // produce
   'listen-type-sentence-en',  // produce
-  'conjugation',              // produce
   'gender',                   // produce
 ];
 
@@ -170,7 +168,6 @@ const DRILL_DIMENSION = {
   'type-en-es':               'produce',
   'listen-type-en':           'produce',
   'listen-type-sentence-en':  'produce',
-  'conjugation':              'produce',
   'gender':                   'produce',
 };
 
@@ -562,18 +559,6 @@ function StopView({
     if (drillType === 'hear-choose-en') {
       return <ChoiceDrill key={drillKey} mode="hear-choose-en-es" {...sharedWordProps} headerOffset={80} />;
     }
-    if (drillType === 'conjugation') {
-      return (
-        <ConjugationDrill
-          key={drillKey}
-          mode="present"
-          drillLength={1}
-          onAnswer={handleFetchAnswer}
-          onDone={handleFetchDone}
-          onBack={handleFetchBack}
-        />
-      );
-    }
     if (drillType === 'gender') {
       if (!(currentItem.word.type === 'noun' && (currentItem.word.gender === 'm' || currentItem.word.gender === 'f'))) {
         return <ChoiceDrill key={drillKey} mode="en-es" {...sharedWordProps} headerOffset={80} />;
@@ -845,18 +830,6 @@ function StopView({
     }
     if (drillType === 'hear-choose-en') {
       return <ChoiceDrill key={drillKey} mode="hear-choose-en-es" {...sharedWordProps} headerOffset={80} />;
-    }
-    if (drillType === 'conjugation') {
-      return (
-        <ConjugationDrill
-          key={drillKey}
-          mode="present"
-          drillLength={1}
-          onAnswer={handlePathFetchAnswer}
-          onDone={handlePathFetchDone}
-          onBack={handlePathFetchBack}
-        />
-      );
     }
     if (drillType === 'gender') {
       if (!(currentItem.word.type === 'noun' && (currentItem.word.gender === 'm' || currentItem.word.gender === 'f'))) {

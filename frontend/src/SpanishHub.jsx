@@ -395,7 +395,6 @@ export default function SpanishHub() {
       'type-en-es':               'produce',
       'listen-type-en':           'produce',
       'listen-type-sentence-en':  'produce',
-      'conjugation':              'produce',
       'gender':                   'produce',
     };
 
