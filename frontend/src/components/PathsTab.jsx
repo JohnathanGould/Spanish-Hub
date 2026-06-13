@@ -9,7 +9,7 @@ import {
 } from '../content/es-en/paths';
 import { MASTER } from '../content/es-en/words';
 import { PATH_STAGES } from '../data/pathTiers';
-import { speak } from '../utils/helpers';
+import { speak, shuffle } from '../utils/helpers';
 import ChoiceDrill from './drills/ChoiceDrill';
 import TypeDrill from './drills/TypeDrill';
 import FillBlankDrill from './drills/FillBlankDrill';
@@ -279,36 +279,24 @@ const enforceMinGap = (queue, minGap = 3) => {
 };
 
 function buildFetchQueue(words, progress = {}) {
-  const queue = [];
-  let wordDeck = [];
-  let drillDeck = [];
-  let lastWord = null;
-  let lastDrillType = null;
-
   // Deduplicate words by es field to prevent repeats from duplicate entries
   const uniqueWords = words.filter((w, i, arr) => arr.findIndex(x => x.es === w.es) === i);
 
-  for (let i = 0; i < FETCH_LENGTH; i++) {
-    // Reshuffle word deck when exhausted — prevent boundary repeat
-    if (wordDeck.length === 0) {
-      wordDeck = lastWord
-        ? reshuffleWithNoBoundaryRepeat(() => buildWordDeck(uniqueWords, progress), lastWord, w => w.es)
-        : buildWordDeck(uniqueWords, progress);
-    }
-    // Reshuffle drill deck when exhausted — prevent boundary repeat
-    if (drillDeck.length === 0) {
-      drillDeck = lastDrillType
-        ? reshuffleWithNoBoundaryRepeat(() => buildDrillDeck(progress, uniqueWords), lastDrillType, dt => dt)
-        : buildDrillDeck(progress, uniqueWords);
-    }
+  const maxPerWord = Math.ceil(FETCH_LENGTH / uniqueWords.length);
+  const cappedWordPool = uniqueWords.flatMap(word => Array(maxPerWord).fill(word)).slice(0, FETCH_LENGTH);
+  const shuffledWordPool = shuffle(cappedWordPool);
 
-    const word = wordDeck.shift();
+  let drillDeck = buildDrillDeck(progress, uniqueWords);
+  const queue = [];
+  for (let i = 0; i < shuffledWordPool.length; i++) {
+    if (drillDeck.length === 0) {
+      drillDeck = buildDrillDeck(progress, uniqueWords);
+    }
+    const word = shuffledWordPool[i];
     let drillType = drillDeck.shift();
     if (drillType === 'gender' && !(word.type === 'noun' && (word.gender === 'm' || word.gender === 'f'))) {
       drillType = 'en-es';
     }
-    lastWord = word;
-    lastDrillType = drillType;
     queue.push({ wordId: word.es, drillType, word });
   }
 
@@ -329,33 +317,23 @@ function buildPathWordPool(pathId) {
 }
 
 function buildPathFetchQueue(pathWords, progress) {
-  const queue = [];
-  let wordDeck = [];
-  let drillDeck = [];
-  let lastWord = null;
-  let lastDrillType = null;
-
   const uniqueWords = pathWords.filter((w, i, arr) => arr.findIndex((x) => x.es === w.es) === i);
 
-  for (let i = 0; i < PATH_FETCH_LENGTH; i++) {
-    if (wordDeck.length === 0) {
-      wordDeck = lastWord
-        ? reshuffleWithNoBoundaryRepeat(() => buildWordDeck(uniqueWords, progress), lastWord, (w) => w.es)
-        : buildWordDeck(uniqueWords, progress);
-    }
-    if (drillDeck.length === 0) {
-      drillDeck = lastDrillType
-        ? reshuffleWithNoBoundaryRepeat(() => buildDrillDeck(progress, uniqueWords), lastDrillType, (dt) => dt)
-        : buildDrillDeck(progress, uniqueWords);
-    }
+  const maxPerWord = Math.ceil(PATH_FETCH_LENGTH / uniqueWords.length);
+  const cappedWordPool = uniqueWords.flatMap(word => Array(maxPerWord).fill(word)).slice(0, PATH_FETCH_LENGTH);
+  const shuffledWordPool = shuffle(cappedWordPool);
 
-    const word = wordDeck.shift();
+  let drillDeck = buildDrillDeck(progress, uniqueWords);
+  const queue = [];
+  for (let i = 0; i < shuffledWordPool.length; i++) {
+    if (drillDeck.length === 0) {
+      drillDeck = buildDrillDeck(progress, uniqueWords);
+    }
+    const word = shuffledWordPool[i];
     let drillType = drillDeck.shift();
     if (drillType === 'gender' && !(word.type === 'noun' && (word.gender === 'm' || word.gender === 'f'))) {
       drillType = 'en-es';
     }
-    lastWord = word;
-    lastDrillType = drillType;
     queue.push({ wordId: word.es, drillType, word });
   }
 

@@ -4,6 +4,9 @@ import { Volume2, ArrowRight } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { buildNoRepeatQueue, speak, stripAccents, playCorrect, playAlmost, gradeTypedAnswer } from '../../utils/helpers';
 
+const sanitiseForTTS = (text) =>
+  text ? text.replace(/\s*\/\s*/g, ' or ') : text;
+
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
 export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0 }) {
   const total = drillLength;
@@ -24,7 +27,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
 
   useEffect(() => {
     if (!feedback) return;
-    const t = setTimeout(() => speak(word.es, languageConfig.sourceLanguage), 50);
+    const t = setTimeout(() => speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage), 50);
     return () => clearTimeout(t);
   }, [feedback]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -37,8 +40,8 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
     if (isListenMode && currentWord && !hasSpokenRef.current) {
       hasSpokenRef.current = true;
       const isEnMode = mode === 'listen-type-en-es' || mode === 'listen-type-sentence-en-es';
-      if (isEnMode) setTimeout(() => speak(currentWord.en, languageConfig.targetLanguage), 200);
-      else setTimeout(() => speak(currentWord.es, languageConfig.sourceLanguage), 200);
+      if (isEnMode) setTimeout(() => speak(sanitiseForTTS(currentWord.en), languageConfig.targetLanguage), 200);
+      else setTimeout(() => speak(sanitiseForTTS(currentWord.es), languageConfig.sourceLanguage), 200);
     }
   }, [idx, mode, currentWord]);
 
@@ -139,8 +142,8 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
         {isListenMode ? (
           <button data-testid="listen-type-replay"
             onClick={() => (mode === 'listen-type-en-es' || mode === 'listen-type-sentence-en-es')
-              ? speak(word.en, languageConfig.targetLanguage)
-              : speak(word.es, languageConfig.sourceLanguage)}
+              ? speak(sanitiseForTTS(word.en), languageConfig.targetLanguage)
+              : speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage)}
             className="mx-auto rounded-full w-16 h-16 flex items-center justify-center text-white"
             style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 14px rgba(198,11,30,0.35)' }}>
             <Volume2 size={24} />
@@ -155,7 +158,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
               {promptText}
             </div>
             {isPromptEs && (
-              <button data-testid="type-speak" onClick={() => speak(promptText, languageConfig.sourceLanguage)} className="speak-btn mt-2">
+              <button data-testid="type-speak" onClick={() => speak(sanitiseForTTS(promptText), languageConfig.sourceLanguage)} className="speak-btn mt-2">
                 <Volume2 size={12} /> Hear it
               </button>
             )}
@@ -185,7 +188,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
             }}>
             <div className="font-bold text-sm" data-testid="type-feedback">
               {feedbackType === 'correct' && (
-                <span>Correct! ✓{mode === 'type-en-es' && <button onClick={() => speak(word.es, languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', marginLeft: '6px' }}>🔊</button>}</span>
+                <span>Correct! ✓{mode === 'type-en-es' && <button onClick={() => speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', marginLeft: '6px' }}>🔊</button>}</span>
               )}
               {feedbackType === 'almost' && (
                 <>
@@ -193,7 +196,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
                   {mode !== 'type-es-en' && (
                     <div className="text-base font-black mt-1 flex items-center justify-center gap-1" style={{ color: '#D97706' }}>
                       → {feedback.target}
-                      {mode === 'type-en-es' && <button onClick={() => speak(word.es, languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
+                      {mode === 'type-en-es' && <button onClick={() => speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
                     </div>
                   )}
                 </>
@@ -204,7 +207,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
                   {mode !== 'type-es-en' && (
                     <div className="text-base font-black mt-1 flex items-center justify-center gap-1">
                       {feedback.target}
-                      {mode === 'type-en-es' && <button onClick={() => speak(word.es, languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
+                      {mode === 'type-en-es' && <button onClick={() => speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
                     </div>
                   )}
                 </>
