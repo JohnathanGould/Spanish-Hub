@@ -1179,6 +1179,7 @@ export default function PathsTab({
   if (selectedStopId) {
     return (
       <StopView
+        key={selectedStopId}
         stopId={selectedStopId}
         onBack={() => setSelectedStopId(null)}
         onNextStop={() => {
