@@ -1,5 +1,36 @@
 # Current State Ledger — Milo Speaks Spanish
-# Last updated: 2026-06-07
+# Last updated: 2026-06-10
+
+## Session Notes — 2026-06-10
+
+Completed this session:
+
+All scrolling eliminated across Fetch drills, preview phase, and intro phase
+DrillShell headerOffset prop added — fetch drills pass headerOffset={90} to account for app Header
+ChoiceDrill compacted — reduced word card padding, text size, audio button spacing
+Removed redundant word/audio from S→E and E→S post-answer feedback
+Hear & Choose post-answer card and audio button made more compact
+Preview phase: word pills condensed, Begin button pinned above BottomNav
+Stop header card padding reduced
+feature/fetch-algorithm fully merged to main
+
+Tomorrow's tasks:
+
+Paths page scrolling — the path list itself needs work
+Add mastery tier grouping layer above Paths: Beginner I, Beginner II, Beginner III, Advanced Beginner I, etc. — each tier is a pill that expands to show its Paths
+This is a data model + UI decision — needs RFC before code
+
+Decisions to make:
+
+How many tiers, what are they called, how many Paths per tier
+Does tapping a tier expand inline or navigate to a new screen
+
+First task next session:
+
+Fix Paths list scrolling
+Then RFC for mastery tier grouping
+
+---
 
 ## Current Stage: 3 → 4 (Paths live, stabilization needed)
 
@@ -15,6 +46,12 @@
 - Aikido configured, PR creation enabled
 - CVEs patched: uuid, dompurify, webpack-dev-server
 - Flagged for future cleanup: firebase-admin, node-fetch, next-themes in frontend/package.json
+
+## Dev Environment
+- OS: Windows
+- Terminal: PowerShell
+- Never use && to chain commands
+- Use Remove-Item instead of rm/rd
 
 ## Architecture Rules (immutable)
 - SpanishHub.jsx = single source of truth. All global state lives here.

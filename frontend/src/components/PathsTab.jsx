@@ -9,9 +9,14 @@ import {
   isPathComplete,
 } from '../content/es-en/paths';
 import { MASTER } from '../content/es-en/words';
+import { PATH_STAGES } from '../data/pathTiers';
 import { speak } from '../utils/helpers';
 import ChoiceDrill from './drills/ChoiceDrill';
 import TypeDrill from './drills/TypeDrill';
+import FillBlankDrill from './drills/FillBlankDrill';
+import ConjugationDrill from './drills/ConjugationDrill';
+import GenderDrill from './drills/GenderDrill';
+import SentenceBuilderDrill from './drills/SentenceBuilderDrill';
 
 // ─────────────────────────────────────────────
 // Lock logic
@@ -143,7 +148,33 @@ function WordIntroCard({ word, isLast, onNext }) {
 // Produces exactly FETCH_LENGTH items.
 // ─────────────────────────────────────────────
 const FETCH_LENGTH = 20;
-const DRILL_TYPES = ['es-en', 'en-es', 'hear-choose', 'type-en-es'];
+const DRILL_TYPES = [
+  'es-en',                    // read
+  'hear-choose-es',           // hear
+  'hear-choose-en',           // hear
+  'listen-type-es',           // hear
+  'listen-type-sentence-es',  // hear
+  'en-es',                    // produce
+  'type-en-es',               // produce
+  'listen-type-en',           // produce
+  'listen-type-sentence-en',  // produce
+  'conjugation',              // produce
+  'gender',                   // produce
+];
+
+const DRILL_DIMENSION = {
+  'es-en':                    'read',
+  'hear-choose-es':           'hear',
+  'hear-choose-en':           'hear',
+  'listen-type-es':           'hear',
+  'listen-type-sentence-es':  'hear',
+  'en-es':                    'produce',
+  'type-en-es':               'produce',
+  'listen-type-en':           'produce',
+  'listen-type-sentence-en':  'produce',
+  'conjugation':              'produce',
+  'gender':                   'produce',
+};
 
 function weightedShuffle(items, weights) {
   // Returns a new array of items ordered by weighted random draw without replacement.
@@ -164,15 +195,16 @@ function weightedShuffle(items, weights) {
   return result;
 }
 
-function buildWordDeck(words) {
-  // Inside a Stop all words are new — equal weight, plain shuffle.
-  // FSRS weighting applies only to off-leash Fetch (future feature).
-  const shuffled = [...words];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
+function buildWordDeck(words, progress) {
+  const now = new Date();
+  const weights = words.map((word) => {
+    const p = progress[word.es] || {};
+    if (p.produce?.due && new Date(p.produce.due) <= now) return 3;
+    if (p.hear?.due && new Date(p.hear.due) <= now) return 2;
+    if (p.read?.due && new Date(p.read.due) <= now) return 1;
+    return 0.5;
+  });
+  return weightedShuffle(words, weights);
 }
 
 function buildDrillDeck(progress, words) {
@@ -218,8 +250,8 @@ function buildFetchQueue(words, progress = {}) {
     // Reshuffle word deck when exhausted — prevent boundary repeat
     if (wordDeck.length === 0) {
       wordDeck = lastWord
-        ? reshuffleWithNoBoundaryRepeat(() => buildWordDeck(uniqueWords), lastWord, w => w.es)
-        : buildWordDeck(uniqueWords);
+        ? reshuffleWithNoBoundaryRepeat(() => buildWordDeck(uniqueWords, progress), lastWord, w => w.es)
+        : buildWordDeck(uniqueWords, progress);
     }
     // Reshuffle drill deck when exhausted — prevent boundary repeat
     if (drillDeck.length === 0) {
@@ -229,7 +261,10 @@ function buildFetchQueue(words, progress = {}) {
     }
 
     const word = wordDeck.shift();
-    const drillType = drillDeck.shift();
+    let drillType = drillDeck.shift();
+    if (drillType === 'gender' && !(word.type === 'noun' && (word.gender === 'm' || word.gender === 'f'))) {
+      drillType = 'en-es';
+    }
     lastWord = word;
     lastDrillType = drillType;
     queue.push({ wordId: word.es, drillType, word });
@@ -425,35 +460,57 @@ function StopView({
         : { s: 6, c: 99, w: 0 };   // distractor: weight 0.5, never drawn first
     });
 
-    if (currentItem.drillType === 'type-en-es') {
+    const drillKey = `fetch-${fetchIndex}-${currentItem.word.es}`;
+    const drillType = currentItem.drillType;
+    const sharedWordProps = {
+      words: drillWords,
+      progress: forcedProgress,
+      drillLength: 1,
+      onAnswer: handleFetchAnswer,
+      onDone: handleFetchDone,
+      onBack: handleFetchBack,
+    };
+
+    if (drillType === 'type-en-es') {
+      return <TypeDrill key={drillKey} mode="type-en-es" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'listen-type-es') {
+      return <TypeDrill key={drillKey} mode="listen-type" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'listen-type-en') {
+      return <TypeDrill key={drillKey} mode="listen-type-en-es" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'listen-type-sentence-es') {
+      return <TypeDrill key={drillKey} mode="listen-type-sentence" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'listen-type-sentence-en') {
+      return <TypeDrill key={drillKey} mode="listen-type-sentence-en-es" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'hear-choose-es') {
+      return <ChoiceDrill key={drillKey} mode="hear-choose" {...sharedWordProps} headerOffset={80} />;
+    }
+    if (drillType === 'hear-choose-en') {
+      return <ChoiceDrill key={drillKey} mode="hear-choose-en-es" {...sharedWordProps} headerOffset={80} />;
+    }
+    if (drillType === 'conjugation') {
       return (
-        <TypeDrill
-          key={`fetch-${fetchIndex}-${currentItem.word.es}`}
-          mode="type-en-es"
-          words={drillWords}
-          progress={forcedProgress}
+        <ConjugationDrill
+          key={drillKey}
+          mode="present"
           drillLength={1}
           onAnswer={handleFetchAnswer}
           onDone={handleFetchDone}
           onBack={handleFetchBack}
-          headerOffset={90}
         />
       );
     }
-
-    return (
-      <ChoiceDrill
-        key={`fetch-${fetchIndex}-${currentItem.word.es}`}
-        mode={currentItem.drillType}
-        words={drillWords}
-        progress={forcedProgress}
-        drillLength={1}
-        onAnswer={handleFetchAnswer}
-        onDone={handleFetchDone}
-        onBack={handleFetchBack}
-        headerOffset={80}
-      />
-    );
+    if (drillType === 'gender') {
+      if (!(currentItem.word.type === 'noun' && (currentItem.word.gender === 'm' || currentItem.word.gender === 'f'))) {
+        return <ChoiceDrill key={drillKey} mode="en-es" {...sharedWordProps} headerOffset={80} />;
+      }
+      return <GenderDrill key={drillKey} {...sharedWordProps} />;
+    }
+    return <ChoiceDrill key={drillKey} mode={drillType} {...sharedWordProps} headerOffset={80} />;
   }
 
   // ── Phase: results ─────────────────────────────────────────────────
@@ -817,6 +874,8 @@ export default function PathsTab({
   // Auto-open Stop on mount when parent passes initialStopId (e.g. Home → Continue)
   const [selectedStopId, setSelectedStopId] = useState(() => initialStopId || null);
   const [lockedMessageStopId, setLockedMessageStopId] = useState(null);
+  const [selectedStage, setSelectedStage] = useState(null);
+  const [selectedTier, setSelectedTier] = useState(null);
 
   const getNextStopId = (currentStopId) => {
     for (const path of PATHS) {
@@ -877,19 +936,91 @@ export default function PathsTab({
     if (typeof onSelectStop === 'function') onSelectStop(stopId);
   };
 
+  // ── Level 1 — Stage list ─────────────────────────────────────────
+  if (selectedStage === null) {
+    return (
+      <div className="p-4" data-testid="paths-tab">
+        <div className="mb-4">
+          <h1 className="text-2xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
+            Choose your level
+          </h1>
+        </div>
+        <div className="flex flex-col gap-3">
+          {PATH_STAGES.map((stage) => (
+            <button
+              key={stage.id}
+              type="button"
+              onClick={() => setSelectedStage(stage)}
+              className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
+              style={{ background: 'hsl(var(--primary))', cursor: 'pointer' }}
+            >
+              <p className="text-xl font-semibold">{stage.emoji} {stage.label}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Level 2 — Tier list ──────────────────────────────────────────
+  if (selectedTier === null) {
+    return (
+      <div className="p-4" data-testid="paths-tab">
+        <button
+          type="button"
+          onClick={() => setSelectedStage(null)}
+          className="inline-flex items-center gap-1 text-sm font-medium mb-4"
+          style={{ color: 'hsl(var(--primary))' }}
+        >
+          ← Back
+        </button>
+        <div className="mb-4">
+          <h1 className="text-2xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
+            {selectedStage.label}
+          </h1>
+        </div>
+        <div className="flex flex-col gap-3">
+          {selectedStage.tiers.map((tier) => {
+            const tierComplete = tier.pathIds.every((id) => completedPaths.includes(id));
+            return (
+              <button
+                key={tier.id}
+                type="button"
+                onClick={() => setSelectedTier(tier)}
+                className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
+                style={{ background: 'hsl(var(--primary))', cursor: 'pointer' }}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-lg font-semibold">{tier.label}</p>
+                  {tierComplete && <Check className="w-5 h-5" />}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Level 3 — Path list (filtered to selectedTier.pathIds) ───────
   return (
     <div className="p-4" data-testid="paths-tab">
+      <button
+        type="button"
+        onClick={() => setSelectedTier(null)}
+        className="inline-flex items-center gap-1 text-sm font-medium mb-4"
+        style={{ color: 'hsl(var(--primary))' }}
+      >
+        ← Back
+      </button>
       <div className="mb-4">
         <h1 className="text-2xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
-          Paths
+          {selectedTier.label}
         </h1>
-        <p className="text-sm mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
-          Work through each Stop to build your Spanish step by step.
-        </p>
       </div>
 
       <div className="flex flex-col gap-3">
-        {PATHS.map((path, pathIndex) => {
+        {PATHS.filter((p) => selectedTier.pathIds.includes(p.id)).map((path, pathIndex) => {
           const unlocked = isPathUnlocked(path.id, completedStops);
           const complete = isPathComplete(path.id, completedStops) ||
             completedPaths.includes(path.id);

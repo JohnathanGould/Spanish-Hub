@@ -61,18 +61,34 @@ async function syncLeaderboard(user, data) {
   } catch (e) { console.error('LB sync error', e); }
 }
 
-// Default shape for each word's progress entry.
-// Used when a word is first encountered. FSRS fields included.
 const DEFAULT_WORD_PROGRESS = {
+  // Legacy — do not remove, existing data depends on these
   c: 0,
   w: 0,
   s: 0,
-  outputCorrect: 0,
-  stability: 0,
-  difficulty: 0,
-  due: new Date().toISOString(),
-  lastReview: null,
   drillStats: {},
+
+  // 4D mastery dimensions
+  read: {
+    stability: 0, difficulty: 0,
+    due: new Date().toISOString(),
+    lastReview: null, correct: 0, wrong: 0
+  },
+  hear: {
+    stability: 0, difficulty: 0,
+    due: new Date().toISOString(),
+    lastReview: null, correct: 0, wrong: 0
+  },
+  produce: {
+    stability: 0, difficulty: 0,
+    due: new Date().toISOString(),
+    lastReview: null, correct: 0, wrong: 0
+  },
+  speak: {
+    stability: 0, difficulty: 0,
+    due: new Date().toISOString(),
+    lastReview: null, correct: 0, wrong: 0
+  }
 };
 
 const DEFAULT_DATA = {
@@ -102,6 +118,23 @@ const DEFAULT_DATA = {
   audioListenEnabled: true,
   audioSpeakEnabled: true,
   earnedBadges: [],
+};
+
+const getDimensionTier = (dim) => {
+  if (!dim || dim.stability === 0) return 'new';
+  if (dim.stability < 7) return 'learning';
+  if (dim.stability < 30) return 'strong';
+  if (dim.stability >= 30 && dim.correct >= 3) return 'mastered';
+  return 'strong';
+};
+
+const TIER_RANK = { new: 0, learning: 1, strong: 2, mastered: 3 };
+
+const getWordMastery = (progress) => {
+  const tiers = ['read', 'hear', 'produce'].map(d => getDimensionTier(progress[d]));
+  return tiers.reduce((lowest, t) =>
+    TIER_RANK[t] < TIER_RANK[lowest] ? t : lowest
+  );
 };
 
 function SpanishFlagPulse() { return <SpanishFlag size={88} />; }
@@ -334,16 +367,32 @@ export default function SpanishHub() {
     }
   }, [getCurrentStop]);
   const updateWordProgress = useCallback((wordEs, isCorrect, wasFirstAttempt, drillType = null) => {
+    const DRILL_DIMENSION = {
+      'es-en':                    'read',
+      'hear-choose-es':           'hear',
+      'hear-choose-en':           'hear',
+      'listen-type-es':           'hear',
+      'listen-type-sentence-es':  'hear',
+      'en-es':                    'produce',
+      'type-en-es':               'produce',
+      'listen-type-en':           'produce',
+      'listen-type-sentence-en':  'produce',
+      'conjugation':              'produce',
+      'gender':                   'produce',
+    };
+
     setUserData(prev => {
       const currentProgress = prev.progress[wordEs] || { ...DEFAULT_WORD_PROGRESS };
+      const dim = DRILL_DIMENSION[drillType] || 'produce';
+      const dimData = currentProgress[dim] || { stability: 0, difficulty: 0, due: new Date().toISOString(), lastReview: null, correct: 0, wrong: 0 };
       const card = {
-        stability: currentProgress.stability || 0,
-        difficulty: currentProgress.difficulty || 0,
-        due: currentProgress.due ? new Date(currentProgress.due) : new Date(),
-        last_review: currentProgress.lastReview ? new Date(currentProgress.lastReview) : null,
+        stability: dimData.stability || 0,
+        difficulty: dimData.difficulty || 0,
+        due: dimData.due ? new Date(dimData.due) : new Date(),
+        last_review: dimData.lastReview ? new Date(dimData.lastReview) : null,
         reps: currentProgress.c || 0,
         lapses: currentProgress.w || 0,
-        state: currentProgress.stability > 0 ? 2 : 0,
+        state: dimData.stability > 0 ? 2 : 0,
       };
       const f = fsrs(generatorParameters());
       const rating = isCorrect
@@ -361,13 +410,17 @@ export default function SpanishHub() {
       } : existingDrillStats;
       const updatedProgress = {
         ...currentProgress,
-        stability: result.card.stability,
-        difficulty: result.card.difficulty,
-        due: result.card.due.toISOString(),
-        lastReview: new Date().toISOString(),
+        [dim]: {
+          ...dimData,
+          stability: result.card.stability,
+          difficulty: result.card.difficulty,
+          due: result.card.due.toISOString(),
+          lastReview: new Date().toISOString(),
+          correct: isCorrect ? (dimData.correct || 0) + 1 : (dimData.correct || 0),
+          wrong: isCorrect ? (dimData.wrong || 0) : (dimData.wrong || 0) + 1,
+        },
         c: isCorrect ? currentProgress.c + 1 : currentProgress.c,
         w: isCorrect ? currentProgress.w : currentProgress.w + 1,
-        outputCorrect: isCorrect ? (currentProgress.outputCorrect || 0) + 1 : (currentProgress.outputCorrect || 0),
         drillStats: updatedDrillStats,
       };
       const newData = {
@@ -667,7 +720,7 @@ export default function SpanishHub() {
 
   const activeWords = getActiveWords();
   const stats = getStats(activeWords, userData.progress);
-  const masteredCount = activeWords.filter(w => (userData.progress?.[w.es]?.s || 0) >= 6).length;
+  const masteredCount = activeWords.filter(w => getWordMastery(userData.progress?.[w.es] || {}) === 'mastered').length;
   const streakRiskLevel = (() => {
     if (!userData.reminderEnabled) return 0;
     const goalMet = (userData.dailyProgress?.count ?? 0) >= userData.dailyGoal &&
