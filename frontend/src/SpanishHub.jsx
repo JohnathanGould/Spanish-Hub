@@ -5,7 +5,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { MASTER, DEFAULT_CATEGORIES, PRESET_PACKS } from './content/es-en/words';
 import { LESSONS, DAILY_THEMES } from './content/es-en/lessons';
-import { PATHS, getPathIdForStop, isPathComplete, getStopWords } from './content/es-en/paths';
+import { PATHS, getStopWords } from './content/es-en/paths';
 import { masteryLevel, getStats, initVoice, initAudio, spacedRepetitionSort, playConfetti } from './utils/helpers';
 import { evaluateBadges } from './utils/evaluateBadges';
 import BadgeGrid from './components/BadgeGrid';
@@ -308,18 +308,36 @@ export default function SpanishHub() {
     });
   }, [persistData]);
 
-  // ── Paths Stop completion (writes Stop to completedStops, optionally Path to completedPaths) ──
+  // ── Paths Stop completion (writes Stop to completedStops only) ──
+  // Path completion is gated by completePathFetch below, not by stop count
   const completeStop = useCallback((stopId) => {
     setUserData(prev => {
       const already = (prev.completedStops || []).includes(stopId);
       if (already) return prev;
       const completedStops = [...(prev.completedStops || []), stopId];
-      const pathId = getPathIdForStop(stopId);
-      const pathDone = pathId && isPathComplete(pathId, completedStops);
-      const completedPaths = pathDone && !(prev.completedPaths || []).includes(pathId)
-        ? [...(prev.completedPaths || []), pathId]
-        : (prev.completedPaths || []);
-      const newData = { ...prev, completedStops, completedPaths };
+      const newData = { ...prev, completedStops };
+      persistData(newData);
+      return newData;
+    });
+  }, [persistData]);
+
+  // ── Path Fetch completion — writes completedPaths[], awards 75 XP + 15 bones ──
+  const completePathFetch = useCallback((pathId, passed) => {
+    if (!passed) return;
+    setUserData(prev => {
+      const already = (prev.completedPaths || []).includes(pathId);
+      if (already) return prev;
+      const completedPaths = [...(prev.completedPaths || []), pathId];
+      const ws = getWeekStartStr();
+      const sameWeek = prev.weekStart === ws;
+      const newData = {
+        ...prev,
+        completedPaths,
+        bones: (prev.bones || 0) + 15,
+        xp: (prev.xp || 0) + 75,
+        weeklyXP: (sameWeek ? (prev.weeklyXP || 0) : 0) + 75,
+        weekStart: ws,
+      };
       persistData(newData);
       return newData;
     });
@@ -846,6 +864,7 @@ export default function SpanishHub() {
                 onUpdateWordProgress={updateWordProgress}
                 onAwardBones={awardBones}
                 onCompleteStop={completeStop}
+                onCompletePathFetch={completePathFetch}
                 fetchStopWords={fetchStopWords}
                 onShowCertificate={(pathId) => setShowPathCertificate(pathId)}
                 onDrillAnswer={onDrillAnswer}
