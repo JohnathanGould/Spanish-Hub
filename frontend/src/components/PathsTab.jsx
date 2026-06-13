@@ -231,6 +231,53 @@ function reshuffleWithNoBoundaryRepeat(buildDeck, lastItem, getKey) {
   return deck;
 }
 
+const enforceMinGap = (queue, minGap = 3) => {
+  const groups = {};
+  queue.forEach(item => {
+    if (!groups[item.wordId]) groups[item.wordId] = [];
+    groups[item.wordId].push(item);
+  });
+  const sorted = Object.values(groups).sort((a, b) => b.length - a.length);
+  const result = [];
+  const maxAttempts = queue.length * 10;
+  let attempts = 0;
+  const pool = [];
+  const maxLen = Math.max(...sorted.map(g => g.length));
+  for (let i = 0; i < maxLen; i++) {
+    sorted.forEach(group => {
+      if (group[i]) pool.push(group[i]);
+    });
+  }
+  const remaining = [...pool];
+  const deferred = [];
+  for (let i = 0; i < queue.length && attempts < maxAttempts; attempts++) {
+    const source = deferred.length > 0 && deferred[0].deferredAt <= i - minGap
+      ? deferred
+      : remaining;
+    let placed = false;
+    for (let j = 0; j < source.length; j++) {
+      const candidate = source[j];
+      const recentWords = result.slice(-minGap).map(r => r.wordId);
+      if (!recentWords.includes(candidate.wordId)) {
+        result.push(candidate);
+        source.splice(j, 1);
+        placed = true;
+        i++;
+        break;
+      }
+    }
+    if (!placed && remaining.length > 0) {
+      const item = remaining.shift();
+      deferred.push({ ...item, deferredAt: i });
+    }
+  }
+  deferred.forEach(item => {
+    const { deferredAt, ...clean } = item;
+    result.push(clean);
+  });
+  return result;
+};
+
 function buildFetchQueue(words, progress = {}) {
   const queue = [];
   let wordDeck = [];
@@ -265,30 +312,8 @@ function buildFetchQueue(words, progress = {}) {
     queue.push({ wordId: word.es, drillType, word });
   }
 
-  // Spacing pass — ensure minimum gap of 3 between same word
-  const minGap = 3;
-  for (let i = 0; i < queue.length; i++) {
-    // Check if this word appeared too recently
-    for (let lookBack = Math.max(0, i - minGap); lookBack < i; lookBack++) {
-      if (queue[i].wordId === queue[lookBack].wordId) {
-        // Find a swap candidate that won't violate spacing
-        for (let j = i + 1; j < queue.length; j++) {
-          const candidateWord = queue[j].wordId;
-          let candidateOk = true;
-          for (let lb = Math.max(0, i - minGap); lb < i; lb++) {
-            if (queue[lb].wordId === candidateWord) { candidateOk = false; break; }
-          }
-          if (candidateOk) {
-            [queue[i], queue[j]] = [queue[j], queue[i]];
-            break;
-          }
-        }
-        break;
-      }
-    }
-  }
-
-  return queue;
+  const spaced = enforceMinGap(queue, 3);
+  return spaced;
 }
 
 const PATH_FETCH_LENGTH = 25;
@@ -334,27 +359,8 @@ function buildPathFetchQueue(pathWords, progress) {
     queue.push({ wordId: word.es, drillType, word });
   }
 
-  const minGap = 3;
-  for (let i = 0; i < queue.length; i++) {
-    for (let lookBack = Math.max(0, i - minGap); lookBack < i; lookBack++) {
-      if (queue[i].wordId === queue[lookBack].wordId) {
-        for (let j = i + 1; j < queue.length; j++) {
-          const candidateWord = queue[j].wordId;
-          let candidateOk = true;
-          for (let lb = Math.max(0, i - minGap); lb < i; lb++) {
-            if (queue[lb].wordId === candidateWord) { candidateOk = false; break; }
-          }
-          if (candidateOk) {
-            [queue[i], queue[j]] = [queue[j], queue[i]];
-            break;
-          }
-        }
-        break;
-      }
-    }
-  }
-
-  return queue;
+  const spaced = enforceMinGap(queue, 3);
+  return spaced;
 }
 
 const PASS_THRESHOLD = 0.80;
@@ -727,7 +733,7 @@ function StopView({
               <button
                 type="button"
                 data-testid="stop-complete-continue-btn"
-                onClick={onNextStop || onBack}
+                onClick={isLastStop ? onBack : onNextStop}
                 className="w-full rounded-full py-3 mt-6 text-white font-bold transition-transform active:scale-95"
                 style={{ background: 'hsl(var(--primary))' }}
               >

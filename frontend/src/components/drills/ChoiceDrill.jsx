@@ -4,6 +4,9 @@ import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { buildNoRepeatQueue, shuffle, speak } from '../../utils/helpers';
 
+const sanitiseForTTS = (text) =>
+  text ? text.replace(/\s*\/\s*/g, ' or ') : text;
+
 // mode: languageConfig.drillDirectionId | languageConfig.reverseDrillDirectionId | 'hear-choose'
 export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0 }) {
   const total = drillLength;
@@ -32,8 +35,8 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
   useEffect(() => {
     if (!picked) return;
     const t = setTimeout(() => {
-      if (mode === 'hear-choose-en-es') speak(word.en, languageConfig.targetLanguage);
-      else speak(word.es, languageConfig.sourceLanguage);
+      if (mode === 'hear-choose-en-es') speak(sanitiseForTTS(word.en), languageConfig.targetLanguage);
+      else speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage);
     }, 50);
     return () => clearTimeout(t);
   }, [picked]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -78,8 +81,8 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
         {(mode === 'hear-choose' || mode === 'hear-choose-en-es') ? (
           <button data-testid="choice-listen-btn"
             onClick={() => mode === 'hear-choose-en-es'
-              ? speak(word.en, languageConfig.targetLanguage)
-              : speak(promptText, languageConfig.sourceLanguage)}
+              ? speak(sanitiseForTTS(word.en), languageConfig.targetLanguage)
+              : speak(sanitiseForTTS(promptText), languageConfig.sourceLanguage)}
             className="mx-auto rounded-full w-14 h-14 flex items-center justify-center text-white"
             style={{ background: 'hsl(var(--primary))', boxShadow: '0 6px 20px rgba(198,11,30,0.35)' }}>
             <Volume2 size={28} />
@@ -93,7 +96,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
               {promptText}
             </div>
             {isAsk && (
-              <button data-testid="choice-speak" onClick={() => speak(promptText, languageConfig.sourceLanguage)} className="speak-btn mt-2">
+              <button data-testid="choice-speak" onClick={() => speak(sanitiseForTTS(promptText), languageConfig.sourceLanguage)} className="speak-btn mt-2">
                 <Volume2 size={12} /> Hear it
               </button>
             )}
@@ -127,8 +130,8 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
                 {mode === 'hear-choose-en-es' ? word.en : word.es}
                 <button
                   onClick={() => mode === 'hear-choose-en-es'
-                    ? speak(word.en, languageConfig.targetLanguage)
-                    : speak(word.es, languageConfig.sourceLanguage)}
+                    ? speak(sanitiseForTTS(word.en), languageConfig.targetLanguage)
+                    : speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
               </div>
               <div className="text-xs mt-1" style={{ color: picked === correctText ? '#16A34A' : '#DC2626' }}>
