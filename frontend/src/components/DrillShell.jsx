@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 
-export default function DrillShell({ title, subtitle, current, total, onBack, children, footer, headerOffset = 0 }) {
+export default function DrillShell({ title, subtitle, current, total, onBack, children, footer, headerOffset = 0, counterOverride }) {
   const pct = total > 0 ? Math.min((current / total) * 100, 100) : 0;
   return (
     <div className="flex flex-col" style={{ height: `calc(100dvh - ${60 + headerOffset}px)` }}>
@@ -23,7 +23,7 @@ export default function DrillShell({ title, subtitle, current, total, onBack, ch
             )}
           </div>
           <div className="text-xs font-bold tabular-nums" style={{ color: 'hsl(var(--muted-foreground))' }}>
-            {current}/{total}
+            {counterOverride ?? `${current}/${total}`}
           </div>
         </div>
         <div className="drill-progress">

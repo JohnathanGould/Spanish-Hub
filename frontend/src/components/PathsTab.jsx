@@ -517,6 +517,7 @@ function StopView({
       words: drillWords,
       progress: forcedProgress,
       drillLength: 1,
+      counterOverride: `${fetchIndex + 1} / ${FETCH_LENGTH}`,
       onAnswer: handleFetchAnswer,
       onDone: handleFetchDone,
       onBack: handleFetchBack,
@@ -789,6 +790,7 @@ function StopView({
       words: drillWords,
       progress: forcedProgress,
       drillLength: 1,
+      counterOverride: `${pathFetchIndex + 1} / ${PATH_FETCH_LENGTH}`,
       onAnswer: handlePathFetchAnswer,
       onDone: handlePathFetchDone,
       onBack: handlePathFetchBack,
@@ -1067,7 +1069,7 @@ function StopView({
         }}
       >
         <p className="text-[11px] uppercase tracking-wider opacity-80">
-          {path.title}
+          {path.title} · Stop {path.stops.findIndex(s => s.id === stopId) + 1} of {path.stops.length}
         </p>
         <h2 className="text-2xl font-semibold mt-1" data-testid="stop-view-title">
           {stop.title}

@@ -4,11 +4,16 @@ import { Volume2, ArrowRight } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { buildNoRepeatQueue, speak, stripAccents, playCorrect, playAlmost, gradeTypedAnswer } from '../../utils/helpers';
 
-const sanitiseForTTS = (text) =>
-  text ? text.replace(/\s*\/\s*/g, ' or ') : text;
+const sanitiseForTTS = (text) => {
+  if (!text) return text;
+  return text
+    .replace(/\s*\/\s*/g, ' or ')
+    .replace(/\(f\)/gi, 'feminine')
+    .replace(/\(m\)/gi, 'masculine');
+};
 
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
-export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0 }) {
+export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, counterOverride }) {
   const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
@@ -108,7 +113,8 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
       current={idx + 1}
       total={queue.length}
       onBack={onBack}
-      headerOffset={headerOffset}>
+      headerOffset={headerOffset}
+      counterOverride={counterOverride}>
 
       {/* Relaxed / Strict toggle — compact for mobile */}
       <div className="flex items-center justify-center gap-2 mb-3">

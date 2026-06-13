@@ -4,11 +4,16 @@ import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { buildNoRepeatQueue, shuffle, speak } from '../../utils/helpers';
 
-const sanitiseForTTS = (text) =>
-  text ? text.replace(/\s*\/\s*/g, ' or ') : text;
+const sanitiseForTTS = (text) => {
+  if (!text) return text;
+  return text
+    .replace(/\s*\/\s*/g, ' or ')
+    .replace(/\(f\)/gi, 'feminine')
+    .replace(/\(m\)/gi, 'masculine');
+};
 
 // mode: languageConfig.drillDirectionId | languageConfig.reverseDrillDirectionId | 'hear-choose'
-export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0 }) {
+export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, counterOverride }) {
   const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
@@ -68,7 +73,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
   };
 
   return (
-    <DrillShell title={titles[mode].title} subtitle={titles[mode].sub} current={idx + 1} total={queue.length} onBack={onBack} headerOffset={headerOffset}
+    <DrillShell title={titles[mode].title} subtitle={titles[mode].sub} current={idx + 1} total={queue.length} onBack={onBack} headerOffset={headerOffset} counterOverride={counterOverride}
       footer={picked && (
         <button onClick={handleContinue} data-testid="choice-continue"
           className="w-full py-3 rounded-xl font-bold text-white text-sm"
