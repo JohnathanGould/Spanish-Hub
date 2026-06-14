@@ -111,6 +111,7 @@ const DEFAULT_DATA = {
   friends: [],
   reminderEnabled: false,
   bones: 0,
+  strictTyping: false,
   completedPaths: [],
   completedStops: [],
   stopProgress: {},
@@ -290,6 +291,14 @@ export default function SpanishHub() {
   const awardBones = useCallback((n) => {
     setUserData(prev => {
       const newData = { ...prev, bones: (prev.bones || 0) + n };
+      persistData(newData);
+      return newData;
+    });
+  }, [persistData]);
+
+  const setStrictTyping = useCallback((value) => {
+    setUserData(prev => {
+      const newData = { ...prev, strictTyping: value };
       persistData(newData);
       return newData;
     });
@@ -778,6 +787,7 @@ export default function SpanishHub() {
             onAnswer={view.drillId.includes('flashcard') ? recordAnswerNoXP : recordAnswer}
             onDone={(c, t) => onDrillDone(view.drillId, c, t)}
             onBack={goHome}
+            strictMode={userData.strictTyping}
           />
         </div>
       </div>
@@ -867,6 +877,7 @@ export default function SpanishHub() {
                 fetchStopWords={fetchStopWords}
                 onShowCertificate={(pathId) => setShowPathCertificate(pathId)}
                 onDrillAnswer={onDrillAnswer}
+                strictTyping={userData.strictTyping}
               />
             </div>
           )}
@@ -987,6 +998,7 @@ export default function SpanishHub() {
             return newData;
           });
         }}
+        onStrictTypingToggle={setStrictTyping}
       />
       {showCategoryModal && (
         <>

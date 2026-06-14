@@ -360,6 +360,7 @@ function StopView({
   completedPaths = [],
   onShowCertificate,
   onDrillAnswer,
+  strictTyping,
 }) {
   const stop = getStop(stopId);
   const pathId = getPathIdForStop(stopId);
@@ -521,6 +522,7 @@ function StopView({
       onAnswer: handleFetchAnswer,
       onDone: handleFetchDone,
       onBack: handleFetchBack,
+      strictMode: strictTyping,
     };
 
     if (drillType === 'type-en-es') {
@@ -794,6 +796,7 @@ function StopView({
       onAnswer: handlePathFetchAnswer,
       onDone: handlePathFetchDone,
       onBack: handlePathFetchBack,
+      strictMode: strictTyping,
     };
 
     if (drillType === 'type-en-es') {
@@ -1154,6 +1157,7 @@ export default function PathsTab({
   fetchStopWords,
   onShowCertificate,
   onDrillAnswer,
+  strictTyping,
 }) {
   const [selectedPathId, setSelectedPathId] = useState(null);
   // Auto-open Stop on mount when parent passes initialStopId (e.g. Home → Continue)
@@ -1200,6 +1204,7 @@ export default function PathsTab({
         completedPaths={completedPaths}
         onShowCertificate={onShowCertificate}
         onDrillAnswer={onDrillAnswer}
+        strictTyping={strictTyping}
       />
     );
   }

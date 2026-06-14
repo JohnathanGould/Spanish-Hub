@@ -6,7 +6,7 @@ import { BADGES } from '../data/badges';
 
 const ADMIN_UID = 'BEeiVtpSVWZuHYbo97InnqmI1DC2';
 
-export default function ProfileSheet({ open, onClose, user, userData, masteredCount, totalWords, onSignOut, onGoalClick, onNotificationsToggle, onAudioListenToggle, onAudioSpeakToggle, onViewAllBadges }) {
+export default function ProfileSheet({ open, onClose, user, userData, masteredCount, totalWords, onSignOut, onGoalClick, onNotificationsToggle, onAudioListenToggle, onAudioSpeakToggle, onStrictTypingToggle, onViewAllBadges }) {
   const navigate = useNavigate();
 
   const memberSince = (() => {
@@ -245,7 +245,7 @@ export default function ProfileSheet({ open, onClose, user, userData, masteredCo
             </div>
 
             {/* Text-to-speech */}
-            <div className="flex items-center justify-between px-4 py-3">
+            <div className="flex items-center justify-between px-4 py-3" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
               <span className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>🎤 Text-to-speech</span>
               <button
                 onClick={() => onAudioSpeakToggle(!userData?.audioSpeakEnabled)}
@@ -272,6 +272,35 @@ export default function ProfileSheet({ open, onClose, user, userData, masteredCo
                   display: 'block',
                 }} />
               </button>
+            </div>
+
+            {/* Typing mode */}
+            <div className="px-4 py-3">
+              <div className="text-sm font-medium mb-2" style={{ color: 'hsl(var(--foreground))' }}>⌨️ Typing mode</div>
+              <div className="flex items-center justify-center gap-2">
+                <button
+                  onClick={() => onStrictTypingToggle(false)}
+                  className="flex flex-col items-center px-4 py-1.5 rounded-xl border-2 transition-all"
+                  style={{
+                    borderColor: !userData?.strictTyping ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                    background: !userData?.strictTyping ? 'hsl(var(--primary) / 0.08)' : 'hsl(var(--card))',
+                    color: !userData?.strictTyping ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
+                  }}>
+                  <span className="text-sm font-bold">😌 Relaxed</span>
+                  <span className="text-xs font-normal opacity-70">typos forgiven</span>
+                </button>
+                <button
+                  onClick={() => onStrictTypingToggle(true)}
+                  className="flex flex-col items-center px-4 py-1.5 rounded-xl border-2 transition-all"
+                  style={{
+                    borderColor: userData?.strictTyping ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                    background: userData?.strictTyping ? 'hsl(var(--primary) / 0.08)' : 'hsl(var(--card))',
+                    color: userData?.strictTyping ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
+                  }}>
+                  <span className="text-sm font-bold">🎯 Strict</span>
+                  <span className="text-xs font-normal opacity-70">exact spelling</span>
+                </button>
+              </div>
             </div>
           </div>
 

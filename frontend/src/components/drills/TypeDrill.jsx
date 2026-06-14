@@ -5,7 +5,7 @@ import DrillShell from '../DrillShell';
 import { buildNoRepeatQueue, speak, stripAccents, gradeTypedAnswer, sanitiseForTTS } from '../../utils/helpers';
 
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
-export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, counterOverride }) {
+export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, counterOverride, strictMode = false }) {
   const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
@@ -16,7 +16,6 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   const [val, setVal] = useState('');
   const [feedback, setFeedback] = useState(null);
   const [correct, setCorrect] = useState(0);
-  const [strictMode, setStrictMode] = useState(false);
   const inputRef = useRef(null);
   const hasSpokenRef = useRef(false);
 
@@ -106,32 +105,6 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
       onBack={onBack}
       headerOffset={headerOffset}
       counterOverride={counterOverride}>
-
-      {/* Relaxed / Strict toggle — compact for mobile */}
-      <div className="flex items-center justify-center gap-2 mb-3">
-        <button
-          onClick={() => setStrictMode(false)}
-          className="flex flex-col items-center px-4 py-1.5 rounded-xl border-2 transition-all"
-          style={{
-            borderColor: isRelaxed ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-            background: isRelaxed ? 'hsl(var(--primary) / 0.08)' : 'hsl(var(--card))',
-            color: isRelaxed ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
-          }}>
-          <span className="text-sm font-bold">😌 Relaxed</span>
-          <span className="text-xs font-normal opacity-70">typos forgiven</span>
-        </button>
-        <button
-          onClick={() => setStrictMode(true)}
-          className="flex flex-col items-center px-4 py-1.5 rounded-xl border-2 transition-all"
-          style={{
-            borderColor: strictMode ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-            background: strictMode ? 'hsl(var(--primary) / 0.08)' : 'hsl(var(--card))',
-            color: strictMode ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))',
-          }}>
-          <span className="text-sm font-bold">🎯 Strict</span>
-          <span className="text-xs font-normal opacity-70">exact spelling</span>
-        </button>
-      </div>
 
       {/* Word card — compact padding for mobile */}
       <div className="rounded-2xl p-4 mb-3 text-center"
