@@ -127,11 +127,6 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
               style={{ color: 'hsl(var(--foreground))' }}>
               {promptText}
             </div>
-            {isPromptEs && (
-              <button data-testid="type-speak" onClick={() => speak(sanitiseForTTS(promptText), languageConfig.sourceLanguage)} className="speak-btn mt-2">
-                <Volume2 size={12} /> Hear it
-              </button>
-            )}
           </>
         )}
       </div>
