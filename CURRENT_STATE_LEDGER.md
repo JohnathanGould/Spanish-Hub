@@ -1,6 +1,33 @@
 # Current State Ledger — Milo Speaks Spanish
 # Last updated: 2026-06-14
 
+## Session Notes — 2026-06-14 (evening)
+
+Completed:
+
+Audio fix: consolidated duplicate sanitiseForTTS (was in both ChoiceDrill.jsx and TypeDrill.jsx) into single exported function in helpers.js. Added comma-pause for (m)/(f) → ", masculine"/", feminine" and for / separator → , or ,. Lowered Hear & Choose EN audio rate to 0.6. Both "hay" (There is, or, there are) and "el"/"la" (the... masculine/feminine) now confirmed working correctly in both Hear & Choose and Listen & Type.
+Image cropping fix: word intro image (PathsTab.jsx) changed from maxHeight: 55vw to aspectRatio: 1/1, then capped at maxWidth: 240px with margin: 0 auto to eliminate a scroll regression introduced by the square fix. Confirmed working on device.
+
+Bugs added:
+
+None new. Two items from "Known Bugs — NEW" (audio, image cropping) are now resolved.
+
+Decisions made:
+
+Bones structure confirmed correct as-is: +2 per Stop pass only, no per-answer bones, XP is the per-answer reward channel (carried over from morning session, restated here).
+sanitiseForTTS consolidation pattern established: shared text-transform utilities belong in helpers.js, not duplicated per drill component — prevents the exact drift that caused this session's "feminine pauses but masculine doesn't" confusion.
+
+Tools assessed:
+
+None new — Claude Code handled all edits this session.
+
+First task next session:
+
+TypeDrill.jsx EN audio rate — only ChoiceDrill's Hear & Choose got the 0.6 rate change; verify whether TypeDrill's speak(word.en, ...) calls (Listen & Type EN mode) also need a slower rate for long phrases like "there is / there are", now that they share the same sanitiseForTTS pause logic.
+Then continue down Known Bugs list: ChoiceDrill sound effects (playCorrect/playAlmost), word mastery filter buttons.
+
+---
+
 ## Session Notes — 2026-06-14 (afternoon)
 
 Completed:
@@ -203,19 +230,19 @@ leaderboard/{uid}: displayName, photoURL, xp, weeklyXP
 chatUsage/{uid}: count, date (rate limit: 30/day)
 
 ## Known Bugs (fix before adding features)
-1. Audio — "hay" TTS unclear (There is/There are too fast); "el" TTS says "the masculine" instead of/alongside Spanish word — NEW, needs diagnosis first
-2. Card images rectangular, getting cropped — need square aspect-ratio/object-fit fix — NEW
-3. ChoiceDrill has no correct/almost sound effects — playCorrect/playAlmost not imported or called.
-4. Word mastery filter buttons in Words tab not wired.
-5. Word detail card opens at screen center (should open at tap position).
-6. Sentence Builder — distractors bug.
-7. Community Word Packs import broken.
-8. Community Word Packs entry form — ES/EN fields need side by side layout.
-9. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
+1. ChoiceDrill has no correct/almost sound effects — playCorrect/playAlmost not imported or called.
+2. Word mastery filter buttons in Words tab not wired.
+3. Word detail card opens at screen center (should open at tap position).
+4. Sentence Builder — distractors bug.
+5. Community Word Packs import broken.
+6. Community Word Packs entry form — ES/EN fields need side by side layout.
+7. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
 
 RESOLVED:
 - Scroll issue in PathsTab — fixed 2026-06-14 (pb-24/pb-12 fix in Stops view)
 - Bones display — verified working correctly 2026-06-14 (+2/Stop pass, no per-answer bones by design)
+- Audio TTS — "hay"/"el"/"la" unclear — fixed 2026-06-14 (sanitiseForTTS consolidated to helpers.js, comma pauses added, EN rate lowered to 0.6)
+- Card images cropped — fixed 2026-06-14 (aspectRatio: 1/1, maxWidth: 240px, margin: 0 auto in PathsTab.jsx WordIntroCard)
 
 ## Emergent Session Protocol
 Before every session:
