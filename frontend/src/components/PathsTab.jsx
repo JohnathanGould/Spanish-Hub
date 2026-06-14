@@ -1270,13 +1270,7 @@ export default function PathsTab({
                           : { background: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }
                       }
                     >
-                      {stopComplete ? (
-                        <Check className="w-4 h-4" />
-                      ) : !stopUnlocked ? (
-                        <Lock className="w-4 h-4" />
-                      ) : (
-                        stopIndex + 1
-                      )}
+                      {stopIndex + 1}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p
@@ -1304,10 +1298,13 @@ export default function PathsTab({
                         {stop.titleEn}
                       </p>
                     </div>
-                    <ChevronRight
-                      className="w-4 h-4 shrink-0"
-                      style={{ color: (stopComplete || stopUnlocked) ? 'rgba(255,255,255,0.7)' : 'hsl(var(--muted-foreground))' }}
-                    />
+                    {stopComplete ? (
+                      <Check className="w-4 h-4 shrink-0" style={{ color: '#fff' }} />
+                    ) : stopUnlocked ? (
+                      <span className="text-xs font-bold shrink-0" style={{ color: '#fff' }}>GO</span>
+                    ) : (
+                      <Lock className="w-4 h-4 shrink-0" style={{ color: 'hsl(var(--muted-foreground))' }} />
+                    )}
                   </div>
                 </button>
 
