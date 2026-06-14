@@ -1062,19 +1062,19 @@ function StopView({
 
       {/* Header card — matches Path header gradient style */}
       <div
-        className="rounded-2xl p-3 mb-3 text-white relative overflow-hidden"
+        className="rounded-2xl p-2 mb-3 text-white relative overflow-hidden"
         style={{
           background:
-            'linear-gradient(135deg, hsl(var(--primary)), hsl(352 75% 65%))',
+            'linear-gradient(135deg, #16A34A, #22c55e)',
         }}
       >
         <p className="text-[11px] uppercase tracking-wider opacity-80">
           {path.title} · Stop {path.stops.findIndex(s => s.id === stopId) + 1} of {path.stops.length}
         </p>
-        <h2 className="text-2xl font-semibold mt-1" data-testid="stop-view-title">
+        <h2 className="text-lg font-semibold mt-0.5" data-testid="stop-view-title">
           {stop.title}
         </h2>
-        <p className="text-sm opacity-90 mt-1" data-testid="stop-view-subtitle">
+        <p className="text-sm opacity-90 mt-0.5" data-testid="stop-view-subtitle">
           {stop.titleEn}
         </p>
       </div>
@@ -1251,23 +1251,24 @@ export default function PathsTab({
                   data-testid={`stop-node-${stop.id}`}
                   onClick={() => handleStopTap(stop.id, stopUnlocked)}
                   className="drill-card w-full text-left"
-                  style={{
-                    background: 'hsl(var(--card))',
-                    border: '1px solid hsl(var(--border))',
-                    opacity: stopUnlocked ? 1 : 0.65,
-                  }}
+                  style={
+                    stopComplete
+                      ? { background: '#0891b2', border: '1px solid #0891b2' }
+                      : stopUnlocked
+                      ? { background: '#16A34A', border: '1px solid #16A34A' }
+                      : { background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', opacity: 0.65 }
+                  }
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold shrink-0"
-                      style={{
-                        background: stopComplete
-                          ? 'hsl(var(--primary))'
-                          : 'hsl(var(--muted))',
-                        color: stopComplete
-                          ? '#fff'
-                          : 'hsl(var(--muted-foreground))',
-                      }}
+                      style={
+                        stopComplete
+                          ? { background: 'transparent', color: '#fff' }
+                          : stopUnlocked
+                          ? { background: 'transparent', color: '#fff' }
+                          : { background: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }
+                      }
                     >
                       {stopComplete ? (
                         <Check className="w-4 h-4" />
@@ -1280,20 +1281,32 @@ export default function PathsTab({
                     <div className="flex-1 min-w-0">
                       <p
                         className="text-sm font-semibold truncate"
-                        style={{ color: 'hsl(var(--foreground))' }}
+                        style={{
+                          color: stopComplete
+                            ? '#fff'
+                            : stopUnlocked
+                            ? '#fff'
+                            : 'hsl(var(--foreground))',
+                        }}
                       >
                         {stop.title}
                       </p>
                       <p
                         className="text-xs truncate"
-                        style={{ color: 'hsl(var(--muted-foreground))' }}
+                        style={{
+                          color: stopComplete
+                            ? 'rgba(255,255,255,0.85)'
+                            : stopUnlocked
+                            ? 'rgba(255,255,255,0.85)'
+                            : 'hsl(var(--muted-foreground))',
+                        }}
                       >
                         {stop.titleEn}
                       </p>
                     </div>
                     <ChevronRight
                       className="w-4 h-4 shrink-0"
-                      style={{ color: 'hsl(var(--muted-foreground))' }}
+                      style={{ color: (stopComplete || stopUnlocked) ? 'rgba(255,255,255,0.7)' : 'hsl(var(--muted-foreground))' }}
                     />
                   </div>
                 </button>
@@ -1443,8 +1456,10 @@ export default function PathsTab({
                 disabled={!unlocked}
                 className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
                 style={{
-                  background: unlocked
-                    ? 'hsl(var(--primary))'
+                  background: complete
+                    ? '#0891b2'
+                    : unlocked
+                    ? '#16A34A'
                     : 'hsl(var(--muted))',
                   color: unlocked ? '#fff' : 'hsl(var(--muted-foreground))',
                   cursor: unlocked ? 'pointer' : 'not-allowed',
