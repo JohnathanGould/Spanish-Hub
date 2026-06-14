@@ -1,6 +1,42 @@
 # Current State Ledger — Milo Speaks Spanish
 # Last updated: 2026-06-14
 
+## Session Notes — 2026-06-14 (late evening)
+
+Completed:
+
+Removed sound effects entirely: playCorrect/playAlmost calls and imports removed from MatchingDrill.jsx, SentenceBuilderDrill.jsx, and TypeDrill.jsx. All drills now silent on answer (normal tap sounds only). Function definitions left unused in helpers.js (low priority cleanup, not yet removed).
+Removed "Hear It" button from Type SP→EN mode (TypeDrill.jsx) — tapping it previously let users hear the Spanish prompt before typing the English answer, turning a recall drill into a listening drill. Type EN→SP and all Listen & Type modes unaffected. isPromptEs remains used elsewhere (display label, prompt text) — no orphaned code.
+Moved Relaxed/Strict typing toggle from per-drill local state (TypeDrill.jsx) to a global user preference:
+  - SpanishHub.jsx: added strictTyping: false to default userData, added setStrictTyping callback (mirrors awardBones pattern), passed strictMode={userData.strictTyping} to <DrillRouter>, strictTyping={userData.strictTyping} to <PathsTab>, onStrictTypingToggle={setStrictTyping} to <ProfileSheet>
+  - PathsTab.jsx: threaded strictTyping through StopView props and both sharedWordProps definitions (fetch + path-fetch phases) as strictMode
+  - TypeDrill.jsx: removed local useState and toggle UI block, now reads strictMode from props (default false)
+  - ProfileSheet.jsx: added Relaxed/Strict toggle UI (same visual style as removed version), placed below Text-to-speech section, wired to onStrictTypingToggle
+
+Bugs added:
+
+None identified.
+
+Decisions made:
+
+Sound effects: no correct/almost sound effects anywhere in the app — decided after live testing, preference for plain tap sounds. playCorrect/playAlmost remain defined in helpers.js but unused.
+Typing strictness is now a global setting (ProfileSheet), not per-drill — applies consistently across Type It and Listen & Type modes everywhere they're rendered.
+Type SP→EN should not offer audio of the prompt — preserves it as a recall drill, distinct from Listen & Type modes.
+Break Free trigger condition — RESOLVED: Break Free becomes available after the user accumulates 50 XP since the last Break Free trigger (new counter field, e.g. breakFreeXP, starts at 0, resets to 0 on trigger). Chosen over bones-threshold (bones already has spending power: streak freeze, word skips, Break Free rewards — using it as a gate too would create a currency conflict) and over lifetime-XP-multiples (counter-since-reset avoids double-trigger edge cases on large XP jumps, e.g. +75 from Path completion). Trigger makes Break Free available, not auto-triggered — respects no-interruption principle, user chooses when to engage, consistent with how Stop Complete offers "Continue" rather than forcing navigation.
+This resolves the "Decide when Break Free triggers" item in MILO-ACTION-LIST.md (Break Free section) and informs Fetch standalone (Session F) — Fetch's entry point is now defined: available after Break Free success.
+
+Tools assessed:
+
+None new — Claude Code handled all edits this session.
+
+First task next session:
+
+Update NEW_MILO_PRODUCT.md "Key Product Decisions (locked)" with the Break Free trigger decision (50 XP counter, resets on trigger, available not auto-triggered).
+Then continue down Known Bugs: word mastery filter buttons in Words tab, Word detail card tap position, Sentence Builder distractors bug.
+TypeDrill.jsx EN audio rate check (carried over from afternoon session — verify if Listen & Type EN mode needs the same 0.6 rate treatment as Hear & Choose for long phrases).
+
+---
+
 ## Session Notes — 2026-06-14 (evening)
 
 Completed:
@@ -230,19 +266,19 @@ leaderboard/{uid}: displayName, photoURL, xp, weeklyXP
 chatUsage/{uid}: count, date (rate limit: 30/day)
 
 ## Known Bugs (fix before adding features)
-1. ChoiceDrill has no correct/almost sound effects — playCorrect/playAlmost not imported or called.
-2. Word mastery filter buttons in Words tab not wired.
-3. Word detail card opens at screen center (should open at tap position).
-4. Sentence Builder — distractors bug.
-5. Community Word Packs import broken.
-6. Community Word Packs entry form — ES/EN fields need side by side layout.
-7. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
+1. Word mastery filter buttons in Words tab not wired.
+2. Word detail card opens at screen center (should open at tap position).
+3. Sentence Builder — distractors bug.
+4. Community Word Packs import broken.
+5. Community Word Packs entry form — ES/EN fields need side by side layout.
+6. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
 
 RESOLVED:
 - Scroll issue in PathsTab — fixed 2026-06-14 (pb-24/pb-12 fix in Stops view)
 - Bones display — verified working correctly 2026-06-14 (+2/Stop pass, no per-answer bones by design)
 - Audio TTS — "hay"/"el"/"la" unclear — fixed 2026-06-14 (sanitiseForTTS consolidated to helpers.js, comma pauses added, EN rate lowered to 0.6)
 - Card images cropped — fixed 2026-06-14 (aspectRatio: 1/1, maxWidth: 240px, margin: 0 auto in PathsTab.jsx WordIntroCard)
+- Sound effects (playCorrect/playAlmost) — removed 2026-06-14 (decision: silent answer feedback preferred; calls and imports removed from MatchingDrill, SentenceBuilderDrill, TypeDrill)
 
 ## Emergent Session Protocol
 Before every session:
