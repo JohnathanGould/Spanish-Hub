@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronDown, ChevronRight, Lock, Check, Volume2, ImageOff } from 'lucide-react';
+import { ChevronRight, Lock, Check, Volume2, ImageOff } from 'lucide-react';
 import {
   PATHS,
   getPath,
@@ -1155,7 +1155,7 @@ export default function PathsTab({
   onShowCertificate,
   onDrillAnswer,
 }) {
-  const [expandedPathId, setExpandedPathId] = useState(null);
+  const [selectedPathId, setSelectedPathId] = useState(null);
   // Auto-open Stop on mount when parent passes initialStopId (e.g. Home → Continue)
   const [selectedStopId, setSelectedStopId] = useState(() => initialStopId || null);
   const [lockedMessageStopId, setLockedMessageStopId] = useState(null);
@@ -1204,11 +1204,6 @@ export default function PathsTab({
     );
   }
 
-  const togglePath = (pathId, unlocked) => {
-    if (!unlocked) return;
-    setExpandedPathId((curr) => (curr === pathId ? null : pathId));
-  };
-
   const handleStopTap = (stopId, unlocked) => {
     if (!unlocked) {
       setLockedMessageStopId(stopId);
@@ -1221,6 +1216,129 @@ export default function PathsTab({
     setLockedMessageStopId(null);
     setSelectedStopId(stopId);
     if (typeof onSelectStop === 'function') onSelectStop(stopId);
+  };
+
+  if (selectedPathId) {
+    const path = getPath(selectedPathId);
+    if (path) return (
+      <div className="p-4" data-testid="paths-tab">
+        <button
+          type="button"
+          onClick={() => setSelectedPathId(null)}
+          className="inline-flex items-center gap-1 text-sm font-medium mb-4"
+          style={{ color: 'hsl(var(--primary))' }}
+        >
+          ← Back
+        </button>
+        <div className="mb-4">
+          <h1 className="text-2xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
+            {path.title}
+          </h1>
+          <p className="text-sm mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
+            {path.titleEn}
+          </p>
+        </div>
+        <div className="flex flex-col gap-2" data-testid={`path-stops-${path.id}`}>
+          {path.stops.map((stop, stopIndex) => {
+            const stopUnlocked = isStopUnlocked(stop.id, completedStops, completedPaths);
+            const stopComplete = completedStops.includes(stop.id);
+            const showLockedMsg = lockedMessageStopId === stop.id;
+
+            return (
+              <div key={stop.id}>
+                <button
+                  type="button"
+                  data-testid={`stop-node-${stop.id}`}
+                  onClick={() => handleStopTap(stop.id, stopUnlocked)}
+                  className="drill-card w-full text-left"
+                  style={{
+                    background: 'hsl(var(--card))',
+                    border: '1px solid hsl(var(--border))',
+                    opacity: stopUnlocked ? 1 : 0.65,
+                  }}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold shrink-0"
+                      style={{
+                        background: stopComplete
+                          ? 'hsl(var(--primary))'
+                          : 'hsl(var(--muted))',
+                        color: stopComplete
+                          ? '#fff'
+                          : 'hsl(var(--muted-foreground))',
+                      }}
+                    >
+                      {stopComplete ? (
+                        <Check className="w-4 h-4" />
+                      ) : !stopUnlocked ? (
+                        <Lock className="w-4 h-4" />
+                      ) : (
+                        stopIndex + 1
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="text-sm font-semibold truncate"
+                        style={{ color: 'hsl(var(--foreground))' }}
+                      >
+                        {stop.title}
+                      </p>
+                      <p
+                        className="text-xs truncate"
+                        style={{ color: 'hsl(var(--muted-foreground))' }}
+                      >
+                        {stop.titleEn}
+                      </p>
+                    </div>
+                    <ChevronRight
+                      className="w-4 h-4 shrink-0"
+                      style={{ color: 'hsl(var(--muted-foreground))' }}
+                    />
+                  </div>
+                </button>
+
+                {showLockedMsg && (
+                  <div
+                    data-testid={`stop-locked-msg-${stop.id}`}
+                    className="mt-2 px-3 py-2 rounded-lg text-xs"
+                    style={{
+                      background: 'hsl(var(--muted))',
+                      color: 'hsl(var(--muted-foreground))',
+                      border: '1px solid hsl(var(--border))',
+                    }}
+                  >
+                    Complete the previous Stop to unlock this one 🐾
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  const getTierState = (tier) => {
+    if (tier.pathIds.every(id => completedPaths.includes(id))) return 'complete';
+    const hasProgress = tier.pathIds.some(id => {
+      const p = getPath(id);
+      return p && p.stops.some(s => completedStops.includes(s.id));
+    });
+    return hasProgress ? 'current' : 'locked';
+  };
+
+  const getStageState = (stage) => {
+    const tierStates = stage.tiers.map(getTierState);
+    if (tierStates.every(s => s === 'complete')) return 'complete';
+    if (tierStates.some(s => s === 'current' || s === 'complete')) return 'current';
+    return 'locked';
+  };
+
+  const pillBg = (state) => {
+    if (state === 'complete') return { background: '#0d9488', color: '#fff' };
+    if (state === 'current')  return { background: '#16A34A', color: '#fff' };
+    return { background: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))', opacity: 0.75 };
   };
 
   // ── Level 1 — Stage list ─────────────────────────────────────────
@@ -1239,7 +1357,7 @@ export default function PathsTab({
               type="button"
               onClick={() => setSelectedStage(stage)}
               className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
-              style={{ background: 'hsl(var(--primary))', cursor: 'pointer' }}
+              style={{ ...pillBg(getStageState(stage)), cursor: 'pointer' }}
             >
               <p className="text-xl font-semibold">{stage.emoji} {stage.label}</p>
             </button>
@@ -1268,18 +1386,18 @@ export default function PathsTab({
         </div>
         <div className="flex flex-col gap-3">
           {selectedStage.tiers.map((tier) => {
-            const tierComplete = tier.pathIds.every((id) => completedPaths.includes(id));
+            const tierState = getTierState(tier);
             return (
               <button
                 key={tier.id}
                 type="button"
                 onClick={() => setSelectedTier(tier)}
                 className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
-                style={{ background: 'hsl(var(--primary))', cursor: 'pointer' }}
+                style={{ ...pillBg(tierState), cursor: 'pointer' }}
               >
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-lg font-semibold">{tier.label}</p>
-                  {tierComplete && <Check className="w-5 h-5" />}
+                  {tierState === 'complete' && <Check className="w-5 h-5" />}
                 </div>
               </button>
             );
@@ -1307,10 +1425,9 @@ export default function PathsTab({
       </div>
 
       <div className="flex flex-col gap-3">
-        {PATHS.filter((p) => selectedTier.pathIds.includes(p.id)).map((path, pathIndex) => {
+        {PATHS.filter((p) => selectedTier.pathIds.includes(p.id)).map((path) => {
           const unlocked = isPathUnlocked(path.id, completedStops, completedPaths);
           const complete = completedPaths.includes(path.id);
-          const expanded = expandedPathId === path.id;
 
           const completedStopCount = path.stops.filter((s) =>
             completedStops.includes(s.id)
@@ -1322,7 +1439,7 @@ export default function PathsTab({
               <button
                 type="button"
                 data-testid={`path-header-${path.id}`}
-                onClick={() => togglePath(path.id, unlocked)}
+                onClick={() => unlocked && setSelectedPathId(path.id)}
                 disabled={!unlocked}
                 className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
                 style={{
@@ -1336,18 +1453,11 @@ export default function PathsTab({
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] uppercase tracking-wider opacity-80">
-                      Path {pathIndex + 1} · {path.subLevel}
-                    </p>
-                    <h2 className="text-lg font-semibold mt-0.5 truncate">
+                    <h2 className="text-lg font-semibold truncate">
                       {path.title}
                     </h2>
                     <p className="text-xs opacity-90 mt-0.5 truncate">
                       {path.titleEn}
-                    </p>
-                    <p className="text-[11px] mt-2 opacity-90">
-                      {completedStopCount} / {path.stops.length} Stops
-                      {complete ? ' · Complete' : ''}
                     </p>
                   </div>
 
@@ -1356,10 +1466,13 @@ export default function PathsTab({
                       <Lock className="w-5 h-5" />
                     ) : complete ? (
                       <Check className="w-5 h-5" />
-                    ) : expanded ? (
-                      <ChevronDown className="w-5 h-5" />
                     ) : (
-                      <ChevronRight className="w-5 h-5" />
+                      <span
+                        className="text-xs font-bold px-2 py-1 rounded-full text-center"
+                        style={{ background: 'rgba(255,255,255,0.2)', minWidth: '2.5rem' }}
+                      >
+                        {completedStopCount}/{path.stops.length}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -1377,90 +1490,6 @@ export default function PathsTab({
                   >
                     🎓 Certificate
                   </button>
-                </div>
-              )}
-
-              {/* Stops list (only when expanded and unlocked) */}
-              {unlocked && expanded && (
-                <div
-                  className="flex flex-col gap-2 mb-2"
-                  data-testid={`path-stops-${path.id}`}
-                >
-                  {path.stops.map((stop, stopIndex) => {
-                    const stopUnlocked = isStopUnlocked(stop.id, completedStops, completedPaths);
-                    const stopComplete = completedStops.includes(stop.id);
-                    const showLockedMsg = lockedMessageStopId === stop.id;
-
-                    return (
-                      <div key={stop.id}>
-                        <button
-                          type="button"
-                          data-testid={`stop-node-${stop.id}`}
-                          onClick={() => handleStopTap(stop.id, stopUnlocked)}
-                          className="drill-card w-full text-left"
-                          style={{
-                            background: 'hsl(var(--card))',
-                            border: '1px solid hsl(var(--border))',
-                            opacity: stopUnlocked ? 1 : 0.65,
-                          }}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold shrink-0"
-                              style={{
-                                background: stopComplete
-                                  ? 'hsl(var(--primary))'
-                                  : 'hsl(var(--muted))',
-                                color: stopComplete
-                                  ? '#fff'
-                                  : 'hsl(var(--muted-foreground))',
-                              }}
-                            >
-                              {stopComplete ? (
-                                <Check className="w-4 h-4" />
-                              ) : !stopUnlocked ? (
-                                <Lock className="w-4 h-4" />
-                              ) : (
-                                stopIndex + 1
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p
-                                className="text-sm font-semibold truncate"
-                                style={{ color: 'hsl(var(--foreground))' }}
-                              >
-                                {stop.title}
-                              </p>
-                              <p
-                                className="text-xs truncate"
-                                style={{ color: 'hsl(var(--muted-foreground))' }}
-                              >
-                                {stop.titleEn}
-                              </p>
-                            </div>
-                            <ChevronRight
-                              className="w-4 h-4 shrink-0"
-                              style={{ color: 'hsl(var(--muted-foreground))' }}
-                            />
-                          </div>
-                        </button>
-
-                        {showLockedMsg && (
-                          <div
-                            data-testid={`stop-locked-msg-${stop.id}`}
-                            className="mt-2 px-3 py-2 rounded-lg text-xs"
-                            style={{
-                              background: 'hsl(var(--muted))',
-                              color: 'hsl(var(--muted-foreground))',
-                              border: '1px solid hsl(var(--border))',
-                            }}
-                          >
-                            Complete the previous Stop to unlock this one 🐾
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
                 </div>
               )}
             </div>
