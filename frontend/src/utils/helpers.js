@@ -159,6 +159,14 @@ export function speak(text, lang = languageConfig.sourceLanguage, rate = 0.85) {
   window.speechSynthesis.speak(u);
 }
 
+export const sanitiseForTTS = (text) => {
+  if (!text) return text;
+  return text
+    .replace(/\s*\/\s*/g, ' , or , ')
+    .replace(/\(f\)/gi, ', feminine')
+    .replace(/\(m\)/gi, ', masculine');
+};
+
 // === TAP SOUND ===
 export function playTap() {
   try {

@@ -2,15 +2,7 @@ import { languageConfig } from '../../config/languageConfig';
 import React, { useState, useRef, useEffect } from 'react';
 import { Volume2, ArrowRight } from 'lucide-react';
 import DrillShell from '../DrillShell';
-import { buildNoRepeatQueue, speak, stripAccents, playCorrect, playAlmost, gradeTypedAnswer } from '../../utils/helpers';
-
-const sanitiseForTTS = (text) => {
-  if (!text) return text;
-  return text
-    .replace(/\s*\/\s*/g, ' or ')
-    .replace(/\(f\)/gi, 'feminine')
-    .replace(/\(m\)/gi, 'masculine');
-};
+import { buildNoRepeatQueue, speak, stripAccents, playCorrect, playAlmost, gradeTypedAnswer, sanitiseForTTS } from '../../utils/helpers';
 
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
 export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, counterOverride }) {

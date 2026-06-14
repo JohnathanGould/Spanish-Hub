@@ -2,15 +2,7 @@ import { languageConfig } from '../../config/languageConfig';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
-import { buildNoRepeatQueue, shuffle, speak } from '../../utils/helpers';
-
-const sanitiseForTTS = (text) => {
-  if (!text) return text;
-  return text
-    .replace(/\s*\/\s*/g, ' or ')
-    .replace(/\(f\)/gi, ', feminine')
-    .replace(/\(m\)/gi, ', masculine');
-};
+import { buildNoRepeatQueue, shuffle, speak, sanitiseForTTS } from '../../utils/helpers';
 
 // mode: languageConfig.drillDirectionId | languageConfig.reverseDrillDirectionId | 'hear-choose'
 export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, counterOverride }) {
