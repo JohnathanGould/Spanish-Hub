@@ -1,5 +1,38 @@
 # Current State Ledger — Milo Speaks Spanish
-# Last updated: 2026-06-10
+# Last updated: 2026-06-14
+
+## Session Notes — 2026-06-14
+
+Completed:
+
+Redesigned Path cards (Level 3 list): 2-line layout (title/subtitle) + progress badge, removed Path N · subLevel line
+Replaced inline accordion with full-screen Stops view: removed expandedPathId/togglePath/expanded, added selectedPathId state with "← Back" navigation (FSM pattern, one layer per state)
+Added 3-state progress styling (locked=grey, current=vivid green #16A34A, complete=vivid cyan #0891b2) across all 4 hierarchy layers: Stage ("Choose your level"), Tier (Beginner I/II/III), Path cards, and Stops list — derived from completedPaths/completedStops, no new gating logic, everything stays tappable
+Restructured Stop row indicators: left circle always shows stop number (all 3 states), right side shows Check/GO/Lock status indicator, removed redundant ChevronRight
+Recolored StopView header from red gradient to green gradient, reduced height (p-3→p-2, text-2xl→text-lg)
+Fixed real scroll bug in Stops view: container was missing pb-24 (later tuned to pb-12), preventing scroll entirely — confirmed against established codebase pattern
+Further compacted Stops view for small viewports (Ulefone Power Armor 16 Pro, 720×1440): drill-card padding 18px→14px, row gap 8px→6px, heading margins mb-4→mb-2 — all 5 Stops now visible without scrolling
+
+Bugs added:
+
+None identified as newly introduced — ChevronRight import now unused (cosmetic ESLint warning only, not touched)
+
+Decisions made:
+
+"Path"/"Tier"/"Stage" terminology stays internal/code-only; user-facing screens never say these words — but "Stop" DOES appear in StopView UI ("STOP 2 OF 5"), which needs auditing against this principle
+Locked Stage/Tier pills remain fully tappable (no new gating) — color is informational only; only Stops remain hard-gated
+Color system: green = current/in-progress, cyan = complete, grey = locked, consistent across Stage/Tier/Path/Stop — vivid/white-text treatment (not pastel), established as the standard going forward
+drill-card confirmed used only in the Stops view — safe to modify without side effects elsewhere
+
+Tools assessed:
+
+None new this session (Cursor remains on hold per token budget; Claude Code handled all work)
+
+First task next session:
+
+"Stop"/"Path" terminology audit — search for other user-facing instances of internal hierarchy vocabulary (starting from the confirmed "STOP X OF Y" in StopView header), decide whether to keep, rename, or remove
+
+---
 
 ## Session Notes — 2026-06-10
 
