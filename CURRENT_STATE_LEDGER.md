@@ -1,7 +1,71 @@
 # Current State Ledger — Milo Speaks Spanish
 # Last updated: 2026-06-14
 
-## Session Notes — 2026-06-14
+## Session Notes — 2026-06-14 (afternoon)
+
+Completed:
+
+Terminology audit — searched all user-facing strings for "Stop"/"Path"/"Tier"/"Stage". Conclusion: "Stop" and "Path" are correct, intentional learner-facing vocabulary (journey/walk metaphor, matches "Walk with Milo" framing) — kept as-is, no renaming needed.
+Removed dead code: frontend/src/components/v0/PathsView.jsx — confirmed zero references anywhere in src/, deleted, build verified, committed.
+Bones display verification — confirmed +2 bones on Stop pass increments header counter correctly and StopCompleteScreen displays "You earned 2 bones".
+Bones reward structure — decided: +2 bones per Stop pass only. No per-answer bones. Per-answer gratification is XP (already correctly wired). Ledger's old "+1 bone per correct Phase 3" description was inaccurate — corrected below.
+Full Paths/Stops architecture re-verified against actual code (see corrected section below) — previous ledger description (Phase 1/2/3 split, FSRS drill-type selection) did not match implementation. Actual system confirmed working and well-designed, just different from what was documented.
+
+Bugs found (not yet fixed):
+
+Audio — "hay" TTS pronunciation runs "There is/There are" together too fast to parse the "or"
+Audio — "el" TTS says "the masculine" — sounds like an English description is being read instead of/alongside the Spanish word
+Card images — word card images are rectangular, getting cropped; need to be square (object-fit/aspect-ratio CSS fix)
+
+Decisions made:
+
+"Stop"/"Path" terminology: keep as user-facing vocabulary, no changes needed (audit closed)
+Bones: +2 per Stop pass only (confirmed correct, not a bug). XP is the per-answer reward channel.
+
+First task next session:
+
+Audio diagnosis — "hay" and "el" TTS issues (need to determine if speak() is reading wrong field/source per word, or if this is a broader content-data issue)
+Then: square image cropping fix (CSS, low risk, quick)
+
+---
+
+## CORRECTED — Paths & Stops Architecture (verified 2026-06-14)
+
+**The previous "Phase 1/2/3 + FSRS drill-type selection + +1 bone/correct" description was inaccurate. Actual implementation, verified directly against code:**
+
+### Per-Stop flow
+1. **Preview** — word list for the Stop (5 words)
+2. **Intro** (Phase 1) — word-by-word: image, Spanish word, auto-audio, English label, Next. Only screen where English appears. Words ordered by `fetchStopWords` (SpanishHub.jsx) — sorted by `progress.stability` ascending (weakest first), tiebreak by `outputCorrect` ascending.
+3. **Fetch round** — 20 questions (`FETCH_LENGTH`), built by `buildFetchQueue(words, progress)`:
+   - Word pool = this Stop's 5 words, capped/repeated to fill 20, shuffled
+   - Drill **type** per question chosen by `buildDrillDeck(progress, words)` — weights `DRILL_TYPES` by per-word/per-type failure rate (`drillStats[dt].w / (c+w)`); no data yet → equal weight
+   - `enforceMinGap` ensures same word doesn't repeat within 3 questions
+   - `forcedProgress` forces the "weakest" word to be drawn first each cycle via `spacedRepetitionSort`
+4. **Results** — pass threshold 80% (`PASS_THRESHOLD`). Fail → "Try Again" rebuilds queue. Pass → `onCompleteStop(stopId)` + `onAwardBones(2)` → Stop Complete.
+5. **Stop Complete** — "+2 bones" message, "Continue to Next Stop" (or, on Stop 5, "Start Path Challenge")
+
+### Per-Path flow (after Stop 5 passes)
+6. **Path Fetch** — 25 questions (`PATH_FETCH_LENGTH`), `buildPathFetchQueue(buildPathWordPool(pathId), progress)` — same mechanism as Stop fetch but pool = all 25 words across the Path's 5 Stops. Pass threshold 80% (`PATH_FETCH_PASS_THRESHOLD`).
+7. Pass → `completePathFetch`: writes `completedPaths[]`, **+15 bones, +75 XP**, Certificate available.
+
+### FSRS — actual role
+- `ts-fsrs` imported in SpanishHub.jsx. Used for **word ordering** (intro screen sequencing, "weakest first" via stability), NOT for drill-type selection.
+- Drill **type** variety/weighting comes from `buildDrillDeck` (failure-rate based), a separate mechanism from FSRS.
+
+### XP — per-answer reward (confirmed working)
+- `onUpdateWordProgress` (SpanishHub.jsx ~line 468): every answer in fetch/path-fetch rounds.
+- Correct: +1 XP normally, **+11 XP if word crosses into "mastered" on this answer** (`wasAboutToMaster`)
+- Incorrect: 0 XP, but `progress.s` (stability-like score) decreases, `progress.w` (wrong count) increases
+- Runs `evaluateBadges` and persists every answer
+
+### Bones — confirmed reward structure
+- **+2** per Stop pass (`onAwardBones(2)` in results phase)
+- **+15** per Path pass (`completePathFetch`)
+- No per-answer bones — by design (XP is per-answer feedback; bones are milestone currency for Break Free / streak freeze economy)
+
+---
+
+## Session Notes — 2026-06-14 (morning)
 
 Completed:
 
@@ -19,18 +83,9 @@ None identified as newly introduced — ChevronRight import now unused (cosmetic
 
 Decisions made:
 
-"Path"/"Tier"/"Stage" terminology stays internal/code-only; user-facing screens never say these words — but "Stop" DOES appear in StopView UI ("STOP 2 OF 5"), which needs auditing against this principle
-Locked Stage/Tier pills remain fully tappable (no new gating) — color is informational only; only Stops remain hard-gated
 Color system: green = current/in-progress, cyan = complete, grey = locked, consistent across Stage/Tier/Path/Stop — vivid/white-text treatment (not pastel), established as the standard going forward
+Locked Stage/Tier pills remain fully tappable (no new gating) — color is informational only; only Stops remain hard-gated
 drill-card confirmed used only in the Stops view — safe to modify without side effects elsewhere
-
-Tools assessed:
-
-None new this session (Cursor remains on hold per token budget; Claude Code handled all work)
-
-First task next session:
-
-"Stop"/"Path" terminology audit — search for other user-facing instances of internal hierarchy vocabulary (starting from the confirmed "STOP X OF Y" in StopView header), decide whether to keep, rename, or remove
 
 ---
 
@@ -46,22 +101,6 @@ Hear & Choose post-answer card and audio button made more compact
 Preview phase: word pills condensed, Begin button pinned above BottomNav
 Stop header card padding reduced
 feature/fetch-algorithm fully merged to main
-
-Tomorrow's tasks:
-
-Paths page scrolling — the path list itself needs work
-Add mastery tier grouping layer above Paths: Beginner I, Beginner II, Beginner III, Advanced Beginner I, etc. — each tier is a pill that expands to show its Paths
-This is a data model + UI decision — needs RFC before code
-
-Decisions to make:
-
-How many tiers, what are they called, how many Paths per tier
-Does tapping a tier expand inline or navigate to a new screen
-
-First task next session:
-
-Fix Paths list scrolling
-Then RFC for mastery tier grouping
 
 ---
 
@@ -105,6 +144,7 @@ Then RFC for mastery tier grouping
 - Animations: frontend/public/animations/milo_idle.gif
 - Landing page: JohnathanGould/milo-speaks/index.html
 - Language config: frontend/src/config/languageConfig.js
+- REMOVED: frontend/src/components/v0/PathsView.jsx (dead code, deleted 2026-06-14)
 
 ## Navigation
 Tab IDs: home · paths · words · study · friends · milo
@@ -127,29 +167,19 @@ Warm Up (no XP, no bones): Matching, Word Sort, Gender el/la
 Practice: Multiple Choice SP→EN/EN→SP, Type It SP→EN/EN→SP, Hear & Choose SP→EN/EN→SP, Listen & Type Words SP→EN/EN→SP, Listen & Type Sentences SP→EN/EN→SP, Conjugation Present
 Review (no XP, no bones): Flashcards Words SP→EN/EN→SP, Flashcards Sentences SP→EN/EN→SP
 
-### Paths & Stops (built 2026-06-07 — 10 Emergent sessions)
-Full dynamic learning loop complete:
-- PathsTab: 12 Paths × 5 Stops, lock/unlock driven by completedStops[]
-- StopView: word list with audio speaker buttons
-- Phase 1: word introduction — image (word.imageUrl), Spanish word, auto-audio (speak(word.es)), English label, Next button. Only screen where English appears.
-- Phase 2: Hear & Choose SP→EN + Multiple Choice SP→EN — warm up tier, no FSRS, no bones
-- Phase 3: FSRS-driven dynamic drill selection via buildDrillQueue:
-  - stability === 0 → Type It EN→SP
-  - stability < 7 → Hear & Choose EN→SP
-  - stability >= 7 → Multiple Choice SP→EN
-- fetchStopWords: sorts Stop words by FSRS stability ascending (weakest first)
-- FSRS: ts-fsrs@5.4.1, called after every Phase 3 answer, Rating.Good/Hard/Again
-- Bones: +1 correct Phase 3, +2 Stop complete (Path complete bones TBD)
-- Stop completion: writes stopId to completedStops[] via persistData, next Stop unlocks
-- Path completion: writes pathId to completedPaths[] via persistData
-- StopCompleteScreen: bones summary, path completion message, Certificate button
-- Certificate: Certificate.jsx wired, shows on Path completion, accessible from Path list
-- Continue button on Home: calls getCurrentStop() → first incomplete Stop → navigates directly
+### Paths & Stops — see "CORRECTED — Paths & Stops Architecture" section above for verified detail
+PathsTab: 12 Paths × 5 Stops, lock/unlock driven by completedStops[]/completedPaths[].
+Stop completion: writes stopId to completedStops[] via persistData, next Stop unlocks.
+Path completion: writes pathId to completedPaths[] via persistData, +15 bones, +75 XP.
+StopCompleteScreen: bones summary, path completion message, Certificate button.
+Certificate: Certificate.jsx wired, shows on Path completion, accessible from Path list.
+Continue button on Home: calls getCurrentStop() → first incomplete Stop → navigates directly.
 
 ### Audio (updated 2026-06-07)
 initAudio() called on app mount — preloads correctBuffer, almostBuffer, confettiBuffer.
 Race condition fixed — buffers ready before first user interaction.
 speak() defaults to languageConfig.sourceLanguage ("es"). Call speak(word.es) for Spanish TTS.
+KNOWN ISSUES (2026-06-14): "hay" reads "There is/There are" too fast (unclear "or"); "el" reads "the masculine" — possible English-description leakage into TTS. Needs diagnosis.
 
 ### Mastery Modal (built 2026-06-07)
 Tapping words mastered pill on Home opens floating modal overlay.
@@ -163,7 +193,7 @@ milo-banner.png live. Mobile header fixed. Bandana lore removed.
 
 ## Firestore Schema (verified)
 users/{uid}: displayName, photoURL, customWords[], importedPacks[]
-progress{ wordEs: { c, w, s, stability, difficulty, due, lastReview, outputCorrect } }
+progress{ wordEs: { c, w, s, stability, difficulty, due, lastReview, outputCorrect, drillStats } }
 xp, weeklyXP, streak, dailyGoal, bones
 earnedBadges[], completedStops[], completedPaths[], lessonsCompleted[]
 sessions[], activeDays[], friends[], reminderEnabled
@@ -173,14 +203,19 @@ leaderboard/{uid}: displayName, photoURL, xp, weeklyXP
 chatUsage/{uid}: count, date (rate limit: 30/day)
 
 ## Known Bugs (fix before adding features)
-1. Scroll issue in PathsTab — WordIntroCard and dynamic-drill container require scrolling to see buttons. Claude Code CSS fix queued — next task.
-2. ChoiceDrill has no correct/almost sound effects — playCorrect/playAlmost not imported or called.
-3. Word mastery filter buttons in Words tab not wired.
-4. Word detail card opens at screen center (should open at tap position).
-5. Sentence Builder — distractors bug.
-6. Community Word Packs import broken.
-7. Community Word Packs entry form — ES/EN fields need side by side layout.
-8. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
+1. Audio — "hay" TTS unclear (There is/There are too fast); "el" TTS says "the masculine" instead of/alongside Spanish word — NEW, needs diagnosis first
+2. Card images rectangular, getting cropped — need square aspect-ratio/object-fit fix — NEW
+3. ChoiceDrill has no correct/almost sound effects — playCorrect/playAlmost not imported or called.
+4. Word mastery filter buttons in Words tab not wired.
+5. Word detail card opens at screen center (should open at tap position).
+6. Sentence Builder — distractors bug.
+7. Community Word Packs import broken.
+8. Community Word Packs entry form — ES/EN fields need side by side layout.
+9. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
+
+RESOLVED:
+- Scroll issue in PathsTab — fixed 2026-06-14 (pb-24/pb-12 fix in Stops view)
+- Bones display — verified working correctly 2026-06-14 (+2/Stop pass, no per-answer bones by design)
 
 ## Emergent Session Protocol
 Before every session:
@@ -197,8 +232,8 @@ Setup waste: 20.56 tokens — wrong repo. Pre-flight check now mandatory.
 Average session cost: 6-10 tokens. FSRS/multi-file sessions cost 10-12.
 
 ## Next Session Priorities
-1. Scroll fix in PathsTab — Claude Code CSS (free, no Emergent tokens) — NEXT
-2. Bones display verification — confirm bones increment visibly in header
+1. Audio diagnosis — "hay" and "el" TTS issues — NEXT
+2. Square image cropping fix (CSS)
 3. ChoiceDrill sound effects — wire playCorrect/playAlmost
 4. Word mastery filter buttons — wire in Words tab
 5. Test full Paths loop end to end — report bugs
@@ -267,7 +302,8 @@ Written: 2026-06-07. Based on 32 days of development to current state.
 ### Month-by-Month Plan
 
 **June 2026 (this month — remaining weeks)**
-- Scroll fix in PathsTab (Claude Code — this week)
+- Audio diagnosis: "hay" and "el" TTS issues
+- Square image cropping fix
 - Test full Paths loop end to end, document all bugs
 - Fix bones display, ChoiceDrill sounds, mastery filter buttons
 - Generate all priority Milo poses in Google Flow (1-2 days, 50 tokens/day)
