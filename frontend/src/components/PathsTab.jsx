@@ -1221,7 +1221,7 @@ export default function PathsTab({
   if (selectedPathId) {
     const path = getPath(selectedPathId);
     if (path) return (
-      <div className="p-4" data-testid="paths-tab">
+      <div className="p-4 pb-24" data-testid="paths-tab">
         <button
           type="button"
           onClick={() => setSelectedPathId(null)}
