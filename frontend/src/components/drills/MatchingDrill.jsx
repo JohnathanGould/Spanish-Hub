@@ -1,7 +1,7 @@
 import { languageConfig } from '../../config/languageConfig';
 import React, { useState, useRef, useEffect } from 'react';
 import DrillShell from '../DrillShell';
-import { buildNoRepeatQueue, shuffle, playCorrect, speak } from '../../utils/helpers';
+import { buildNoRepeatQueue, shuffle, speak } from '../../utils/helpers';
 
 export default function MatchingDrill({ words, progress, onAnswer, onDone, onBack, drillLength = 6 }) {
   const PAIRS = Math.min(drillLength, words.length);
@@ -29,7 +29,6 @@ export default function MatchingDrill({ words, progress, onAnswer, onDone, onBac
         if (w) onAnswer(w.es, true);
         setMatched(prev => new Set([...prev, selectedEs]));
         setCorrect(c => c + 1);
-        playCorrect();
         setFeedback({ ok: true, msg: 'Correct! ✓' });
         setSelectedEs(null);
         setSelectedEn(null);

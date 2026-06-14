@@ -2,7 +2,7 @@ import { languageConfig } from '../../config/languageConfig';
 import React, { useState, useMemo } from 'react';
 import { ArrowRight, Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
-import { shuffle, speak, playCorrect } from '../../utils/helpers';
+import { shuffle, speak } from '../../utils/helpers';
 import { SENT_POOL } from '../../content/es-en/drillData';
 
 export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLength = 10 }) {
@@ -51,7 +51,6 @@ export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLe
     if (feedback) return;
     const built = placed.map(p => p.text).join(' ');
     const ok = built === targetSentence;
-    if (ok) playCorrect();
     setFeedback({ ok, target: targetSentence });
     onAnswer(targetSentence, ok);
     if (ok) setCorrect(c => c + 1);

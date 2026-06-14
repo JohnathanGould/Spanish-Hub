@@ -2,7 +2,7 @@ import { languageConfig } from '../../config/languageConfig';
 import React, { useState, useRef, useEffect } from 'react';
 import { Volume2, ArrowRight } from 'lucide-react';
 import DrillShell from '../DrillShell';
-import { buildNoRepeatQueue, speak, stripAccents, playCorrect, playAlmost, gradeTypedAnswer, sanitiseForTTS } from '../../utils/helpers';
+import { buildNoRepeatQueue, speak, stripAccents, gradeTypedAnswer, sanitiseForTTS } from '../../utils/helpers';
 
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
 export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, counterOverride }) {
@@ -81,7 +81,6 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
 
     const { ok, closeEnough, displayTarget, matchedTarget } = gradeTypedAnswer(val, target, strictMode);
 
-    if (ok) { if (closeEnough) playAlmost(); else playCorrect(); }
     setFeedback({ ok, closeEnough, target: displayTarget, matchedTarget, ans: stripAccents(val.trim().toLowerCase()) });
     onAnswer(word.es, ok);
     if (ok) setCorrect(c => c + 1);
