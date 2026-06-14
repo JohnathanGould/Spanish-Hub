@@ -12,6 +12,10 @@ const sanitiseForTTS = (text) => {
     .replace(/\(m\)/gi, 'masculine');
 };
 
+function ttsFriendly(text) {
+  return text.replace('(m)', ', masculine').replace('(f)', ', feminine');
+}
+
 // mode: languageConfig.drillDirectionId | languageConfig.reverseDrillDirectionId | 'hear-choose'
 export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, counterOverride }) {
   const total = drillLength;
@@ -40,7 +44,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
   useEffect(() => {
     if (!picked) return;
     const t = setTimeout(() => {
-      if (mode === 'hear-choose-en-es') speak(sanitiseForTTS(word.en), languageConfig.targetLanguage, 0.72);
+      if (mode === 'hear-choose-en-es') speak(ttsFriendly(sanitiseForTTS(word.en)), languageConfig.targetLanguage, 0.6);
       else speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage);
     }, 50);
     return () => clearTimeout(t);
@@ -86,7 +90,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
         {(mode === 'hear-choose' || mode === 'hear-choose-en-es') ? (
           <button data-testid="choice-listen-btn"
             onClick={() => mode === 'hear-choose-en-es'
-              ? speak(sanitiseForTTS(word.en), languageConfig.targetLanguage, 0.72)
+              ? speak(ttsFriendly(sanitiseForTTS(word.en)), languageConfig.targetLanguage, 0.6)
               : speak(sanitiseForTTS(promptText), languageConfig.sourceLanguage)}
             className="mx-auto rounded-full w-14 h-14 flex items-center justify-center text-white"
             style={{ background: 'hsl(var(--primary))', boxShadow: '0 6px 20px rgba(198,11,30,0.35)' }}>
@@ -135,7 +139,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
                 {mode === 'hear-choose-en-es' ? word.en : word.es}
                 <button
                   onClick={() => mode === 'hear-choose-en-es'
-                    ? speak(sanitiseForTTS(word.en), languageConfig.targetLanguage, 0.72)
+                    ? speak(ttsFriendly(sanitiseForTTS(word.en)), languageConfig.targetLanguage, 0.6)
                     : speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage)}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
               </div>
