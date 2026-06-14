@@ -1225,12 +1225,12 @@ export default function PathsTab({
         <button
           type="button"
           onClick={() => setSelectedPathId(null)}
-          className="inline-flex items-center gap-1 text-sm font-medium mb-4"
+          className="inline-flex items-center gap-1 text-sm font-medium mb-2"
           style={{ color: 'hsl(var(--primary))' }}
         >
           ← Back
         </button>
-        <div className="mb-4">
+        <div className="mb-2">
           <h1 className="text-2xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
             {path.title}
           </h1>
@@ -1238,7 +1238,7 @@ export default function PathsTab({
             {path.titleEn}
           </p>
         </div>
-        <div className="flex flex-col gap-2" data-testid={`path-stops-${path.id}`}>
+        <div className="flex flex-col gap-1.5" data-testid={`path-stops-${path.id}`}>
           {path.stops.map((stop, stopIndex) => {
             const stopUnlocked = isStopUnlocked(stop.id, completedStops, completedPaths);
             const stopComplete = completedStops.includes(stop.id);
