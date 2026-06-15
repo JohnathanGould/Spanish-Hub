@@ -153,10 +153,17 @@ export default function DrillsGrid({
             </button>
           </div>
 
-          <button onClick={() => onStartDrill('sent-build', 10)}
-            className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
-            Sentence Builder
-          </button>
+          {completedPaths.includes('path1') ? (
+            <button onClick={() => onStartDrill('sent-build', 10)}
+              className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
+              Sentence Builder
+            </button>
+          ) : (
+            <button disabled
+              className={`w-full ${PILL_CLASS} opacity-50`} style={PILL_STYLE}>
+              Sentence Builder 🔒
+            </button>
+          )}
         </>
       )}
 
