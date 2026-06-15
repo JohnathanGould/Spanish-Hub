@@ -16,7 +16,23 @@ export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLe
 
   React.useEffect(() => {
     if (queue[idx]) {
-      setPool(shuffle(queue[idx].words.map((w, i) => ({ id: i, text: w }))));
+      const targetWords = queue[idx].words;
+      const targetSet = new Set(targetWords.map(w => w.toLowerCase()));
+      const correct = targetWords.map((w, i) => ({ id: i, text: w }));
+
+      const distractors = [];
+      if (queue.length > 1) {
+        const otherIdxs = shuffle(queue.map((_, i) => i).filter(i => i !== idx)).slice(0, 2);
+        otherIdxs.forEach((qi, di) => {
+          const candidates = queue[qi].words.filter(w => !targetSet.has(w.toLowerCase()));
+          if (candidates.length > 0) {
+            const word = candidates[Math.floor(Math.random() * candidates.length)];
+            distractors.push({ id: `d-${di}`, text: word });
+          }
+        });
+      }
+
+      setPool(shuffle([...correct, ...distractors]));
       setPlaced([]);
       setFeedback(null);
     }
@@ -116,7 +132,7 @@ export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLe
           </button>
         </div>
       ) : (
-        <button data-testid="sent-check" onClick={check} disabled={pool.length > 0}
+        <button data-testid="sent-check" onClick={check} disabled={placed.length === 0}
           className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50"
           style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 14px rgba(198,11,30,0.3)' }}>
           Check sentence
