@@ -104,7 +104,6 @@ export default function DrillsGrid({
       {/* ── PRACTICE ── */}
       {activeSection === 'practice' && (
         <>
-          <SectionHeader title="Practice" />
 
           <div>
             <RowLabel label="Multiple Choice" />
@@ -153,6 +152,11 @@ export default function DrillsGrid({
               Present Tense
             </button>
           </div>
+
+          <button onClick={() => onStartDrill('sent-build', 10)}
+            className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
+            Sentence Builder
+          </button>
         </>
       )}
 
