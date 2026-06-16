@@ -42,6 +42,89 @@ Multi-word phrases treated as single unbreakable vocabulary items.
 
 ---
 
+## Session Notes — 2026-06-15 (evening, extended session)
+
+### Completed
+- Bug audit closed: #3-8 all resolved (sound effects removed by design,
+  mastery filter confirmed live, tap-position modal confirmed working
+  as designed, Sentence Builder distractors shipped, pack import confirmed,
+  ES/EN layout confirmed)
+- Sentence Builder Track A shipped: 2 distractor tiles pulled from queue,
+  excluding target words, graceful fallback for single-entry queues,
+  Check button changed to disabled={placed.length === 0}
+- Sentence Builder missing launch button fixed in DrillsGrid (added after
+  Conjugation, "Practice" header removed for vertical space)
+- Sentence Builder lock gate added: locked until completedPaths
+  includes 'path2' (later superseded by full curriculum redesign — see below)
+- MILO_CURRICULUM_CONTENT_RULES.md created — 12 sections covering verb
+  sequencing, noun/article rules, gender color coding (blue=masc/pink=fem),
+  adjective/question-word/connector/number sequencing, multi-word phrase
+  handling, sentence pool architecture
+- MAJOR: Entire 12-Path curriculum redesigned from scratch (not patched)
+  - Abandoned original paths.js structure entirely — research-based rebuild
+  - Verb order based on CORPES XXI frequency ranking (ser>estar>tener>
+    hacer>poder>ir>dar>ver>saber>querer>decir>hablar>venir>salir>vivir...)
+  - Rule 1 finalized: every verb splits across 2 Stops
+    (Stop N: infinitive+yo+tú+3 NEW vocab; Stop N+1: él/ella+nosotros+
+    ustedes/ellos+3 NEW vocab) — NO recycled/filler words, every Stop
+    contributes exactly 6 genuinely new words
+  - hay confirmed via research as legitimate standalone exception to
+    Rule 1 (impersonal, invariant, every A1 curriculum treats it this way)
+  - Tier structure locked: Tier 1 (Paths 1-4) = 6 Stops/Path,
+    Tier 2 (Paths 5-8) = 7 Stops/Path, Tier 3 (Paths 9-12) = 8 Stops/Path
+  - Final result: 504 words, 84 Stops, 12 Paths — programmatically
+    verified twice, zero duplicate words across entire curriculum
+  - Found and fixed 2 duplicate-word bugs (café, oficina) via script,
+    plus ~6 more caught manually during generation
+  - Removed trabajo-as-noun (Path 4) to eliminate homonym confusion
+    with trabajo-as-verb (Path 10, "I work") — beginner clarity prioritized
+    over preserving a linguistically-valid homonym
+  - Full document: MILO_CURRICULUM_FINAL_V2.md
+
+### Bugs Found (not yet fixed)
+- Old Sentence Builder lock gate (completedPaths.includes('path2')) is
+  now based on the OLD Path structure — needs revisiting once new
+  paths.js is built, since Path boundaries/content have completely changed
+- P3 sentence pools generated in earlier session (P3S1-S5_SENT_POOL) are
+  now OBSOLETE — based on old Path 3 structure which no longer exists
+- Global SENT_POOL in drillData.js still contains out-of-vocabulary
+  words (e.g. "al") — not yet addressed, lower priority now given the
+  full curriculum rebuild
+- contextSentence audit (Path 1-3 words using Path 4+ vocabulary) —
+  MOOT — entire vocabulary/Path structure changed, will need redoing
+  against new curriculum once paths.js is rebuilt
+
+### Decisions Made
+- Curriculum approach: rebuild from research/frequency data, not patch
+  existing structure — eliminated cascading dependency problems
+- No filler/recycled words in any Stop — every Stop = 6 NEW words always
+- Verb Stops pair 3 conjugated forms + 3 new vocabulary (not reused nouns)
+- 504-word target achieved and verified (not negotiable anymore — locked)
+- trabajo noun removed entirely from curriculum (beginner clarity)
+- Gender color coding still pending implementation: blue=masculine,
+  pink=feminine pills (decided in rules doc, not yet built in UI)
+
+### Tools Assessed
+- None new — Claude Code handled all bug fixes, Claude (this chat)
+  handled all curriculum design/verification, bash/python used for
+  duplicate-checking the 504-word list (manual tracking proved
+  unreliable at this scale — script verification now mandatory for
+  any future word-list work)
+
+### First Tasks Next Session
+1. Convert MILO_CURRICULUM_FINAL_V2.md into actual paths.js code
+   (all 12 Paths, 84 Stops, 504 words)
+2. Identify which of the 504 words already exist in words.js vs.
+   need new entries created (imageUrl, contextSentence, gender, type)
+3. Rebuild Sentence Builder lock gate logic against new Path structure
+4. Regenerate sentence pools (Track B) using new curriculum's confirmed
+   vocabulary — old P3 pools are obsolete
+5. Implement gender color coding (blue/pink pills) in UI
+6. Full app test once new paths.js is live — this is a critical-path
+   file, test thoroughly before considering it stable
+
+---
+
 ## Session Notes — 2026-06-14 (late evening)
 
 Completed:

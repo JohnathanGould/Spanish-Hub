@@ -2,6 +2,7 @@ import { languageConfig } from '../../config/languageConfig';
 import React, { useState, useRef, useEffect } from 'react';
 import { Volume2, ArrowRight } from 'lucide-react';
 import DrillShell from '../DrillShell';
+import SpecialCharBar from '../SpecialCharBar';
 import { buildNoRepeatQueue, speak, stripAccents, gradeTypedAnswer, sanitiseForTTS } from '../../utils/helpers';
 
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
@@ -137,12 +138,14 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
         onKeyDown={e => { if (e.key === 'Enter') feedback ? next() : submit(); }}
         placeholder={mode === 'type-es-en' ? `Type ${languageConfig.targetLanguageName}…` : `Type ${languageConfig.sourceLanguageName}…`}
         disabled={!!feedback} autoCapitalize="none" autoCorrect="off" spellCheck={false}
-        className="w-full p-3 rounded-xl border-2 text-center text-lg font-bold mb-3 transition-colors"
+        className="w-full p-3 rounded-xl border-2 text-center text-lg font-bold mb-2 transition-colors"
         style={{
           background: 'hsl(var(--card))',
           color: 'hsl(var(--foreground))',
           borderColor: inputBorderColor,
         }} />
+
+      {!feedback && <SpecialCharBar inputRef={inputRef} value={val} onChange={setVal} />}
 
       {feedback ? (
         <div className="space-y-2">
