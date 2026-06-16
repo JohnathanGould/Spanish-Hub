@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 
-const CHARS = ['á', 'é', 'í', 'ó', 'ú', 'ñ', 'ü', '¿', '¡'];
+const ROW1 = ['á', 'é', 'í', 'ó', 'ú', 'ü'];
+const ROW2 = ['ñ', '¿', '¡'];
 
 export default function SpecialCharBar({ inputRef, value, onChange }) {
   const insertPos = useRef(null);
@@ -29,33 +30,38 @@ export default function SpecialCharBar({ inputRef, value, onChange }) {
     if (el) insertPos.current = el.selectionStart;
   };
 
+  const btnStyle = {
+    minWidth: 36,
+    minHeight: 36,
+    padding: '0 10px',
+    background: 'hsl(var(--muted))',
+    color: 'hsl(var(--foreground))',
+    borderColor: 'hsl(var(--border))',
+  };
+
+  const renderRow = (chars) =>
+    chars.map((ch) => (
+      <button
+        key={ch}
+        type="button"
+        onClick={() => insert(ch)}
+        className="rounded-lg border font-bold text-sm transition-all active:scale-95"
+        style={btnStyle}
+      >
+        {ch}
+      </button>
+    ));
+
   return (
     <div
-      className="flex flex-wrap gap-1 mb-2"
+      className="flex flex-col gap-1 mb-2"
       onPointerDown={(e) => {
-        // Save cursor position before the button press steals focus
         savePos();
         e.preventDefault();
       }}
     >
-      {CHARS.map((ch) => (
-        <button
-          key={ch}
-          type="button"
-          onClick={() => insert(ch)}
-          className="rounded-lg border font-bold text-sm transition-all active:scale-95"
-          style={{
-            minWidth: 36,
-            minHeight: 36,
-            padding: '0 10px',
-            background: 'hsl(var(--muted))',
-            color: 'hsl(var(--foreground))',
-            borderColor: 'hsl(var(--border))',
-          }}
-        >
-          {ch}
-        </button>
-      ))}
+      <div className="flex justify-center gap-1">{renderRow(ROW1)}</div>
+      <div className="flex justify-center gap-1">{renderRow(ROW2)}</div>
     </div>
   );
 }
