@@ -153,7 +153,7 @@ export default function DrillsGrid({
             </button>
           </div>
 
-          {completedPaths.includes('path1') ? (
+          {completedPaths.includes('path2') ? (
             <button onClick={() => onStartDrill('sent-build', 10)}
               className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
               Sentence Builder

@@ -195,7 +195,91 @@ export const SENT_POOL = [
   { words: ['yo', 'voy', 'a', 'la', 'tienda'], hint: 'I go to the store' },
   { words: ['tú', 'eres', 'muy', 'amable'], hint: 'you are very kind' },
 ];
- 
+
+// ─────────────────────────────────────────────
+// PATH 3 SENTENCE POOLS — incremental per Stop
+// Base vocabulary: Path 1 (25) + Path 2 (25)
+// Each Stop adds 5 new words cumulatively
+// ─────────────────────────────────────────────
+
+// STOP 1 — +necesitar, necesito, necesitas, necesita, disculpe
+export const P3S1_SENT_POOL = [
+  { words: ['yo', 'necesito', 'mi', 'pasaporte'], hint: 'I need my passport' },
+  { words: ['ella', 'necesita', 'un', 'taxi'], hint: 'she needs a taxi' },
+  { words: ['necesitas', 'ayuda'], hint: 'you need help' },
+  { words: ['disculpe', 'dónde', 'está', 'el', 'hotel'], hint: 'excuse me, where is the hotel' },
+  { words: ['yo', 'necesito', 'ayuda', 'por', 'favor'], hint: 'I need help please' },
+  { words: ['ella', 'necesita', 'mi', 'pasaporte'], hint: 'she needs my passport' },
+  { words: ['necesito', 'un', 'taxi', 'por', 'favor'], hint: 'I need a taxi please' },
+  { words: ['tú', 'necesitas', 'mi', 'ayuda'], hint: 'you need my help' },
+  { words: ['disculpe', 'necesito', 'ayuda'], hint: 'excuse me, I need help' },
+  { words: ['él', 'necesita', 'un', 'taxi'], hint: 'he needs a taxi' },
+];
+
+// STOP 2 — +tener, tengo, tienes, tiene, nombre
+export const P3S2_SENT_POOL = [
+  { words: ['tengo', 'una', 'reserva'], hint: 'I have a reservation' },
+  { words: ['tienes', 'mi', 'pasaporte'], hint: 'you have my passport' },
+  { words: ['él', 'tiene', 'una', 'reserva'], hint: 'he has a reservation' },
+  { words: ['ella', 'tiene', 'mi', 'nombre'], hint: 'she has my name' },
+  { words: ['tú', 'tienes', 'mi', 'ayuda'], hint: 'you have my help' },
+  { words: ['yo', 'tengo', 'un', 'taxi'], hint: 'I have a taxi' },
+  { words: ['tengo', 'mi', 'pasaporte', 'aquí'], hint: 'I have my passport here' },
+  { words: ['ella', 'necesita', 'mi', 'nombre'], hint: 'she needs my name' },
+  { words: ['él', 'tiene', 'mi', 'pasaporte'], hint: 'he has my passport' },
+  { words: ['yo', 'necesito', 'tu', 'nombre'], hint: 'I need your name' },
+  { words: ['tú', 'tienes', 'el', 'nombre'], hint: 'you have the name' },
+  { words: ['tengo', 'ayuda', 'aquí'], hint: 'I have help here' },
+];
+
+// STOP 3 — +querer, quiero, quieres, quiere, amigo
+export const P3S3_SENT_POOL = [
+  { words: ['quiero', 'ayuda', 'por', 'favor'], hint: 'I want help please' },
+  { words: ['ella', 'quiere', 'un', 'taxi'], hint: 'she wants a taxi' },
+  { words: ['tú', 'quieres', 'mi', 'ayuda'], hint: 'you want my help' },
+  { words: ['mi', 'amigo', 'tiene', 'una', 'reserva'], hint: 'my friend has a reservation' },
+  { words: ['él', 'quiere', 'ayuda'], hint: 'he wants help' },
+  { words: ['mi', 'amigo', 'necesita', 'un', 'taxi'], hint: 'my friend needs a taxi' },
+  { words: ['tú', 'quieres', 'hablar', 'español'], hint: 'you want to speak Spanish' },
+  { words: ['ella', 'quiere', 'mi', 'nombre'], hint: 'she wants my name' },
+  { words: ['yo', 'tengo', 'un', 'amigo', 'aquí'], hint: 'I have a friend here' },
+  { words: ['quiero', 'un', 'taxi', 'por', 'favor'], hint: 'I want a taxi please' },
+  { words: ['mi', 'amigo', 'necesita', 'ayuda'], hint: 'my friend needs help' },
+  { words: ['él', 'quiere', 'hablar', 'español'], hint: 'he wants to speak Spanish' },
+];
+
+// STOP 4 — +poder, puedo, puedes, puede, amiga
+export const P3S4_SENT_POOL = [
+  { words: ['puedo', 'hablar', 'español'], hint: 'I can speak Spanish' },
+  { words: ['puedes', 'hablar', 'español'], hint: 'you can speak Spanish' },
+  { words: ['mi', 'amiga', 'puede', 'ayudar'], hint: 'my friend can help' },
+  { words: ['él', 'puede', 'hablar', 'español'], hint: 'he can speak Spanish' },
+  { words: ['mi', 'amiga', 'tiene', 'una', 'reserva'], hint: 'my friend has a reservation' },
+  { words: ['puedes', 'ayudar', 'por', 'favor'], hint: 'can you help please' },
+  { words: ['mi', 'amigo', 'puede', 'hablar', 'español'], hint: 'my friend can speak Spanish' },
+  { words: ['ella', 'puede', 'hablar', 'español'], hint: 'she can speak Spanish' },
+  { words: ['yo', 'puedo', 'ayudar'], hint: 'I can help' },
+  { words: ['mi', 'amiga', 'quiere', 'ayudar'], hint: 'my friend wants to help' },
+  { words: ['puedo', 'hablar', 'con', 'mi', 'amigo'], hint: 'I can speak with my friend' },
+  { words: ['ella', 'puede', 'hablar', 'con', 'tú'], hint: 'she can speak with you' },
+];
+
+// STOP 5 — +hacer, hago, haces, hace, saber
+export const P3S5_SENT_POOL = [
+  { words: ['yo', 'hago', 'mi', 'tarea'], hint: 'I do my work' },
+  { words: ['haces', 'español', 'muy', 'bien'], hint: 'you do Spanish very well' },
+  { words: ['no', 'sé', 'dónde', 'está'], hint: "I don't know where it is" },
+  { words: ['yo', 'sé', 'hablar', 'español'], hint: 'I know how to speak Spanish' },
+  { words: ['ella', 'hace', 'mi', 'tarea'], hint: 'she does my work' },
+  { words: ['mi', 'amigo', 'sabe', 'hablar', 'español'], hint: 'my friend knows how to speak Spanish' },
+  { words: ['puedo', 'hacer', 'mi', 'tarea'], hint: 'I can do my work' },
+  { words: ['tú', 'sabes', 'hablar', 'español'], hint: 'you know how to speak Spanish' },
+  { words: ['él', 'hace', 'mi', 'tarea', 'aquí'], hint: 'he does my work here' },
+  { words: ['mi', 'amiga', 'sabe', 'hablar', 'español'], hint: 'my friend knows how to speak Spanish' },
+  { words: ['hago', 'mi', 'tarea', 'aquí'], hint: 'I do my work here' },
+  { words: ['no', 'sé', 'dónde', 'está', 'mi', 'amigo'], hint: "I don't know where my friend is" },
+];
+
 // === FILL IN THE BLANK ===
 export const FITB_POOL = [
   { before: 'Yo', blank: 'bebo', after: 'leche.', choices: ['bebo', 'bebes', 'bebe', 'como'], hint: 'yo = I, beber', en: 'I drink milk.' },

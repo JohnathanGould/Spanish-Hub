@@ -1,5 +1,46 @@
 # Current State Ledger — Milo Speaks Spanish
-# Last updated: 2026-06-14
+# Last updated: 2026-06-15
+
+## Session Notes — 2026-06-15
+
+Completed:
+
+Bug audit #3-8: all resolved or closed.
+- #3 Sound effects: confirmed removed (MatchingDrill, SentenceBuilderDrill, TypeDrill).
+- #4 Mastery filter: confirmed live (drillMode state in WordList.jsx).
+- #5 Tap position: closed — center modal confirmed good UX via play-test.
+- #6 Sentence Builder distractors: Track A shipped — 2 distractor tiles added from queue, excluding target sentence words, fallback for queue.length === 1. Check button changed to disabled={placed.length === 0}.
+- #7 Pack import: confirmed working (live test).
+- #8 ES/EN side-by-side: confirmed fixed.
+Sentence Builder missing from DrillsGrid — fixed (button added after Conjugation).
+"Practice" section header removed from DrillsGrid (freed vertical space).
+Sentence Builder lock gate added: locked until completedPaths.includes('path2') (Path 2 gate — Path 1 vocabulary insufficient for real sentence construction).
+Track B scoped: per-Stop incremental sentence pools starting at Path 3 (Path 3 is first Path with real action verbs — necesitar/tener/querer/poder/hacer).
+P3S1-S5 sentence pools generated, revised, and added to drillData.js — confirmed vocabulary-clean (no hablar, no tarea, no eso, no out-of-sequence forms).
+Milo Curriculum & Content Rules established (see new project doc).
+Verb sequencing rule finalized (Option B + 3-way split: Stop N = infinitive + yo + tú + 2 fillers; Stop N+1 = él/ella + nosotros + ustedes/ellos + 2 fillers).
+Gender color coding decided: blue (masculine) / pink (feminine) pills.
+Variable-length Paths confirmed (no 5-Stop cap).
+Stop naming convention confirmed.
+
+Bugs found (not yet fixed):
+
+Global SENT_POOL (drillData.js) contains out-of-vocabulary words (e.g. "al") — superseded by per-Path pools once Track B complete, not to be patched directly.
+contextSentence audit needed: Path 1-3 words have contextSentences using Path 4+ vocabulary (hablar, sabes, etc.).
+sabes/sabe/sabemos/saben orphaned in words.js — not assigned to any Path/Stop. Full saber conjugation set needs Stop assignment.
+Gender color coding (blue/pink pills) not yet implemented in UI.
+
+Decisions made:
+
+Sentence Builder unlocks when Path 2 complete (completedPaths.includes('path2')).
+Track B scope: per-Stop incremental pools from Path 3 onward (cumulative: each Stop's pool = Path 1 + Path 2 + Path 3 up to that Stop).
+Global SENT_POOL to be superseded by per-Path pools — not patched.
+Gender color coding: masculine = blue pill, feminine = pink pill.
+Paths restructuring: all 12 Paths, variable-length, expand verb Stops.
+Stop naming: "[Infinitive]" / "[él form], [nosotros form], [ellos form]". TitleEn: "To [verb]" / "He/She [verb], We [verb], They [verb]".
+Multi-word phrases treated as single unbreakable vocabulary items.
+
+---
 
 ## Session Notes — 2026-06-14 (late evening)
 
@@ -266,14 +307,18 @@ leaderboard/{uid}: displayName, photoURL, xp, weeklyXP
 chatUsage/{uid}: count, date (rate limit: 30/day)
 
 ## Known Bugs (fix before adding features)
-1. Word mastery filter buttons in Words tab not wired.
-2. Word detail card opens at screen center (should open at tap position).
-3. Sentence Builder — distractors bug.
-4. Community Word Packs import broken.
-5. Community Word Packs entry form — ES/EN fields need side by side layout.
-6. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
+1. Global SENT_POOL (drillData.js) contains out-of-vocabulary words (e.g. "al") — superseded by per-Path pools once Track B complete; do not patch directly.
+2. contextSentence audit needed: Path 1-3 words have contextSentences using Path 4+ vocabulary (hablar, sabes, etc.).
+3. sabes/sabe/sabemos/saben orphaned in words.js — not assigned to any Path/Stop. Full saber conjugation set needs Stop assignment.
+4. Gender color coding (blue=masculine, pink=feminine) not yet implemented in UI.
+5. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
 
 RESOLVED:
+- Word mastery filter buttons in Words tab — confirmed live 2026-06-15 (drillMode state in WordList.jsx)
+- Word detail card tap position — closed 2026-06-15 (center modal confirmed good UX via play-test)
+- Sentence Builder distractors — fixed 2026-06-15 (Track A: 2 distractor tiles from queue, excluded target words, fallback for queue.length===1, Check button disabled={placed.length===0})
+- Community Word Packs import — confirmed working 2026-06-15 (live test)
+- Community Word Packs ES/EN side-by-side — confirmed fixed 2026-06-15
 - Scroll issue in PathsTab — fixed 2026-06-14 (pb-24/pb-12 fix in Stops view)
 - Bones display — verified working correctly 2026-06-14 (+2/Stop pass, no per-answer bones by design)
 - Audio TTS — "hay"/"el"/"la" unclear — fixed 2026-06-14 (sanitiseForTTS consolidated to helpers.js, comma pauses added, EN rate lowered to 0.6)
@@ -295,12 +340,11 @@ Setup waste: 20.56 tokens — wrong repo. Pre-flight check now mandatory.
 Average session cost: 6-10 tokens. FSRS/multi-file sessions cost 10-12.
 
 ## Next Session Priorities
-1. Audio diagnosis — "hay" and "el" TTS issues — NEXT
-2. Square image cropping fix (CSS)
-3. ChoiceDrill sound effects — wire playCorrect/playAlmost
-4. Word mastery filter buttons — wire in Words tab
-5. Test full Paths loop end to end — report bugs
-6. Next month Emergent: Stop completion polish, Break Free mechanic, badges, friend notifications
+1. Write Milo Curriculum & Content Rules as formal project document
+2. Restructure paths.js per new verb sequencing rule (all 12 Paths)
+3. Implement gender color coding (blue/pink pills) across UI
+4. contextSentence audit — Path 1-3 words using Path 4+ vocabulary
+5. Assign saber conjugation forms to appropriate Path/Stop in words.js/paths.js
 
 ## Animation Pipeline
 Google Flow → PNG white background → animate to GIF white background. No post-processing.
