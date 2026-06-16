@@ -108,7 +108,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
       counterOverride={counterOverride}>
 
       {/* Word card — compact padding for mobile */}
-      <div className="rounded-2xl p-4 mb-3 text-center"
+      <div className="rounded-2xl p-4 mb-2 text-center"
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
         {isListenMode ? (
           <button data-testid="listen-type-replay"
@@ -132,20 +132,20 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
         )}
       </div>
 
+      {!feedback && <SpecialCharBar inputRef={inputRef} value={val} onChange={setVal} />}
+
       {/* Input — compact for mobile */}
       <input ref={inputRef} data-testid="type-input"
         value={val} onChange={e => setVal(e.target.value)}
         onKeyDown={e => { if (e.key === 'Enter') feedback ? next() : submit(); }}
         placeholder={mode === 'type-es-en' ? `Type ${languageConfig.targetLanguageName}…` : `Type ${languageConfig.sourceLanguageName}…`}
         disabled={!!feedback} autoCapitalize="none" autoCorrect="off" spellCheck={false}
-        className="w-full p-3 rounded-xl border-2 text-center text-lg font-bold mb-2 transition-colors"
+        className="w-full p-3 rounded-xl border-2 text-center text-lg font-bold mb-3 transition-colors"
         style={{
           background: 'hsl(var(--card))',
           color: 'hsl(var(--foreground))',
           borderColor: inputBorderColor,
         }} />
-
-      {!feedback && <SpecialCharBar inputRef={inputRef} value={val} onChange={setVal} />}
 
       {feedback ? (
         <div className="space-y-2">

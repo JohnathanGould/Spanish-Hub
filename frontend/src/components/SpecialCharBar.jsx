@@ -31,7 +31,7 @@ export default function SpecialCharBar({ inputRef, value, onChange }) {
 
   return (
     <div
-      className="flex flex-wrap gap-1 mb-3"
+      className="flex flex-wrap gap-1 mb-2"
       onPointerDown={(e) => {
         // Save cursor position before the button press steals focus
         savePos();
