@@ -6,6 +6,11 @@
 //
 // Usage:
 //   ANTHROPIC_API_KEY=sk-ant-... node generate-context-sentences.js
+//   ANTHROPIC_API_KEY=sk-ant-... node generate-context-sentences.js --test
+//
+// --test  Process only the first 5 words, log results to console, do NOT
+//         write anything to words.js. Use this to verify parsing and API
+//         output before running the full generation.
 
 const https = require('https');
 const fs    = require('fs');
@@ -19,6 +24,8 @@ if (!API_KEY) {
   console.error('Usage: ANTHROPIC_API_KEY=sk-ant-... node generate-context-sentences.js');
   process.exit(1);
 }
+
+const TEST_MODE = process.argv.includes('--test');
 
 const PATHS_FILE     = path.join(__dirname, 'frontend/src/content/es-en/paths.js');
 const WORDS_FILE     = path.join(__dirname, 'frontend/src/content/es-en/words.js');
@@ -242,13 +249,20 @@ async function main() {
 
   // ── Step 2 ────────────────────────────────────────────────────────────────
   console.log('\nStep 2 — parsing words.js');
-  const wordsSrc = fs.readFileSync(WORDS_FILE, 'utf8');
-  const words    = parseWords(wordsSrc);
-  console.log(`  ${words.length} entries with contextSentence found`);
+  const wordsSrc  = fs.readFileSync(WORDS_FILE, 'utf8');
+  const allWords  = parseWords(wordsSrc);
+  console.log(`  ${allWords.length} entries with contextSentence found`);
+  console.log(`  vocab floor (path 3): ${vocabByPath[3]?.length ?? 0} words`);
 
-  if (!words.length) {
+  if (!allWords.length) {
     console.error('No words parsed — aborting.');
     process.exit(1);
+  }
+
+  const words = TEST_MODE ? allWords.slice(0, 5) : allWords;
+
+  if (TEST_MODE) {
+    console.log('\n*** TEST MODE — processing first 5 words only, words.js will NOT be written ***');
   }
 
   // ── Step 4 — generate in batches ─────────────────────────────────────────
@@ -292,6 +306,25 @@ async function main() {
     if (b + BATCH_SIZE < words.length) {
       await sleep(BATCH_DELAY_MS);
     }
+  }
+
+  // ── Test mode: log results and exit without touching words.js ───────────
+  if (TEST_MODE) {
+    console.log('\n\n*** TEST RESULTS (words.js not modified) ***\n');
+    for (const { word, sentence, fail } of results) {
+      const pathNum = wordToPath[word.es];
+      const floor   = pathNum !== undefined ? Math.max(pathNum, 3) : maxPath;
+      const vsize   = (vocabByPath[floor] || []).length;
+      if (sentence) {
+        console.log(`  [OK]   ${word.es} (path${pathNum ?? 'orphan'}, vocab=${vsize})`);
+        console.log(`         old: ${word.contextSentence}`);
+        console.log(`         new: ${sentence}`);
+      } else {
+        console.log(`  [FAIL] ${word.es}: ${fail}`);
+      }
+    }
+    console.log('\n*** End of test — no file written ***');
+    return;
   }
 
   // ── Step 5 — apply replacements ───────────────────────────────────────────
