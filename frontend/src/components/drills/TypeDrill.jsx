@@ -124,9 +124,20 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
             <div className="text-xs uppercase tracking-wider mb-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
               {isPromptEs ? languageConfig.sourceLanguageName : languageConfig.targetLanguageName}
             </div>
-            <div className="font-serif text-2xl font-black" data-testid="type-prompt"
-              style={{ color: 'hsl(var(--foreground))' }}>
-              {promptText}
+            <div className="flex items-center justify-center gap-2 flex-wrap"
+              data-testid="type-prompt">
+              {isPromptEs && word.gender && (
+                <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+                  background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+                  color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
+                }}>
+                  {word.gender === 'm' ? 'el' : 'la'}
+                </span>
+              )}
+              <div className="font-serif text-2xl font-black"
+                style={{ color: 'hsl(var(--foreground))' }}>
+                {promptText}
+              </div>
             </div>
           </>
         )}
@@ -162,8 +173,17 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
                 <>
                   <div>Almost! ✓</div>
                   {mode !== 'type-es-en' && (
-                    <div className="text-base font-black mt-1 flex items-center justify-center gap-1" style={{ color: '#D97706' }}>
-                      → {feedback.target}
+                    <div className="text-base font-black mt-1 flex items-center justify-center gap-2 flex-wrap" style={{ color: '#D97706' }}>
+                      →
+                      {mode === 'type-en-es' && word.gender && (
+                        <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+                          background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+                          color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
+                        }}>
+                          {word.gender === 'm' ? 'el' : 'la'}
+                        </span>
+                      )}
+                      {feedback.target}
                       {mode === 'type-en-es' && <button onClick={() => speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
                     </div>
                   )}
@@ -173,7 +193,15 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
                 <>
                   <div>Answer:</div>
                   {mode !== 'type-es-en' && (
-                    <div className="text-base font-black mt-1 flex items-center justify-center gap-1">
+                    <div className="text-base font-black mt-1 flex items-center justify-center gap-2 flex-wrap">
+                      {mode === 'type-en-es' && word.gender && (
+                        <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+                          background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+                          color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
+                        }}>
+                          {word.gender === 'm' ? 'el' : 'la'}
+                        </span>
+                      )}
                       {feedback.target}
                       {mode === 'type-en-es' && <button onClick={() => speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
                     </div>
@@ -188,7 +216,17 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
               <div className="text-xs mt-2 opacity-70">{word.en}</div>
             )}
             {(mode === 'listen-type-en-es' || mode === 'listen-type-sentence-en-es') && (
-              <div className="text-xs mt-2 opacity-70">{word.es}</div>
+              <div className="text-xs mt-2 opacity-70 flex items-center justify-center gap-1 flex-wrap">
+                {word.gender && (
+                  <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+                    background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+                    color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
+                  }}>
+                    {word.gender === 'm' ? 'el' : 'la'}
+                  </span>
+                )}
+                {word.es}
+              </div>
             )}
           </div>
           <button data-testid="type-next" onClick={next}
