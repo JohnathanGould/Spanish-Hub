@@ -35,13 +35,15 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
   const isSentences = mode === 'sentences';
   const isEsEn = direction === languageConfig.drillDirectionId;
 
-  const article = !isSentences && word.gender === 'm' ? 'el ' : !isSentences && word.gender === 'f' ? 'la ' : '';
+  const articleWord = !isSentences && word.gender
+    ? (word.gender === 'm' ? 'el' : 'la')
+    : '';
   const canHint = !isSentences && (word.type === 'noun' || word.type === 'phrase');
 
   const frontLabel = isSentences ? `${languageConfig.sourceLanguageName} sentence` : (isEsEn ? languageConfig.sourceLanguageName : languageConfig.targetLanguageName);
-  const frontText = isSentences ? word.contextSentence : (isEsEn ? `${article}${word.es}` : word.en);
+  const frontText = isSentences ? word.contextSentence : (isEsEn ? word.es : word.en);
   const backLabel = isSentences ? languageConfig.targetLanguageName : (isEsEn ? languageConfig.targetLanguageName : languageConfig.sourceLanguageName);
-  const backText = isSentences ? (word.sentence?.en || '') : (isEsEn ? word.en : `${article}${word.es}`);
+  const backText = isSentences ? (word.sentence?.en || '') : (isEsEn ? word.en : word.es);
   const speakText = isSentences ? word.contextSentence : word.es;
 
   const handleFlip = () => {
@@ -82,7 +84,17 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
               className={`font-serif font-black mb-3 ${isSentences ? 'text-xl leading-snug' : 'text-4xl'}`}
               style={{ color: 'hsl(var(--foreground))' }}
               data-testid="flashcard-front">
-              {frontText}
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                {isEsEn && articleWord && (
+                  <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+                    background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+                    color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
+                  }}>
+                    {articleWord}
+                  </span>
+                )}
+                <span>{frontText}</span>
+              </div>
             </div>
             {showHint && canHint && isEsEn && (
               <div className="w-3/4 max-w-[220px] mt-3" onClick={e => e.stopPropagation()} data-testid="flashcard-hint-image">
@@ -102,7 +114,17 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
               className={`font-serif font-black mb-2 ${isSentences ? 'text-xl leading-snug' : 'text-3xl'}`}
               style={{ color: '#451A03' }}
               data-testid="flashcard-back">
-              {backText}
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                {!isEsEn && articleWord && (
+                  <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+                    background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+                    color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
+                  }}>
+                    {articleWord}
+                  </span>
+                )}
+                <span>{backText}</span>
+              </div>
             </div>
             {word.sentence && isEsEn && !isSentences && (
               <div className="text-xs mt-3 px-2" style={{ color: '#78350F' }}>
