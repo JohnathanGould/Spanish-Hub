@@ -139,10 +139,17 @@ export default function DrillsGrid({
 
           <div>
             <RowLabel label="Listen & Type — Sentences" />
-            <div className="flex gap-2">
-              <button onClick={() => onStartDrill('listen-type-sentence', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
-              <button onClick={() => onStartDrill('listen-type-sentence-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
-            </div>
+            {completedPaths.includes('path3') ? (
+              <div className="flex gap-2">
+                <button onClick={() => onStartDrill('listen-type-sentence', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+                <button onClick={() => onStartDrill('listen-type-sentence-en-es', 10)} className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <button disabled className={`flex-1 ${PILL_CLASS} opacity-50`} style={PILL_STYLE}>SP→EN 🔒</button>
+                <button disabled className={`flex-1 ${PILL_CLASS} opacity-50`} style={PILL_STYLE}>EN→SP 🔒</button>
+              </div>
+            )}
           </div>
 
           <div>
@@ -153,7 +160,7 @@ export default function DrillsGrid({
             </button>
           </div>
 
-          {completedPaths.includes('path2') ? (
+          {completedPaths.includes('path3') ? (
             <button onClick={() => onStartDrill('sent-build', 10)}
               className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
               Sentence Builder
@@ -162,6 +169,17 @@ export default function DrillsGrid({
             <button disabled
               className={`w-full ${PILL_CLASS} opacity-50`} style={PILL_STYLE}>
               Sentence Builder 🔒
+            </button>
+          )}
+          {completedPaths.includes('path3') ? (
+            <button onClick={() => onStartDrill('fill-blank', 10)}
+              className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
+              Fill in the Blank
+            </button>
+          ) : (
+            <button disabled
+              className={`w-full ${PILL_CLASS} opacity-50`} style={PILL_STYLE}>
+              Fill in the Blank 🔒
             </button>
           )}
         </>
@@ -184,12 +202,19 @@ export default function DrillsGrid({
 
           <div>
             <RowLabel label="Flashcards — Sentences" />
-            <div className="flex gap-2">
-              <button onClick={() => setActiveFlashcard({ initialDirection: 'es-en', sentence: true })}
-                className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
-              <button onClick={() => setActiveFlashcard({ initialDirection: 'en-es', sentence: true })}
-                className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
-            </div>
+            {completedPaths.includes('path3') ? (
+              <div className="flex gap-2">
+                <button onClick={() => setActiveFlashcard({ initialDirection: 'es-en', sentence: true })}
+                  className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>SP→EN</button>
+                <button onClick={() => setActiveFlashcard({ initialDirection: 'en-es', sentence: true })}
+                  className={`flex-1 ${PILL_CLASS}`} style={PILL_STYLE}>EN→SP</button>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <button disabled className={`flex-1 ${PILL_CLASS} opacity-50`} style={PILL_STYLE}>SP→EN 🔒</button>
+                <button disabled className={`flex-1 ${PILL_CLASS} opacity-50`} style={PILL_STYLE}>EN→SP 🔒</button>
+              </div>
+            )}
           </div>
         </>
       )}
