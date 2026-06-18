@@ -90,9 +90,9 @@ export default function DrillsGrid({
             className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
             Matching
           </button>
-          <button onClick={() => onStartDrill('word-sort', 10)}
-            className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
-            Word Sort
+          <button disabled
+            className={`w-full ${PILL_CLASS} opacity-50`} style={PILL_STYLE}>
+            Word Sort 🔒
           </button>
           <button onClick={() => onStartDrill('gender', 10)}
             className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
