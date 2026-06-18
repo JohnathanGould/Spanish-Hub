@@ -1,5 +1,88 @@
 # Current State Ledger — Milo Speaks Spanish
-# Last updated: 2026-06-15
+# Last updated: 2026-06-17
+
+## Session Notes — 2026-06-16 (continuation of 06-15 marathon session)
+
+### Completed
+- words.js content gap closed: 185 new entries added (22 of the original
+  207 already existed as orphaned nosotros/ellos conjugations from an
+  earlier session). Final words.js: 583 entries. Build passing.
+- paths.js completely rebuilt from MILO_CURRICULUM_FINAL_V2.md:
+  13 Paths, 87 Stops, 522 words, zero duplicates, all words verified
+  against words.js exact `es` field matches. All 5 helper functions
+  preserved (getStopWords, getPath, getStop, getPathIdForStop,
+  isPathComplete). Build passing, +1.45 kB gzipped.
+  - Question words use bare forms (dónde/quién/cómo/cuánto) matching
+    words.js exactly, not the ¿...? punctuated forms from the design doc
+- New SpecialCharBar.jsx component built — Spanish special character
+  insertion (á é í ó ú ü ñ ¿ ¡) for any typing drill. Integrated into
+  TypeDrill.jsx (covers Type It + all 4 Listen & Type variants).
+  - Solved cursor-position insertion despite button-tap stealing focus:
+    onPointerDown + preventDefault saves selectionStart before focus
+    moves; requestAnimationFrame after onChange sets cursor position
+    after React re-renders with new value
+  - Edge cases handled: no cursor yet → appends to end; text selected →
+    replaces selection; bar hides during feedback state
+  - Repositioned above the input (not below) after live device testing
+    showed keyboard apps (Typewise tested) push a below-input bar out
+    of view, requiring scroll
+  - Two-row intentional layout (á é í ó ú ü / ñ ¿ ¡) instead of
+    accidental wrap, after live testing showed ¡ orphaning to its own row
+  - Tested and confirmed working on real device (Ulefone, Typewise
+    keyboard) — all characters insert correctly at cursor position
+- Firestore progress reset: completedStops, completedPaths, progress,
+  xp, weeklyXP, bones, earnedBadges, lessonsCompleted all zeroed —
+  full reset since old IDs now point to different curriculum content
+  and this is pre-beta testing, not real user data worth preserving
+- Repo housekeeping: all .md files moved into a dedicated folder off root
+
+### Bugs Found (not yet fixed)
+- Old P3 sentence pools (P3S1-S5_SENT_POOL in drillData.js) are now
+  OBSOLETE — built against the old Path 3 structure before the full
+  curriculum rebuild. Need removal or replacement.
+- Global SENT_POOL in drillData.js still contains the "al" out-of-vocabulary
+  word bug from earlier, AND is now also misaligned with the new 13-Path
+  curriculum's sequencing (words may not match new Path/Stop introduction
+  order). This is the data source for standalone Sentence Builder (DrillsGrid)
+  and needs a full rework against the new curriculum.
+- Minor cosmetic: none currently open (¡ wrapping issue was fixed)
+
+### Decisions Made
+- Sentence Builder lock gate (completedPaths.includes('path2')) confirmed
+  still correct under new curriculum — Path 2 ("Ser") is still the first
+  Path with full verb conjugation + enough vocabulary for real sentences.
+  No code change needed.
+- Curriculum is now considered STABLE at 522 words / 13 Paths / 87 Stops —
+  this is the reference structure going forward, documented in
+  MILO_CURRICULUM_FINAL_V2.md
+- Old MILO_CURRICULUM_CONTENT_RULES.md (12-section rules document) still
+  the canonical rules reference — Rule 1 (verb sequencing), gender color
+  coding (blue/pink, not yet implemented in UI), and all other rules
+  from that doc remain valid and apply to the new 13-Path structure
+
+### Tools Assessed
+- Claude in Chrome MCP tools loaded but not used — task was a code change,
+  not a browser interaction, tool_search call was a dead end for this case
+- Routines feature (Claude Code scheduled runs) explained but not adopted —
+  no current recurring task identified as worth automating yet
+
+### First Tasks Next Session
+1. Remove obsolete P3S1-S5_SENT_POOL from drillData.js (old Path 3
+   structure, no longer valid)
+2. Rework global SENT_POOL against new 13-Path curriculum — likely
+   regenerate per-Path sentence pools properly this time (Track B,
+   revisited), now that paths.js is stable and won't change underneath
+   the pools again
+3. Implement gender color coding (blue=masculine, pink=feminine pills)
+   in UI — decided in rules doc, never built
+4. Full app regression test of the new paths.js — walk through several
+   Paths/Stops manually, confirm word cards display correctly, confirm
+   Fetch/drill flows work against the new Stop structure end to end
+5. Audit contextSentence fields in words.js against the NEW curriculum
+   sequencing (the original audit item from 06-14/06-15 is still valid,
+   just needs to be re-run against the new Path order rather than the old one)
+
+---
 
 ## Session Notes — 2026-06-15
 
