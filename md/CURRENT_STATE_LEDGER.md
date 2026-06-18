@@ -524,11 +524,11 @@ chatUsage/{uid}: count, date (rate limit: 30/day)
 2. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
 
 Follow-up tasks (not bugs):
-- Sentence Builder word tiles should get gender color pills, but require a MASTER lookup per token — separate task, scoped and logged, not blocking.
 - Word Sort — no component built, button disabled in DrillsGrid. Standalone Emergent task when Stage 4 opens.
+- Sentence Builder word tiles: gender color requires MASTER lookup per token — separate Emergent task, not blocking.
 
 RESOLVED:
-- Gender color coding 2026-06-18: blue=masculine (#1E40AF), pink=feminine (#9D174D) pills applied across WordList.jsx, WordDetail.jsx, FlashcardDrill.jsx, PathsTab.jsx (WordIntroCard + Stop word list), ChoiceDrill.jsx
+- Gender color coding 2026-06-18 (complete): design locked — gendered nouns display as single colored pill [el hombre] / [la casa]; masculine #1E40AF on #DBEAFE, feminine #9D174D on #FCE7F3. Applied across WordList.jsx, WordDetail.jsx, FlashcardDrill.jsx, PathsTab.jsx (WordIntroCard + Stop word list), ChoiceDrill.jsx, TypeDrill.jsx.
 - SENT_POOL reworked 2026-06-17: obsolete P3S1-S5 pools deleted, SENT_POOL replaced with 34 Path 1+2 aligned sentences (ser conjugations, greetings, nationality, family vocabulary — no out-of-vocabulary words)
 - Word mastery filter buttons in Words tab — confirmed live 2026-06-15 (drillMode state in WordList.jsx)
 - Word detail card tap position — closed 2026-06-15 (center modal confirmed good UX via play-test)
