@@ -473,13 +473,13 @@ leaderboard/{uid}: displayName, photoURL, xp, weeklyXP
 chatUsage/{uid}: count, date (rate limit: 30/day)
 
 ## Known Bugs (fix before adding features)
-1. Global SENT_POOL (drillData.js) contains out-of-vocabulary words (e.g. "al") — superseded by per-Path pools once Track B complete; do not patch directly.
-2. contextSentence audit needed: Path 1-3 words have contextSentences using Path 4+ vocabulary (hablar, sabes, etc.).
-3. sabes/sabe/sabemos/saben orphaned in words.js — not assigned to any Path/Stop. Full saber conjugation set needs Stop assignment.
-4. Gender color coding (blue=masculine, pink=feminine) not yet implemented in UI.
-5. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
+1. contextSentence audit needed: Path 1-3 words have contextSentences using Path 4+ vocabulary (hablar, sabes, etc.).
+2. sabes/sabe/sabemos/saben orphaned in words.js — not assigned to any Path/Stop. Full saber conjugation set needs Stop assignment.
+3. Gender color coding (blue=masculine, pink=feminine) not yet implemented in UI.
+4. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
 
 RESOLVED:
+- SENT_POOL reworked 2026-06-17: obsolete P3S1-S5 pools deleted, SENT_POOL replaced with 34 Path 1+2 aligned sentences (ser conjugations, greetings, nationality, family vocabulary — no out-of-vocabulary words)
 - Word mastery filter buttons in Words tab — confirmed live 2026-06-15 (drillMode state in WordList.jsx)
 - Word detail card tap position — closed 2026-06-15 (center modal confirmed good UX via play-test)
 - Sentence Builder distractors — fixed 2026-06-15 (Track A: 2 distractor tiles from queue, excluded target words, fallback for queue.length===1, Check button disabled={placed.length===0})
