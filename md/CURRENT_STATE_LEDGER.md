@@ -521,10 +521,12 @@ chatUsage/{uid}: count, date (rate limit: 30/day)
 
 ## Known Bugs (fix before adding features)
 1. contextSentence audit needed: Path 1-3 words have contextSentences using Path 4+ vocabulary (hablar, sabes, etc.).
-2. Gender color coding (blue=masculine, pink=feminine) not yet implemented in UI.
-3. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
+2. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
+
+Follow-up task (not a bug): Sentence Builder word tiles should get gender color pills, but require a MASTER lookup per token — separate task, scoped and logged, not blocking.
 
 RESOLVED:
+- Gender color coding 2026-06-18: blue=masculine (#1E40AF), pink=feminine (#9D174D) pills applied across WordList.jsx, WordDetail.jsx, FlashcardDrill.jsx, PathsTab.jsx (WordIntroCard + Stop word list), ChoiceDrill.jsx
 - SENT_POOL reworked 2026-06-17: obsolete P3S1-S5 pools deleted, SENT_POOL replaced with 34 Path 1+2 aligned sentences (ser conjugations, greetings, nationality, family vocabulary — no out-of-vocabulary words)
 - Word mastery filter buttons in Words tab — confirmed live 2026-06-15 (drillMode state in WordList.jsx)
 - Word detail card tap position — closed 2026-06-15 (center modal confirmed good UX via play-test)
