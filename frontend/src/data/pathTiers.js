@@ -25,6 +25,12 @@ export const PATH_STAGES = [
       { id: 'adv-beginner-3', label: 'Advanced Beginner III', pathIds: ['path11', 'path12'] },
     ]
   },
-  // Future stages — append here only. No structural changes needed.
-  // { id: 'intermediate', label: 'Intermediate', emoji: '🌳', tiers: [...] },
+  {
+    id: 'intermediate',
+    label: 'Intermediate',
+    emoji: '🌳',
+    tiers: [
+      { id: 'intermediate-1', label: 'Intermediate I', pathIds: ['path13'] },
+    ]
+  },
 ]

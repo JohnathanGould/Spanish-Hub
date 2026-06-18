@@ -4,7 +4,8 @@
 // Verb sequencing: infinitive+yo+tú Stop → él/ella+nosotros+ustedes/ellos Stop
 // Tier 1 (Paths 1-4): Beginner I — 6 Stops each
 // Tier 2 (Paths 5-8): Beginner II — 7 Stops each
-// Tier 3 (Paths 9-13): Advanced Beginner — 7 Stops each
+// Tier 3 (Paths 9-12): Advanced Beginner — 7 Stops each
+// Tier 4 (Path 13): Intermediate — 7 Stops
 // videoUrl: null on all Stops — feature flag. Add YouTube URL when video ready.
 // All es values match exactly with MASTER array in words.js
 
@@ -746,7 +747,7 @@ export const PATHS = [
     id: 'path13',
     title: 'Verbos Finales',
     titleEn: 'Final Verbs',
-    subLevel: 'Advanced Beginner',
+    subLevel: 'Intermediate',
     videoUrl: null,
     stops: [
       {
