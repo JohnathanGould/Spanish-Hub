@@ -1,5 +1,48 @@
 # Current State Ledger — Milo Speaks Spanish
-# Last updated: 2026-06-17
+# Last updated: 2026-06-18
+
+## Session Notes — 2026-06-18
+
+### Completed
+- Removed obsolete P3S1–S5 sentence pools from drillData.js (84 lines, confirmed dead code)
+- Reworked global SENT_POOL — replaced 30 out-of-vocabulary entries with 34
+  vocabulary-verified sentences using only Path 1+2 words (72-word set, machine-checked)
+- pathTiers.js — added new Intermediate stage, Intermediate I tier containing path13;
+  used the file's own documented extension point
+- paths.js — corrected header comment (Paths 9-12 = Advanced Beginner, Path 13 =
+  Intermediate) and path13 subLevel field
+- WordList.jsx — gender color coding applied to both noun grid cards and word row list
+  items (blue=masculine #1E40AF, pink=feminine #9D174D)
+
+### Bugs Added
+None
+
+### Decisions Made
+- SENT_POOL fix: minimal (flat pool, Path 1+2 vocab only) — progressive pool logged as
+  future backlog
+- Article display rule locked: show article whenever word.es is displayed standalone;
+  never when Spanish is being produced or tested; never needed inside full sentence strings
+- Word tiles in Sentence Builder ARE standalone display — should get gender color
+  (separate task, requires MASTER lookup per token)
+- Full sentence string highlighting (contextSentence) is a separate, more complex task —
+  out of scope for this pass
+- saber orphaned forms bug struck — already resolved by curriculum rebuild
+
+### Tools Assessed
+None new
+
+### First Tasks Next Session
+1. Complete gender color coding — 4 files remaining: WordDetail.jsx, FlashcardDrill.jsx,
+   PathsTab.jsx (WordIntroCard), ChoiceDrill.jsx — prompts already designed, continue
+   from where we left off
+2. Regression test of paths.js — manual walkthrough of live app, several Paths end to end
+3. contextSentence audit — Path 1-3 words referencing Path 4+ vocabulary
+
+**Finish gender color coding first next session — we're mid-task and the prompts are
+already designed. Stopping here with it partially done is fine; starting something new
+before finishing it isn't.**
+
+---
 
 ## Session Notes — 2026-06-16 (continuation of 06-15 marathon session)
 
