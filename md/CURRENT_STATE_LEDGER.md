@@ -376,6 +376,10 @@ feature/fetch-algorithm fully merged to main
 
 ## Current Stage: 3 → 4 (Paths live, stabilization needed)
 
+pathTiers.js now has 3 live Stages: Beginner, Advanced Beginner, Intermediate.
+Intermediate I contains path13 only — designed to grow as Path 14+ are authored
+from the 83 orphaned words not yet assigned to the 13-Path curriculum.
+
 ## Live App
 - URL: spanish-hub-zeta.vercel.app
 - Landing page: milo-speaks.com (separate repo: JohnathanGould/milo-speaks)
@@ -474,9 +478,8 @@ chatUsage/{uid}: count, date (rate limit: 30/day)
 
 ## Known Bugs (fix before adding features)
 1. contextSentence audit needed: Path 1-3 words have contextSentences using Path 4+ vocabulary (hablar, sabes, etc.).
-2. sabes/sabe/sabemos/saben orphaned in words.js — not assigned to any Path/Stop. Full saber conjugation set needs Stop assignment.
-3. Gender color coding (blue=masculine, pink=feminine) not yet implemented in UI.
-4. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
+2. Gender color coding (blue=masculine, pink=feminine) not yet implemented in UI.
+3. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
 
 RESOLVED:
 - SENT_POOL reworked 2026-06-17: obsolete P3S1-S5 pools deleted, SENT_POOL replaced with 34 Path 1+2 aligned sentences (ser conjugations, greetings, nationality, family vocabulary — no out-of-vocabulary words)
