@@ -85,15 +85,16 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
               style={{ color: 'hsl(var(--foreground))' }}
               data-testid="flashcard-front">
               <div className="flex items-center justify-center gap-2 flex-wrap">
-                {isEsEn && articleWord && (
-                  <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+                {isEsEn && articleWord ? (
+                  <span className="font-bold px-2 py-0.5 rounded-full" style={{
                     background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
                     color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
                   }}>
-                    {articleWord}
+                    {articleWord} {frontText}
                   </span>
+                ) : (
+                  <span>{frontText}</span>
                 )}
-                <span>{frontText}</span>
               </div>
             </div>
             {showHint && canHint && isEsEn && (
@@ -115,15 +116,16 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
               style={{ color: '#451A03' }}
               data-testid="flashcard-back">
               <div className="flex items-center justify-center gap-2 flex-wrap">
-                {!isEsEn && articleWord && (
-                  <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+                {!isEsEn && articleWord ? (
+                  <span className="font-bold px-2 py-0.5 rounded-full" style={{
                     background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
                     color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
                   }}>
-                    {articleWord}
+                    {articleWord} {backText}
                   </span>
+                ) : (
+                  <span>{backText}</span>
                 )}
-                <span>{backText}</span>
               </div>
             </div>
             {word.sentence && isEsEn && !isSentences && (

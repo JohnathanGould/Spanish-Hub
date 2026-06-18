@@ -296,8 +296,16 @@ export default function WordList({ words, progress, customWords, importedPacks =
                       className="flex items-center gap-2 rounded-lg border p-2 cursor-pointer hover:bg-muted/50 transition-colors"
                       style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
                       <MasteryDot es={w.es} progress={progress} />
-                      {w.g && <span className="text-xs font-bold" style={{ color: 'hsl(var(--muted-foreground))' }}>{w.g === 'm' ? 'el' : 'la'}</span>}
-                      <span className="text-xs font-bold flex-1">{w.es}</span>
+                      {w.g ? (
+                        <span className="text-xs font-bold px-1.5 py-0.5 rounded-full flex-1" style={{
+                          background: w.g === 'm' ? '#DBEAFE' : '#FCE7F3',
+                          color: w.g === 'm' ? '#1E40AF' : '#9D174D',
+                        }}>
+                          {w.g === 'm' ? 'el' : 'la'} {w.es}
+                        </span>
+                      ) : (
+                        <span className="text-xs font-bold flex-1">{w.es}</span>
+                      )}
                       <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>{w.en}</span>
                     </div>
                   ))}
@@ -354,8 +362,16 @@ function WordRow({ word, progress, onClick }) {
     <div onClick={onClick} className="flex items-center gap-2 px-3 py-2 rounded-lg border mb-1 cursor-pointer transition-colors hover:bg-muted/50 text-sm"
       style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
       <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: dotColor(masteryLevel(progress, word.es)) }} />
-      {word.gender && <span className="text-xs font-bold" style={{ color: 'hsl(var(--muted-foreground))' }}>{word.gender === 'm' ? 'el' : 'la'}</span>}
-      <span className="font-bold">{word.es}</span>
+      {word.gender ? (
+        <span className="font-bold px-1.5 py-0.5 rounded-full" style={{
+          background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+          color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
+        }}>
+          {word.gender === 'm' ? 'el' : 'la'} {word.es}
+        </span>
+      ) : (
+        <span className="font-bold">{word.es}</span>
+      )}
       <span className="flex-1" style={{ color: 'hsl(var(--muted-foreground))' }}>{word.en}</span>
       <ChevronRight size={12} style={{ color: 'hsl(var(--muted-foreground))' }} />
     </div>

@@ -103,18 +103,21 @@ export default function WordDetail({ word, progress, onClose }) {
             </div>
             <div className="flex items-center gap-3 mb-2">
               <div className="flex items-center gap-2 flex-wrap">
-                {article && (
-                  <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
-                    background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
-                    color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
-                  }}>
-                    {article.trim()}
-                  </span>
+                {article ? (
+                  <h3 className="font-serif text-2xl font-black px-2 py-1 rounded-2xl"
+                    data-testid="word-detail-es"
+                    style={{
+                      background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+                      color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
+                    }}>
+                    {article.trim()} {word.es}
+                  </h3>
+                ) : (
+                  <h3 className="font-serif text-3xl font-black" data-testid="word-detail-es"
+                    style={{ color: 'hsl(var(--foreground))' }}>
+                    {word.es}
+                  </h3>
                 )}
-                <h3 className="font-serif text-3xl font-black" data-testid="word-detail-es"
-                  style={{ color: 'hsl(var(--foreground))' }}>
-                  {word.es}
-                </h3>
               </div>
               <button data-testid="word-detail-speak" onClick={() => speak(word.es, languageConfig.sourceLanguage)}
                 className="p-2 rounded-full transition-colors hover:bg-black/5"

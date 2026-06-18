@@ -126,18 +126,20 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
             </div>
             <div className="flex items-center justify-center gap-2 flex-wrap"
               data-testid="type-prompt">
-              {isPromptEs && word.gender && (
-                <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
-                  background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
-                  color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
-                }}>
-                  {word.gender === 'm' ? 'el' : 'la'}
-                </span>
+              {isPromptEs && word.gender ? (
+                <div className="font-serif text-2xl font-black px-2 py-0.5 rounded-full"
+                  style={{
+                    background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+                    color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
+                  }}>
+                  {word.gender === 'm' ? 'el' : 'la'} {promptText}
+                </div>
+              ) : (
+                <div className="font-serif text-2xl font-black"
+                  style={{ color: 'hsl(var(--foreground))' }}>
+                  {promptText}
+                </div>
               )}
-              <div className="font-serif text-2xl font-black"
-                style={{ color: 'hsl(var(--foreground))' }}>
-                {promptText}
-              </div>
             </div>
           </>
         )}
@@ -175,15 +177,16 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
                   {mode !== 'type-es-en' && (
                     <div className="text-base font-black mt-1 flex items-center justify-center gap-2 flex-wrap" style={{ color: '#D97706' }}>
                       →
-                      {mode === 'type-en-es' && word.gender && (
-                        <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+                      {mode === 'type-en-es' && word.gender ? (
+                        <span className="px-2 py-0.5 rounded-full" style={{
                           background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
                           color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
                         }}>
-                          {word.gender === 'm' ? 'el' : 'la'}
+                          {word.gender === 'm' ? 'el' : 'la'} {feedback.target}
                         </span>
+                      ) : (
+                        <span>{feedback.target}</span>
                       )}
-                      {feedback.target}
                       {mode === 'type-en-es' && <button onClick={() => speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
                     </div>
                   )}
@@ -194,15 +197,16 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
                   <div>Answer:</div>
                   {mode !== 'type-es-en' && (
                     <div className="text-base font-black mt-1 flex items-center justify-center gap-2 flex-wrap">
-                      {mode === 'type-en-es' && word.gender && (
-                        <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+                      {mode === 'type-en-es' && word.gender ? (
+                        <span className="px-2 py-0.5 rounded-full" style={{
                           background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
                           color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
                         }}>
-                          {word.gender === 'm' ? 'el' : 'la'}
+                          {word.gender === 'm' ? 'el' : 'la'} {feedback.target}
                         </span>
+                      ) : (
+                        <span>{feedback.target}</span>
                       )}
-                      {feedback.target}
                       {mode === 'type-en-es' && <button onClick={() => speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>}
                     </div>
                   )}
@@ -217,15 +221,16 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
             )}
             {(mode === 'listen-type-en-es' || mode === 'listen-type-sentence-en-es') && (
               <div className="text-xs mt-2 opacity-70 flex items-center justify-center gap-1 flex-wrap">
-                {word.gender && (
-                  <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+                {word.gender ? (
+                  <span className="font-bold px-1.5 py-0.5 rounded-full" style={{
                     background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
                     color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
                   }}>
-                    {word.gender === 'm' ? 'el' : 'la'}
+                    {word.gender === 'm' ? 'el' : 'la'} {word.es}
                   </span>
+                ) : (
+                  <span>{word.es}</span>
                 )}
-                {word.es}
               </div>
             )}
           </div>

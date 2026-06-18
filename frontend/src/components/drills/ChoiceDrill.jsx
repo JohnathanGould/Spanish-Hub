@@ -91,18 +91,20 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
             </div>
             <div className="flex items-center justify-center gap-2 flex-wrap"
               data-testid="choice-prompt">
-              {isAsk && word.gender && (
-                <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
-                  background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
-                  color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
-                }}>
-                  {word.gender === 'm' ? 'el' : 'la'}
-                </span>
+              {isAsk && word.gender ? (
+                <div className="font-serif text-2xl font-black leading-tight break-words px-2 py-0.5 rounded-full"
+                  style={{
+                    background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+                    color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
+                  }}>
+                  {word.gender === 'm' ? 'el' : 'la'} {promptText}
+                </div>
+              ) : (
+                <div className="font-serif text-2xl font-black leading-tight break-words"
+                  style={{ color: 'hsl(var(--foreground))' }}>
+                  {promptText}
+                </div>
               )}
-              <div className="font-serif text-2xl font-black leading-tight break-words"
-                style={{ color: 'hsl(var(--foreground))' }}>
-                {promptText}
-              </div>
             </div>
             {isAsk && (
               <button data-testid="choice-speak" onClick={() => speak(sanitiseForTTS(promptText), languageConfig.sourceLanguage)} className="speak-btn mt-2">
@@ -135,17 +137,19 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
           )}
           {(mode === 'hear-choose' || mode === 'hear-choose-en-es') && (
             <div className="mb-1 py-2 rounded-lg" style={{ background: 'hsl(var(--muted))' }}>
-              <div className="font-serif text-lg font-black flex items-center justify-center gap-2 flex-wrap"
-                style={{ color: 'hsl(var(--foreground))' }}>
-                {mode === 'hear-choose' && word.gender && (
-                  <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+              <div className="font-serif text-lg font-black flex items-center justify-center gap-2 flex-wrap">
+                {mode === 'hear-choose' && word.gender ? (
+                  <span className="px-2 py-0.5 rounded-full" style={{
                     background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
                     color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
                   }}>
-                    {word.gender === 'm' ? 'el' : 'la'}
+                    {word.gender === 'm' ? 'el' : 'la'} {word.es}
+                  </span>
+                ) : (
+                  <span style={{ color: 'hsl(var(--foreground))' }}>
+                    {mode === 'hear-choose-en-es' ? word.en : word.es}
                   </span>
                 )}
-                {mode === 'hear-choose-en-es' ? word.en : word.es}
                 <button
                   onClick={() => mode === 'hear-choose-en-es'
                     ? speak(sanitiseForTTS(word.en), languageConfig.targetLanguage, 0.6)
@@ -154,17 +158,20 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
               </div>
               <div className="text-xs mt-1 flex items-center justify-center gap-1 flex-wrap"
                 style={{ color: picked === correctText ? '#16A34A' : '#DC2626' }}>
-                {picked === correctText && mode === 'hear-choose-en-es' && word.gender && (
-                  <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+                {picked === correctText && mode === 'hear-choose-en-es' && word.gender ? (
+                  <span className="font-bold px-1.5 py-0.5 rounded-full" style={{
                     background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
                     color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
                   }}>
-                    {word.gender === 'm' ? 'el' : 'la'}
+                    {word.gender === 'm' ? 'el' : 'la'} {word.es}
+                  </span>
+                ) : (
+                  <span>
+                    {picked === correctText
+                      ? (mode === 'hear-choose-en-es' ? word.es : word.en)
+                      : `Answer: ${correctText}`}
                   </span>
                 )}
-                {picked === correctText
-                  ? (mode === 'hear-choose-en-es' ? word.es : word.en)
-                  : `Answer: ${correctText}`}
               </div>
             </div>
           )}

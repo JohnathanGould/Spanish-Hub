@@ -112,21 +112,26 @@ function WordIntroCard({ word, isLast, onNext }) {
       {/* Word and translation below image */}
       <div className="text-center">
         <div className="flex items-center justify-center gap-2 flex-wrap mb-1">
-          {word.gender && (
-            <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
-              background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
-              color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
-            }}>
-              {word.gender === 'm' ? 'el' : 'la'}
-            </span>
+          {word.gender ? (
+            <p
+              className="text-2xl font-bold px-3 py-1 rounded-2xl"
+              data-testid={`word-intro-es-${word.es}`}
+              style={{
+                background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+                color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
+              }}
+            >
+              {word.gender === 'm' ? 'el' : 'la'} {word.es}
+            </p>
+          ) : (
+            <p
+              className="text-3xl font-bold"
+              style={{ color: 'hsl(var(--foreground))' }}
+              data-testid={`word-intro-es-${word.es}`}
+            >
+              {word.es}
+            </p>
           )}
-          <p
-            className="text-3xl font-bold"
-            style={{ color: 'hsl(var(--foreground))' }}
-            data-testid={`word-intro-es-${word.es}`}
-          >
-            {word.es}
-          </p>
         </div>
         <p
           className="text-base mt-1"
@@ -1106,20 +1111,21 @@ function StopView({
           >
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5 flex-wrap">
-                {word.gender && (
-                  <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{
+                {word.gender ? (
+                  <p className="text-sm font-bold px-1.5 py-0.5 rounded-full truncate" style={{
                     background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
                     color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
                   }}>
-                    {word.gender === 'm' ? 'el' : 'la'}
-                  </span>
+                    {word.gender === 'm' ? 'el' : 'la'} {word.es}
+                  </p>
+                ) : (
+                  <p
+                    className="text-sm font-bold truncate"
+                    style={{ color: 'hsl(var(--foreground))' }}
+                  >
+                    {word.es}
+                  </p>
                 )}
-                <p
-                  className="text-sm font-bold truncate"
-                  style={{ color: 'hsl(var(--foreground))' }}
-                >
-                  {word.es}
-                </p>
               </div>
               <p
                 className="text-xs truncate"
