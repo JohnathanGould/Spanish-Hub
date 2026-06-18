@@ -480,7 +480,7 @@ listen-type-sentence silent null bug fixed.
 FlashcardDrill internal toggles removed — direction and mode prop-controlled.
 DrillsGrid inline flashcards use progress={{}} — shuffle order, spaced-rep deferred.
 
-Warm Up (no XP, no bones): Matching, Word Sort, Gender el/la
+Warm Up (no XP, no bones): Matching, Word Sort (button disabled — no component built), Gender el/la
 Practice: Multiple Choice SP→EN/EN→SP, Type It SP→EN/EN→SP, Hear & Choose SP→EN/EN→SP, Listen & Type Words SP→EN/EN→SP, Listen & Type Sentences SP→EN/EN→SP, Conjugation Present
 Review (no XP, no bones): Flashcards Words SP→EN/EN→SP, Flashcards Sentences SP→EN/EN→SP
 
@@ -523,7 +523,9 @@ chatUsage/{uid}: count, date (rate limit: 30/day)
 1. contextSentence audit needed: Path 1-3 words have contextSentences using Path 4+ vocabulary (hablar, sabes, etc.).
 2. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
 
-Follow-up task (not a bug): Sentence Builder word tiles should get gender color pills, but require a MASTER lookup per token — separate task, scoped and logged, not blocking.
+Follow-up tasks (not bugs):
+- Sentence Builder word tiles should get gender color pills, but require a MASTER lookup per token — separate task, scoped and logged, not blocking.
+- Word Sort — no component built, button disabled in DrillsGrid. Standalone Emergent task when Stage 4 opens.
 
 RESOLVED:
 - Gender color coding 2026-06-18: blue=masculine (#1E40AF), pink=feminine (#9D174D) pills applied across WordList.jsx, WordDetail.jsx, FlashcardDrill.jsx, PathsTab.jsx (WordIntroCard + Stop word list), ChoiceDrill.jsx
