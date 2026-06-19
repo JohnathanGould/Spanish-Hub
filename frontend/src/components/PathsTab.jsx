@@ -24,8 +24,6 @@ import SentenceBuilderDrill from './drills/SentenceBuilderDrill';
 function ContextualBinding({ word, onDone }) {
   useEffect(() => {
     speak(sanitiseForTTS(word.contextSentence), languageConfig.sourceLanguage);
-    const timer = setTimeout(() => onDone(), 2500);
-    return () => clearTimeout(timer);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isMasc = word.gender === 'm';
@@ -587,14 +585,12 @@ function StopView({
 
     const isLast = fetchQueueRef.current.length > 0 && fetchIndex >= fetchQueueRef.current.length - 1;
 
-    const OUTPUT_DIMENSIONS = ['produce'];
     const handleFetchAnswer = (wordEs, isCorrect) => {
       if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true, currentItem.drillType);
       if (onDrillAnswer) onDrillAnswer(isCorrect);
       if (isCorrect) {
         setFetchCorrect((n) => n + 1);
-        const dim = DRILL_DIMENSION[currentItem.drillType];
-        if (OUTPUT_DIMENSIONS.includes(dim) && currentItem.word.contextSentence) {
+        if (currentItem.word.contextSentence) {
           setBindingWord({ word: currentItem.word, onDone: handleFetchDone });
           return;
         }
@@ -869,8 +865,7 @@ function StopView({
       if (onDrillAnswer) onDrillAnswer(isCorrect);
       if (isCorrect) {
         setPathFetchCorrect((n) => n + 1);
-        const dim = DRILL_DIMENSION[currentItem.drillType];
-        if (['produce'].includes(dim) && currentItem.word.contextSentence) {
+        if (currentItem.word.contextSentence) {
           setBindingWord({ word: currentItem.word, onDone: handlePathFetchDone });
           return;
         }
