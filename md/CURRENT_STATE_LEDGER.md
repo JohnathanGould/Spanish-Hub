@@ -1,6 +1,60 @@
 # Current State Ledger — Milo Speaks Spanish
 # Last updated: 2026-06-19
 
+## Session Notes — 2026-06-19
+
+### Completed
+- Removed obsolete P3 sentence pools from drillData.js
+- Reworked global SENT_POOL — 34 vocabulary-clean entries against Path 1+2 floor
+- pathTiers.js — Path 13 moved to new Intermediate stage
+- paths.js — header comment and path13 subLevel corrected
+- Gender color coding — [el hombre] single pill implemented across all 6 components
+  (WordList, WordDetail, FlashcardDrill, PathsTab, ChoiceDrill, TypeDrill) plus
+  SentenceBuilderDrill tiles
+- All sentence drills locked at Path 3 (DrillsGrid.jsx)
+- Fill in the Blank added to DrillsGrid.jsx
+- Word Sort crash fixed — button disabled until component is built
+- Regression test passed — full app confirmed working
+- contextSentence regeneration — 583 sentences generated via automated script,
+  malformed responses cleaned, two truncated sentences manually fixed
+- generate-context-sentences.js — reusable script at repo root, reads .env for API key
+- Contextual Binding — post-answer overlay implemented in PathsTab.jsx, fires on all
+  correct answers with a contextSentence, reads sentence aloud, tap to continue
+- MILO_FIREBASE_STRUCTURE.md updated — progress schema, mastery rule, breakFreeXP field
+- Grammar reference added to Milo system prompt in api/chat.js
+- Terms of Service and Privacy Policy — live at milo-speaks.com/terms and
+  milo-speaks.com/privacy
+- Bones Logic Spec written — md/bones-logic-spec.md
+- Nationality diversity fix — americano replaced with mix of Mexican, Colombian,
+  Canadian, Spanish nationalities across words.js and drillData.js
+- Anthropic Console account set up, API key working
+
+### Bugs Added
+None
+
+### Decisions Made
+- Fetch targets output-weak words — weighted by drillStats[dt].w on produce-dimension drills
+- 80/20 session composition — 80% confident words, 20% output-weak, small-pool fallback
+- Mastery requires output success — outputCorrect threshold, recognition alone caps at Strong
+- XP stays flat +1, mastery crossing bonus (+11) is the output reward
+- Contextual Binding fires on ALL correct answers (not output only), tap to continue, no timer
+- Sentence drills unlock at Path 3 completion
+- Placement test deferred to post-launch
+- Streak freeze: 10 bones. Word skip: 20 bones. Break Free reward: +10 bones.
+  Break Free: XP-gated only (50 XP counter)
+- americano appears only as its own vocabulary word — all placeholder uses replaced
+  with diverse nationalities
+
+### Tools Assessed
+- Anthropic API Console set up and working — generate-context-sentences.js uses it directly
+
+### First Tasks Next Session
+1. Firebase emulator setup (before any Emergent session)
+2. Fill in the Blank — State Ledger spec + Claude Code build session
+3. YouTube decisions (original vs curated, Stop vs Path) — before Session D
+
+---
+
 ## Session Notes — 2026-06-18
 
 ### Completed
