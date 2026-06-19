@@ -9,12 +9,96 @@ import {
 } from '../content/es-en/paths';
 import { MASTER } from '../content/es-en/words';
 import { PATH_STAGES } from '../data/pathTiers';
-import { speak, shuffle } from '../utils/helpers';
+import { speak, shuffle, sanitiseForTTS } from '../utils/helpers';
+import { languageConfig } from '../config/languageConfig';
 import ChoiceDrill from './drills/ChoiceDrill';
 import TypeDrill from './drills/TypeDrill';
 import FillBlankDrill from './drills/FillBlankDrill';
 import GenderDrill from './drills/GenderDrill';
 import SentenceBuilderDrill from './drills/SentenceBuilderDrill';
+
+// ─────────────────────────────────────────────
+// ContextualBinding — full-screen overlay shown for 2.5s after a
+// correct output-drill answer, displaying the word in context
+// ─────────────────────────────────────────────
+function ContextualBinding({ word, onDone }) {
+  useEffect(() => {
+    speak(sanitiseForTTS(word.contextSentence), languageConfig.sourceLanguage);
+    const timer = setTimeout(() => onDone(), 2500);
+    return () => clearTimeout(timer);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const isMasc = word.gender === 'm';
+
+  return (
+    <div
+      onClick={onDone}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 50,
+        background: 'rgba(0,0,0,0.7)',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        padding: '2rem', cursor: 'pointer',
+      }}>
+      <div style={{
+        background: 'hsl(var(--card))',
+        borderRadius: '1rem',
+        padding: '2rem',
+        maxWidth: '340px',
+        width: '100%',
+        textAlign: 'center',
+      }}>
+        <p style={{
+          fontSize: '0.75rem',
+          color: 'hsl(var(--muted-foreground))',
+          marginBottom: '0.75rem',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+        }}>
+          In context
+        </p>
+        {word.gender && (
+          <span style={{
+            display: 'inline-block',
+            fontSize: '0.75rem',
+            fontWeight: 'bold',
+            padding: '0.125rem 0.5rem',
+            borderRadius: '9999px',
+            marginBottom: '0.75rem',
+            background: isMasc ? '#DBEAFE' : '#FCE7F3',
+            color: isMasc ? '#1E40AF' : '#9D174D',
+          }}>
+            {isMasc ? 'el' : 'la'} {word.es}
+          </span>
+        )}
+        {!word.gender && (
+          <p style={{
+            fontSize: '1.125rem',
+            fontWeight: 'bold',
+            color: 'hsl(var(--foreground))',
+            marginBottom: '0.75rem',
+          }}>
+            {word.es}
+          </p>
+        )}
+        <p style={{
+          fontSize: '1.25rem',
+          color: 'hsl(var(--foreground))',
+          lineHeight: 1.5,
+        }}>
+          {word.contextSentence}
+        </p>
+        <p style={{
+          fontSize: '0.75rem',
+          color: 'hsl(var(--muted-foreground))',
+          marginTop: '1rem',
+        }}>
+          Tap to continue
+        </p>
+      </div>
+    </div>
+  );
+}
 
 // ─────────────────────────────────────────────
 // Lock logic
@@ -394,6 +478,7 @@ function StopView({
   const [pathFetchWrongWords, setPathFetchWrongWords] = useState([]);
   const [finalScore, setFinalScore] = useState(null);
   const [finalTotal, setFinalTotal] = useState(null);
+  const [bindingWord, setBindingWord] = useState(null);
 
   // ── Initial word list (for preview screen, before Begin reorders by FSRS weakness) ──
   const initialWordStrings = getStopWords(stopId);
@@ -424,6 +509,18 @@ function StopView({
 
   // Resolve word strings into full MASTER entries; fall back to {es, en: es} if missing
   // (words state initialised at top; reordered by fetchStopWords on Begin tap)
+
+  if (bindingWord) {
+    return (
+      <ContextualBinding
+        word={bindingWord.word}
+        onDone={() => {
+          setBindingWord(null);
+          bindingWord.onDone();
+        }}
+      />
+    );
+  }
 
   const startIntro = () => {
     setCurrentWordIndex(0);
@@ -490,10 +587,18 @@ function StopView({
 
     const isLast = fetchQueueRef.current.length > 0 && fetchIndex >= fetchQueueRef.current.length - 1;
 
+    const OUTPUT_DIMENSIONS = ['produce'];
     const handleFetchAnswer = (wordEs, isCorrect) => {
       if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true, currentItem.drillType);
       if (onDrillAnswer) onDrillAnswer(isCorrect);
-      if (isCorrect) setFetchCorrect((n) => n + 1);
+      if (isCorrect) {
+        setFetchCorrect((n) => n + 1);
+        const dim = DRILL_DIMENSION[currentItem.drillType];
+        if (OUTPUT_DIMENSIONS.includes(dim) && currentItem.word.contextSentence) {
+          setBindingWord({ word: currentItem.word, onDone: handleFetchDone });
+          return;
+        }
+      }
     };
 
     const handleFetchDone = () => {
@@ -764,6 +869,11 @@ function StopView({
       if (onDrillAnswer) onDrillAnswer(isCorrect);
       if (isCorrect) {
         setPathFetchCorrect((n) => n + 1);
+        const dim = DRILL_DIMENSION[currentItem.drillType];
+        if (['produce'].includes(dim) && currentItem.word.contextSentence) {
+          setBindingWord({ word: currentItem.word, onDone: handlePathFetchDone });
+          return;
+        }
       } else {
         const word = currentItem.word;
         setPathFetchWrongWords((prev) =>
