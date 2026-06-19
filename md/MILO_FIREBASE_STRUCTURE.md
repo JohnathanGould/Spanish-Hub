@@ -24,6 +24,7 @@ One document per authenticated user. Written by SpanishHub.jsx only.
 | `streak` | number | Current daily streak in days |
 | `dailyGoal` | number | User's daily XP goal |
 | `bones` | number | Current bone count |
+| `breakFreeXP` | number | XP accumulated since last Break Free trigger. Resets to 0 on trigger. Break Free becomes available at 50. |
 | `treats` | number | Current treat count |
 | `stars` | number | Current star count |
 | `earnedBadges` | array of strings | Badge IDs the user has earned |
@@ -39,17 +40,23 @@ One document per authenticated user. Written by SpanishHub.jsx only.
 #### `progress` map structure
 ```
 progress: {
-  es: {
-    [wordId]: {
-      c: number,   // correct answers
-      w: number,   // wrong answers
-      s: number    // current confidence score
+  [wordEs]: {
+    c: number,           // correct answers (all drill types)
+    w: number,           // wrong answers (all drill types)
+    s: number,           // confidence score
+    stability: number,   // FSRS stability score
+    difficulty: number,  // FSRS difficulty
+    due: timestamp,      // next review due date
+    lastReview: timestamp,
+    outputCorrect: number,  // correct answers on output drills only
+    drillStats: {           // per-drill-type performance
+      [drillType]: { c: number, w: number }
     }
   }
 }
 ```
 
-**Note:** `progress{ c, w, s }` does not currently distinguish which drill type scored the correct answer. A word can show as mastered from input recognition alone. This is a known open decision — see action list under "Does mastery require output success?"
+**Mastery rule (locked 2026-06-19):** A word cannot reach Mastered status unless `outputCorrect` meets a minimum threshold. Recognition alone caps at Strong. Fetch word selection weights toward words with high `drillStats[drillType].w` rates on output drill types (`type-en-es`, `listen-type-en-es`, `fill-blank`, `sent-build`).
 
 ---
 
@@ -117,4 +124,4 @@ Users who are not logged in receive a synthetic user object — never written to
 
 ---
 
-*Last updated: 2026-06-01*
+*Last updated: 2026-06-19*
