@@ -4,6 +4,7 @@ import { ArrowRight, Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { shuffle, speak } from '../../utils/helpers';
 import { SENT_POOL } from '../../content/es-en/drillData';
+import { MASTER } from '../../content/es-en/words';
 
 export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLength = 10 }) {
   const total = Math.min(drillLength, SENT_POOL.length);
@@ -13,6 +14,14 @@ export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLe
   const [placed, setPlaced] = useState([]);
   const [feedback, setFeedback] = useState(null);
   const [correct, setCorrect] = useState(0);
+
+  const genderMap = useMemo(() => {
+    const map = {};
+    MASTER.forEach(w => {
+      if (w.gender) map[w.es.toLowerCase()] = w.gender;
+    });
+    return map;
+  }, []);
 
   React.useEffect(() => {
     if (queue[idx]) {
@@ -97,19 +106,41 @@ export default function SentenceBuilderDrill({ onAnswer, onDone, onBack, drillLe
             Tap words below to add them here
           </div>
         )}
-        {placed.map(w => (
-          <button key={w.id} data-testid={`sent-placed-${w.id}`} onClick={() => removeWord(w)} className="word-tile placed">
-            {w.text}
-          </button>
-        ))}
+        {placed.map(w => {
+          const gender = genderMap[w.text.toLowerCase()];
+          const pillStyle = gender ? {
+            background: gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+            color: gender === 'm' ? '#1E40AF' : '#9D174D',
+            fontWeight: 'bold',
+            padding: '0.125rem 0.375rem',
+            borderRadius: '9999px',
+            display: 'inline-block',
+          } : {};
+          return (
+            <button key={w.id} data-testid={`sent-placed-${w.id}`} onClick={() => removeWord(w)} className="word-tile placed">
+              <span style={pillStyle}>{w.text}</span>
+            </button>
+          );
+        })}
       </div>
 
       <div className="flex flex-wrap gap-2 mb-5">
-        {pool.map(w => (
-          <button key={w.id} data-testid={`sent-pool-${w.id}`} onClick={() => placeWord(w)} className="word-tile">
-            {w.text}
-          </button>
-        ))}
+        {pool.map(w => {
+          const gender = genderMap[w.text.toLowerCase()];
+          const pillStyle = gender ? {
+            background: gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+            color: gender === 'm' ? '#1E40AF' : '#9D174D',
+            fontWeight: 'bold',
+            padding: '0.125rem 0.375rem',
+            borderRadius: '9999px',
+            display: 'inline-block',
+          } : {};
+          return (
+            <button key={w.id} data-testid={`sent-pool-${w.id}`} onClick={() => placeWord(w)} className="word-tile">
+              <span style={pillStyle}>{w.text}</span>
+            </button>
+          );
+        })}
       </div>
 
       {feedback ? (
