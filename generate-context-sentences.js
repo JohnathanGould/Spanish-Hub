@@ -26,6 +26,7 @@ if (!API_KEY) {
 }
 
 const TEST_MODE = process.argv.includes('--test');
+const FIX_MODE  = process.argv.includes('--fix');
 
 const PATHS_FILE     = path.join(__dirname, 'frontend/src/content/es-en/paths.js');
 const WORDS_FILE     = path.join(__dirname, 'frontend/src/content/es-en/words.js');
@@ -214,7 +215,18 @@ Reply with ONLY the sentence. No explanation. No quotes. No punctuation outside 
             if (json.error) {
               return reject(new Error(json.error.message || JSON.stringify(json.error)));
             }
-            resolve((json.content?.[0]?.text || '').trim());
+            let text = (json.content?.[0]?.text || '').trim();
+            // Take only the first sentence — strip any model reasoning that
+            // appeared after the response
+            text = text.split('\n')[0].trim();
+            // Also strip any trailing incomplete text after the last punctuation
+            const lastPunct = Math.max(
+              text.lastIndexOf('.'),
+              text.lastIndexOf('!'),
+              text.lastIndexOf('?')
+            );
+            if (lastPunct > 0) text = text.substring(0, lastPunct + 1);
+            resolve(text);
           } catch (e) {
             reject(new Error(`Unparseable API response: ${raw.slice(0, 120)}`));
           }
@@ -226,6 +238,26 @@ Reply with ONLY the sentence. No explanation. No quotes. No punctuation outside 
     req.write(body);
     req.end();
   });
+}
+
+// Returns true if the sentence contains 3 or more consecutive ASCII-only words
+// (a sign of English leaking into what should be a Spanish sentence)
+function hasConsecutiveEnglishWords(s, n = 3) {
+  const tokens = s.split(/[\s,\.!?¿¡]+/).filter(Boolean);
+  let run = 0;
+  for (const t of tokens) {
+    if (/^[a-zA-Z]+$/.test(t)) {
+      if (++run >= n) return true;
+    } else {
+      run = 0;
+    }
+  }
+  return false;
+}
+
+function needsFix(word) {
+  const cs = word.contextSentence;
+  return cs.includes('Wait') || hasConsecutiveEnglishWords(cs);
 }
 
 const REFUSAL_PHRASES = ["i cannot", "i'm sorry", "i can't", "i am sorry", "as an ai"];
@@ -259,10 +291,16 @@ async function main() {
     process.exit(1);
   }
 
-  const words = TEST_MODE ? allWords.slice(0, 5) : allWords;
+  let words = TEST_MODE ? allWords.slice(0, 5) : allWords;
 
   if (TEST_MODE) {
     console.log('\n*** TEST MODE — processing first 5 words only, words.js will NOT be written ***');
+  }
+
+  if (FIX_MODE) {
+    const fixable = allWords.filter(needsFix);
+    console.log(`\n*** FIX MODE — ${fixable.length} of ${allWords.length} words qualify for reprocessing ***`);
+    words = fixable;
   }
 
   // ── Step 4 — generate in batches ─────────────────────────────────────────

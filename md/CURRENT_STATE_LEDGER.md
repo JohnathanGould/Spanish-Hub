@@ -1,5 +1,5 @@
 # Current State Ledger — Milo Speaks Spanish
-# Last updated: 2026-06-18
+# Last updated: 2026-06-19
 
 ## Session Notes — 2026-06-18
 
@@ -461,6 +461,7 @@ from the 83 orphaned words not yet assigned to the 13-Path curriculum.
 - Animations: frontend/public/animations/milo_idle.gif
 - Landing page: JohnathanGould/milo-speaks/index.html
 - Language config: frontend/src/config/languageConfig.js
+- Context sentence generator: generate-context-sentences.js (repo root) — reads ANTHROPIC_API_KEY from env; reusable if curriculum changes. Use --fix flag to reprocess only broken sentences. Use --test for dry run.
 - REMOVED: frontend/src/components/v0/PathsView.jsx (dead code, deleted 2026-06-14)
 
 ## Navigation
@@ -520,14 +521,14 @@ leaderboard/{uid}: displayName, photoURL, xp, weeklyXP
 chatUsage/{uid}: count, date (rate limit: 30/day)
 
 ## Known Bugs (fix before adding features)
-1. contextSentence audit needed: Path 1-3 words have contextSentences using Path 4+ vocabulary (hablar, sabes, etc.).
-2. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
+1. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
 
 Follow-up tasks (not bugs):
 - Word Sort — no component built, button disabled in DrillsGrid. Standalone Emergent task when Stage 4 opens.
 - Sentence Builder word tiles: gender color requires MASTER lookup per token — separate Emergent task, not blocking.
 
 RESOLVED:
+- contextSentence audit RESOLVED 2026-06-19: 583 sentences regenerated against curriculum vocabulary floor. Malformed/truncated responses cleaned up (first-line strip + last-punctuation trim added to generator). Two truncated sentences manually corrected (me, se). 115 minor remaining violations are adjective inflections and orphaned-word companions — all linguistically correct, not flagged for fixing.
 - Gender color coding 2026-06-18 (complete): design locked — gendered nouns display as single colored pill [el hombre] / [la casa]; masculine #1E40AF on #DBEAFE, feminine #9D174D on #FCE7F3. Applied across WordList.jsx, WordDetail.jsx, FlashcardDrill.jsx, PathsTab.jsx (WordIntroCard + Stop word list), ChoiceDrill.jsx, TypeDrill.jsx.
 - SENT_POOL reworked 2026-06-17: obsolete P3S1-S5 pools deleted, SENT_POOL replaced with 34 Path 1+2 aligned sentences (ser conjugations, greetings, nationality, family vocabulary — no out-of-vocabulary words)
 - Word mastery filter buttons in Words tab — confirmed live 2026-06-15 (drillMode state in WordList.jsx)
