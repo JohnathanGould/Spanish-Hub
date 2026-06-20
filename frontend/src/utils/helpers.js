@@ -4,9 +4,9 @@ import { languageConfig } from '../config/languageConfig';
 export function masteryLevel(progress, es) {
   const p = progress?.[es];
   if (!p || p.c === 0) return 'new';
-  if (p.s >= 6) return 'mastered';
-  if (p.s >= 3) return 'strong';
-  return 'learning';
+  if (p.s < 3) return 'learning';
+  if (p.s >= 6 && (p.drillStats?.produce?.c ?? 0) >= 3) return 'mastered';
+  return 'strong';
 }
 
 export function getStats(words, progress) {

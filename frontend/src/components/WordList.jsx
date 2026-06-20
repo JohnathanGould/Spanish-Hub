@@ -142,7 +142,7 @@ function AddWordForm({ onAdd }) {
   );
 }
 
-export default function WordList({ words, progress, customWords, importedPacks = [], searchQuery, setSearchQuery, onAddWord, onDeleteWord, onWordClick, onCategoryClick, onSharedPacksClick, categoryEnabled, drillMode, setDrillMode }) {
+export default function WordList({ words, allWords, progress, customWords, importedPacks = [], searchQuery, setSearchQuery, onAddWord, onDeleteWord, onWordClick, onCategoryClick, onSharedPacksClick, categoryEnabled, drillMode, setDrillMode }) {
   const [expandedPackIds, setExpandedPackIds] = useState(new Set());
   const togglePack = (id) => setExpandedPackIds(prev => {
     const next = new Set(prev);
@@ -159,7 +159,7 @@ export default function WordList({ words, progress, customWords, importedPacks =
 
   return (
     <div>
-      <ProgressPanel words={words} progress={progress} drillMode={drillMode} setDrillMode={setDrillMode} />
+      <ProgressPanel words={allWords || words} progress={progress} drillMode={drillMode} setDrillMode={setDrillMode} />
 
       {/* Search + Community button */}
       <div className="flex gap-2 mb-3">

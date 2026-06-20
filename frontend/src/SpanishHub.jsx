@@ -1,5 +1,5 @@
 import { languageConfig } from './config/languageConfig';
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { auth, db } from './firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -121,22 +121,6 @@ const DEFAULT_DATA = {
   earnedBadges: [],
 };
 
-const getDimensionTier = (dim) => {
-  if (!dim || dim.stability === 0) return 'new';
-  if (dim.stability < 7) return 'learning';
-  if (dim.stability < 30) return 'strong';
-  if (dim.stability >= 30 && dim.correct >= 3) return 'mastered';
-  return 'strong';
-};
-
-const TIER_RANK = { new: 0, learning: 1, strong: 2, mastered: 3 };
-
-const getWordMastery = (progress) => {
-  const tiers = ['read', 'hear', 'produce'].map(d => getDimensionTier(progress[d]));
-  return tiers.reduce((lowest, t) =>
-    TIER_RANK[t] < TIER_RANK[lowest] ? t : lowest
-  );
-};
 
 function SpanishFlagPulse() { return <SpanishFlag size={88} />; }
 
@@ -745,8 +729,26 @@ export default function SpanishHub() {
   const effectiveUser = user || { uid: 'guest', displayName: 'Guest', photoURL: null };
 
   const activeWords = getActiveWords();
+  const allWords = useMemo(() => {
+    const filtered = MASTER.filter(w => w.group === 'Core' || userData.categoryEnabled[w.group] !== false);
+    const filteredSet = new Set(filtered.map(w => w.es));
+    const custom = (userData.customWords || []).filter(w => !filteredSet.has(w.es));
+    const all = [...filtered, ...custom];
+    const masterSet = new Set(MASTER.map(w => w.es));
+    const customSet = new Set((userData.customWords || []).map(w => w.es));
+    const importedPackWords = (userData.importedPacks || [])
+      .flatMap(p => p.words)
+      .filter(w => !masterSet.has(w.es) && !customSet.has(w.es));
+    return [...all, ...importedPackWords];
+  }, [userData]);
+  const pathWords = useMemo(() => {
+    const esKeys = new Set(
+      (userData.completedStops || []).flatMap(sid => getStopWords(sid))
+    );
+    return MASTER.filter(w => esKeys.has(w.es));
+  }, [userData.completedStops]);
   const stats = getStats(activeWords, userData.progress);
-  const masteredCount = activeWords.filter(w => getWordMastery(userData.progress?.[w.es] || {}) === 'mastered').length;
+  const masteredCount = pathWords.filter(w => masteryLevel(userData.progress, w.es) === 'mastered').length;
   const streakRiskLevel = (() => {
     if (!userData.reminderEnabled) return 0;
     const goalMet = (userData.dailyProgress?.count ?? 0) >= userData.dailyGoal &&
@@ -884,7 +886,7 @@ export default function SpanishHub() {
           {tab === 'words' && (
             <div className="pb-[76px]">
             <WordList
-              words={activeWords} progress={userData.progress}
+              words={activeWords} allWords={allWords} progress={userData.progress}
               customWords={userData.customWords || []}
               importedPacks={userData.importedPacks || []}
               searchQuery={searchQuery} setSearchQuery={setSearchQuery}
@@ -968,7 +970,7 @@ export default function SpanishHub() {
       {showMasteryModal && (
         <MasteryModal
           userData={userData}
-          words={activeWords}
+          words={pathWords}
           onStartDrill={startDrill}
           onClose={() => setShowMasteryModal(false)}
         />

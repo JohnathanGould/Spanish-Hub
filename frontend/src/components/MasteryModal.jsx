@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { X, ArrowLeft } from 'lucide-react';
-import { MASTER } from '../content/es-en/words';
+import { masteryLevel } from '../utils/helpers';
 
 const TIERS = [
   {
@@ -48,26 +48,17 @@ const DRILL_OPTIONS = [
   { label: 'Type It  EN→SP',         drillId: 'type-en-es' },
 ];
 
-function getTier(progress) {
-  const s  = progress?.stability    || 0;
-  const oc = progress?.outputCorrect || 0;
-  if (s === 0 && oc === 0)        return 'new';
-  if (s >= 30 && oc >= 3)         return 'mastered';
-  if (s >= 7  && oc >= 1)         return 'strong';
-  return 'learning';
-}
-
 export default function MasteryModal({ userData, words, onStartDrill, onClose }) {
   const [activeTier, setActiveTier] = useState(null);
 
   const tierWords = useMemo(() => {
     const map = { new: [], learning: [], strong: [], mastered: [] };
-    MASTER.forEach(word => {
-      const tier = getTier(userData.progress?.[word.es]);
+    words.forEach(word => {
+      const tier = masteryLevel(userData.progress, word.es);
       map[tier].push(word);
     });
     return map;
-  }, [userData.progress]);
+  }, [words, userData.progress]);
 
   const activeTierMeta  = TIERS.find(t => t.key === activeTier);
   const activeTierWords = activeTier ? tierWords[activeTier] : [];
@@ -101,8 +92,9 @@ export default function MasteryModal({ userData, words, onStartDrill, onClose })
             <ArrowLeft size={16} /> Back
           </button>
         ) : (
-          <div className="text-lg font-bold" style={{ color: 'hsl(var(--foreground))' }}>
-            Your Progress
+          <div>
+            <div className="text-lg font-bold" style={{ color: 'hsl(var(--foreground))' }}>Your Progress</div>
+            <div className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>Your Path Words</div>
           </div>
         )}
         <button onClick={onClose}
