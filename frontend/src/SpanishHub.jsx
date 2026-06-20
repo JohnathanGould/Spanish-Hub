@@ -551,6 +551,25 @@ export default function SpanishHub() {
     setView({ page: 'drill', drillId, drillLength, ...(filteredWords ? { overrideWords: filteredWords } : {}) }), []);
   const goHome = useCallback(() => setView({ page: 'home' }), []);
 
+  const allWords = useMemo(() => {
+    const filtered = MASTER.filter(w => w.group === 'Core' || userData.categoryEnabled[w.group] !== false);
+    const filteredSet = new Set(filtered.map(w => w.es));
+    const custom = (userData.customWords || []).filter(w => !filteredSet.has(w.es));
+    const all = [...filtered, ...custom];
+    const masterSet = new Set(MASTER.map(w => w.es));
+    const customSet = new Set((userData.customWords || []).map(w => w.es));
+    const importedPackWords = (userData.importedPacks || [])
+      .flatMap(p => p.words)
+      .filter(w => !masterSet.has(w.es) && !customSet.has(w.es));
+    return [...all, ...importedPackWords];
+  }, [userData]);
+  const pathWords = useMemo(() => {
+    const esKeys = new Set(
+      (userData.completedStops || []).flatMap(sid => getStopWords(sid))
+    );
+    return MASTER.filter(w => esKeys.has(w.es));
+  }, [userData.completedStops]);
+
   const startDailyChallenge = useCallback((kind) => {
     const today = new Date().toDateString();
     if (kind === 'weak') {
@@ -710,25 +729,6 @@ export default function SpanishHub() {
     setUserData(DEFAULT_DATA);
     setView({ page: 'home' });
   };
-
-  const allWords = useMemo(() => {
-    const filtered = MASTER.filter(w => w.group === 'Core' || userData.categoryEnabled[w.group] !== false);
-    const filteredSet = new Set(filtered.map(w => w.es));
-    const custom = (userData.customWords || []).filter(w => !filteredSet.has(w.es));
-    const all = [...filtered, ...custom];
-    const masterSet = new Set(MASTER.map(w => w.es));
-    const customSet = new Set((userData.customWords || []).map(w => w.es));
-    const importedPackWords = (userData.importedPacks || [])
-      .flatMap(p => p.words)
-      .filter(w => !masterSet.has(w.es) && !customSet.has(w.es));
-    return [...all, ...importedPackWords];
-  }, [userData]);
-  const pathWords = useMemo(() => {
-    const esKeys = new Set(
-      (userData.completedStops || []).flatMap(sid => getStopWords(sid))
-    );
-    return MASTER.filter(w => esKeys.has(w.es));
-  }, [userData.completedStops]);
 
   if (loading) return (
     <div className="app-outer">
