@@ -554,7 +554,7 @@ export default function SpanishHub() {
   const startDailyChallenge = useCallback((kind) => {
     const today = new Date().toDateString();
     if (kind === 'weak') {
-      const all = MASTER.filter(w => w.group === 'Core' || userData.categoryEnabled[w.group] !== false);
+      const all = pathWords.filter(w => w.group === 'Core' || userData.categoryEnabled[w.group] !== false);
       const candidates = all.filter(w => masteryLevel(userData.progress, w.es) !== 'mastered');
       const pool = candidates.length >= 5 ? candidates : all;
       const sorted = spacedRepetitionSort(pool, userData.progress);
@@ -568,7 +568,7 @@ export default function SpanishHub() {
       const words = spacedRepetitionSort(themeWords, userData.progress).slice(0, 5);
       setView({ page: 'drill', drillId: 'flashcard', overrideWords: words, dailyKind: 'theme', xpMultiplier: 1.5, today });
     }
-  }, [userData]);
+  }, [userData, pathWords]);
 
   const openLesson = useCallback((lessonId) => setView({ page: 'lesson', lessonId }), []);
 
@@ -711,24 +711,6 @@ export default function SpanishHub() {
     setView({ page: 'home' });
   };
 
-  if (loading) return (
-    <div className="app-outer">
-      <div className="app-container flex items-center justify-center">
-        <div className="text-center">
-          <div className="mb-4 flex justify-center" style={{ animation: 'pulse 1.5s infinite' }}>
-            <SpanishFlagPulse />
-          </div>
-          <p style={{ color: 'hsl(var(--muted-foreground))' }}>Loading…</p>
-        </div>
-      </div>
-    </div>
-  );
-
-  if (!user && !isGuest) return <LoginScreen onGuest={startGuest} />;
-
-  const effectiveUser = user || { uid: 'guest', displayName: 'Guest', photoURL: null };
-
-  const activeWords = getActiveWords();
   const allWords = useMemo(() => {
     const filtered = MASTER.filter(w => w.group === 'Core' || userData.categoryEnabled[w.group] !== false);
     const filteredSet = new Set(filtered.map(w => w.es));
@@ -747,6 +729,25 @@ export default function SpanishHub() {
     );
     return MASTER.filter(w => esKeys.has(w.es));
   }, [userData.completedStops]);
+
+  if (loading) return (
+    <div className="app-outer">
+      <div className="app-container flex items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 flex justify-center" style={{ animation: 'pulse 1.5s infinite' }}>
+            <SpanishFlagPulse />
+          </div>
+          <p style={{ color: 'hsl(var(--muted-foreground))' }}>Loading…</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (!user && !isGuest) return <LoginScreen onGuest={startGuest} />;
+
+  const effectiveUser = user || { uid: 'guest', displayName: 'Guest', photoURL: null };
+
+  const activeWords = getActiveWords();
   const stats = getStats(activeWords, userData.progress);
   const masteredCount = pathWords.filter(w => masteryLevel(userData.progress, w.es) === 'mastered').length;
   const streakRiskLevel = (() => {
