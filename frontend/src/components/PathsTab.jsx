@@ -811,17 +811,6 @@ function StopView({
             </>
           ) : (
             <>
-              {pathAlreadyComplete && onShowCertificate && (
-                <button
-                  type="button"
-                  onClick={() => onShowCertificate(path.id)}
-                  className="w-full rounded-full font-bold py-3 mt-4"
-                  style={{ background: 'hsl(var(--primary))', color: 'white' }}
-                  data-testid="stop-complete-certificate-btn"
-                >
-                  🎓 View Certificate →
-                </button>
-              )}
               {!isLastStop && (
                 <p className="text-sm mt-4" style={{ color: 'hsl(var(--muted-foreground))' }}>
                   Keep going — the next Stop is unlocked
@@ -1001,17 +990,6 @@ function StopView({
                 ))}
               </div>
             </div>
-          )}
-          {onShowCertificate && (
-            <button
-              type="button"
-              onClick={() => onShowCertificate(path.id)}
-              className="w-full rounded-full font-bold py-3 mt-6"
-              style={{ background: 'hsl(var(--primary))', color: 'white' }}
-              data-testid="path-fetch-pass-certificate-btn"
-            >
-              🎓 View Certificate →
-            </button>
           )}
           <button
             type="button"
@@ -1534,18 +1512,30 @@ export default function PathsTab({
           {selectedStage.tiers.map((tier) => {
             const tierState = getTierState(tier);
             return (
-              <button
-                key={tier.id}
-                type="button"
-                onClick={() => setSelectedTier(tier)}
-                className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
-                style={{ ...pillBg(tierState), cursor: 'pointer' }}
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-lg font-semibold">{tier.label}</p>
-                  {tierState === 'complete' && <Check className="w-5 h-5" />}
-                </div>
-              </button>
+              <div key={tier.id}>
+                <button
+                  type="button"
+                  onClick={() => setSelectedTier(tier)}
+                  className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
+                  style={{ ...pillBg(tierState), cursor: 'pointer' }}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-lg font-semibold">{tier.label}</p>
+                    {tierState === 'complete' && <Check className="w-5 h-5" />}
+                  </div>
+                </button>
+                {tierState === 'complete' && onShowCertificate && (
+                  <button
+                    type="button"
+                    onClick={() => onShowCertificate(tier.id)}
+                    className="w-full rounded-full font-bold py-2 mb-2 text-sm"
+                    style={{ background: 'hsl(var(--primary))', color: 'white' }}
+                    data-testid={`tier-certificate-btn-${tier.id}`}
+                  >
+                    🎓 Certificate
+                  </button>
+                )}
+              </div>
             );
           })}
         </div>
@@ -1626,20 +1616,6 @@ export default function PathsTab({
                 </div>
               </button>
 
-              {/* Certificate button — completed Paths only */}
-              {completedPaths.includes(path.id) && onShowCertificate && (
-                <div className="flex justify-end mb-2">
-                  <button
-                    type="button"
-                    onClick={() => onShowCertificate(path.id)}
-                    className="text-xs font-bold px-3 py-1 rounded-full"
-                    style={{ background: 'hsl(var(--primary))', color: 'white' }}
-                    data-testid={`path-certificate-btn-${path.id}`}
-                  >
-                    🎓 Certificate
-                  </button>
-                </div>
-              )}
             </div>
           );
         })}
