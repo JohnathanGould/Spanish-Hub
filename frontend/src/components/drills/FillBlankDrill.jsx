@@ -1,20 +1,29 @@
 import { languageConfig } from '../../config/languageConfig';
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
+import SpecialCharBar from '../SpecialCharBar';
 import { shuffle, speak } from '../../utils/helpers';
 import { FITB_POOL } from '../../content/es-en/drillData';
 import { VERB_TABLE } from '../../content/es-en/words';
 
-export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength = 10 }) {
+export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength = 10, mode = 'choice' }) {
   const total = drillLength;
   const queue = useMemo(() => shuffle(FITB_POOL).slice(0, total), [total]);
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);
   const [correct, setCorrect] = useState(0);
+  const [typedValue, setTypedValue] = useState('');
+  const inputRef = useRef(null);
 
   const item = queue[idx];
   const choices = useMemo(() => shuffle([...item.choices]), [item]);
+
+  useEffect(() => {
+    if (mode === 'typed' && !picked) {
+      inputRef.current?.focus();
+    }
+  }, [idx, mode, picked]);
 
   const getEnglishMeaning = (blankWord) => {
     for (const verb of VERB_TABLE) {
@@ -33,9 +42,19 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
     if (ok) setCorrect(x => x + 1);
   };
 
+  const handleTypedSubmit = () => {
+    if (!typedValue.trim() || picked) return;
+    const answer = typedValue.trim();
+    const ok = answer.toLowerCase() === item.blank.toLowerCase();
+    const display = ok ? item.blank : answer;
+    setPicked(display);
+    onAnswer(item.blank, ok);
+    if (ok) setCorrect(x => x + 1);
+  };
+
   const handleContinue = () => {
     if (idx + 1 >= queue.length) onDone(correct, queue.length);
-    else { setIdx(idx + 1); setPicked(null); }
+    else { setIdx(idx + 1); setPicked(null); setTypedValue(''); }
   };
 
   useEffect(() => {
@@ -46,12 +65,23 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
   let blankBg = 'hsl(var(--muted))';
   let blankColor = 'hsl(var(--muted-foreground))';
   if (picked) {
-    blankBg = '#DCFCE7';
-    blankColor = '#14532D';
+    const isCorrect = mode === 'typed'
+      ? picked.toLowerCase() === item.blank.toLowerCase()
+      : picked === item.blank;
+    blankBg = isCorrect ? '#DCFCE7' : '#FEE2E2';
+    blankColor = isCorrect ? '#14532D' : '#991B1B';
   }
 
+  const isCorrectAnswer = picked && (
+    mode === 'typed'
+      ? picked.toLowerCase() === item.blank.toLowerCase()
+      : picked === item.blank
+  );
+
   return (
-    <DrillShell title="Fill in the Blank" subtitle="Pick the missing word"
+    <DrillShell
+      title="Fill in the Blank"
+      subtitle={mode === 'typed' ? 'Type the missing word' : 'Pick the missing word'}
       current={idx + 1} total={queue.length} onBack={onBack}
       footer={picked && (
         <button onClick={handleContinue} data-testid="fitb-continue"
@@ -65,13 +95,8 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
         <div className="font-serif text-xl sm:text-2xl font-bold leading-relaxed" data-testid="fitb-prompt" style={{ color: 'hsl(var(--foreground))' }}>
           {item.before}{' '}
           <span className="inline-block px-3 py-0.5 rounded-lg mx-1 align-middle"
-            style={{
-              background: blankBg,
-              color: blankColor,
-              minWidth: 80,
-              fontSize: '0.95em',
-            }}>
-            {picked ? item.blank : '____'}
+            style={{ background: blankBg, color: blankColor, minWidth: 80, fontSize: '0.95em' }}>
+            {picked ? (mode === 'typed' ? picked : item.blank) : '____'}
           </span>{' '}
           {item.after}
         </div>
@@ -82,24 +107,52 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5">
-        {choices.map((c, i) => {
-          const isCorrect = picked && c === item.blank;
-          const isWrong = picked === c && c !== item.blank;
-          return (
-            <button key={c + i} data-testid={`fitb-choice-${i}`} disabled={!!picked} onClick={() => handlePick(c)}
-              className={`choice-btn ${isCorrect ? 'correct' : ''} ${isWrong ? 'wrong' : ''}`}>
-              {c}
+      {mode === 'choice' ? (
+        <div className="grid grid-cols-2 gap-2.5">
+          {choices.map((c, i) => {
+            const isCorrect = picked && c === item.blank;
+            const isWrong = picked === c && c !== item.blank;
+            return (
+              <button key={c + i} data-testid={`fitb-choice-${i}`} disabled={!!picked} onClick={() => handlePick(c)}
+                className={`choice-btn ${isCorrect ? 'correct' : ''} ${isWrong ? 'wrong' : ''}`}>
+                {c}
+              </button>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2">
+          <SpecialCharBar inputRef={inputRef} value={typedValue} onChange={setTypedValue} />
+          <input
+            ref={inputRef}
+            type="text"
+            value={typedValue}
+            onChange={e => setTypedValue(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') handleTypedSubmit(); }}
+            disabled={!!picked}
+            placeholder="Type the missing word…"
+            data-testid="fitb-typed-input"
+            className="w-full px-4 py-3 rounded-xl border text-center text-lg font-semibold"
+            style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }}
+          />
+          {!picked && (
+            <button
+              onClick={handleTypedSubmit}
+              disabled={!typedValue.trim()}
+              data-testid="fitb-typed-submit"
+              className="w-full py-3 rounded-xl font-bold text-sm"
+              style={{ background: typedValue.trim() ? 'hsl(var(--primary))' : 'hsl(var(--muted))', color: typedValue.trim() ? 'white' : 'hsl(var(--muted-foreground))' }}>
+              Check
             </button>
-          );
-        })}
-      </div>
+          )}
+        </div>
+      )}
 
       {picked && (
         <div className="mt-4 text-center">
-          <div className="mb-3 text-sm font-medium" style={{ color: picked === item.blank ? '#16A34A' : '#DC2626' }}>
-            {picked === item.blank ? 'Correct! ✓' : `Answer: ${item.blank}`}
-            {picked === item.blank && (
+          <div className="mb-3 text-sm font-medium" style={{ color: isCorrectAnswer ? '#16A34A' : '#DC2626' }}>
+            {isCorrectAnswer ? 'Correct! ✓' : `Answer: ${item.blank}`}
+            {isCorrectAnswer && (
               <div className="text-xs mt-1 opacity-70">{getEnglishMeaning(item.blank)}</div>
             )}
           </div>
@@ -112,4 +165,3 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
     </DrillShell>
   );
 }
-

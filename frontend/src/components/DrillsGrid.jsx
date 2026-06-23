@@ -171,17 +171,15 @@ export default function DrillsGrid({
               Sentence Builder 🔒
             </button>
           )}
-          {completedPaths.includes('path3') ? (
-            <button onClick={() => onStartDrill('fill-blank', 10)}
-              className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
-              Fill in the Blank
-            </button>
-          ) : (
-            <button disabled
-              className={`w-full ${PILL_CLASS} opacity-50`} style={PILL_STYLE}>
-              Fill in the Blank 🔒
-            </button>
-          )}
+          {/* TODO: restore lock — completedPaths.includes('path3') */}
+          <button onClick={() => onStartDrill('fill-blank', 10)}
+            className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
+            Conjugation Fill in the Blank — Multiple Choice
+          </button>
+          <button onClick={() => onStartDrill('fill-blank-typed', 10)}
+            className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>
+            Conjugation Fill in the Blank — Typed
+          </button>
         </>
       )}
 

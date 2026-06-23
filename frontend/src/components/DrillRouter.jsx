@@ -41,6 +41,7 @@ export default function DrillRouter(props) {
     case 'matching':             return <MatchingDrill {...drillProps} />;
     case 'sent-build':           return <SentenceBuilderDrill {...drillProps} />;
     case 'fill-blank':           return <FillBlankDrill {...drillProps} />;
+    case 'fill-blank-typed':     return <FillBlankDrill mode="typed" {...drillProps} />;
     default: return <div className="p-10 text-center">Drill not found: {drillId}</div>;
   }
 }
