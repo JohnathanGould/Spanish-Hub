@@ -1,20 +1,53 @@
 // paths.js — Milo Speaks Spanish
-// 13 Paths, 87 Stops, 522 words
-// Research basis: CORPES XXI frequency ranking + CEFR A1/A2 word lists
-// Verb sequencing: infinitive+yo+tú Stop → él/ella+nosotros+ustedes/ellos Stop
-// Tier 1 (Paths 1-4): Beginner I — 6 Stops each
-// Tier 2 (Paths 5-8): Beginner II — 7 Stops each
-// Tier 3 (Paths 9-12): Advanced Beginner — 7 Stops each
-// Tier 4 (Path 13): Intermediate — 7 Stops
+// 13 Paths, 65 Stops, 390 words
+// Revised: 2026-06-24
+//
+// PHILOSOPHY: Survival-first, communicative usability model
+// Every Stop is a scene — a situation the learner can function in immediately
+// Structure: 5 Stops per Path, 6 words per Stop, uniform across all Tiers
+//
+// WHAT CHANGED FROM PREVIOUS VERSION:
+// - Isolated grammar particles removed as drill targets (articles, conjunctions, prepositions)
+//   → These are acquired via tap-to-define in sentence context (tap-to-define feature prerequisite)
+// - Subject pronouns (yo, tú, él, ella) removed as drill targets → exposure only via sentences
+// - Object pronouns (me, se) replaced by fixed expressions (me llamo, me gusta, se llama)
+// - Verb infinitives removed as standalone Stop words → forms appear in sentence context
+// - Conjugation paradigm completions (nosotros/ellos forms) moved to Advanced Beginner
+//   where paradigm work belongs — Beginner focuses on yo/tú/él/ellos (highest frequency)
+// - Numbers moved from Path 9 → Paths 2-3 (survival day one)
+// - Survival learner phrases added to Path 1 (no entiendo, más despacio, etc.)
+// - Days of week added to Path 8
+// - Tener expressions (tengo hambre, etc.) added to Path 9
+// - siempre/nunca/todavía/ya/a veces/pronto given proper home in Path 13
+// - abierto/cerrado added (high survival — is the store open/closed?)
+// - Navigation/directions Stop added to Path 6
+// - Weather consolidated into clean standalone Stop
+//
+// PROGRESSIVE IMMERSION MODEL (locked 2026-06-24):
+// Beginner (Paths 1-4): English shown freely
+// Advanced Beginner (Paths 5-8... wait, tiers):
+//   Tier 1 Beginner I (Paths 1-4): English shown freely
+//   Tier 2 Beginner II (Paths 5-8): English de-emphasized, tap to reveal
+//   Tier 3 Advanced Beginner (Paths 9-12): English hidden by default
+//   Tier 4 Intermediate (Path 13): English removed from drill prompts
+//
+// FETCH WEIGHTING (locked 2026-06-24):
+// Failure-rate weighted. Sentence-level drills unlock at Strong mastery level.
+//
+// XP (locked 2026-06-24):
+// Output drills: +2 XP. Input drills: +1 XP. Mastery crossing bonus: +11 XP.
+//
+// All es values must match exactly with MASTER array in words.js
 // videoUrl: null on all Stops — feature flag. Add YouTube URL when video ready.
-// All es values match exactly with MASTER array in words.js
 
 export const PATHS = [
 
   // ─────────────────────────────────────────────
-  // PATH 1 — El Primer Encuentro
-  // Sub-level: Beginner I
+  // TIER 1 — BEGINNER I
+  // Paths 1-4 | English shown freely
+  // Focus: survival interaction, core verb forms in context, essential vocabulary
   // ─────────────────────────────────────────────
+
   {
     id: 'path1',
     title: 'El Primer Encuentro',
@@ -41,35 +74,27 @@ export const PATHS = [
         title: 'Mucho Gusto',
         titleEn: 'Nice to Meet You',
         videoUrl: null,
-        words: ['mucho gusto', 'encantado', 'hasta luego', 'hasta mañana', 'salud', 'suerte'],
+        words: ['mucho gusto', 'encantado', 'hasta luego', 'hasta mañana', 'me llamo', '¿cómo te llamas?'],
       },
       {
         id: 'p1s4',
-        title: 'Sí y No',
-        titleEn: 'Yes and No',
+        title: 'No Entiendo',
+        titleEn: 'I Don\'t Understand',
         videoUrl: null,
-        words: ['sí', 'no', 'el', 'la', 'un', 'una'],
+        words: ['no entiendo', 'más despacio', '¿puedes repetir?', '¿cómo se dice?', 'un momento', 'no sé'],
       },
       {
         id: 'p1s5',
-        title: 'Yo y Tú',
-        titleEn: 'I and You',
+        title: 'Sí y No',
+        titleEn: 'Yes and No',
         videoUrl: null,
-        words: ['yo', 'tú', 'mi', 'tu', 'hay', 'dónde'],
-      },
-      {
-        id: 'p1s6',
-        title: 'Él y Ella',
-        titleEn: 'He and She',
-        videoUrl: null,
-        words: ['él', 'ella', 'me', 'se', 'su', 'aquí'],
+        words: ['sí', 'no', 'bien', 'mal', 'muy bien', 'más o menos'],
       },
     ],
   },
 
   // ─────────────────────────────────────────────
   // PATH 2 — Ser
-  // Sub-level: Beginner I
   // ─────────────────────────────────────────────
   {
     id: 'path2',
@@ -87,45 +112,37 @@ export const PATHS = [
       },
       {
         id: 'p2s2',
-        title: 'Ser',
-        titleEn: 'To Be',
+        title: 'Soy y Eres',
+        titleEn: 'I Am and You Are',
         videoUrl: null,
-        words: ['ser', 'soy', 'eres', 'español', 'inglés', 'americano'],
+        words: ['soy', 'eres', 'español', 'inglés', 'americano', 'canadiense'],
       },
       {
         id: 'p2s3',
-        title: 'Es, Somos, Son',
-        titleEn: 'He/She Is, We Are, They Are',
+        title: 'Es y Son',
+        titleEn: 'He/She Is and They Are',
         videoUrl: null,
-        words: ['es', 'somos', 'son', 'canadiense', 'mexicano', 'colombiano'],
+        words: ['es', 'son', 'mexicano', 'colombiano', 'muy', 'hoy'],
       },
       {
         id: 'p2s4',
         title: '¿Quién? y ¿Cómo?',
         titleEn: 'Who? and How?',
         videoUrl: null,
-        words: ['quién', 'cómo', 'muy', 'bien', 'mal', 'también'],
+        words: ['quién', 'cómo', 'cuándo', 'también', 'su', 'aquí'],
       },
       {
         id: 'p2s5',
-        title: 'Y, O, Pero',
-        titleEn: 'And, Or, But',
+        title: 'Números 1-6',
+        titleEn: 'Numbers 1-6',
         videoUrl: null,
-        words: ['y', 'o', 'pero', 'porque', 'con', 'en'],
-      },
-      {
-        id: 'p2s6',
-        title: 'Más Personas',
-        titleEn: 'More People',
-        videoUrl: null,
-        words: ['amigo', 'amiga', 'adulto', 'bebé', 'familia', 'gente'],
+        words: ['uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis'],
       },
     ],
   },
 
   // ─────────────────────────────────────────────
   // PATH 3 — Estar
-  // Sub-level: Beginner I
   // ─────────────────────────────────────────────
   {
     id: 'path3',
@@ -143,17 +160,17 @@ export const PATHS = [
       },
       {
         id: 'p3s2',
-        title: 'Estar',
-        titleEn: 'To Be (Location)',
+        title: 'Estoy y Estás',
+        titleEn: 'I Am and You Are (Location)',
         videoUrl: null,
-        words: ['estar', 'estoy', 'estás', 'grande', 'pequeño', 'bueno'],
+        words: ['estoy', 'estás', 'grande', 'pequeño', 'bueno', 'abierto'],
       },
       {
         id: 'p3s3',
-        title: 'Está, Estamos, Están',
-        titleEn: 'He/She Is, We Are, They Are (Location)',
+        title: 'Está y Están',
+        titleEn: 'He/She Is and They Are (Location)',
         videoUrl: null,
-        words: ['está', 'estamos', 'están', 'malo', 'nuevo', 'viejo'],
+        words: ['está', 'están', 'malo', 'nuevo', 'viejo', 'cerrado'],
       },
       {
         id: 'p3s4',
@@ -164,29 +181,21 @@ export const PATHS = [
       },
       {
         id: 'p3s5',
-        title: 'Preposiciones',
-        titleEn: 'Prepositions',
+        title: 'Números 7-20',
+        titleEn: 'Numbers 7-20',
         videoUrl: null,
-        words: ['de', 'a', 'por', 'para', 'sin', 'sobre'],
-      },
-      {
-        id: 'p3s6',
-        title: '¿Cómo Es?',
-        titleEn: 'What Is It Like?',
-        videoUrl: null,
-        words: ['fácil', 'difícil', 'rápido', 'lento', 'caro', 'barato'],
+        words: ['siete', 'ocho', 'nueve', 'diez', 'veinte', 'cuánto'],
       },
     ],
   },
 
   // ─────────────────────────────────────────────
-  // PATH 4 — Tener y Necesitar
-  // Sub-level: Beginner I
+  // PATH 4 — Tener y El Tiempo
   // ─────────────────────────────────────────────
   {
     id: 'path4',
-    title: 'Tener y Necesitar',
-    titleEn: 'To Have and To Need',
+    title: 'Tener y El Tiempo',
+    titleEn: 'To Have and Time',
     subLevel: 'Beginner I',
     videoUrl: null,
     stops: [
@@ -199,46 +208,41 @@ export const PATHS = [
       },
       {
         id: 'p4s2',
-        title: 'Tener',
-        titleEn: 'To Have',
+        title: 'Tengo y Tienes',
+        titleEn: 'I Have and You Have',
         videoUrl: null,
-        words: ['tener', 'tengo', 'tienes', 'problema', 'idea', 'plan'],
+        words: ['tengo', 'tienes', 'problema', 'idea', 'plan', 'llave'],
       },
       {
         id: 'p4s3',
-        title: 'Tiene, Tenemos, Tienen',
-        titleEn: 'He/She Has, We Have, They Have',
+        title: 'Tiene y Tienen',
+        titleEn: 'He/She Has and They Have',
         videoUrl: null,
-        words: ['tiene', 'tenemos', 'tienen', 'carta', 'llave', 'cuenta'],
+        words: ['tiene', 'tienen', 'carta', 'cuenta', 'tiempo', 'hora'],
       },
       {
         id: 'p4s4',
-        title: 'Necesitar',
-        titleEn: 'To Need',
+        title: 'Necesito y Necesitas',
+        titleEn: 'I Need and You Need',
         videoUrl: null,
-        words: ['necesitar', 'necesito', 'necesitas', 'cita', 'documento', 'firma'],
+        words: ['necesito', 'necesitas', 'cita', 'documento', 'agua', 'comida'],
       },
       {
         id: 'p4s5',
-        title: 'Necesita, Necesitamos, Necesitan',
-        titleEn: 'He/She Needs, We Need, They Need',
-        videoUrl: null,
-        words: ['necesita', 'necesitamos', 'necesitan', 'oficina', 'formulario', 'copia'],
-      },
-      {
-        id: 'p4s6',
         title: 'El Tiempo',
         titleEn: 'Time',
         videoUrl: null,
-        words: ['tiempo', 'semana', 'mes', 'año', 'hora', 'minuto'],
+        words: ['semana', 'mes', 'año', 'minuto', 'mañana', 'ayer'],
       },
     ],
   },
 
   // ─────────────────────────────────────────────
-  // PATH 5 — Querer y Poder
-  // Sub-level: Beginner II
+  // TIER 2 — BEGINNER II
+  // Paths 5-8 | English de-emphasized, tap to reveal
+  // Focus: food, travel, communication, family, daily life
   // ─────────────────────────────────────────────
+
   {
     id: 'path5',
     title: 'Querer y Poder',
@@ -251,61 +255,46 @@ export const PATHS = [
         title: 'Comida y Bebida',
         titleEn: 'Food and Drink',
         videoUrl: null,
-        words: ['agua', 'leche', 'café', 'pan', 'fruta', 'comida'],
+        words: ['bebida', 'café', 'pan', 'fruta', 'hambre', 'leche'],
       },
       {
         id: 'p5s2',
-        title: 'Querer',
-        titleEn: 'To Want',
+        title: 'Quiero y Quieres',
+        titleEn: 'I Want and You Want',
         videoUrl: null,
-        words: ['querer', 'quiero', 'quieres', 'jugo', 'té', 'arroz'],
+        words: ['quiero', 'quieres', 'jugo', 'té', 'arroz', 'sopa'],
       },
       {
         id: 'p5s3',
-        title: 'Quiere, Queremos, Quieren',
-        titleEn: 'He/She Wants, We Want, They Want',
+        title: 'Quiere y Quieren',
+        titleEn: 'He/She Wants and They Want',
         videoUrl: null,
-        words: ['quiere', 'queremos', 'quieren', 'sopa', 'ensalada', 'postre'],
+        words: ['quiere', 'quieren', 'ensalada', 'postre', 'rico', 'delicioso'],
       },
       {
         id: 'p5s4',
-        title: 'Poder',
-        titleEn: 'To Be Able',
+        title: 'Puedo y Puedes',
+        titleEn: 'I Can and You Can',
         videoUrl: null,
-        words: ['poder', 'puedo', 'puedes', 'menú', 'mesa', 'orden'],
+        words: ['puedo', 'puedes', 'menú', 'mesa', 'orden', 'propina'],
       },
       {
         id: 'p5s5',
-        title: 'Puede, Podemos, Pueden',
-        titleEn: 'He/She Can, We Can, They Can',
-        videoUrl: null,
-        words: ['puede', 'podemos', 'pueden', 'propina', 'rico', 'delicioso'],
-      },
-      {
-        id: 'p5s6',
-        title: 'En el Restaurante',
-        titleEn: 'At the Restaurant',
-        videoUrl: null,
-        words: ['camarero', 'cocina', 'plato', 'vaso', 'servilleta', 'cuchara'],
-      },
-      {
-        id: 'p5s7',
         title: 'Más Comida',
         titleEn: 'More Food',
         videoUrl: null,
-        words: ['pollo', 'carne', 'pescado', 'verdura', 'manzana', 'huevo'],
+        words: ['pollo', 'carne', 'pescado', 'verdura', 'huevo', 'queso'],
       },
     ],
   },
 
   // ─────────────────────────────────────────────
-  // PATH 6 — Hacer e Ir
-  // Sub-level: Beginner II
+  // PATH 6 — Ir y Viajar
   // ─────────────────────────────────────────────
   {
     id: 'path6',
-    title: 'Hacer e Ir',
-    titleEn: 'To Do and To Go',
+    title: 'Ir y Viajar',
+    titleEn: 'To Go and To Travel',
     subLevel: 'Beginner II',
     videoUrl: null,
     stops: [
@@ -318,57 +307,42 @@ export const PATHS = [
       },
       {
         id: 'p6s2',
-        title: 'Hacer',
-        titleEn: 'To Do',
+        title: 'Voy y Vas',
+        titleEn: 'I Go and You Go',
         videoUrl: null,
-        words: ['hacer', 'hago', 'haces', 'equipaje', 'mapa', 'dirección'],
+        words: ['voy', 'vas', 'llego', 'llegas', 'mapa', 'dirección'],
       },
       {
         id: 'p6s3',
-        title: 'Hace, Hacemos, Hacen',
-        titleEn: 'He/She Does, We Do, They Do',
+        title: 'Va y Van',
+        titleEn: 'He/She Goes and They Go',
         videoUrl: null,
-        words: ['hace', 'hacemos', 'hacen', 'sol', 'lluvia', 'nieve'],
+        words: ['va', 'van', 'ahora', 'después', 'antes', 'tarde'],
       },
       {
         id: 'p6s4',
-        title: 'Ir',
-        titleEn: 'To Go',
+        title: 'Direcciones',
+        titleEn: 'Directions',
         videoUrl: null,
-        words: ['ir', 'voy', 'vas', 'viento', 'calor', 'frío'],
+        words: ['a la derecha', 'a la izquierda', 'recto', 'cerca', 'lejos', 'estoy perdido'],
       },
       {
         id: 'p6s5',
-        title: 'Va, Vamos, Van',
-        titleEn: 'He/She Goes, We Go, They Go',
+        title: 'El Clima',
+        titleEn: 'The Weather',
         videoUrl: null,
-        words: ['va', 'vamos', 'van', 'llegar', 'llego', 'llegas'],
-      },
-      {
-        id: 'p6s6',
-        title: 'Llega, Llegamos, Llegan',
-        titleEn: 'He/She Arrives, We Arrive, They Arrive',
-        videoUrl: null,
-        words: ['llega', 'llegamos', 'llegan', 'llevar', 'llevo', 'llevas'],
-      },
-      {
-        id: 'p6s7',
-        title: 'Lleva, Llevamos, Llevan',
-        titleEn: 'He/She Carries, We Carry, They Carry',
-        videoUrl: null,
-        words: ['lleva', 'llevamos', 'llevan', 'ahora', 'después', 'antes'],
+        words: ['sol', 'lluvia', 'nieve', 'viento', 'calor', 'frío'],
       },
     ],
   },
 
   // ─────────────────────────────────────────────
-  // PATH 7 — Hablar, Ver y Saber
-  // Sub-level: Beginner II
+  // PATH 7 — Hablar y Saber
   // ─────────────────────────────────────────────
   {
     id: 'path7',
-    title: 'Hablar, Ver y Saber',
-    titleEn: 'To Speak, To See, To Know',
+    title: 'Hablar y Saber',
+    titleEn: 'To Speak and To Know',
     subLevel: 'Beginner II',
     videoUrl: null,
     stops: [
@@ -377,61 +351,46 @@ export const PATHS = [
         title: 'Comunicación',
         titleEn: 'Communication',
         videoUrl: null,
-        words: ['mensaje', 'llamada', 'correo', 'noticia', 'conversación', 'pregunta'],
+        words: ['mensaje', 'llamada', 'correo', 'pregunta', 'respuesta', 'conversación'],
       },
       {
         id: 'p7s2',
-        title: 'Hablar',
-        titleEn: 'To Speak',
+        title: 'Hablo y Hablas',
+        titleEn: 'I Speak and You Speak',
         videoUrl: null,
-        words: ['hablar', 'hablo', 'hablas', 'idioma', 'palabra', 'frase'],
+        words: ['hablo', 'hablas', 'idioma', 'palabra', 'frase', 'acento'],
       },
       {
         id: 'p7s3',
-        title: 'Habla, Hablamos, Hablan',
-        titleEn: 'He/She Speaks, We Speak, They Speak',
+        title: 'Habla y Hablan',
+        titleEn: 'He/She Speaks and They Speak',
         videoUrl: null,
-        words: ['habla', 'hablamos', 'hablan', 'respuesta', 'acento', 'significado'],
+        words: ['habla', 'hablan', 'significado', 'verdad', 'razón', 'sé'],
       },
       {
         id: 'p7s4',
-        title: 'Ver',
-        titleEn: 'To See',
+        title: 'Ver y Escuchar',
+        titleEn: 'To See and To Listen',
         videoUrl: null,
-        words: ['ver', 'veo', 'ves', 'televisión', 'película', 'noticias'],
+        words: ['veo', 'ves', 'escucho', 'escuchas', 'televisión', 'música'],
       },
       {
         id: 'p7s5',
-        title: 'Ve, Vemos, Ven',
-        titleEn: 'He/She Sees, We See, They See',
+        title: 'Medios y Noticias',
+        titleEn: 'Media and News',
         videoUrl: null,
-        words: ['ve', 'vemos', 'ven', 'foto', 'imagen', 'video'],
-      },
-      {
-        id: 'p7s6',
-        title: 'Saber',
-        titleEn: 'To Know',
-        videoUrl: null,
-        words: ['saber', 'sé', 'sabes', 'verdad', 'secreto', 'razón'],
-      },
-      {
-        id: 'p7s7',
-        title: 'Sabe, Sabemos, Saben',
-        titleEn: 'He/She Knows, We Know, They Know',
-        videoUrl: null,
-        words: ['sabe', 'sabemos', 'saben', 'información', 'detalle', 'resultado'],
+        words: ['película', 'foto', 'video', 'imagen', 'noticias', 'canción'],
       },
     ],
   },
 
   // ─────────────────────────────────────────────
-  // PATH 8 — Decir, Dar y Familia
-  // Sub-level: Beginner II
+  // PATH 8 — Decir, Familia y Los Días
   // ─────────────────────────────────────────────
   {
     id: 'path8',
-    title: 'Decir, Dar y Familia',
-    titleEn: 'To Say, To Give, and Family',
+    title: 'Decir, Familia y Los Días',
+    titleEn: 'To Say, Family and the Days',
     subLevel: 'Beginner II',
     videoUrl: null,
     stops: [
@@ -444,53 +403,41 @@ export const PATHS = [
       },
       {
         id: 'p8s2',
-        title: 'Decir',
-        titleEn: 'To Say',
+        title: 'Digo y Dices',
+        titleEn: 'I Say and You Say',
         videoUrl: null,
-        words: ['decir', 'digo', 'dices', 'abuelo', 'abuela', 'esposo'],
+        words: ['digo', 'dices', 'abuelo', 'abuela', 'esposo', 'esposa'],
       },
       {
         id: 'p8s3',
-        title: 'Dice, Decimos, Dicen',
-        titleEn: 'He/She Says, We Say, They Say',
+        title: 'Dice y Dicen',
+        titleEn: 'He/She Says and They Say',
         videoUrl: null,
-        words: ['dice', 'decimos', 'dicen', 'esposa', 'primo', 'prima'],
+        words: ['dice', 'dicen', 'primo', 'prima', 'tío', 'tía'],
       },
       {
         id: 'p8s4',
-        title: 'Dar',
-        titleEn: 'To Give',
+        title: 'Los Días de la Semana',
+        titleEn: 'Days of the Week',
         videoUrl: null,
-        words: ['dar', 'doy', 'das', 'tío', 'tía', 'sobrino'],
+        words: ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'],
       },
       {
         id: 'p8s5',
-        title: 'Da, Damos, Dan',
-        titleEn: 'He/She Gives, We Give, They Give',
-        videoUrl: null,
-        words: ['da', 'damos', 'dan', 'sobrina', 'nieto', 'nieta'],
-      },
-      {
-        id: 'p8s6',
-        title: 'Palabras de Tiempo',
-        titleEn: 'Time Words',
-        videoUrl: null,
-        words: ['hoy', 'mañana', 'ayer', 'siempre', 'nunca', 'todavía'],
-      },
-      {
-        id: 'p8s7',
         title: 'Más Personas',
         titleEn: 'More People',
         videoUrl: null,
-        words: ['novio', 'novia', 'pareja', 'vecino', 'vecina', 'compañero'],
+        words: ['domingo', 'novio', 'novia', 'pareja', 'vecino', 'compañero'],
       },
     ],
   },
 
   // ─────────────────────────────────────────────
-  // PATH 9 — Comer y Beber
-  // Sub-level: Advanced Beginner
+  // TIER 3 — ADVANCED BEGINNER
+  // Paths 9-12 | English hidden by default, tap to reveal
+  // Focus: paradigm completion, nuanced vocabulary, expanded situations
   // ─────────────────────────────────────────────
+
   {
     id: 'path9',
     title: 'Comer y Beber',
@@ -503,56 +450,41 @@ export const PATHS = [
         title: 'Más Comida',
         titleEn: 'More Food',
         videoUrl: null,
-        words: ['queso', 'tomate', 'cebolla', 'papa', 'lechuga', 'zanahoria'],
+        words: ['tomate', 'cebolla', 'papa', 'lechuga', 'zanahoria', 'manzana'],
       },
       {
         id: 'p9s2',
-        title: 'Comer',
-        titleEn: 'To Eat',
+        title: 'Como y Comes',
+        titleEn: 'I Eat and You Eat',
         videoUrl: null,
-        words: ['comer', 'como', 'comes', 'desayuno', 'almuerzo', 'cena'],
+        words: ['como', 'comes', 'desayuno', 'almuerzo', 'cena', 'merienda'],
       },
       {
         id: 'p9s3',
-        title: 'Come, Comemos, Comen',
-        titleEn: 'He/She Eats, We Eat, They Eat',
+        title: 'Come y Comen',
+        titleEn: 'He/She Eats and They Eat',
         videoUrl: null,
-        words: ['come', 'comemos', 'comen', 'merienda', 'bocadillo', 'galleta'],
+        words: ['come', 'comen', 'bocadillo', 'galleta', 'plato', 'taza'],
       },
       {
         id: 'p9s4',
-        title: 'Beber',
-        titleEn: 'To Drink',
+        title: 'Bebo y Bebes',
+        titleEn: 'I Drink and You Drink',
         videoUrl: null,
-        words: ['beber', 'bebo', 'bebes', 'refresco', 'vino', 'cerveza'],
+        words: ['bebo', 'bebes', 'refresco', 'vino', 'cerveza', 'botella'],
       },
       {
         id: 'p9s5',
-        title: 'Bebe, Bebemos, Beben',
-        titleEn: 'He/She Drinks, We Drink, They Drink',
+        title: 'Estados Físicos',
+        titleEn: 'Physical States',
         videoUrl: null,
-        words: ['bebe', 'bebemos', 'beben', 'botella', 'taza', 'copa'],
-      },
-      {
-        id: 'p9s6',
-        title: 'Números 1-6',
-        titleEn: 'Numbers 1-6',
-        videoUrl: null,
-        words: ['uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis'],
-      },
-      {
-        id: 'p9s7',
-        title: 'Números 7-20',
-        titleEn: 'Numbers 7-20',
-        videoUrl: null,
-        words: ['siete', 'ocho', 'nueve', 'diez', 'veinte', 'cuánto'],
+        words: ['tengo hambre', 'tengo sed', 'tengo frío', 'tengo calor', 'tengo sueño', 'tengo miedo'],
       },
     ],
   },
 
   // ─────────────────────────────────────────────
   // PATH 10 — Comprar, Vivir y Trabajar
-  // Sub-level: Advanced Beginner
   // ─────────────────────────────────────────────
   {
     id: 'path10',
@@ -570,57 +502,42 @@ export const PATHS = [
       },
       {
         id: 'p10s2',
-        title: 'Comprar',
-        titleEn: 'To Buy',
+        title: 'Compro y Compras',
+        titleEn: 'I Buy and You Buy',
         videoUrl: null,
-        words: ['comprar', 'compro', 'compras', 'descuento', 'oferta', 'marca'],
+        words: ['compro', 'compras', 'descuento', 'oferta', 'regalo', 'bolsa'],
       },
       {
         id: 'p10s3',
-        title: 'Compra, Compramos, Compran',
-        titleEn: 'He/She Buys, We Buy, They Buy',
+        title: 'El Dinero',
+        titleEn: 'Money',
         videoUrl: null,
-        words: ['compra', 'compramos', 'compran', 'regalo', 'caja', 'bolsa'],
+        words: ['cien', 'mil', 'precio', 'cambio', 'billete', 'moneda'],
       },
       {
         id: 'p10s4',
-        title: 'Vivir',
-        titleEn: 'To Live',
+        title: 'Vivo y Vives',
+        titleEn: 'I Live and You Live',
         videoUrl: null,
-        words: ['vivir', 'vivo', 'vives', 'apartamento', 'vecindario', 'barrio'],
+        words: ['vivo', 'vives', 'apartamento', 'vecindario', 'barrio', 'edificio'],
       },
       {
         id: 'p10s5',
-        title: 'Vive, Vivimos, Viven',
-        titleEn: 'He/She Lives, We Live, They Live',
+        title: 'Trabajo y Trabajas',
+        titleEn: 'I Work and You Work',
         videoUrl: null,
-        words: ['vive', 'vivimos', 'viven', 'edificio', 'piso', 'alquiler'],
-      },
-      {
-        id: 'p10s6',
-        title: 'Trabajar',
-        titleEn: 'To Work',
-        videoUrl: null,
-        words: ['trabajar', 'trabajo', 'trabajas', 'jefe', 'empleado', 'empresa'],
-      },
-      {
-        id: 'p10s7',
-        title: 'Trabaja, Trabajamos, Trabajan',
-        titleEn: 'He/She Works, We Work, They Work',
-        videoUrl: null,
-        words: ['trabaja', 'trabajamos', 'trabajan', 'horario', 'sueldo', 'descanso'],
+        words: ['trabajo', 'trabajas', 'jefe', 'empresa', 'horario', 'sueldo'],
       },
     ],
   },
 
   // ─────────────────────────────────────────────
-  // PATH 11 — El Cuerpo y Cómo Te Sientes
-  // Sub-level: Advanced Beginner
+  // PATH 11 — El Cuerpo y La Salud
   // ─────────────────────────────────────────────
   {
     id: 'path11',
-    title: 'El Cuerpo y Cómo Te Sientes',
-    titleEn: 'The Body and How You Feel',
+    title: 'El Cuerpo y La Salud',
+    titleEn: 'The Body and Health',
     subLevel: 'Advanced Beginner',
     videoUrl: null,
     stops: [
@@ -629,56 +546,41 @@ export const PATHS = [
         title: 'El Cuerpo',
         titleEn: 'The Body',
         videoUrl: null,
-        words: ['cabeza', 'ojo', 'nariz', 'boca', 'oreja', 'mano'],
+        words: ['cabeza', 'ojo', 'nariz', 'boca', 'mano', 'brazo'],
       },
       {
         id: 'p11s2',
         title: 'Más Cuerpo',
         titleEn: 'More Body',
         videoUrl: null,
-        words: ['brazo', 'pierna', 'pie', 'dedo', 'espalda', 'corazón'],
+        words: ['pierna', 'pie', 'espalda', 'corazón', 'dedo', 'oreja'],
       },
       {
         id: 'p11s3',
-        title: 'Dormir',
-        titleEn: 'To Sleep',
-        videoUrl: null,
-        words: ['dormir', 'duermo', 'duermes', 'cansado', 'sueño', 'almohada'],
-      },
-      {
-        id: 'p11s4',
-        title: 'Duerme, Dormimos, Duermen',
-        titleEn: 'He/She Sleeps, We Sleep, They Sleep',
-        videoUrl: null,
-        words: ['duerme', 'dormimos', 'duermen', 'cama', 'manta', 'noche'],
-      },
-      {
-        id: 'p11s5',
-        title: 'Venir',
-        titleEn: 'To Come',
-        videoUrl: null,
-        words: ['venir', 'vengo', 'vienes', 'enfermo', 'feliz', 'triste'],
-      },
-      {
-        id: 'p11s6',
-        title: 'Viene, Venimos, Vienen',
-        titleEn: 'He/She Comes, We Come, They Come',
-        videoUrl: null,
-        words: ['viene', 'venimos', 'vienen', 'mejor', 'peor', 'normal'],
-      },
-      {
-        id: 'p11s7',
         title: 'La Salud',
         titleEn: 'Health',
         videoUrl: null,
         words: ['médico', 'medicina', 'dolor', 'fiebre', 'alergia', 'emergencia'],
+      },
+      {
+        id: 'p11s4',
+        title: 'Duermo y Duermes',
+        titleEn: 'I Sleep and You Sleep',
+        videoUrl: null,
+        words: ['duermo', 'duermes', 'cansado', 'sueño', 'cama', 'noche'],
+      },
+      {
+        id: 'p11s5',
+        title: 'Vengo y Vienes',
+        titleEn: 'I Come and You Come',
+        videoUrl: null,
+        words: ['vengo', 'vienes', 'enfermo', 'feliz', 'triste', 'mejor'],
       },
     ],
   },
 
   // ─────────────────────────────────────────────
   // PATH 12 — El Mundo
-  // Sub-level: Advanced Beginner
   // ─────────────────────────────────────────────
   {
     id: 'path12',
@@ -703,8 +605,8 @@ export const PATHS = [
       },
       {
         id: 'p12s3',
-        title: 'Más Clima',
-        titleEn: 'More Weather',
+        title: 'El Clima y La Naturaleza',
+        titleEn: 'Weather and Nature',
         videoUrl: null,
         words: ['tormenta', 'nube', 'estrella', 'luna', 'cielo', 'arcoíris'],
       },
@@ -717,85 +619,59 @@ export const PATHS = [
       },
       {
         id: 'p12s5',
-        title: 'Cantidades',
-        titleEn: 'Quantities',
-        videoUrl: null,
-        words: ['cien', 'precio', 'kilo', 'litro', 'poco', 'mucho'],
-      },
-      {
-        id: 'p12s6',
-        title: 'La Ciudad',
-        titleEn: 'The City',
-        videoUrl: null,
-        words: ['calle', 'avenida', 'esquina', 'semáforo', 'acera', 'plaza'],
-      },
-      {
-        id: 'p12s7',
         title: 'Sentimientos',
         titleEn: 'Feelings',
         videoUrl: null,
-        words: ['emocionado', 'nervioso', 'sorprendido', 'aburrido', 'ocupado', 'tranquilo'],
+        words: ['emocionado', 'nervioso', 'sorprendido', 'aburrido', 'tranquilo', 'ocupado'],
       },
     ],
   },
 
   // ─────────────────────────────────────────────
-  // PATH 13 — Verbos Finales
-  // Sub-level: Advanced Beginner
+  // TIER 4 — INTERMEDIATE
+  // Path 13 | English removed from drill prompts
+  // Focus: frequency adverbs, paradigm completion, activity verbs
   // ─────────────────────────────────────────────
+
   {
     id: 'path13',
-    title: 'Verbos Finales',
-    titleEn: 'Final Verbs',
+    title: 'Verbos y Matices',
+    titleEn: 'Verbs and Nuance',
     subLevel: 'Intermediate',
     videoUrl: null,
     stops: [
       {
         id: 'p13s1',
-        title: 'Salir',
-        titleEn: 'To Leave',
+        title: 'Salir y Celebrar',
+        titleEn: 'To Leave and Celebrate',
         videoUrl: null,
-        words: ['salir', 'salgo', 'sales', 'fiesta', 'invitación', 'evento'],
+        words: ['salgo', 'sales', 'fiesta', 'cumpleaños', 'boda', 'celebración'],
       },
       {
         id: 'p13s2',
-        title: 'Sale, Salimos, Salen',
-        titleEn: 'He/She Leaves, We Leave, They Leave',
+        title: 'Frecuencia',
+        titleEn: 'Frequency',
         videoUrl: null,
-        words: ['sale', 'salimos', 'salen', 'celebración', 'cumpleaños', 'boda'],
+        words: ['siempre', 'nunca', 'todavía', 'ya', 'a veces', 'pronto'],
       },
       {
         id: 'p13s3',
-        title: 'Escuchar',
-        titleEn: 'To Listen',
-        videoUrl: null,
-        words: ['escuchar', 'escucho', 'escuchas', 'música', 'canción', 'radio'],
-      },
-      {
-        id: 'p13s4',
-        title: 'Escucha, Escuchamos, Escuchan',
-        titleEn: 'He/She Listens, We Listen, They Listen',
-        videoUrl: null,
-        words: ['escucha', 'escuchamos', 'escuchan', 'sonido', 'ruido', 'silencio'],
-      },
-      {
-        id: 'p13s5',
         title: 'Leer y Escribir',
         titleEn: 'To Read and To Write',
         videoUrl: null,
-        words: ['leer', 'leo', 'lees', 'escribir', 'escribo', 'escribes'],
+        words: ['leo', 'lees', 'escribo', 'escribes', 'libro', 'periódico'],
       },
       {
-        id: 'p13s6',
-        title: 'Lee, Leemos, Leen + Escribe, Escribimos, Escriben',
-        titleEn: 'He/She Reads, We Read, They Read + Writes, Write, Write',
+        id: 'p13s4',
+        title: 'Escuchar y Ver',
+        titleEn: 'To Listen and To See',
         videoUrl: null,
-        words: ['lee', 'leemos', 'leen', 'escribe', 'escribimos', 'escriben'],
+        words: ['escucha', 'escuchan', 've', 'ven', 'sonido', 'silencio'],
       },
       {
-        id: 'p13s7',
-        title: 'Más Verbos',
-        titleEn: 'More Verbs',
+        id: 'p13s5',
+        title: 'Actividades',
+        titleEn: 'Activities',
         videoUrl: null,
         words: ['caminar', 'correr', 'nadar', 'bailar', 'cantar', 'jugar'],
       },
@@ -805,10 +681,9 @@ export const PATHS = [
 ];
 
 // ─────────────────────────────────────────────
-// Helper functions
+// Helper functions — unchanged
 // ─────────────────────────────────────────────
 
-// Get all word es values for a given stopId
 export function getStopWords(stopId) {
   for (const path of PATHS) {
     for (const stop of path.stops) {
@@ -818,12 +693,10 @@ export function getStopWords(stopId) {
   return [];
 }
 
-// Get path object by pathId
 export function getPath(pathId) {
   return PATHS.find(p => p.id === pathId) || null;
 }
 
-// Get stop object by stopId
 export function getStop(stopId) {
   for (const path of PATHS) {
     for (const stop of path.stops) {
@@ -833,7 +706,6 @@ export function getStop(stopId) {
   return null;
 }
 
-// Get pathId for a given stopId
 export function getPathIdForStop(stopId) {
   for (const path of PATHS) {
     for (const stop of path.stops) {
@@ -843,7 +715,6 @@ export function getPathIdForStop(stopId) {
   return null;
 }
 
-// Check if all stops in a path are complete
 export function isPathComplete(pathId, completedStops) {
   const path = getPath(pathId);
   if (!path) return false;
