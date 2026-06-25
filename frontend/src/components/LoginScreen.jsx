@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
-import { signInWithPopup } from 'firebase/auth';
+import { signInWithPopup, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase';
 
 export default function LoginScreen({ onGuest }) {
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [emailError, setEmailError] = useState('');
+
   const handleSignIn = async () => {
     setLoading(true);
     try { await signInWithPopup(auth, googleProvider); }
     catch (e) { console.error(e); setLoading(false); }
+  };
+
+  const handleEmailSignIn = async () => {
+    setEmailError('');
+    setLoading(true);
+    try { await signInWithEmailAndPassword(auth, email, password); }
+    catch (e) { setEmailError(e.message); setLoading(false); }
   };
   return (
     <div className="app-outer">
@@ -43,6 +54,41 @@ export default function LoginScreen({ onGuest }) {
               style={{ background: 'hsl(var(--primary))', color: 'white', boxShadow: '0 4px 14px rgba(198,11,30,0.35)' }}
             >
               {loading ? 'Signing in…' : 'Sign in with Google'}
+            </button>
+
+            <div className="my-4 flex items-center gap-2">
+              <div className="flex-1 h-px" style={{ background: 'hsl(var(--border))' }} />
+              <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>or dev login</span>
+              <div className="flex-1 h-px" style={{ background: 'hsl(var(--border))' }} />
+            </div>
+
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="w-full mb-2 px-4 py-2.5 rounded-xl text-sm border outline-none"
+              style={{ background: 'hsl(var(--background))', color: 'hsl(var(--foreground))', borderColor: 'hsl(var(--border))' }}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleEmailSignIn()}
+              className="w-full mb-2 px-4 py-2.5 rounded-xl text-sm border outline-none"
+              style={{ background: 'hsl(var(--background))', color: 'hsl(var(--foreground))', borderColor: 'hsl(var(--border))' }}
+            />
+            {emailError && (
+              <p className="text-xs mb-2 text-left" style={{ color: 'hsl(var(--destructive))' }}>{emailError}</p>
+            )}
+            <button
+              onClick={handleEmailSignIn}
+              disabled={loading || !email || !password}
+              className="w-full py-2.5 px-6 rounded-xl font-medium text-sm transition-all duration-200 mb-4"
+              style={{ background: 'hsl(var(--muted))', color: 'hsl(var(--foreground))' }}
+            >
+              {loading ? 'Signing in…' : 'Sign in with Email'}
             </button>
 
             <button
