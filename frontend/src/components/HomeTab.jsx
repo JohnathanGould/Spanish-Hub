@@ -38,6 +38,7 @@ export default function HomeTab({ onNavigate, userData, streak, dailyProgress, d
   // Word of the day — seeded by date hash, from unmastered words
   const hashSeed = [...today].reduce((a, c) => a + c.charCodeAt(0), 0);
   const wotd = MASTER[hashSeed % MASTER.length];
+  const wotdSentence = wotd?.contextSentence?.[Math.floor(Math.random() * wotd.contextSentence.length)] ?? '';
 
   const lastSession = userData?.sessions?.[0];
 
@@ -131,13 +132,13 @@ export default function HomeTab({ onNavigate, userData, streak, dailyProgress, d
               <div className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
                 {wotd.en}
               </div>
-              {wotd.contextSentence && (
+              {wotdSentence && (
                 <div className="flex items-center gap-1 mt-0.5">
                   <span className="text-xs italic" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                    {wotd.contextSentence}
+                    {wotdSentence}
                   </span>
                   <button
-                    onClick={() => speak(wotd.contextSentence, languageConfig.sourceLanguage)}
+                    onClick={() => speak(wotdSentence, languageConfig.sourceLanguage)}
                     className="rounded-full flex items-center justify-center flex-shrink-0"
                     style={{ width: 18, height: 18, background: '#DCFCE7', border: '1px solid #86EFAC', fontSize: 10 }}
                     aria-label="Pronounce sentence"

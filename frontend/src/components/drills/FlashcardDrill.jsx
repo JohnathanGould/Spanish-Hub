@@ -19,7 +19,7 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
   );
 
   const sentenceQueue = useMemo(() => {
-    const filtered = words.filter(w => w.contextSentence && w.contextSentence.trim());
+    const filtered = words.filter(w => w.contextSentence?.length);
     return buildNoRepeatQueue(filtered, progress, drillLength);
   }, [words, progress, drillLength]);
 
@@ -40,11 +40,12 @@ export default function FlashcardDrill({ words, progress, onAnswer, onDone, onBa
     : '';
   const canHint = !isSentences && (word.type === 'noun' || word.type === 'phrase');
 
+  const cs = word.contextSentence?.[Math.floor(Math.random() * word.contextSentence.length)] ?? '';
   const frontLabel = isSentences ? `${languageConfig.sourceLanguageName} sentence` : (isEsEn ? languageConfig.sourceLanguageName : languageConfig.targetLanguageName);
-  const frontText = isSentences ? word.contextSentence : (isEsEn ? word.es : word.en);
+  const frontText = isSentences ? cs : (isEsEn ? word.es : word.en);
   const backLabel = isSentences ? languageConfig.targetLanguageName : (isEsEn ? languageConfig.targetLanguageName : languageConfig.sourceLanguageName);
   const backText = isSentences ? (word.sentence?.en || '') : (isEsEn ? word.en : word.es);
-  const speakText = isSentences ? word.contextSentence : word.es;
+  const speakText = isSentences ? cs : word.es;
 
   const handleFlip = () => {
     setFlipped(!flipped);

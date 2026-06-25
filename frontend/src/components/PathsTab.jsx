@@ -22,8 +22,9 @@ import SentenceBuilderDrill from './drills/SentenceBuilderDrill';
 // correct output-drill answer, displaying the word in context
 // ─────────────────────────────────────────────
 function ContextualBinding({ word, onDone }) {
+  const sentence = word.contextSentence?.[Math.floor(Math.random() * word.contextSentence.length)] ?? '';
   useEffect(() => {
-    speak(sanitiseForTTS(word.contextSentence), languageConfig.sourceLanguage);
+    speak(sanitiseForTTS(sentence), languageConfig.sourceLanguage);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const isMasc = word.gender === 'm';
@@ -84,7 +85,7 @@ function ContextualBinding({ word, onDone }) {
           color: 'hsl(var(--foreground))',
           lineHeight: 1.5,
         }}>
-          {word.contextSentence}
+          {sentence}
         </p>
         <p style={{
           fontSize: '0.75rem',
@@ -590,7 +591,7 @@ function StopView({
       if (onDrillAnswer) onDrillAnswer(isCorrect);
       if (isCorrect) {
         setFetchCorrect((n) => n + 1);
-        if (currentItem.word.contextSentence) {
+        if (currentItem.word.contextSentence?.length) {
           setBindingWord({ word: currentItem.word, onDone: handleFetchDone });
           return;
         }
@@ -854,7 +855,7 @@ function StopView({
       if (onDrillAnswer) onDrillAnswer(isCorrect);
       if (isCorrect) {
         setPathFetchCorrect((n) => n + 1);
-        if (currentItem.word.contextSentence) {
+        if (currentItem.word.contextSentence?.length) {
           setBindingWord({ word: currentItem.word, onDone: handlePathFetchDone });
           return;
         }
