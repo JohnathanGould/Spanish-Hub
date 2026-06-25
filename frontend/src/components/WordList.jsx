@@ -1,7 +1,7 @@
 ﻿import { languageConfig } from '../config/languageConfig';
 import React, { useState } from 'react';
 import { Search, Plus, Trash2, ChevronRight, Globe, Package } from 'lucide-react';
-import { VERB_TABLE, NOUN_GROUPS, TOGGLEABLE_CATEGORIES, PRESET_PACKS } from '../content/es-en/words';
+import { VERB_TABLE, TOGGLEABLE_CATEGORIES, PRESET_PACKS } from '../content/es-en/words';
 
 function getActivePreset(categoryEnabled) {
   return PRESET_PACKS.find(p =>
@@ -283,36 +283,6 @@ export default function WordList({ words, allWords, progress, customWords, impor
               ))}
             </Section>
           )}
-
-          {/* Noun groups */}
-          {NOUN_GROUPS.map(g => {
-            const visibleWords = g.words.filter(w => matchesTier(w.es));
-            if (visibleWords.length === 0) return null;
-            return (
-              <Section key={g.title} title={g.title}>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {visibleWords.map(w => (
-                    <div key={w.es} onClick={() => onWordClick(words.find(x => x.es === w.es) || w)}
-                      className="flex items-center gap-2 rounded-lg border p-2 cursor-pointer hover:bg-muted/50 transition-colors"
-                      style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
-                      <MasteryDot es={w.es} progress={progress} />
-                      {w.g ? (
-                        <span className="text-xs font-bold px-1.5 py-0.5 rounded-full flex-1" style={{
-                          background: w.g === 'm' ? '#DBEAFE' : '#FCE7F3',
-                          color: w.g === 'm' ? '#1E40AF' : '#9D174D',
-                        }}>
-                          {w.g === 'm' ? 'el' : 'la'} {w.es}
-                        </span>
-                      ) : (
-                        <span className="text-xs font-bold flex-1">{w.es}</span>
-                      )}
-                      <span className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>{w.en}</span>
-                    </div>
-                  ))}
-                </div>
-              </Section>
-            );
-          })}
 
           {/* Phrases */}
           {phrases.filter(w => matchesTier(w.es)).length > 0 && (

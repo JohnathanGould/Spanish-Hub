@@ -463,6 +463,7 @@ function StopView({
   const stop = getStop(stopId);
   const pathId = getPathIdForStop(stopId);
   const path = getPath(pathId);
+  const pathNum = PATHS.findIndex(p => p.id === pathId) + 1;
 
   const [phase, setPhase] = useState('preview'); // 'preview' | 'intro' | 'transition' | 'fetch' | 'results' | 'stop-complete' | 'path-fetch' | 'path-fetch-result' | 'path-fetch-pass' | 'path-fetch-fail' | 'intro-complete'
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
@@ -791,7 +792,7 @@ function StopView({
               style={{ color: 'hsl(var(--primary))' }}
               data-testid="stop-complete-path-done"
             >
-              🎉 {path.title} complete!
+              🎉 Path {pathNum} — {path.title} complete!
             </p>
           )}
 
@@ -965,7 +966,7 @@ function StopView({
             Path Complete! 🎉
           </p>
           <p className="text-base mt-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
-            You mastered all 25 words in {path.title}
+            You mastered all 25 words in Path {pathNum} — {path.title}
           </p>
           <p className="text-base font-semibold mt-6" style={{ color: 'hsl(var(--foreground))' }}
             data-testid="path-fetch-pass-reward">
@@ -1171,7 +1172,7 @@ function StopView({
         }}
       >
         <p className="text-[11px] uppercase tracking-wider opacity-80">
-          {path.title} · Stop {path.stops.findIndex(s => s.id === stopId) + 1} of {path.stops.length}
+          Path {pathNum} — {path.title} · Stop {path.stops.findIndex(s => s.id === stopId) + 1} of {path.stops.length}
         </p>
         <h2 className="text-lg font-semibold mt-0.5" data-testid="stop-view-title">
           {stop.title}
@@ -1347,7 +1348,7 @@ export default function PathsTab({
         </button>
         <div className="mb-2">
           <h1 className="text-2xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
-            {path.title}
+            Path {PATHS.findIndex(p => p.id === path.id) + 1} — {path.title}
           </h1>
           <p className="text-sm mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
             {path.titleEn}
@@ -1593,7 +1594,7 @@ export default function PathsTab({
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <h2 className="text-lg font-semibold truncate">
-                      {path.title}
+                      Path {PATHS.findIndex(p => p.id === path.id) + 1} — {path.title}
                     </h2>
                     <p className="text-xs opacity-90 mt-0.5 truncate">
                       {path.titleEn}
