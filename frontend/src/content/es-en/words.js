@@ -52,10 +52,10 @@ export const MASTER = [
   { es: 'mucho gusto', en: 'nice to meet you', type: 'phrase', group: 'Core', contextSentence: ["Hola, mucho gusto, soy mexicano."], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fmucho-gusto.jpg?alt=media", theme: "greetings" },
   { es: 'encantado', en: 'pleased to meet you', type: 'phrase', group: 'Core', contextSentence: ["Hola, encantado, mucho gusto."], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fencantado.jpg?alt=media", theme: "greetings" },
   { es: 'hasta luego', en: 'see you later', type: 'phrase', group: 'Core', contextSentence: ["Hasta luego, amigo, y buenas noches."], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fhasta-luego.jpg?alt=media", theme: "greetings" },
-  { es: 'hasta mañana', en: 'see you tomorrow', type: 'phrase', group: 'Core', contextSentence: ["Hasta mañana, amigo."], imageUrl: "https://picsum.photos/seed/hasta-manana/400/400", theme: "greetings" },
+  { es: 'hasta mañana', en: 'see you tomorrow', type: 'phrase', group: 'Core', contextSentence: ["Hasta mañana, amigo."], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fhasta-manana.jpg?alt=media", theme: "greetings" },
   // NEW — p1s3
-  { es: 'me llamo', en: 'my name is', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/mellamo/400/400", theme: "greetings" },
-  { es: '¿cómo te llamas?', en: 'what is your name?', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/comollamas/400/400", theme: "greetings" },
+  { es: 'me llamo', en: 'my name is', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fme-llamo.jpg?alt=media", theme: "greetings" },
+  { es: '¿cómo te llamas?', en: 'what is your name?', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fcomo-te-llamas.jpg?alt=media", theme: "greetings" },
   // NEW — p1s4
   { es: 'no entiendo', en: "i don't understand", type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/noentiendo/400/400", theme: "greetings" },
   { es: 'más despacio', en: 'slower / more slowly', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/masdespacio/400/400", theme: "greetings" },
