@@ -16,6 +16,7 @@ import TypeDrill from './drills/TypeDrill';
 import FillBlankDrill from './drills/FillBlankDrill';
 import GenderDrill from './drills/GenderDrill';
 import SentenceBuilderDrill from './drills/SentenceBuilderDrill';
+import VocabFillBlankDrill from './drills/VocabFillBlankDrill';
 
 // ─────────────────────────────────────────────
 // Lock logic
@@ -172,6 +173,8 @@ const DRILL_TYPES = [
   'listen-type-en',           // produce
   'listen-type-sentence-en',  // produce
   'gender',                   // produce
+  'vocab-fill-blank-typed',   // produce
+  'vocab-fill-blank-choice',  // produce
 ];
 
 const DRILL_DIMENSION = {
@@ -571,6 +574,9 @@ function StopView({
       }
       return <GenderDrill key={drillKey} {...sharedWordProps} />;
     }
+    if (drillType === 'vocab-fill-blank-typed' || drillType === 'vocab-fill-blank-choice') {
+      return <VocabFillBlankDrill key={drillKey} mode={drillType === 'vocab-fill-blank-typed' ? 'typed' : 'choice'} {...sharedWordProps} headerOffset={90} />;
+    }
     return <ChoiceDrill key={drillKey} mode={drillType} {...sharedWordProps} headerOffset={80} />;
   }
 
@@ -833,6 +839,9 @@ function StopView({
         return <ChoiceDrill key={drillKey} mode="en-es" {...sharedWordProps} headerOffset={80} />;
       }
       return <GenderDrill key={drillKey} {...sharedWordProps} />;
+    }
+    if (drillType === 'vocab-fill-blank-typed' || drillType === 'vocab-fill-blank-choice') {
+      return <VocabFillBlankDrill key={drillKey} mode={drillType === 'vocab-fill-blank-typed' ? 'typed' : 'choice'} {...sharedWordProps} headerOffset={90} />;
     }
     return <ChoiceDrill key={drillKey} mode={drillType} {...sharedWordProps} headerOffset={80} />;
   }
