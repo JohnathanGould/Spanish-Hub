@@ -622,6 +622,7 @@ export default function SpanishHub() {
     if (view.page === 'drill' && Array.isArray(view.overrideWords) && view.overrideWords.length > 0) {
       return view.overrideWords;
     }
+
     const filtered = MASTER.filter(w => w.group === 'Core' || userData.categoryEnabled[w.group] !== false);
     const filteredSet = new Set(filtered.map(w => w.es));
     const custom = (userData.customWords || []).filter(w => !filteredSet.has(w.es));
@@ -631,8 +632,22 @@ export default function SpanishHub() {
     const importedPackWords = (userData.importedPacks || [])
       .flatMap(p => p.words)
       .filter(w => !masterSet.has(w.es) && !customSet.has(w.es));
-    if (drillMode !== 'all') return [...all.filter(w => masteryLevel(userData.progress, w.es) === drillMode), ...importedPackWords];
-    return [...all, ...importedPackWords];
+
+    // Build the set of words from completed Stops only
+    const completedStopWords = new Set(
+      (userData.completedStops || []).flatMap(stopId => getStopWords(stopId))
+    );
+
+    // Filter to learned words only — exclude articles, particles, conjunctions
+    const EXCLUDED_TYPES = ['article', 'particle', 'conjunction', 'preposition'];
+    const learnedWords = all.filter(w =>
+      completedStopWords.has(w.es) && !EXCLUDED_TYPES.includes(w.type)
+    );
+
+    const baseWords = learnedWords.length > 0 ? learnedWords : all;
+
+    if (drillMode !== 'all') return [...baseWords.filter(w => masteryLevel(userData.progress, w.es) === drillMode), ...importedPackWords];
+    return [...baseWords, ...importedPackWords];
   }, [userData, drillMode, view]);
 
   const addCustomWord = useCallback((wordData) => {
