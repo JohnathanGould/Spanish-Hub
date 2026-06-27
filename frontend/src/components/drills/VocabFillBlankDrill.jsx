@@ -50,12 +50,14 @@ export default function VocabFillBlankDrill({
 
   useEffect(() => { if (isTyped) inputRef.current?.focus(); }, [idx, isTyped]);
 
+  const wordEs = word ? word.es : null;
   const choices = useMemo(() => {
     if (isTyped || !word) return [];
-    const others = pool.filter(w => w.es !== word.es);
+    const others = pool.filter(w => w.es !== wordEs);
     const distractors = shuffle(others).slice(0, 3).map(w => w.es);
-    return shuffle([word.es, ...distractors]);
-  }, [word && word.es, isTyped]);
+    return shuffle([wordEs, ...distractors]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wordEs, isTyped, pool]);
 
   if (!queue.length) {
     return (
