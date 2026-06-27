@@ -27,9 +27,16 @@ export default function VocabFillBlankDrill({
   const isTyped = mode === 'typed';
 
   const pool = useMemo(
-    () => (Array.isArray(words)
-      ? words.filter(w => w && w.es && typeof w.contextSentence === 'string' && w.contextSentence.trim())
-      : []),
+    () => {
+      const filtered = Array.isArray(words)
+        ? words.filter(w => w && w.es && typeof w.contextSentence === 'string' && w.contextSentence.trim())
+        : [];
+      console.log('VocabFillBlank pool:', filtered.length, 'of', words?.length, 'words passed filter');
+      if (filtered.length === 0 && words?.length > 0) {
+        console.log('Sample word:', words[0]);
+      }
+      return filtered;
+    },
     [words],
   );
 
