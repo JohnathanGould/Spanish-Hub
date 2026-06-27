@@ -1,17 +1,103 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronDown, ChevronRight, Lock, Check, Volume2, ImageOff } from 'lucide-react';
+import { ChevronRight, Lock, Check, Volume2, ImageOff } from 'lucide-react';
 import {
   PATHS,
   getPath,
   getStop,
   getPathIdForStop,
   getStopWords,
-  isPathComplete,
 } from '../content/es-en/paths';
 import { MASTER } from '../content/es-en/words';
-import { speak } from '../utils/helpers';
+import { PATH_STAGES } from '../data/pathTiers';
+import { speak, shuffle, sanitiseForTTS } from '../utils/helpers';
+import { languageConfig } from '../config/languageConfig';
 import ChoiceDrill from './drills/ChoiceDrill';
 import TypeDrill from './drills/TypeDrill';
+import FillBlankDrill from './drills/FillBlankDrill';
+import GenderDrill from './drills/GenderDrill';
+import SentenceBuilderDrill from './drills/SentenceBuilderDrill';
+
+// ─────────────────────────────────────────────
+// ContextualBinding — full-screen overlay shown for 2.5s after a
+// correct output-drill answer, displaying the word in context
+// ─────────────────────────────────────────────
+function ContextualBinding({ word, onDone }) {
+  const sentence = word.contextSentence?.[Math.floor(Math.random() * word.contextSentence.length)] ?? '';
+  useEffect(() => {
+    speak(sanitiseForTTS(sentence), languageConfig.sourceLanguage);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const isMasc = word.gender === 'm';
+
+  return (
+    <div
+      onClick={onDone}
+      style={{
+        position: 'fixed', inset: 0, zIndex: 50,
+        background: 'rgba(0,0,0,0.7)',
+        display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center',
+        padding: '2rem', cursor: 'pointer',
+      }}>
+      <div style={{
+        background: 'hsl(var(--card))',
+        borderRadius: '1rem',
+        padding: '2rem',
+        maxWidth: '340px',
+        width: '100%',
+        textAlign: 'center',
+      }}>
+        <p style={{
+          fontSize: '0.75rem',
+          color: 'hsl(var(--muted-foreground))',
+          marginBottom: '0.75rem',
+          textTransform: 'uppercase',
+          letterSpacing: '0.05em',
+        }}>
+          In context
+        </p>
+        {word.gender && (
+          <span style={{
+            display: 'inline-block',
+            fontSize: '0.75rem',
+            fontWeight: 'bold',
+            padding: '0.125rem 0.5rem',
+            borderRadius: '9999px',
+            marginBottom: '0.75rem',
+            background: isMasc ? '#DBEAFE' : '#FCE7F3',
+            color: isMasc ? '#1E40AF' : '#9D174D',
+          }}>
+            {isMasc ? 'el' : 'la'} {word.es}
+          </span>
+        )}
+        {!word.gender && (
+          <p style={{
+            fontSize: '1.125rem',
+            fontWeight: 'bold',
+            color: 'hsl(var(--foreground))',
+            marginBottom: '0.75rem',
+          }}>
+            {word.es}
+          </p>
+        )}
+        <p style={{
+          fontSize: '1.25rem',
+          color: 'hsl(var(--foreground))',
+          lineHeight: 1.5,
+        }}>
+          {sentence}
+        </p>
+        <p style={{
+          fontSize: '0.75rem',
+          color: 'hsl(var(--muted-foreground))',
+          marginTop: '1rem',
+        }}>
+          Tap to continue
+        </p>
+      </div>
+    </div>
+  );
+}
 
 // ─────────────────────────────────────────────
 // Lock logic
@@ -19,7 +105,7 @@ import TypeDrill from './drills/TypeDrill';
 // Stop N unlocked when Stop N-1 ID is in completedStops[]
 // First Stop of Path 2–12 unlocked when final Stop of previous Path is in completedStops[]
 // ─────────────────────────────────────────────
-function isStopUnlocked(stopId, completedStops) {
+function isStopUnlocked(stopId, completedStops, completedPaths = []) {
   if (stopId === 'p1s1') return true;
   if (completedStops.includes(stopId)) return true;
 
@@ -31,22 +117,23 @@ function isStopUnlocked(stopId, completedStops) {
   const stopIndex = path.stops.findIndex((s) => s.id === stopId);
   if (stopIndex === -1) return false;
 
+  // First stop of a path (not Path 1) — unlocked when previous Path is in completedPaths
   if (stopIndex === 0) {
     const pathArrayIndex = PATHS.findIndex((p) => p.id === pathId);
     if (pathArrayIndex <= 0) return false;
     const prevPath = PATHS[pathArrayIndex - 1];
-    const prevFinalStopId = prevPath.stops[prevPath.stops.length - 1].id;
-    return completedStops.includes(prevFinalStopId);
+    return completedPaths.includes(prevPath.id);
   }
 
+  // Otherwise — unlocked when previous stop in same path is completed
   const prevStopId = path.stops[stopIndex - 1].id;
   return completedStops.includes(prevStopId);
 }
 
-function isPathUnlocked(pathId, completedStops) {
+function isPathUnlocked(pathId, completedStops, completedPaths = []) {
   const path = getPath(pathId);
   if (!path) return false;
-  return isStopUnlocked(path.stops[0].id, completedStops);
+  return isStopUnlocked(path.stops[0].id, completedStops, completedPaths);
 }
 
 // ─────────────────────────────────────────────
@@ -71,11 +158,11 @@ function WordIntroCard({ word, isLast, onNext }) {
             alt={word.es}
             onError={() => setImgErr(true)}
             data-testid={`word-intro-image-${word.es}`}
-            style={{ width: '100%', maxHeight: '55vw', objectFit: 'cover', borderRadius: '16px', display: 'block' }}
+            style={{ width: '100%', maxWidth: '240px', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '16px', display: 'block', margin: '0 auto' }}
           />
         ) : (
           <div
-            style={{ width: '100%', maxHeight: '55vw', borderRadius: '16px', background: 'hsl(var(--muted))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ width: '100%', maxWidth: '240px', aspectRatio: '1 / 1', borderRadius: '16px', background: 'hsl(var(--muted))', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto' }}
             data-testid={`word-intro-image-fallback-${word.es}`}
           >
             <ImageOff className="w-10 h-10" style={{ color: 'hsl(var(--muted-foreground))' }} />
@@ -107,13 +194,28 @@ function WordIntroCard({ word, isLast, onNext }) {
 
       {/* Word and translation below image */}
       <div className="text-center">
-        <p
-          className="text-3xl font-bold"
-          style={{ color: 'hsl(var(--foreground))' }}
-          data-testid={`word-intro-es-${word.es}`}
-        >
-          {word.es}
-        </p>
+        <div className="flex items-center justify-center gap-2 flex-wrap mb-1">
+          {word.gender ? (
+            <p
+              className="text-2xl font-bold px-3 py-1 rounded-2xl"
+              data-testid={`word-intro-es-${word.es}`}
+              style={{
+                background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+                color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
+              }}
+            >
+              {word.gender === 'm' ? 'el' : 'la'} {word.es}
+            </p>
+          ) : (
+            <p
+              className="text-3xl font-bold"
+              style={{ color: 'hsl(var(--foreground))' }}
+              data-testid={`word-intro-es-${word.es}`}
+            >
+              {word.es}
+            </p>
+          )}
+        </div>
         <p
           className="text-base mt-1"
           style={{ color: 'hsl(var(--muted-foreground))' }}
@@ -127,31 +229,220 @@ function WordIntroCard({ word, isLast, onNext }) {
 }
 
 // ─────────────────────────────────────────────
-// buildGauntletQueue — 20-item interleaved drill queue
-// 4 rounds × 5 words, shuffled within each round
+// buildFetchQueue — two shuffled decks, drawn in parallel
+//
+// Word deck:  5 Stop words, reshuffled when exhausted.
+//   On reshuffle, words are weighted by FSRS weakness —
+//   lower stability = higher weight = appears more often.
+//
+// Drill deck: 4 drill types, reshuffled when exhausted.
+//   On reshuffle, drill types are weighted by desirable difficulty —
+//   higher failure rate in drillStats = higher weight = appears more often.
+//   On first session (no drillStats yet) all drill types are equal weight.
+//
+// Produces exactly FETCH_LENGTH items.
 // ─────────────────────────────────────────────
-function buildGauntletQueue(words) {
-  const drillTypes = ['es-en', 'en-es', 'hear-choose', 'type-en-es'];
-  const queue = [];
-  for (const drillType of drillTypes) {
-    const round = words.map((word) => ({ wordId: word.es, drillType, word }));
-    for (let i = round.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [round[i], round[j]] = [round[j], round[i]];
+const FETCH_LENGTH = 20;
+const DRILL_TYPES = [
+  'es-en',                    // read
+  'hear-choose-es',           // hear
+  'hear-choose-en',           // hear
+  'listen-type-es',           // hear
+  'listen-type-sentence-es',  // hear
+  'en-es',                    // produce
+  'type-en-es',               // produce
+  'listen-type-en',           // produce
+  'listen-type-sentence-en',  // produce
+  'gender',                   // produce
+];
+
+const DRILL_DIMENSION = {
+  'es-en':                    'read',
+  'hear-choose-es':           'hear',
+  'hear-choose-en':           'hear',
+  'listen-type-es':           'hear',
+  'listen-type-sentence-es':  'hear',
+  'en-es':                    'produce',
+  'type-en-es':               'produce',
+  'listen-type-en':           'produce',
+  'listen-type-sentence-en':  'produce',
+  'gender':                   'produce',
+};
+
+function weightedShuffle(items, weights) {
+  // Returns a new array of items ordered by weighted random draw without replacement.
+  // Each item's probability of being drawn next is proportional to its weight.
+  const pool = items.map((item, i) => ({ item, weight: weights[i] }));
+  const result = [];
+  while (pool.length > 0) {
+    const total = pool.reduce((sum, e) => sum + e.weight, 0);
+    let r = Math.random() * total;
+    let idx = pool.length - 1; // fallback to last item if floating point never hits 0
+    for (let i = 0; i < pool.length; i++) {
+      if (r < pool[i].weight) { idx = i; break; }
+      r -= pool[i].weight;
     }
-    queue.push(...round);
+    result.push(pool[idx].item);
+    pool.splice(idx, 1);
   }
-  for (let i = queue.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [queue[i], queue[j]] = [queue[j], queue[i]];
+  return result;
+}
+
+function buildWordDeck(words, progress) {
+  const now = new Date();
+  const weights = words.map((word) => {
+    const p = progress[word.es] || {};
+    if (p.produce?.due && new Date(p.produce.due) <= now) return 3;
+    if (p.hear?.due && new Date(p.hear.due) <= now) return 2;
+    if (p.read?.due && new Date(p.read.due) <= now) return 1;
+    return 0.5;
+  });
+  return weightedShuffle(words, weights);
+}
+
+function buildDrillDeck(progress, words) {
+  // Weight each drill type by its aggregate failure rate across the Stop's words.
+  // failure rate = w / (c + w) from drillStats[drillType].
+  // No drillStats yet → equal weight of 1 for all types.
+  const weights = DRILL_TYPES.map((dt) => {
+    let totalC = 0;
+    let totalW = 0;
+    for (const word of words) {
+      const stats = progress[word.es]?.drillStats?.[dt];
+      if (stats) { totalC += stats.c || 0; totalW += stats.w || 0; }
+    }
+    const total = totalC + totalW;
+    if (total === 0) return 1;
+    return Math.max(0.1, totalW / total);
+  });
+  return weightedShuffle(DRILL_TYPES, weights);
+}
+
+function reshuffleWithNoBoundaryRepeat(buildDeck, lastItem, getKey) {
+  // Builds a new deck and swaps the first item if it matches the last item
+  // from the previous deck — prevents repeats at deck boundaries.
+  const deck = buildDeck();
+  if (deck.length > 1 && getKey(deck[0]) === getKey(lastItem)) {
+    const swapIdx = Math.floor(Math.random() * (deck.length - 1)) + 1;
+    [deck[0], deck[swapIdx]] = [deck[swapIdx], deck[0]];
   }
-  return queue;
+  return deck;
+}
+
+const enforceMinGap = (queue, minGap = 3) => {
+  const groups = {};
+  queue.forEach(item => {
+    if (!groups[item.wordId]) groups[item.wordId] = [];
+    groups[item.wordId].push(item);
+  });
+  const sorted = Object.values(groups).sort((a, b) => b.length - a.length);
+  const result = [];
+  const maxAttempts = queue.length * 10;
+  let attempts = 0;
+  const pool = [];
+  const maxLen = Math.max(...sorted.map(g => g.length));
+  for (let i = 0; i < maxLen; i++) {
+    sorted.forEach(group => {
+      if (group[i]) pool.push(group[i]);
+    });
+  }
+  const remaining = [...pool];
+  const deferred = [];
+  for (let i = 0; i < queue.length && attempts < maxAttempts; attempts++) {
+    const source = deferred.length > 0 && deferred[0].deferredAt <= i - minGap
+      ? deferred
+      : remaining;
+    let placed = false;
+    for (let j = 0; j < source.length; j++) {
+      const candidate = source[j];
+      const recentWords = result.slice(-minGap).map(r => r.wordId);
+      if (!recentWords.includes(candidate.wordId)) {
+        result.push(candidate);
+        source.splice(j, 1);
+        placed = true;
+        i++;
+        break;
+      }
+    }
+    if (!placed && remaining.length > 0) {
+      const item = remaining.shift();
+      deferred.push({ ...item, deferredAt: i });
+    }
+  }
+  deferred.forEach(item => {
+    const { deferredAt, ...clean } = item;
+    result.push(clean);
+  });
+  return result;
+};
+
+function buildFetchQueue(words, progress = {}) {
+  // Deduplicate words by es field to prevent repeats from duplicate entries
+  const uniqueWords = words.filter((w, i, arr) => arr.findIndex(x => x.es === w.es) === i);
+
+  const maxPerWord = Math.ceil(FETCH_LENGTH / uniqueWords.length);
+  const cappedWordPool = uniqueWords.flatMap(word => Array(maxPerWord).fill(word)).slice(0, FETCH_LENGTH);
+  const shuffledWordPool = shuffle(cappedWordPool);
+
+  let drillDeck = buildDrillDeck(progress, uniqueWords);
+  const queue = [];
+  for (let i = 0; i < shuffledWordPool.length; i++) {
+    if (drillDeck.length === 0) {
+      drillDeck = buildDrillDeck(progress, uniqueWords);
+    }
+    const word = shuffledWordPool[i];
+    let drillType = drillDeck.shift();
+    if (drillType === 'gender' && !(word.type === 'noun' && (word.gender === 'm' || word.gender === 'f'))) {
+      drillType = 'en-es';
+    }
+    queue.push({ wordId: word.es, drillType, word });
+  }
+
+  const spaced = enforceMinGap(queue, 3);
+  return spaced;
+}
+
+const PATH_FETCH_LENGTH = 25;
+const PATH_FETCH_PASS_THRESHOLD = 0.80;
+
+function buildPathWordPool(pathId) {
+  const path = getPath(pathId);
+  if (!path) return [];
+  const wordStrings = path.stops.flatMap((stop) => getStopWords(stop.id));
+  return wordStrings
+    .map((es) => MASTER.find((w) => w.es === es))
+    .filter(Boolean);
+}
+
+function buildPathFetchQueue(pathWords, progress) {
+  const uniqueWords = pathWords.filter((w, i, arr) => arr.findIndex((x) => x.es === w.es) === i);
+
+  const maxPerWord = Math.ceil(PATH_FETCH_LENGTH / uniqueWords.length);
+  const cappedWordPool = uniqueWords.flatMap(word => Array(maxPerWord).fill(word)).slice(0, PATH_FETCH_LENGTH);
+  const shuffledWordPool = shuffle(cappedWordPool);
+
+  let drillDeck = buildDrillDeck(progress, uniqueWords);
+  const queue = [];
+  for (let i = 0; i < shuffledWordPool.length; i++) {
+    if (drillDeck.length === 0) {
+      drillDeck = buildDrillDeck(progress, uniqueWords);
+    }
+    const word = shuffledWordPool[i];
+    let drillType = drillDeck.shift();
+    if (drillType === 'gender' && !(word.type === 'noun' && (word.gender === 'm' || word.gender === 'f'))) {
+      drillType = 'en-es';
+    }
+    queue.push({ wordId: word.es, drillType, word });
+  }
+
+  const spaced = enforceMinGap(queue, 3);
+  return spaced;
 }
 
 const PASS_THRESHOLD = 0.80;
 
 // ─────────────────────────────────────────────
-// StopView — Stop detail screen + intro + gauntlet drill flow
+// StopView — Stop detail screen + intro + fetch drill flow
 // ─────────────────────────────────────────────
 function StopView({
   stopId,
@@ -160,26 +451,36 @@ function StopView({
   onUpdateWordProgress,
   onAwardBones,
   onCompleteStop,
+  onCompletePathFetch,
   fetchStopWords,
   progress = {},
   completedStops = [],
   completedPaths = [],
   onShowCertificate,
-  onDrillAnswer, // FIX 2: callback to increment dailyProgress in SpanishHub
+  onDrillAnswer,
+  strictTyping,
 }) {
   const stop = getStop(stopId);
   const pathId = getPathIdForStop(stopId);
   const path = getPath(pathId);
+  const pathNum = PATHS.findIndex(p => p.id === pathId) + 1;
 
-  const [phase, setPhase] = useState('preview'); // 'preview' | 'intro' | 'transition' | 'gauntlet' | 'results' | 'stop-complete' | 'intro-complete'
+  const [phase, setPhase] = useState('preview'); // 'preview' | 'intro' | 'transition' | 'fetch' | 'results' | 'stop-complete' | 'path-fetch' | 'path-fetch-result' | 'path-fetch-pass' | 'path-fetch-fail' | 'intro-complete'
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [gauntletQueue, setGauntletQueue] = useState([]);
-  const [gauntletIndex, setGauntletIndex] = useState(0);
-  const [gauntletCorrect, setGauntletCorrect] = useState(0);
-  const gauntletQueueRef = useRef([]);
+  const [fetchQueue, setFetchQueue] = useState([]);
+  const [fetchIndex, setFetchIndex] = useState(0);
+  const [fetchCorrect, setFetchCorrect] = useState(0);
+  const fetchQueueRef = useRef([]);
+  const pathFetchQueueRef = useRef([]);
+  const [pathFetchQueue, setPathFetchQueue] = useState([]);
+  const [pathFetchIndex, setPathFetchIndex] = useState(0);
+  const [pathFetchCorrect, setPathFetchCorrect] = useState(0);
+  const [pathFetchWrongWords, setPathFetchWrongWords] = useState([]);
   const [finalScore, setFinalScore] = useState(null);
   const [finalTotal, setFinalTotal] = useState(null);
+  const [bindingWord, setBindingWord] = useState(null);
 
+  // ── Initial word list (for preview screen, before Begin reorders by FSRS weakness) ──
   const initialWordStrings = getStopWords(stopId);
   const initialWords = initialWordStrings.map((es) => {
     const entry = MASTER.find((w) => w.es === es);
@@ -206,6 +507,21 @@ function StopView({
     );
   }
 
+  // Resolve word strings into full MASTER entries; fall back to {es, en: es} if missing
+  // (words state initialised at top; reordered by fetchStopWords on Begin tap)
+
+  if (bindingWord) {
+    return (
+      <ContextualBinding
+        word={bindingWord.word}
+        onDone={() => {
+          setBindingWord(null);
+          bindingWord.onDone();
+        }}
+      />
+    );
+  }
+
   const startIntro = () => {
     setCurrentWordIndex(0);
     setPhase('intro');
@@ -221,13 +537,13 @@ function StopView({
 
   // ── Phase: transition ──────────────────────────────────────────────
   if (phase === 'transition') {
-    const startGauntlet = () => {
-      const queue = buildGauntletQueue(words);
-      gauntletQueueRef.current = queue;
-      setGauntletQueue(queue);
-      setGauntletIndex(0);
-      setGauntletCorrect(0);
-      setPhase('gauntlet');
+    const startFetch = () => {
+      const queue = buildFetchQueue(words, progress);
+      fetchQueueRef.current = queue;
+      setFetchQueue(queue);
+      setFetchIndex(0);
+      setFetchCorrect(0);
+      setPhase('fetch');
     };
 
     return (
@@ -251,7 +567,7 @@ function StopView({
           <button
             type="button"
             data-testid="stop-view-lets-go-btn"
-            onClick={startGauntlet}
+            onClick={startFetch}
             className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
             style={{ background: 'hsl(var(--primary))' }}
           >
@@ -262,78 +578,109 @@ function StopView({
     );
   }
 
-  // ── Phase: gauntlet ────────────────────────────────────────────────
-  if (phase === 'gauntlet') {
-    const currentItem = gauntletQueueRef.current[gauntletIndex];
+  // ── Phase: fetch ────────────────────────────────────────────────
+  if (phase === 'fetch') {
+    const currentItem = fetchQueueRef.current[fetchIndex];
     if (!currentItem) {
       return null;
     }
 
-    const isLast = gauntletQueueRef.current.length > 0 && gauntletIndex >= gauntletQueueRef.current.length - 1;
+    const isLast = fetchQueueRef.current.length > 0 && fetchIndex >= fetchQueueRef.current.length - 1;
 
-    // FIX 2: call onDrillAnswer on every answer (correct or incorrect) to credit dailyProgress
-    const handleGauntletAnswer = (wordEs, isCorrect) => {
-      if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true);
+    const handleFetchAnswer = (wordEs, isCorrect) => {
+      if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true, currentItem.drillType);
       if (onDrillAnswer) onDrillAnswer(isCorrect);
-      if (isCorrect) setGauntletCorrect((n) => n + 1);
-    };
-
-    const handleGauntletDone = () => {
-      if (gauntletQueueRef.current.length === 0) return;
-      if (isLast) {
-        setPhase('results');
-      } else {
-        setGauntletIndex((i) => i + 1);
+      if (isCorrect) {
+        setFetchCorrect((n) => n + 1);
+        if (currentItem.word.contextSentence?.length) {
+          setBindingWord({ word: currentItem.word, onDone: handleFetchDone });
+          return;
+        }
       }
     };
 
-    const handleGauntletBack = () => {
-      if (gauntletIndex > 0) {
-        setGauntletIndex((i) => i - 1);
+    const handleFetchDone = () => {
+      if (fetchQueueRef.current.length === 0) return;
+      if (isLast) {
+        setPhase('results');
+      } else {
+        setFetchIndex((i) => i + 1);
+      }
+    };
+
+    const handleFetchBack = () => {
+      if (fetchIndex > 0) {
+        setFetchIndex((i) => i - 1);
       } else {
         setPhase('transition');
       }
     };
 
+    // drillWords: target word first, then distractors for choice display
     const drillWords = [currentItem.word, ...words.filter(w => w.es !== currentItem.word.es)];
 
-    if (currentItem.drillType === 'type-en-es') {
-      return (
-        <TypeDrill
-          key={`gauntlet-${gauntletIndex}-${currentItem.word.es}`}
-          mode="type-en-es"
-          words={drillWords}
-          progress={{}}
-          drillLength={1}
-          onAnswer={handleGauntletAnswer}
-          onDone={handleGauntletDone}
-          onBack={handleGauntletBack}
-        />
-      );
-    }
+    // forcedProgress: give the target word a very high wrong count so spacedRepetitionSort
+    // always scores it highest (weight 5 via p.w > p.c * 0.5 branch).
+    // Distractors get s:6 so they score 0.5. Max distractor score = 0.5 * 1.0 = 0.5.
+    // Min target score = 5 * 0.0001 = 0.0005 — target always wins.
+    const forcedProgress = {};
+    drillWords.forEach((w, i) => {
+      forcedProgress[w.es] = i === 0
+        ? { s: 0, c: 0, w: 999 }   // target: weight 5, always drawn first
+        : { s: 6, c: 99, w: 0 };   // distractor: weight 0.5, never drawn first
+    });
 
-    return (
-      <ChoiceDrill
-        key={`gauntlet-${gauntletIndex}-${currentItem.word.es}`}
-        mode={currentItem.drillType}
-        words={drillWords}
-        progress={{}}
-        drillLength={1}
-        onAnswer={handleGauntletAnswer}
-        onDone={handleGauntletDone}
-        onBack={handleGauntletBack}
-      />
-    );
+    const drillKey = `fetch-${fetchIndex}-${currentItem.word.es}`;
+    const drillType = currentItem.drillType;
+    const sharedWordProps = {
+      words: drillWords,
+      progress: forcedProgress,
+      drillLength: 1,
+      counterOverride: `${fetchIndex + 1} / ${FETCH_LENGTH}`,
+      onAnswer: handleFetchAnswer,
+      onDone: handleFetchDone,
+      onBack: handleFetchBack,
+      strictMode: strictTyping,
+    };
+
+    if (drillType === 'type-en-es') {
+      return <TypeDrill key={drillKey} mode="type-en-es" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'listen-type-es') {
+      return <TypeDrill key={drillKey} mode="listen-type" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'listen-type-en') {
+      return <TypeDrill key={drillKey} mode="listen-type-en-es" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'listen-type-sentence-es') {
+      return <TypeDrill key={drillKey} mode="listen-type-sentence" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'listen-type-sentence-en') {
+      return <TypeDrill key={drillKey} mode="listen-type-sentence-en-es" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'hear-choose-es') {
+      return <ChoiceDrill key={drillKey} mode="hear-choose" {...sharedWordProps} headerOffset={80} />;
+    }
+    if (drillType === 'hear-choose-en') {
+      return <ChoiceDrill key={drillKey} mode="hear-choose-en-es" {...sharedWordProps} headerOffset={80} />;
+    }
+    if (drillType === 'gender') {
+      if (!(currentItem.word.type === 'noun' && (currentItem.word.gender === 'm' || currentItem.word.gender === 'f'))) {
+        return <ChoiceDrill key={drillKey} mode="en-es" {...sharedWordProps} headerOffset={80} />;
+      }
+      return <GenderDrill key={drillKey} {...sharedWordProps} />;
+    }
+    return <ChoiceDrill key={drillKey} mode={drillType} {...sharedWordProps} headerOffset={80} />;
   }
 
   // ── Phase: results ─────────────────────────────────────────────────
   if (phase === 'results') {
-    const passed = gauntletQueue.length > 0 &&
-      (gauntletCorrect / gauntletQueue.length) >= PASS_THRESHOLD;
+    const passed = fetchQueue.length > 0 &&
+      (fetchCorrect / fetchQueue.length) >= PASS_THRESHOLD;
 
     if (passed) {
-      setFinalScore(gauntletCorrect);
-      setFinalTotal(gauntletQueue.length);
+      setFinalScore(fetchCorrect);
+      setFinalTotal(fetchQueue.length);
       if (onCompleteStop) onCompleteStop(stopId);
       if (onAwardBones) onAwardBones(2);
       setPhase('stop-complete');
@@ -341,11 +688,11 @@ function StopView({
     }
 
     const handleRetry = () => {
-      const queue = buildGauntletQueue(words);
-      gauntletQueueRef.current = queue;
-      setGauntletQueue(queue);
-      setGauntletIndex(0);
-      setGauntletCorrect(0);
+      const queue = buildFetchQueue(words, progress);
+      fetchQueueRef.current = queue;
+      setFetchQueue(queue);
+      setFetchIndex(0);
+      setFetchCorrect(0);
       setPhase('transition');
     };
 
@@ -364,7 +711,7 @@ function StopView({
           </p>
           <p className="text-base mt-3" style={{ color: 'hsl(var(--muted-foreground))' }}
             data-testid="results-score">
-            You got {gauntletCorrect} of {gauntletQueue.length} correct — you need 80% to advance
+            You got {fetchCorrect} of {fetchQueue.length} correct — you need 80% to advance
           </p>
           <button type="button" data-testid="results-retry-btn" onClick={handleRetry}
             className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
@@ -378,9 +725,19 @@ function StopView({
 
   // ── Phase: stop-complete (only reachable on pass) ─────────────────
   if (phase === 'stop-complete') {
-    const pathDoneNow =
-      isPathComplete(path.id, [...completedStops, stopId]) ||
-      completedPaths.includes(path.id);
+    const isLastStop = path.stops[path.stops.length - 1].id === stopId;
+    const pathAlreadyComplete = completedPaths.includes(path.id);
+
+    const startPathFetch = () => {
+      const pathWords = buildPathWordPool(path.id);
+      const queue = buildPathFetchQueue(pathWords, progress);
+      pathFetchQueueRef.current = queue;
+      setPathFetchQueue(queue);
+      setPathFetchIndex(0);
+      setPathFetchCorrect(0);
+      setPathFetchWrongWords([]);
+      setPhase('path-fetch');
+    };
 
     return (
       <div className="p-4 pb-24" data-testid="stop-complete">
@@ -428,44 +785,51 @@ function StopView({
               You scored {finalScore} of {finalTotal} — {Math.round((finalScore/finalTotal)*100)}%
             </p>
           )}
-          <p
-            className="text-sm mt-2"
-            style={{ color: 'hsl(var(--muted-foreground))' }}
-          >
-            Keep going — the next Stop is unlocked
-          </p>
 
-          {pathDoneNow && (
+          {pathAlreadyComplete && (
             <p
-              className="text-base font-semibold mt-6"
+              className="text-base font-semibold mt-4"
               style={{ color: 'hsl(var(--primary))' }}
               data-testid="stop-complete-path-done"
             >
-              🎉 You completed {path.title}!
+              🎉 Path {pathNum} — {path.title} complete!
             </p>
           )}
 
-          {pathDoneNow && onShowCertificate && (
-            <button
-              type="button"
-              onClick={() => onShowCertificate(path.id)}
-              className="w-full rounded-full font-bold py-3 mt-2"
-              style={{ background: 'hsl(var(--primary))', color: 'white' }}
-              data-testid="stop-complete-certificate-btn"
-            >
-              🎓 View Certificate →
-            </button>
+          {isLastStop && !pathAlreadyComplete ? (
+            <>
+              <p className="text-sm mt-4" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                All 5 Stops done — time for the Path Challenge!
+              </p>
+              <button
+                type="button"
+                data-testid="stop-complete-path-challenge-btn"
+                onClick={startPathFetch}
+                className="w-full rounded-full py-3 mt-6 text-white font-bold transition-transform active:scale-95"
+                style={{ background: 'hsl(var(--primary))' }}
+              >
+                Start Path Challenge 🏆
+              </button>
+            </>
+          ) : (
+            <>
+              {!isLastStop && (
+                <p className="text-sm mt-4" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                  Keep going — the next Stop is unlocked
+                </p>
+              )}
+              <button
+                type="button"
+                data-testid="stop-complete-continue-btn"
+                onClick={isLastStop ? onBack : onNextStop}
+                className="w-full rounded-full py-3 mt-6 text-white font-bold transition-transform active:scale-95"
+                style={{ background: 'hsl(var(--primary))' }}
+              >
+                {isLastStop ? 'Back to Paths' : 'Continue to Next Stop →'}
+              </button>
+            </>
           )}
 
-          <button
-            type="button"
-            data-testid="stop-complete-continue-btn"
-            onClick={onNextStop || onBack}
-            className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
-            style={{ background: 'hsl(var(--primary))' }}
-          >
-            Continue to Next Stop →
-          </button>
           <button
             type="button"
             data-testid="stop-complete-back-btn"
@@ -480,7 +844,218 @@ function StopView({
     );
   }
 
-  // ── Phase: intro-complete ─────────────────────────────────────────
+  // ── Phase: path-fetch ────────────────────────────────────────────
+  if (phase === 'path-fetch') {
+    const currentItem = pathFetchQueueRef.current[pathFetchIndex];
+    if (!currentItem) return null;
+
+    const isLast = pathFetchQueueRef.current.length > 0 && pathFetchIndex >= pathFetchQueueRef.current.length - 1;
+
+    const handlePathFetchAnswer = (wordEs, isCorrect) => {
+      if (onUpdateWordProgress) onUpdateWordProgress(wordEs, isCorrect, true, currentItem.drillType);
+      if (onDrillAnswer) onDrillAnswer(isCorrect);
+      if (isCorrect) {
+        setPathFetchCorrect((n) => n + 1);
+        if (currentItem.word.contextSentence?.length) {
+          setBindingWord({ word: currentItem.word, onDone: handlePathFetchDone });
+          return;
+        }
+      } else {
+        const word = currentItem.word;
+        setPathFetchWrongWords((prev) =>
+          prev.some((w) => w.es === word.es) ? prev : [...prev, word]
+        );
+      }
+    };
+
+    const handlePathFetchDone = () => {
+      if (pathFetchQueueRef.current.length === 0) return;
+      if (isLast) {
+        setPhase('path-fetch-result');
+      } else {
+        setPathFetchIndex((i) => i + 1);
+      }
+    };
+
+    const handlePathFetchBack = () => {
+      if (pathFetchIndex > 0) {
+        setPathFetchIndex((i) => i - 1);
+      } else {
+        setPhase('stop-complete');
+      }
+    };
+
+    const allPathWords = pathFetchQueueRef.current.reduce((acc, item) => {
+      if (!acc.some((w) => w.es === item.word.es)) acc.push(item.word);
+      return acc;
+    }, []);
+    const drillWords = [currentItem.word, ...allPathWords.filter((w) => w.es !== currentItem.word.es)];
+    const forcedProgress = {};
+    drillWords.forEach((w, i) => {
+      forcedProgress[w.es] = i === 0
+        ? { s: 0, c: 0, w: 999 }
+        : { s: 6, c: 99, w: 0 };
+    });
+
+    const drillKey = `path-fetch-${pathFetchIndex}-${currentItem.word.es}`;
+    const drillType = currentItem.drillType;
+    const sharedWordProps = {
+      words: drillWords,
+      progress: forcedProgress,
+      drillLength: 1,
+      counterOverride: `${pathFetchIndex + 1} / ${PATH_FETCH_LENGTH}`,
+      onAnswer: handlePathFetchAnswer,
+      onDone: handlePathFetchDone,
+      onBack: handlePathFetchBack,
+      strictMode: strictTyping,
+    };
+
+    if (drillType === 'type-en-es') {
+      return <TypeDrill key={drillKey} mode="type-en-es" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'listen-type-es') {
+      return <TypeDrill key={drillKey} mode="listen-type" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'listen-type-en') {
+      return <TypeDrill key={drillKey} mode="listen-type-en-es" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'listen-type-sentence-es') {
+      return <TypeDrill key={drillKey} mode="listen-type-sentence" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'listen-type-sentence-en') {
+      return <TypeDrill key={drillKey} mode="listen-type-sentence-en-es" {...sharedWordProps} headerOffset={90} />;
+    }
+    if (drillType === 'hear-choose-es') {
+      return <ChoiceDrill key={drillKey} mode="hear-choose" {...sharedWordProps} headerOffset={80} />;
+    }
+    if (drillType === 'hear-choose-en') {
+      return <ChoiceDrill key={drillKey} mode="hear-choose-en-es" {...sharedWordProps} headerOffset={80} />;
+    }
+    if (drillType === 'gender') {
+      if (!(currentItem.word.type === 'noun' && (currentItem.word.gender === 'm' || currentItem.word.gender === 'f'))) {
+        return <ChoiceDrill key={drillKey} mode="en-es" {...sharedWordProps} headerOffset={80} />;
+      }
+      return <GenderDrill key={drillKey} {...sharedWordProps} />;
+    }
+    return <ChoiceDrill key={drillKey} mode={drillType} {...sharedWordProps} headerOffset={80} />;
+  }
+
+  // ── Phase: path-fetch-result (internal transition) ───────────────
+  if (phase === 'path-fetch-result') {
+    const passed = pathFetchQueue.length > 0 &&
+      (pathFetchCorrect / pathFetchQueue.length) >= PATH_FETCH_PASS_THRESHOLD;
+    if (passed) {
+      if (onCompletePathFetch) onCompletePathFetch(path.id, true);
+      setPhase('path-fetch-pass');
+    } else {
+      setPhase('path-fetch-fail');
+    }
+    return null;
+  }
+
+  // ── Phase: path-fetch-pass ────────────────────────────────────────
+  if (phase === 'path-fetch-pass') {
+    return (
+      <div className="p-4 pb-24" data-testid="path-fetch-pass">
+        <div
+          className="rounded-2xl p-8 flex flex-col items-center text-center"
+          style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
+        >
+          <p className="text-2xl font-bold" style={{ color: 'hsl(var(--foreground))' }}
+            data-testid="path-fetch-pass-title">
+            Path Complete! 🎉
+          </p>
+          <p className="text-base mt-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
+            You mastered all 25 words in Path {pathNum} — {path.title}
+          </p>
+          <p className="text-base font-semibold mt-6" style={{ color: 'hsl(var(--foreground))' }}
+            data-testid="path-fetch-pass-reward">
+            +75 XP · 15 bones 🦴
+          </p>
+          {pathFetchQueue.length > 0 && (
+            <p className="text-sm mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
+              You scored {pathFetchCorrect} of {pathFetchQueue.length} — {Math.round((pathFetchCorrect / pathFetchQueue.length) * 100)}%
+            </p>
+          )}
+          {pathFetchWrongWords.length > 0 && (
+            <div className="mt-4 w-full text-left">
+              <p className="text-sm font-semibold mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                Words to review:
+              </p>
+              <div className="flex flex-col gap-1">
+                {pathFetchWrongWords.map((w) => (
+                  <div key={w.es} className="rounded-lg px-3 py-2 flex justify-between text-sm"
+                    style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}>
+                    <span className="font-semibold" style={{ color: 'hsl(var(--foreground))' }}>{w.es}</span>
+                    <span style={{ color: 'hsl(var(--muted-foreground))' }}>{w.en}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          <button
+            type="button"
+            data-testid="path-fetch-pass-continue-btn"
+            onClick={onBack}
+            className="w-full rounded-full py-3 mt-3 font-bold transition-transform active:scale-95"
+            style={{ background: 'hsl(var(--muted))', color: 'hsl(var(--foreground))' }}
+          >
+            Back to Paths
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Phase: path-fetch-fail ────────────────────────────────────────
+  if (phase === 'path-fetch-fail') {
+    return (
+      <div className="p-4 pb-24" data-testid="path-fetch-fail">
+        <div
+          className="rounded-2xl p-8 flex flex-col items-center text-center"
+          style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))' }}
+        >
+          <p className="text-2xl font-bold" style={{ color: 'hsl(var(--foreground))' }}
+            data-testid="path-fetch-fail-title">
+            Almost there! 🐾
+          </p>
+          <p className="text-sm mt-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
+            You got {pathFetchCorrect} of {pathFetchQueue.length} correct — you need 80% to pass
+          </p>
+          <p className="text-sm mt-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
+            Keep going — you&apos;ve got this! 🐾
+          </p>
+          {pathFetchWrongWords.length > 0 && (
+            <div className="mt-4 w-full text-left">
+              <p className="text-sm font-semibold mb-2" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                Words to review:
+              </p>
+              <div className="flex flex-col gap-1">
+                {pathFetchWrongWords.map((w) => (
+                  <div key={w.es} className="rounded-lg px-3 py-2 flex justify-between text-sm"
+                    style={{ background: 'hsl(var(--muted))', border: '1px solid hsl(var(--border))' }}>
+                    <span className="font-semibold" style={{ color: 'hsl(var(--foreground))' }}>{w.es}</span>
+                    <span style={{ color: 'hsl(var(--muted-foreground))' }}>{w.en}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          <button
+            type="button"
+            data-testid="path-fetch-fail-keep-practising-btn"
+            onClick={onBack}
+            className="w-full rounded-full py-3 mt-6 text-white font-bold transition-transform active:scale-95"
+            style={{ background: 'hsl(var(--primary))' }}
+          >
+            Keep Practising
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Phase: intro-complete (reachable via Hear & Choose back) ─────
   if (phase === 'intro-complete') {
     return (
       <div className="p-4 pb-24" data-testid="stop-view-intro-complete">
@@ -532,10 +1107,6 @@ function StopView({
   }
 
   // ── Phase: intro (word cards) ────────────────────────────────────
-  // FIX 1: Full-height flex column so the Next button is always visible without scrolling.
-  // Available height = viewport - header (76px) - bottom nav (60px) = calc(100vh - 136px).
-  // Layout: back link + progress label pinned at top, WordIntroCard grows to fill middle,
-  // Next button pinned at bottom inside the same flex column (no fixed positioning needed).
   if (phase === 'intro') {
     const word = words[currentWordIndex];
     const isLast = currentWordIndex === words.length - 1;
@@ -545,47 +1116,32 @@ function StopView({
         style={{
           display: 'flex',
           flexDirection: 'column',
-          height: 'calc(100vh - 136px)',
+          height: 'calc(100vh - 180px)',
           padding: '16px',
           boxSizing: 'border-box',
         }}
       >
-        {/* Top: back link + progress label */}
         <div>
-          <button
-            type="button"
-            data-testid="stop-view-back-btn"
-            onClick={onBack}
+          <button type="button" data-testid="stop-view-back-btn" onClick={onBack}
             className="inline-flex items-center gap-1 text-sm font-medium mb-4"
-            style={{ color: 'hsl(var(--primary))' }}
-          >
+            style={{ color: 'hsl(var(--primary))' }}>
             ← Back to Paths
           </button>
-          <p
-            className="text-xs uppercase tracking-wider mb-3"
+          <p className="text-xs uppercase tracking-wider mb-3"
             style={{ color: 'hsl(var(--muted-foreground))' }}
-            data-testid="word-intro-progress"
-          >
+            data-testid="word-intro-progress">
             {stop.title} · Word {currentWordIndex + 1} of {words.length}
           </p>
         </div>
-
-        {/* Middle: word card grows to fill remaining space */}
         <div style={{ flex: 1, overflowY: 'auto', display: 'flex', alignItems: 'center' }}>
           <div style={{ width: '100%' }}>
             <WordIntroCard key={word.es} word={word} isLast={isLast} onNext={handleNext} />
           </div>
         </div>
-
-        {/* Bottom: Next button always visible */}
         <div style={{ paddingTop: '12px' }}>
-          <button
-            type="button"
-            data-testid="word-intro-next-btn"
-            onClick={handleNext}
+          <button type="button" data-testid="word-intro-next-btn" onClick={handleNext}
             className="w-full rounded-full py-3 text-white font-bold transition-transform active:scale-95"
-            style={{ background: 'hsl(var(--primary))' }}
-          >
+            style={{ background: 'hsl(var(--primary))' }}>
             {isLast ? 'Ready to Practice →' : 'Next →'}
           </button>
         </div>
@@ -595,7 +1151,8 @@ function StopView({
 
   // ── Phase: preview (default — word list + Begin) ─────────────────
   return (
-    <div className="p-4 pb-24" data-testid={`stop-view-${stopId}`}>
+    <>
+    <div className="p-4 pb-[140px]" data-testid={`stop-view-${stopId}`}>
       <button
         type="button"
         data-testid="stop-view-back-btn"
@@ -606,29 +1163,31 @@ function StopView({
         ← Back to Paths
       </button>
 
+      {/* Header card — matches Path header gradient style */}
       <div
-        className="rounded-2xl p-5 mb-5 text-white relative overflow-hidden"
+        className="rounded-2xl p-2 mb-3 text-white relative overflow-hidden"
         style={{
           background:
-            'linear-gradient(135deg, hsl(var(--primary)), hsl(352 75% 65%))',
+            'linear-gradient(135deg, #16A34A, #22c55e)',
         }}
       >
         <p className="text-[11px] uppercase tracking-wider opacity-80">
-          {path.title}
+          Path {pathNum} — {path.title} · Stop {path.stops.findIndex(s => s.id === stopId) + 1} of {path.stops.length}
         </p>
-        <h2 className="text-2xl font-semibold mt-1" data-testid="stop-view-title">
+        <h2 className="text-lg font-semibold mt-0.5" data-testid="stop-view-title">
           {stop.title}
         </h2>
-        <p className="text-sm opacity-90 mt-1" data-testid="stop-view-subtitle">
+        <p className="text-sm opacity-90 mt-0.5" data-testid="stop-view-subtitle">
           {stop.titleEn}
         </p>
       </div>
 
-      <div className="flex flex-col gap-2 mb-6" data-testid="stop-view-word-list">
+      {/* Word list */}
+      <div className="flex flex-col gap-1 mb-3" data-testid="stop-view-word-list">
         {words.map((word, idx) => (
           <div
             key={`${word.es}-${idx}`}
-            className="rounded-2xl p-4 flex items-center justify-between gap-3"
+            className="rounded-xl px-3 py-1 flex items-center justify-between gap-2"
             style={{
               background: 'hsl(var(--card))',
               border: '1px solid hsl(var(--border))',
@@ -636,14 +1195,25 @@ function StopView({
             data-testid={`stop-view-word-${word.es}`}
           >
             <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {word.gender ? (
+                  <p className="text-sm font-bold px-1.5 py-0.5 rounded-full truncate" style={{
+                    background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
+                    color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
+                  }}>
+                    {word.gender === 'm' ? 'el' : 'la'} {word.es}
+                  </p>
+                ) : (
+                  <p
+                    className="text-sm font-bold truncate"
+                    style={{ color: 'hsl(var(--foreground))' }}
+                  >
+                    {word.es}
+                  </p>
+                )}
+              </div>
               <p
-                className="text-lg font-bold truncate"
-                style={{ color: 'hsl(var(--foreground))' }}
-              >
-                {word.es}
-              </p>
-              <p
-                className="text-sm truncate"
+                className="text-xs truncate"
                 style={{ color: 'hsl(var(--muted-foreground))' }}
               >
                 {word.en}
@@ -654,19 +1224,20 @@ function StopView({
               aria-label={`Hear ${word.es}`}
               data-testid={`stop-view-speak-${word.es}`}
               onClick={() => speak(word.es)}
-              className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-transform active:scale-95"
+              className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-transform active:scale-95"
               style={{
                 background: 'hsl(var(--muted))',
                 color: 'hsl(var(--primary))',
                 border: '1px solid hsl(var(--border))',
               }}
             >
-              <Volume2 className="w-5 h-5" />
+              <Volume2 className="w-4 h-4" />
             </button>
           </div>
         ))}
       </div>
-
+    </div>
+    <div style={{ position: 'fixed', bottom: '72px', left: 0, right: 0, padding: '8px 16px', zIndex: 50 }}>
       <button
         type="button"
         data-testid="stop-view-begin-btn"
@@ -674,9 +1245,10 @@ function StopView({
         className="w-full rounded-full py-3 text-white font-bold transition-transform active:scale-95"
         style={{ background: 'hsl(var(--primary))' }}
       >
-        Begin
+        Begin →
       </button>
     </div>
+    </>
   );
 }
 
@@ -692,13 +1264,18 @@ export default function PathsTab({
   onUpdateWordProgress,
   onAwardBones,
   onCompleteStop,
+  onCompletePathFetch,
   fetchStopWords,
   onShowCertificate,
-  onDrillAnswer, // FIX 2: threaded down from SpanishHub to StopView → handleGauntletAnswer
+  onDrillAnswer,
+  strictTyping,
 }) {
-  const [expandedPathId, setExpandedPathId] = useState(null);
+  const [selectedPathId, setSelectedPathId] = useState(null);
+  // Auto-open Stop on mount when parent passes initialStopId (e.g. Home → Continue)
   const [selectedStopId, setSelectedStopId] = useState(() => initialStopId || null);
   const [lockedMessageStopId, setLockedMessageStopId] = useState(null);
+  const [selectedStage, setSelectedStage] = useState(null);
+  const [selectedTier, setSelectedTier] = useState(null);
 
   const getNextStopId = (currentStopId) => {
     for (const path of PATHS) {
@@ -713,9 +1290,11 @@ export default function PathsTab({
     return null;
   };
 
+  // Render StopView when a stop is selected
   if (selectedStopId) {
     return (
       <StopView
+        key={selectedStopId}
         stopId={selectedStopId}
         onBack={() => setSelectedStopId(null)}
         onNextStop={() => {
@@ -729,24 +1308,22 @@ export default function PathsTab({
         onUpdateWordProgress={onUpdateWordProgress}
         onAwardBones={onAwardBones}
         onCompleteStop={onCompleteStop}
+        onCompletePathFetch={onCompletePathFetch}
         fetchStopWords={fetchStopWords}
         progress={progress}
         completedStops={completedStops}
         completedPaths={completedPaths}
         onShowCertificate={onShowCertificate}
         onDrillAnswer={onDrillAnswer}
+        strictTyping={strictTyping}
       />
     );
   }
 
-  const togglePath = (pathId, unlocked) => {
-    if (!unlocked) return;
-    setExpandedPathId((curr) => (curr === pathId ? null : pathId));
-  };
-
   const handleStopTap = (stopId, unlocked) => {
     if (!unlocked) {
       setLockedMessageStopId(stopId);
+      // Auto-dismiss the message after 2.5s
       setTimeout(() => {
         setLockedMessageStopId((curr) => (curr === stopId ? null : curr));
       }, 2500);
@@ -757,23 +1334,238 @@ export default function PathsTab({
     if (typeof onSelectStop === 'function') onSelectStop(stopId);
   };
 
+  if (selectedPathId) {
+    const path = getPath(selectedPathId);
+    if (path) return (
+      <div className="p-4 pb-12" data-testid="paths-tab">
+        <button
+          type="button"
+          onClick={() => setSelectedPathId(null)}
+          className="inline-flex items-center gap-1 text-sm font-medium mb-2"
+          style={{ color: 'hsl(var(--primary))' }}
+        >
+          ← Back
+        </button>
+        <div className="mb-2">
+          <h1 className="text-2xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
+            Path {PATHS.findIndex(p => p.id === path.id) + 1} — {path.title}
+          </h1>
+          <p className="text-sm mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
+            {path.titleEn}
+          </p>
+        </div>
+        <div className="flex flex-col gap-1.5" data-testid={`path-stops-${path.id}`}>
+          {path.stops.map((stop, stopIndex) => {
+            const stopUnlocked = isStopUnlocked(stop.id, completedStops, completedPaths);
+            const stopComplete = completedStops.includes(stop.id);
+            const showLockedMsg = lockedMessageStopId === stop.id;
+
+            return (
+              <div key={stop.id}>
+                <button
+                  type="button"
+                  data-testid={`stop-node-${stop.id}`}
+                  onClick={() => handleStopTap(stop.id, stopUnlocked)}
+                  className="drill-card w-full text-left"
+                  style={
+                    stopComplete
+                      ? { background: '#0891b2', border: '1px solid #0891b2' }
+                      : stopUnlocked
+                      ? { background: '#16A34A', border: '1px solid #16A34A' }
+                      : { background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', opacity: 0.65 }
+                  }
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold shrink-0"
+                      style={
+                        stopComplete
+                          ? { background: 'transparent', color: '#fff' }
+                          : stopUnlocked
+                          ? { background: 'transparent', color: '#fff' }
+                          : { background: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))' }
+                      }
+                    >
+                      {stopIndex + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p
+                        className="text-sm font-semibold truncate"
+                        style={{
+                          color: stopComplete
+                            ? '#fff'
+                            : stopUnlocked
+                            ? '#fff'
+                            : 'hsl(var(--foreground))',
+                        }}
+                      >
+                        {stop.title}
+                      </p>
+                      <p
+                        className="text-xs truncate"
+                        style={{
+                          color: stopComplete
+                            ? 'rgba(255,255,255,0.85)'
+                            : stopUnlocked
+                            ? 'rgba(255,255,255,0.85)'
+                            : 'hsl(var(--muted-foreground))',
+                        }}
+                      >
+                        {stop.titleEn}
+                      </p>
+                    </div>
+                    {stopComplete ? (
+                      <Check className="w-4 h-4 shrink-0" style={{ color: '#fff' }} />
+                    ) : stopUnlocked ? (
+                      <span className="text-xs font-bold shrink-0" style={{ color: '#fff' }}>GO</span>
+                    ) : (
+                      <Lock className="w-4 h-4 shrink-0" style={{ color: 'hsl(var(--muted-foreground))' }} />
+                    )}
+                  </div>
+                </button>
+
+                {showLockedMsg && (
+                  <div
+                    data-testid={`stop-locked-msg-${stop.id}`}
+                    className="mt-2 px-3 py-2 rounded-lg text-xs"
+                    style={{
+                      background: 'hsl(var(--muted))',
+                      color: 'hsl(var(--muted-foreground))',
+                      border: '1px solid hsl(var(--border))',
+                    }}
+                  >
+                    Complete the previous Stop to unlock this one 🐾
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  const getTierState = (tier) => {
+    if (tier.pathIds.every(id => completedPaths.includes(id))) return 'complete';
+    const hasProgress = tier.pathIds.some(id => {
+      const p = getPath(id);
+      return p && p.stops.some(s => completedStops.includes(s.id));
+    });
+    return hasProgress ? 'current' : 'locked';
+  };
+
+  const getStageState = (stage) => {
+    const tierStates = stage.tiers.map(getTierState);
+    if (tierStates.every(s => s === 'complete')) return 'complete';
+    if (tierStates.some(s => s === 'current' || s === 'complete')) return 'current';
+    return 'locked';
+  };
+
+  const pillBg = (state) => {
+    if (state === 'complete') return { background: '#0d9488', color: '#fff' };
+    if (state === 'current')  return { background: '#16A34A', color: '#fff' };
+    return { background: 'hsl(var(--muted))', color: 'hsl(var(--muted-foreground))', opacity: 0.75 };
+  };
+
+  // ── Level 1 — Stage list ─────────────────────────────────────────
+  if (selectedStage === null) {
+    return (
+      <div className="p-4" data-testid="paths-tab">
+        <div className="mb-4">
+          <h1 className="text-2xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
+            Choose your level
+          </h1>
+        </div>
+        <div className="flex flex-col gap-3">
+          {PATH_STAGES.map((stage) => (
+            <button
+              key={stage.id}
+              type="button"
+              onClick={() => setSelectedStage(stage)}
+              className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
+              style={{ ...pillBg(getStageState(stage)), cursor: 'pointer' }}
+            >
+              <p className="text-xl font-semibold">{stage.emoji} {stage.label}</p>
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Level 2 — Tier list ──────────────────────────────────────────
+  if (selectedTier === null) {
+    return (
+      <div className="p-4" data-testid="paths-tab">
+        <button
+          type="button"
+          onClick={() => setSelectedStage(null)}
+          className="inline-flex items-center gap-1 text-sm font-medium mb-4"
+          style={{ color: 'hsl(var(--primary))' }}
+        >
+          ← Back
+        </button>
+        <div className="mb-4">
+          <h1 className="text-2xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
+            {selectedStage.label}
+          </h1>
+        </div>
+        <div className="flex flex-col gap-3">
+          {selectedStage.tiers.map((tier) => {
+            const tierState = getTierState(tier);
+            return (
+              <div key={tier.id}>
+                <button
+                  type="button"
+                  onClick={() => setSelectedTier(tier)}
+                  className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
+                  style={{ ...pillBg(tierState), cursor: 'pointer' }}
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-lg font-semibold">{tier.label}</p>
+                    {tierState === 'complete' && <Check className="w-5 h-5" />}
+                  </div>
+                </button>
+                {tierState === 'complete' && onShowCertificate && (
+                  <button
+                    type="button"
+                    onClick={() => onShowCertificate(tier.id)}
+                    className="w-full rounded-full font-bold py-2 mb-2 text-sm"
+                    style={{ background: 'hsl(var(--primary))', color: 'white' }}
+                    data-testid={`tier-certificate-btn-${tier.id}`}
+                  >
+                    🎓 Certificate
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+
+  // ── Level 3 — Path list (filtered to selectedTier.pathIds) ───────
   return (
     <div className="p-4" data-testid="paths-tab">
+      <button
+        type="button"
+        onClick={() => setSelectedTier(null)}
+        className="inline-flex items-center gap-1 text-sm font-medium mb-4"
+        style={{ color: 'hsl(var(--primary))' }}
+      >
+        ← Back
+      </button>
       <div className="mb-4">
         <h1 className="text-2xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
-          Paths
+          {selectedTier.label}
         </h1>
-        <p className="text-sm mt-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
-          Work through each Stop to build your Spanish step by step.
-        </p>
       </div>
 
       <div className="flex flex-col gap-3">
-        {PATHS.map((path, pathIndex) => {
-          const unlocked = isPathUnlocked(path.id, completedStops);
-          const complete = isPathComplete(path.id, completedStops) ||
-            completedPaths.includes(path.id);
-          const expanded = expandedPathId === path.id;
+        {PATHS.filter((p) => selectedTier.pathIds.includes(p.id)).map((path) => {
+          const unlocked = isPathUnlocked(path.id, completedStops, completedPaths);
+          const complete = completedPaths.includes(path.id);
 
           const completedStopCount = path.stops.filter((s) =>
             completedStops.includes(s.id)
@@ -781,15 +1573,18 @@ export default function PathsTab({
 
           return (
             <div key={path.id} data-testid={`path-row-${path.id}`}>
+              {/* Path header */}
               <button
                 type="button"
                 data-testid={`path-header-${path.id}`}
-                onClick={() => togglePath(path.id, unlocked)}
+                onClick={() => unlocked && setSelectedPathId(path.id)}
                 disabled={!unlocked}
                 className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
                 style={{
-                  background: unlocked
-                    ? 'hsl(var(--primary))'
+                  background: complete
+                    ? '#0891b2'
+                    : unlocked
+                    ? '#16A34A'
                     : 'hsl(var(--muted))',
                   color: unlocked ? '#fff' : 'hsl(var(--muted-foreground))',
                   cursor: unlocked ? 'pointer' : 'not-allowed',
@@ -798,18 +1593,11 @@ export default function PathsTab({
               >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] uppercase tracking-wider opacity-80">
-                      Path {pathIndex + 1} · {path.subLevel}
-                    </p>
-                    <h2 className="text-lg font-semibold mt-0.5 truncate">
-                      {path.title}
+                    <h2 className="text-lg font-semibold truncate">
+                      Path {PATHS.findIndex(p => p.id === path.id) + 1} — {path.title}
                     </h2>
                     <p className="text-xs opacity-90 mt-0.5 truncate">
                       {path.titleEn}
-                    </p>
-                    <p className="text-[11px] mt-2 opacity-90">
-                      {completedStopCount} / {path.stops.length} Stops
-                      {complete ? ' · Complete' : ''}
                     </p>
                   </div>
 
@@ -818,111 +1606,18 @@ export default function PathsTab({
                       <Lock className="w-5 h-5" />
                     ) : complete ? (
                       <Check className="w-5 h-5" />
-                    ) : expanded ? (
-                      <ChevronDown className="w-5 h-5" />
                     ) : (
-                      <ChevronRight className="w-5 h-5" />
+                      <span
+                        className="text-xs font-bold px-2 py-1 rounded-full text-center"
+                        style={{ background: 'rgba(255,255,255,0.2)', minWidth: '2.5rem' }}
+                      >
+                        {completedStopCount}/{path.stops.length}
+                      </span>
                     )}
                   </div>
                 </div>
               </button>
 
-              {completedPaths.includes(path.id) && onShowCertificate && (
-                <div className="flex justify-end mb-2">
-                  <button
-                    type="button"
-                    onClick={() => onShowCertificate(path.id)}
-                    className="text-xs font-bold px-3 py-1 rounded-full"
-                    style={{ background: 'hsl(var(--primary))', color: 'white' }}
-                    data-testid={`path-certificate-btn-${path.id}`}
-                  >
-                    🎓 Certificate
-                  </button>
-                </div>
-              )}
-
-              {unlocked && expanded && (
-                <div
-                  className="flex flex-col gap-2 mb-2"
-                  data-testid={`path-stops-${path.id}`}
-                >
-                  {path.stops.map((stop, stopIndex) => {
-                    const stopUnlocked = isStopUnlocked(stop.id, completedStops);
-                    const stopComplete = completedStops.includes(stop.id);
-                    const showLockedMsg = lockedMessageStopId === stop.id;
-
-                    return (
-                      <div key={stop.id}>
-                        <button
-                          type="button"
-                          data-testid={`stop-node-${stop.id}`}
-                          onClick={() => handleStopTap(stop.id, stopUnlocked)}
-                          className="drill-card w-full text-left"
-                          style={{
-                            background: 'hsl(var(--card))',
-                            border: '1px solid hsl(var(--border))',
-                            opacity: stopUnlocked ? 1 : 0.65,
-                          }}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div
-                              className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-semibold shrink-0"
-                              style={{
-                                background: stopComplete
-                                  ? 'hsl(var(--primary))'
-                                  : 'hsl(var(--muted))',
-                                color: stopComplete
-                                  ? '#fff'
-                                  : 'hsl(var(--muted-foreground))',
-                              }}
-                            >
-                              {stopComplete ? (
-                                <Check className="w-4 h-4" />
-                              ) : !stopUnlocked ? (
-                                <Lock className="w-4 h-4" />
-                              ) : (
-                                stopIndex + 1
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p
-                                className="text-sm font-semibold truncate"
-                                style={{ color: 'hsl(var(--foreground))' }}
-                              >
-                                {stop.title}
-                              </p>
-                              <p
-                                className="text-xs truncate"
-                                style={{ color: 'hsl(var(--muted-foreground))' }}
-                              >
-                                {stop.titleEn}
-                              </p>
-                            </div>
-                            <ChevronRight
-                              className="w-4 h-4 shrink-0"
-                              style={{ color: 'hsl(var(--muted-foreground))' }}
-                            />
-                          </div>
-                        </button>
-
-                        {showLockedMsg && (
-                          <div
-                            data-testid={`stop-locked-msg-${stop.id}`}
-                            className="mt-2 px-3 py-2 rounded-lg text-xs"
-                            style={{
-                              background: 'hsl(var(--muted))',
-                              color: 'hsl(var(--muted-foreground))',
-                              border: '1px solid hsl(var(--border))',
-                            }}
-                          >
-                            Complete the previous Stop to unlock this one 🐾
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
             </div>
           );
         })}
