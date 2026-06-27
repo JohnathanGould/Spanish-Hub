@@ -54,23 +54,23 @@ export const MASTER = [
   { es: 'hasta luego', en: 'see you later', type: 'phrase', group: 'Core', contextSentence: ["Hasta luego, amigo, y buenas noches."], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fhasta-luego.jpg?alt=media", theme: "greetings" },
   { es: 'hasta mañana', en: 'see you tomorrow', type: 'phrase', group: 'Core', contextSentence: ["Hasta mañana, amigo."], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fhasta-manana.jpg?alt=media", theme: "greetings" },
   // NEW — p1s3
-  { es: 'me llamo', en: 'my name is', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fme-llamo.jpg?alt=media", theme: "greetings" },
-  { es: '¿cómo te llamas?', en: 'what is your name?', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fcomo-te-llamas.jpg?alt=media", theme: "greetings" },
+  { es: 'me llamo', en: 'my name is', type: 'phrase', group: 'Core', contextSentence: ["Me llamo Carlos, ¿y tú?"], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fme-llamo.jpg?alt=media", theme: "greetings" },
+  { es: '¿cómo te llamas?', en: 'what is your name?', type: 'phrase', group: 'Core', contextSentence: ["¿Cómo te llamas tú?"], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fcomo-te-llamas.jpg?alt=media", theme: "greetings" },
   // NEW — p1s4
-  { es: 'no entiendo', en: "i don't understand", type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/noentiendo/400/400", theme: "greetings" },
-  { es: 'más despacio', en: 'slower / more slowly', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/masdespacio/400/400", theme: "greetings" },
-  { es: '¿puedes repetir?', en: 'can you repeat?', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/puedesrepetir/400/400", theme: "greetings" },
-  { es: '¿cómo se dice?', en: 'how do you say?', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/comodice/400/400", theme: "greetings" },
-  { es: 'un momento', en: 'one moment', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/unmomento/400/400", theme: "greetings" },
-  { es: 'no sé', en: "i don't know", type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/nose/400/400", theme: "greetings" },
+  { es: 'no entiendo', en: "i don't understand", type: 'phrase', group: 'Core', contextSentence: ["No entiendo, ¿puedes repetir?"], imageUrl: "https://picsum.photos/seed/noentiendo/400/400", theme: "greetings" },
+  { es: 'más despacio', en: 'slower / more slowly', type: 'phrase', group: 'Core', contextSentence: ["Por favor, habla más despacio."], imageUrl: "https://picsum.photos/seed/masdespacio/400/400", theme: "greetings" },
+  { es: '¿puedes repetir?', en: 'can you repeat?', type: 'phrase', group: 'Core', contextSentence: ["¿Puedes repetir eso, por favor?"], imageUrl: "https://picsum.photos/seed/puedesrepetir/400/400", theme: "greetings" },
+  { es: '¿cómo se dice?', en: 'how do you say?', type: 'phrase', group: 'Core', contextSentence: ["¿Cómo se dice 'hello' en español?"], imageUrl: "https://picsum.photos/seed/comodice/400/400", theme: "greetings" },
+  { es: 'un momento', en: 'one moment', type: 'phrase', group: 'Core', contextSentence: ["Un momento, por favor."], imageUrl: "https://picsum.photos/seed/unmomento/400/400", theme: "greetings" },
+  { es: 'no sé', en: "i don't know", type: 'phrase', group: 'Core', contextSentence: ["No sé dónde está la calle."], imageUrl: "https://picsum.photos/seed/nose/400/400", theme: "greetings" },
   // p1s5
   { es: 'sí', en: 'yes', type: 'adv', group: 'Core', contextSentence: ["Sí, yo soy colombiano."], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fs%C3%AD.jpg?alt=media", theme: "greetings" },
   { es: 'no', en: 'no', type: 'adv', group: 'Core', contextSentence: ["No estoy bien hoy."], imageUrl: "https://firebasestorage.googleapis.com/v0/b/my-spanish-hub.firebasestorage.app/o/images%2Fwords%2Fno.jpg?alt=media", theme: "greetings" },
   { es: 'bien', en: 'well / good', type: 'adv', group: 'Core', contextSentence: ["Yo estoy muy bien, gracias."], imageUrl: "https://picsum.photos/seed/bien/400/400", theme: "greetings" },
   { es: 'mal', en: 'bad / badly', type: 'adv', group: 'Core', contextSentence: ["Estoy mal hoy."], imageUrl: "https://picsum.photos/seed/mal/400/400", theme: "descriptions" },
   // NEW — p1s5
-  { es: 'muy bien', en: 'very well', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/muybien/400/400", theme: "greetings" },
-  { es: 'más o menos', en: 'more or less / so-so', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/masorenos/400/400", theme: "greetings" },
+  { es: 'muy bien', en: 'very well', type: 'phrase', group: 'Core', contextSentence: ["Estoy muy bien, gracias."], imageUrl: "https://picsum.photos/seed/muybien/400/400", theme: "greetings" },
+  { es: 'más o menos', en: 'more or less / so-so', type: 'phrase', group: 'Core', contextSentence: ["Hablo español más o menos."], imageUrl: "https://picsum.photos/seed/masorenos/400/400", theme: "greetings" },
 
   // ─────────────────────────────────────────────
   // PATH 2 — Ser
@@ -89,7 +89,7 @@ export const MASTER = [
   { es: 'canadiense', en: 'Canadian', type: 'adj', group: 'Core', contextSentence: ["Él es canadiense y muy bueno."], imageUrl: "https://picsum.photos/seed/canadiense/400/400", theme: "descriptions" },
   { es: 'es', en: 'he/she/it is', type: 'verb', group: 'Core', contextSentence: ["El hotel es muy grande."], imageUrl: "https://picsum.photos/seed/he/400/400", theme: "family" },
   // NEW
-  { es: 'son', en: 'they are', type: 'verb', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/son/400/400", theme: "descriptions" },
+  { es: 'son', en: 'they are', type: 'verb', group: 'Core', contextSentence: ["Son mis amigos del trabajo."], imageUrl: "https://picsum.photos/seed/son/400/400", theme: "descriptions" },
   { es: 'mexicano', en: 'Mexican', type: 'adj', group: 'Core', contextSentence: ["El restaurante mexicano es muy bueno."], imageUrl: "https://picsum.photos/seed/mexicano/400/400", theme: "descriptions" },
   { es: 'colombiano', en: 'Colombian', type: 'adj', group: 'Core', contextSentence: ["Él es colombiano y muy bueno."], imageUrl: "https://picsum.photos/seed/colombiano/400/400", theme: "descriptions" },
   { es: 'muy', en: 'very', type: 'adv', group: 'Connectors', contextSentence: ["El hotel es muy grande."], imageUrl: "https://picsum.photos/seed/very/400/400", theme: "descriptions" },
@@ -124,7 +124,7 @@ export const MASTER = [
   { es: 'abierto', en: 'open', type: 'adj', group: 'Adjectives', contextSentence: ["El restaurante está abierto hoy."], imageUrl: "https://picsum.photos/seed/open/400/400", theme: "shopping" },
   { es: 'está', en: 'he/she/it is (location)', type: 'verb', group: 'Core', contextSentence: ["El hospital está aquí."], imageUrl: "https://picsum.photos/seed/he/400/400", theme: "travel" },
   // NEW
-  { es: 'están', en: 'they are (location)', type: 'verb', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/estan/400/400", theme: "descriptions" },
+  { es: 'están', en: 'they are (location)', type: 'verb', group: 'Core', contextSentence: ["Están en el parque ahora."], imageUrl: "https://picsum.photos/seed/estan/400/400", theme: "descriptions" },
   { es: 'malo', en: 'bad', type: 'adj', group: 'Adjectives', contextSentence: ["El hotel nuevo es malo."], imageUrl: "https://picsum.photos/seed/bad/400/400", theme: "nature" },
   { es: 'nuevo', en: 'new', type: 'adj', group: 'Adjectives', contextSentence: ["El hotel nuevo es muy grande."], imageUrl: "https://picsum.photos/seed/new/400/400", theme: "shopping" },
   { es: 'viejo', en: 'old', type: 'adj', group: 'Adjectives', contextSentence: ["El hotel es viejo pero grande."], imageUrl: "https://picsum.photos/seed/old/400/400", theme: "descriptions" },
@@ -159,7 +159,7 @@ export const MASTER = [
   { es: 'llave', en: 'key', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Yo tengo la llave de la casa."], imageUrl: "https://picsum.photos/seed/llave/400/400", theme: "travel" },
   { es: 'tiene', en: 'he/she has', type: 'verb', group: 'Core', contextSentence: ["Ella tiene un problema con su pasaporte."], imageUrl: "https://picsum.photos/seed/he/400/400", theme: "travel" },
   // NEW
-  { es: 'tienen', en: 'they have', type: 'verb', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/tienen/400/400", theme: "descriptions" },
+  { es: 'tienen', en: 'they have', type: 'verb', group: 'Core', contextSentence: ["Tienen una casa muy grande."], imageUrl: "https://picsum.photos/seed/tienen/400/400", theme: "descriptions" },
   { es: 'carta', en: 'letter / menu', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Yo tengo la carta del restaurante."], imageUrl: "https://picsum.photos/seed/carta/400/400", theme: "restaurant" },
   { es: 'cuenta', en: 'bill / check', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Disculpe, necesito la cuenta por favor."], imageUrl: "https://picsum.photos/seed/cuenta/400/400", theme: "restaurant" },
   { es: 'tiempo', en: 'weather / time', type: 'noun', group: 'Time', gender: 'm', contextSentence: ["No tengo tiempo."], imageUrl: "https://picsum.photos/seed/weather/400/400", theme: "nature" },
@@ -181,12 +181,12 @@ export const MASTER = [
   // PATH 5 — Querer y Poder
   // ─────────────────────────────────────────────
   // NEW
-  { es: 'bebida', en: 'drink (general)', type: 'noun', group: 'Food & Drink', gender: 'f', contextSentence: [], imageUrl: "https://picsum.photos/seed/bebida/400/400", theme: "restaurant" },
+  { es: 'bebida', en: 'drink (general)', type: 'noun', group: 'Food & Drink', gender: 'f', contextSentence: ["¿Qué bebida quieres con la comida?"], imageUrl: "https://picsum.photos/seed/bebida/400/400", theme: "restaurant" },
   { es: 'café', en: 'coffee', type: 'noun', group: 'Food & Drink', gender: 'm', contextSentence: ["Yo quiero un café, por favor."], imageUrl: "https://picsum.photos/seed/coffee/400/400", theme: "restaurant" },
   { es: 'pan', en: 'bread', type: 'noun', group: 'Food & Drink', gender: 'm', contextSentence: ["Yo quiero pan con leche."], imageUrl: "https://picsum.photos/seed/bread/400/400", theme: "restaurant" },
   { es: 'fruta', en: 'fruit', type: 'noun', group: 'Food & Drink', gender: 'f', contextSentence: ["La fruta es muy rica."], imageUrl: "https://picsum.photos/seed/fruit/400/400", theme: "nature" },
   // NEW
-  { es: 'hambre', en: 'hunger', type: 'noun', group: 'Core', gender: 'f', contextSentence: [], imageUrl: "https://picsum.photos/seed/hambre/400/400", theme: "restaurant" },
+  { es: 'hambre', en: 'hunger', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Tengo mucha hambre ahora mismo."], imageUrl: "https://picsum.photos/seed/hambre/400/400", theme: "restaurant" },
   { es: 'leche', en: 'milk', type: 'noun', group: 'Food & Drink', gender: 'f', contextSentence: ["Yo quiero leche con café."], imageUrl: "https://picsum.photos/seed/milk/400/400", theme: "restaurant" },
   { es: 'quiero', en: 'i want', type: 'verb', group: 'Core', contextSentence: ["Yo quiero agua y pan, por favor."], imageUrl: "https://picsum.photos/seed/want/400/400", theme: "travel" },
   { es: 'quieres', en: 'you want', type: 'verb', group: 'Core', contextSentence: ["¿Quieres agua o jugo?"], imageUrl: "https://picsum.photos/seed/want/400/400", theme: "restaurant" },
@@ -196,7 +196,7 @@ export const MASTER = [
   { es: 'sopa', en: 'soup', type: 'noun', group: 'Food & Drink', gender: 'f', contextSentence: ["La sopa está deliciosa."], imageUrl: "https://picsum.photos/seed/soup/400/400", theme: "restaurant" },
   { es: 'quiere', en: 'he/she wants', type: 'verb', group: 'Core', contextSentence: ["Ella quiere agua y pan."], imageUrl: "https://picsum.photos/seed/he/400/400", theme: "restaurant" },
   // NEW
-  { es: 'quieren', en: 'they want', type: 'verb', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/quieren/400/400", theme: "restaurant" },
+  { es: 'quieren', en: 'they want', type: 'verb', group: 'Core', contextSentence: ["Quieren comer pizza esta noche."], imageUrl: "https://picsum.photos/seed/quieren/400/400", theme: "restaurant" },
   { es: 'ensalada', en: 'salad', type: 'noun', group: 'Food & Drink', gender: 'f', contextSentence: ["La ensalada es muy rica."], imageUrl: "https://picsum.photos/seed/salad/400/400", theme: "restaurant" },
   { es: 'postre', en: 'dessert', type: 'noun', group: 'Food & Drink', gender: 'm', contextSentence: ["El postre es muy rico."], imageUrl: "https://picsum.photos/seed/dessert/400/400", theme: "restaurant" },
   { es: 'rico', en: 'delicious / rich', type: 'adj', group: 'Core', contextSentence: ["El pollo es muy rico."], imageUrl: "https://picsum.photos/seed/rico/400/400", theme: "restaurant" },
@@ -226,24 +226,24 @@ export const MASTER = [
   { es: 'voy', en: 'i go', type: 'verb', group: 'Core', contextSentence: ["Yo voy al restaurante con mi amiga."], imageUrl: "https://picsum.photos/seed/go/400/400", theme: "restaurant" },
   { es: 'vas', en: 'you go', type: 'verb', group: 'Core', contextSentence: ["¿Vas a la escuela ahora?"], imageUrl: "https://picsum.photos/seed/go/400/400", theme: "travel" },
   // NEW
-  { es: 'llego', en: 'i arrive', type: 'verb', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/llego/400/400", theme: "travel" },
-  { es: 'llegas', en: 'you arrive', type: 'verb', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/llegas/400/400", theme: "travel" },
+  { es: 'llego', en: 'i arrive', type: 'verb', group: 'Core', contextSentence: ["Llego a casa a las seis."], imageUrl: "https://picsum.photos/seed/llego/400/400", theme: "travel" },
+  { es: 'llegas', en: 'you arrive', type: 'verb', group: 'Core', contextSentence: ["¿A qué hora llegas al aeropuerto?"], imageUrl: "https://picsum.photos/seed/llegas/400/400", theme: "travel" },
   { es: 'mapa', en: 'map', type: 'noun', group: 'Travel', gender: 'm', contextSentence: ["Tengo un mapa de la ciudad."], imageUrl: "https://picsum.photos/seed/map/400/400", theme: "travel" },
   { es: 'dirección', en: 'address / direction', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["¿Tienes la dirección del hotel?"], imageUrl: "https://picsum.photos/seed/direccion/400/400", theme: "travel" },
   { es: 'va', en: 'he/she goes', type: 'verb', group: 'Core', contextSentence: ["Ella va al restaurante con su amiga."], imageUrl: "https://picsum.photos/seed/he/400/400", theme: "shopping" },
   // NEW
-  { es: 'van', en: 'they go', type: 'verb', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/van/400/400", theme: "travel" },
+  { es: 'van', en: 'they go', type: 'verb', group: 'Core', contextSentence: ["Van al mercado los sábados."], imageUrl: "https://picsum.photos/seed/van/400/400", theme: "travel" },
   { es: 'ahora', en: 'now', type: 'adv', group: 'Time', contextSentence: ["Ahora voy al restaurante con mi amiga."], imageUrl: "https://picsum.photos/seed/now/400/400", theme: "time" },
   { es: 'después', en: 'after / later', type: 'adv', group: 'Time', contextSentence: ["Después, vamos a la casa."], imageUrl: "https://picsum.photos/seed/after/400/400", theme: "time" },
   { es: 'antes', en: 'before', type: 'adv', group: 'Time', contextSentence: ["Yo como antes, pero ahora no."], imageUrl: "https://picsum.photos/seed/before/400/400", theme: "time" },
   { es: 'tarde', en: 'afternoon / late', type: 'adv', group: 'Time', contextSentence: ["Es tarde para comer."], imageUrl: "https://picsum.photos/seed/afternoon/400/400", theme: "time" },
   // NEW
-  { es: 'a la derecha', en: 'to the right', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/derecha/400/400", theme: "travel" },
-  { es: 'a la izquierda', en: 'to the left', type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/izquierda/400/400", theme: "travel" },
-  { es: 'recto', en: 'straight ahead', type: 'adv', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/recto/400/400", theme: "travel" },
+  { es: 'a la derecha', en: 'to the right', type: 'phrase', group: 'Core', contextSentence: ["El banco está a la derecha."], imageUrl: "https://picsum.photos/seed/derecha/400/400", theme: "travel" },
+  { es: 'a la izquierda', en: 'to the left', type: 'phrase', group: 'Core', contextSentence: ["Gira a la izquierda en la esquina."], imageUrl: "https://picsum.photos/seed/izquierda/400/400", theme: "travel" },
+  { es: 'recto', en: 'straight ahead', type: 'adv', group: 'Core', contextSentence: ["Sigue recto por esta calle."], imageUrl: "https://picsum.photos/seed/recto/400/400", theme: "travel" },
   { es: 'cerca', en: 'near', type: 'adv', group: 'Connectors', contextSentence: ["El parque está cerca de la escuela."], imageUrl: "https://picsum.photos/seed/near/400/400", theme: "travel" },
   { es: 'lejos', en: 'far', type: 'adv', group: 'Connectors', contextSentence: ["El hospital está lejos de aquí."], imageUrl: "https://picsum.photos/seed/far/400/400", theme: "health" },
-  { es: 'estoy perdido', en: "i'm lost", type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/perdido/400/400", theme: "travel" },
+  { es: 'estoy perdido', en: "i'm lost", type: 'phrase', group: 'Core', contextSentence: ["Estoy perdido, ¿puedes ayudarme?"], imageUrl: "https://picsum.photos/seed/perdido/400/400", theme: "travel" },
   { es: 'sol', en: 'sun', type: 'noun', group: 'Weather', gender: 'm', contextSentence: ["Hay sol en la playa hoy."], imageUrl: "https://picsum.photos/seed/sun/400/400", theme: "nature" },
   { es: 'lluvia', en: 'rain', type: 'noun', group: 'Weather', gender: 'f', contextSentence: ["Hay lluvia en la ciudad."], imageUrl: "https://picsum.photos/seed/rain/400/400", theme: "nature" },
   { es: 'nieve', en: 'snow', type: 'noun', group: 'Weather', gender: 'f', contextSentence: ["Hay nieve en la ciudad."], imageUrl: "https://picsum.photos/seed/snow/400/400", theme: "nature" },
@@ -268,7 +268,7 @@ export const MASTER = [
   { es: 'acento', en: 'accent', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Mi acento en español es muy malo."], imageUrl: "https://picsum.photos/seed/acento/400/400", theme: "communication" },
   { es: 'habla', en: 'he/she speaks', type: 'verb', group: 'Core', contextSentence: ["Ella habla español muy bien."], imageUrl: "https://picsum.photos/seed/he/400/400", theme: "descriptions" },
   // NEW
-  { es: 'hablan', en: 'they speak', type: 'verb', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/hablan/400/400", theme: "descriptions" },
+  { es: 'hablan', en: 'they speak', type: 'verb', group: 'Core', contextSentence: ["Hablan español muy rápido."], imageUrl: "https://picsum.photos/seed/hablan/400/400", theme: "descriptions" },
   { es: 'significado', en: 'meaning', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["¿Sabes el significado de esta palabra?"], imageUrl: "https://picsum.photos/seed/significado/400/400", theme: "communication" },
   { es: 'verdad', en: 'truth', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Yo sé la verdad."], imageUrl: "https://picsum.photos/seed/verdad/400/400", theme: "communication" },
   { es: 'razón', en: 'reason / right', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Yo sé que tú tienes razón."], imageUrl: "https://picsum.photos/seed/razon/400/400", theme: "communication" },
@@ -303,7 +303,7 @@ export const MASTER = [
   { es: 'esposa', en: 'wife', type: 'noun', group: 'Family', gender: 'f', contextSentence: ["Mi esposa es muy buena."], imageUrl: "https://picsum.photos/seed/wife/400/400", theme: "family" },
   { es: 'dice', en: 'he/she says', type: 'verb', group: 'Core', contextSentence: ["Ella dice que la comida es deliciosa."], imageUrl: "https://picsum.photos/seed/he/400/400", theme: "family" },
   // NEW
-  { es: 'dicen', en: 'they say', type: 'verb', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/dicen/400/400", theme: "descriptions" },
+  { es: 'dicen', en: 'they say', type: 'verb', group: 'Core', contextSentence: ["Dicen que el restaurante es bueno."], imageUrl: "https://picsum.photos/seed/dicen/400/400", theme: "descriptions" },
   { es: 'primo', en: 'cousin (m)', type: 'noun', group: 'Family', gender: 'm', contextSentence: ["Mi primo es muy grande."], imageUrl: "https://picsum.photos/seed/cousin/400/400", theme: "family" },
   { es: 'prima', en: 'cousin (f)', type: 'noun', group: 'Family', gender: 'f', contextSentence: ["Mi prima es mi amiga también."], imageUrl: "https://picsum.photos/seed/cousin/400/400", theme: "family" },
   { es: 'tío', en: 'uncle', type: 'noun', group: 'Family', gender: 'm', contextSentence: ["Mi tío es de México."], imageUrl: "https://picsum.photos/seed/uncle/400/400", theme: "family" },
@@ -338,7 +338,7 @@ export const MASTER = [
   { es: 'merienda', en: 'afternoon snack', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["La merienda es buena."], imageUrl: "https://picsum.photos/seed/merienda/400/400", theme: "restaurant" },
   { es: 'come', en: 'he/she eats', type: 'verb', group: 'Core', contextSentence: ["Ella come pollo con arroz."], imageUrl: "https://picsum.photos/seed/he/400/400", theme: "restaurant" },
   // NEW
-  { es: 'comen', en: 'they eat', type: 'verb', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/comen/400/400", theme: "restaurant" },
+  { es: 'comen', en: 'they eat', type: 'verb', group: 'Core', contextSentence: ["Comen juntos todos los domingos."], imageUrl: "https://picsum.photos/seed/comen/400/400", theme: "restaurant" },
   { es: 'bocadillo', en: 'sandwich / snack', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Yo como un bocadillo con queso y tomate."], imageUrl: "https://picsum.photos/seed/bocadillo/400/400", theme: "restaurant" },
   { es: 'galleta', en: 'cookie', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Yo como una galleta con leche."], imageUrl: "https://picsum.photos/seed/galleta/400/400", theme: "restaurant" },
   { es: 'plato', en: 'plate / dish', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["El plato de sopa es muy rico."], imageUrl: "https://picsum.photos/seed/plato/400/400", theme: "restaurant" },
@@ -350,12 +350,12 @@ export const MASTER = [
   { es: 'cerveza', en: 'beer', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Yo quiero una cerveza, por favor."], imageUrl: "https://picsum.photos/seed/cerveza/400/400", theme: "restaurant" },
   { es: 'botella', en: 'bottle', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Hay una botella de agua aquí."], imageUrl: "https://picsum.photos/seed/botella/400/400", theme: "restaurant" },
   // NEW — tener expressions
-  { es: 'tengo hambre', en: "i'm hungry", type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/hambre/400/400", theme: "restaurant" },
-  { es: 'tengo sed', en: "i'm thirsty", type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/sed/400/400", theme: "restaurant" },
-  { es: 'tengo frío', en: "i'm cold", type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/frio/400/400", theme: "nature" },
-  { es: 'tengo calor', en: "i'm hot", type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/calor/400/400", theme: "nature" },
-  { es: 'tengo sueño', en: "i'm sleepy", type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/sueno/400/400", theme: "health" },
-  { es: 'tengo miedo', en: "i'm scared", type: 'phrase', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/miedo/400/400", theme: "health" },
+  { es: 'tengo hambre', en: "i'm hungry", type: 'phrase', group: 'Core', contextSentence: ["Tengo hambre, ¿dónde podemos comer?"], imageUrl: "https://picsum.photos/seed/hambre/400/400", theme: "restaurant" },
+  { es: 'tengo sed', en: "i'm thirsty", type: 'phrase', group: 'Core', contextSentence: ["Tengo sed, necesito agua por favor."], imageUrl: "https://picsum.photos/seed/sed/400/400", theme: "restaurant" },
+  { es: 'tengo frío', en: "i'm cold", type: 'phrase', group: 'Core', contextSentence: ["Tengo frío, ¿puedes cerrar la ventana?"], imageUrl: "https://picsum.photos/seed/frio/400/400", theme: "nature" },
+  { es: 'tengo calor', en: "i'm hot", type: 'phrase', group: 'Core', contextSentence: ["Tengo calor, voy a abrir la ventana."], imageUrl: "https://picsum.photos/seed/calor/400/400", theme: "nature" },
+  { es: 'tengo sueño', en: "i'm sleepy", type: 'phrase', group: 'Core', contextSentence: ["Tengo sueño, me voy a dormir."], imageUrl: "https://picsum.photos/seed/sueno/400/400", theme: "health" },
+  { es: 'tengo miedo', en: "i'm scared", type: 'phrase', group: 'Core', contextSentence: ["Tengo miedo de hablar en público."], imageUrl: "https://picsum.photos/seed/miedo/400/400", theme: "health" },
 
   // ─────────────────────────────────────────────
   // PATH 10 — Comprar, Vivir y Trabajar
@@ -374,11 +374,11 @@ export const MASTER = [
   { es: 'bolsa', en: 'bag', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["La bolsa es muy grande."], imageUrl: "https://picsum.photos/seed/bolsa/400/400", theme: "travel" },
   { es: 'cien', en: 'one hundred', type: 'other', group: 'Numbers', contextSentence: ["El precio es cien."], imageUrl: "https://picsum.photos/seed/one+hundred/400/400", theme: "shopping" },
   // NEW
-  { es: 'mil', en: 'thousand', type: 'other', group: 'Numbers', contextSentence: [], imageUrl: "https://picsum.photos/seed/mil/400/400", theme: "shopping" },
+  { es: 'mil', en: 'thousand', type: 'other', group: 'Numbers', contextSentence: ["Este coche cuesta veinte mil euros."], imageUrl: "https://picsum.photos/seed/mil/400/400", theme: "shopping" },
   { es: 'precio', en: 'price', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["El precio es muy caro."], imageUrl: "https://picsum.photos/seed/precio/400/400", theme: "travel" },
-  { es: 'cambio', en: 'change (money)', type: 'noun', group: 'Core', gender: 'm', contextSentence: [], imageUrl: "https://picsum.photos/seed/cambio/400/400", theme: "shopping" },
-  { es: 'billete', en: 'banknote / bill', type: 'noun', group: 'Core', gender: 'm', contextSentence: [], imageUrl: "https://picsum.photos/seed/billete/400/400", theme: "shopping" },
-  { es: 'moneda', en: 'coin / currency', type: 'noun', group: 'Core', gender: 'f', contextSentence: [], imageUrl: "https://picsum.photos/seed/moneda/400/400", theme: "shopping" },
+  { es: 'cambio', en: 'change (money)', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["¿Tiene cambio para cien pesos?"], imageUrl: "https://picsum.photos/seed/cambio/400/400", theme: "shopping" },
+  { es: 'billete', en: 'banknote / bill', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Pago con un billete de cincuenta."], imageUrl: "https://picsum.photos/seed/billete/400/400", theme: "shopping" },
+  { es: 'moneda', en: 'coin / currency', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["No tengo moneda, solo billetes."], imageUrl: "https://picsum.photos/seed/moneda/400/400", theme: "shopping" },
   { es: 'vivo', en: 'i live', type: 'verb', group: 'Core', contextSentence: ["Yo vivo en un apartamento grande."], imageUrl: "https://picsum.photos/seed/live/400/400", theme: "home" },
   { es: 'vives', en: 'you live', type: 'verb', group: 'Core', contextSentence: ["¿Dónde vives tú?"], imageUrl: "https://picsum.photos/seed/live/400/400", theme: "home" },
   { es: 'apartamento', en: 'apartment', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Yo vivo en un apartamento grande."], imageUrl: "https://picsum.photos/seed/apartamento/400/400", theme: "home" },
@@ -473,7 +473,7 @@ export const MASTER = [
   { es: 'nunca', en: 'never', type: 'adv', group: 'Time', contextSentence: ["Yo nunca como sopa sin pan."], imageUrl: "https://picsum.photos/seed/never/400/400", theme: "health" },
   { es: 'todavía', en: 'still / yet', type: 'adv', group: 'Time', contextSentence: ["Todavía tengo tu pasaporte aquí."], imageUrl: "https://picsum.photos/seed/still/400/400", theme: "descriptions" },
   // NEW
-  { es: 'ya', en: 'already / now', type: 'adv', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/ya/400/400", theme: "time" },
+  { es: 'ya', en: 'already / now', type: 'adv', group: 'Core', contextSentence: ["Ya sé hablar un poco de español."], imageUrl: "https://picsum.photos/seed/ya/400/400", theme: "time" },
   { es: 'a veces', en: 'sometimes', type: 'adv', group: 'Time', contextSentence: ["A veces como pollo con arroz."], imageUrl: "https://picsum.photos/seed/sometimes/400/400", theme: "time" },
   { es: 'pronto', en: 'soon', type: 'adv', group: 'Time', contextSentence: ["Mañana llego pronto a la escuela."], imageUrl: "https://picsum.photos/seed/soon/400/400", theme: "time" },
   { es: 'leo', en: 'i read', type: 'verb', group: 'Core', contextSentence: ["Yo leo un libro en casa."], imageUrl: "https://picsum.photos/seed/read/400/400", theme: "descriptions" },
@@ -481,14 +481,14 @@ export const MASTER = [
   { es: 'escribo', en: 'i write', type: 'verb', group: 'Core', contextSentence: ["Yo escribo una carta en español."], imageUrl: "https://picsum.photos/seed/write/400/400", theme: "descriptions" },
   { es: 'escribes', en: 'you write', type: 'verb', group: 'Core', contextSentence: ["Tú escribes una carta en español."], imageUrl: "https://picsum.photos/seed/write/400/400", theme: "descriptions" },
   // NEW
-  { es: 'libro', en: 'book', type: 'noun', group: 'Core', gender: 'm', contextSentence: [], imageUrl: "https://picsum.photos/seed/libro/400/400", theme: "descriptions" },
-  { es: 'periódico', en: 'newspaper', type: 'noun', group: 'Core', gender: 'm', contextSentence: [], imageUrl: "https://picsum.photos/seed/periodico/400/400", theme: "communication" },
+  { es: 'libro', en: 'book', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Estoy leyendo un libro muy interesante."], imageUrl: "https://picsum.photos/seed/libro/400/400", theme: "descriptions" },
+  { es: 'periódico', en: 'newspaper', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Leo el periódico todas las mañanas."], imageUrl: "https://picsum.photos/seed/periodico/400/400", theme: "communication" },
   { es: 'escucha', en: 'he/she listens', type: 'verb', group: 'Core', contextSentence: ["Ella escucha música con su amiga."], imageUrl: "https://picsum.photos/seed/he/400/400", theme: "travel" },
   // NEW
-  { es: 'escuchan', en: 'they listen', type: 'verb', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/escuchan/400/400", theme: "descriptions" },
+  { es: 'escuchan', en: 'they listen', type: 'verb', group: 'Core', contextSentence: ["Escuchan música mientras trabajan."], imageUrl: "https://picsum.photos/seed/escuchan/400/400", theme: "descriptions" },
   { es: 've', en: 'he/she sees / watches', type: 'verb', group: 'Core', contextSentence: ["Ella ve una película en casa."], imageUrl: "https://picsum.photos/seed/he/400/400", theme: "descriptions" },
   // NEW
-  { es: 'ven', en: 'they see / watch', type: 'verb', group: 'Core', contextSentence: [], imageUrl: "https://picsum.photos/seed/ven/400/400", theme: "descriptions" },
+  { es: 'ven', en: 'they see / watch', type: 'verb', group: 'Core', contextSentence: ["Ven una película juntos el viernes."], imageUrl: "https://picsum.photos/seed/ven/400/400", theme: "descriptions" },
   { es: 'sonido', en: 'sound', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Escucho un sonido de música aquí."], imageUrl: "https://picsum.photos/seed/sonido/400/400", theme: "communication" },
   { es: 'silencio', en: 'silence', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Me gusta el silencio de la noche."], imageUrl: "https://picsum.photos/seed/silencio/400/400", theme: "communication" },
   { es: 'caminar', en: 'to walk', type: 'verb', group: 'Core', contextSentence: ["Me gusta caminar en el parque."], imageUrl: "https://picsum.photos/seed/walk/400/400", theme: "nature" },
