@@ -64,7 +64,7 @@ export default function DrillsGrid({
   }
 
   if (activeVocabFB) {
-    return (
+return (
       <VocabFillBlankDrill
         mode={activeVocabFB.mode}
         words={words}
