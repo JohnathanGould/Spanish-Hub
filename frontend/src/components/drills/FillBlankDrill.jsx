@@ -3,17 +3,18 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import SpecialCharBar from '../SpecialCharBar';
-import { shuffle, speak } from '../../utils/helpers';
+import { shuffle, speak, gradeTypedAnswer } from '../../utils/helpers';
 import { FITB_POOL } from '../../content/es-en/drillData';
 import { VERB_TABLE } from '../../content/es-en/words';
 
-export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength = 10, mode = 'choice' }) {
+export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength = 10, mode = 'choice', strictMode = false }) {
   const total = drillLength;
   const queue = useMemo(() => shuffle(FITB_POOL).slice(0, total), [total]);
   const [idx, setIdx] = useState(0);
   const [picked, setPicked] = useState(null);
   const [correct, setCorrect] = useState(0);
   const [typedValue, setTypedValue] = useState('');
+  const [typedOk, setTypedOk] = useState(false);
   const inputRef = useRef(null);
 
   const item = queue[idx];
@@ -45,16 +46,16 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
   const handleTypedSubmit = () => {
     if (!typedValue.trim() || picked) return;
     const answer = typedValue.trim();
-    const ok = answer.toLowerCase() === item.blank.toLowerCase();
-    const display = ok ? item.blank : answer;
-    setPicked(display);
+    const { ok, displayTarget } = gradeTypedAnswer(answer, item.blank, strictMode);
+    setTypedOk(ok);
+    setPicked(ok ? item.blank : answer);
     onAnswer(item.blank, ok);
     if (ok) setCorrect(x => x + 1);
   };
 
   const handleContinue = () => {
     if (idx + 1 >= queue.length) onDone(correct, queue.length);
-    else { setIdx(idx + 1); setPicked(null); setTypedValue(''); }
+    else { setIdx(idx + 1); setPicked(null); setTypedValue(''); setTypedOk(false); }
   };
 
   useEffect(() => {
@@ -65,18 +66,12 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
   let blankBg = 'hsl(var(--muted))';
   let blankColor = 'hsl(var(--muted-foreground))';
   if (picked) {
-    const isCorrect = mode === 'typed'
-      ? picked.toLowerCase() === item.blank.toLowerCase()
-      : picked === item.blank;
+    const isCorrect = mode === 'typed' ? typedOk : picked === item.blank;
     blankBg = isCorrect ? '#DCFCE7' : '#FEE2E2';
     blankColor = isCorrect ? '#14532D' : '#991B1B';
   }
 
-  const isCorrectAnswer = picked && (
-    mode === 'typed'
-      ? picked.toLowerCase() === item.blank.toLowerCase()
-      : picked === item.blank
-  );
+  const isCorrectAnswer = picked && (mode === 'typed' ? typedOk : picked === item.blank);
 
   return (
     <DrillShell
