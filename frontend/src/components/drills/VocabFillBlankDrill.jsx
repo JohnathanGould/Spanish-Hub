@@ -29,12 +29,11 @@ export default function VocabFillBlankDrill({
   const pool = useMemo(
     () => {
       const filtered = Array.isArray(words)
-        ? words.filter(w => w && w.es && typeof w.contextSentence === 'string' && w.contextSentence.trim())
+        ? words.filter(w => w && w.es && (
+            (typeof w.contextSentence === 'string' && w.contextSentence.trim()) ||
+            (Array.isArray(w.contextSentence) && w.contextSentence.length > 0)
+          ))
         : [];
-      console.log('VocabFillBlank pool:', filtered.length, 'of', words?.length, 'words passed filter');
-      if (filtered.length === 0 && words?.length > 0) {
-        console.log('Sample word:', words[0]);
-      }
       return filtered;
     },
     [words],
@@ -76,7 +75,10 @@ export default function VocabFillBlankDrill({
     );
   }
 
-  const parts = buildBlank(word.contextSentence, word.es);
+  const sentence = Array.isArray(word.contextSentence)
+    ? word.contextSentence[Math.floor(Math.random() * word.contextSentence.length)]
+    : (word.contextSentence || '');
+  const parts = buildBlank(sentence, word.es);
   const answered = isTyped ? !!feedback : !!picked;
   const wasCorrect = isTyped ? (feedback && feedback.ok) : (picked === word.es);
 
