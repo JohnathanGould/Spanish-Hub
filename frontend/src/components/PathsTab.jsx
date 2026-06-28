@@ -1149,11 +1149,7 @@ function StopView({
           data-testid="stop-view-back-btn"
           onClick={onBack}
           className="flex-1 rounded-full py-2 font-bold transition-transform active:scale-95"
-          style={{
-            background: 'transparent',
-            color: 'hsl(var(--foreground))',
-            border: '1px solid hsl(var(--border))',
-          }}
+          style={{ background: 'hsl(var(--destructive))', color: 'white' }}
         >
           ← Paths
         </button>
@@ -1162,7 +1158,7 @@ function StopView({
           data-testid="stop-view-begin-btn"
           onClick={startIntro}
           className="flex-1 rounded-full py-2 text-white font-bold transition-transform active:scale-95"
-          style={{ background: 'hsl(var(--primary))' }}
+          style={{ background: '#16a34a' }}
         >
           Continue →
         </button>
