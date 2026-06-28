@@ -487,7 +487,7 @@ function StopView({
             data-testid="stop-view-lets-go-btn"
             onClick={startFetch}
             className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
-            style={{ background: 'hsl(var(--primary))' }}
+            style={{ background: '#16a34a' }}
           >
             Let&apos;s Go 🐾
           </button>
@@ -631,7 +631,7 @@ function StopView({
           </p>
           <button type="button" data-testid="results-retry-btn" onClick={handleRetry}
             className="w-full rounded-full py-3 mt-8 text-white font-bold transition-transform active:scale-95"
-            style={{ background: 'hsl(var(--primary))' }}>
+            style={{ background: '#16a34a' }}>
             Try Again
           </button>
         </div>
@@ -722,7 +722,7 @@ function StopView({
                 data-testid="stop-complete-path-challenge-btn"
                 onClick={startPathFetch}
                 className="w-full rounded-full py-3 mt-6 text-white font-bold transition-transform active:scale-95"
-                style={{ background: 'hsl(var(--primary))' }}
+                style={{ background: '#16a34a' }}
               >
                 Start Path Challenge 🏆
               </button>
@@ -739,7 +739,7 @@ function StopView({
                 data-testid="stop-complete-continue-btn"
                 onClick={isLastStop ? onBack : onNextStop}
                 className="w-full rounded-full py-3 mt-6 text-white font-bold transition-transform active:scale-95"
-                style={{ background: 'hsl(var(--primary))' }}
+                style={{ background: '#16a34a' }}
               >
                 {isLastStop ? 'Back to Paths' : 'Continue to Next Stop →'}
               </button>
@@ -1056,7 +1056,7 @@ function StopView({
         <div style={{ paddingTop: '12px' }}>
           <button type="button" data-testid="word-intro-next-btn" onClick={handleNext}
             className="w-full rounded-full py-3 text-white font-bold transition-transform active:scale-95"
-            style={{ background: 'hsl(var(--primary))' }}>
+            style={{ background: '#16a34a' }}>
             {isLast ? 'Ready to Practice →' : 'Next →'}
           </button>
         </div>
