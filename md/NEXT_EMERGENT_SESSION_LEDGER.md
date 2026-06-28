@@ -5,6 +5,48 @@
 
 ---
 
+## Pre-Emergent Cleanup Session — ~2026-07-01
+
+Runs before Session A. Uses separate token budget from the 7 main sessions.
+
+### Task 1 — Audio kill switch + remove dead TTS toggle
+
+- Wire `audioListenEnabled` globally: guard `speak()` in helpers.js, exclude audio drill types from fetch queue in PathsTab.jsx when flag is off
+- Remove `audioSpeakEnabled` entirely: delete toggle from ProfileSheet.jsx, remove state and callback from SpanishHub.jsx
+
+### Task 2 — Word Sort drill
+
+- Build `WordSortDrill.jsx` — sentence from `contextSentence`, words scrambled into tappable tiles, user reconstructs in order
+- Wire into DrillsGrid.jsx (inline render, Warm Up tab) and PathsTab.jsx (DRILL_TYPES + both routers)
+- Prop contract: `{ words, progress, onAnswer, onDone, onBack, drillLength, headerOffset, counterOverride }`
+
+### Task 3 — Sentence Builder word tile gender color
+
+- MASTER lookup per token in Sentence Builder component
+- Masculine nouns: blue tile accent, Feminine nouns: pink tile accent
+- Pass `masterList` prop from SpanishHub.jsx down to Sentence Builder
+
+**Est. tokens: 15–20**
+
+---
+
+## Lesson Card — Emergent Session (unscheduled)
+
+Not yet slotted into A–G order. Needs UI spec written before session opens.
+
+### What gets built
+
+- Optional lesson card at Path entry point
+- Auto-shows on first visit to each Path, skip remembered per Path in Firestore
+- Persistent 'Lesson' button on Path screen accessible any time
+- Skip button: closes card, goes to Stop 1, never auto-shows again for that Path
+- Further Study button: expands to deeper content (grammar notes, cultural context — text only, YouTube deferred to v3)
+- Data fields already in paths.js: `lessonText` (100–150 words) and `furtherStudy` (longer form) — content complete for all 13 Paths
+
+**Est. tokens: 10–15**
+
+---
+
 ## Emergent Session Plan — Next Month (~100 tokens)
 
 | # | Session | What Gets Built | Est. Tokens |
@@ -68,9 +110,7 @@ Everything below must be done in the next month using Claude Code, Claude Projec
   Filter by New / Learning / Strong / Mastered using FSRS stability thresholds.
   Claude Code task.
 
-- [ ] **contextSentence populated for all 300+ words**
-  Already populated — verify 5 random words have non-empty contextSentence field.
-  Blocks: sentence flashcards, Fill in the Blank, Contextual Binding.
+- [x] **contextSentence verified on all words** — CLOSED 2026-06-27, 414/414 complete
 
 - [ ] **imageUrl verified loading in Phase 1**
   Open a Stop, go through Phase 1. Do images load or show ImageOff fallback?
@@ -98,9 +138,7 @@ Everything below must be done in the next month using Claude Code, Claude Projec
   After 5 new words in a session, Milo suggests reviewing before adding more.
   Claude Code.
 
-- [ ] **Contextual Binding post-answer step**
-  After correct Phase 3 answer, show contextSentence for 2-3 seconds before advancing.
-  DrillShell.jsx change — Claude Code.
+- [x] **Contextual Binding post-answer step** — CLOSED 2026-06-27, removed entirely (sentence drills surface context naturally)
 
 - [ ] **Streak reminder styling**
   Make streak reminder stand out more visually.

@@ -1142,13 +1142,13 @@ function StopView({
         ))}
       </div>
     </div>
-    <div style={{ position: 'fixed', bottom: '72px', left: 0, right: 0, padding: '8px 16px', zIndex: 50 }}>
+    <div style={{ position: 'fixed', bottom: '80px', left: 0, right: 0, padding: '8px 16px', zIndex: 50 }}>
       <div className="flex gap-2">
         <button
           type="button"
           data-testid="stop-view-back-btn"
           onClick={onBack}
-          className="flex-1 rounded-full py-3 font-bold transition-transform active:scale-95"
+          className="flex-1 rounded-full py-2 font-bold transition-transform active:scale-95"
           style={{
             background: 'transparent',
             color: 'hsl(var(--foreground))',
@@ -1161,7 +1161,7 @@ function StopView({
           type="button"
           data-testid="stop-view-begin-btn"
           onClick={startIntro}
-          className="flex-1 rounded-full py-3 text-white font-bold transition-transform active:scale-95"
+          className="flex-1 rounded-full py-2 text-white font-bold transition-transform active:scale-95"
           style={{ background: 'hsl(var(--primary))' }}
         >
           Continue →

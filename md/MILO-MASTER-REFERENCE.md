@@ -237,7 +237,7 @@ match /chatUsage/{userId} {
 | Learn | `learn` | 14 lessons — being replaced by Paths & Stops |
 | Words | `words` | Word list, mastery, custom words, community packs |
 | Drills | `drills` | 14 drill types |
-| Milo | `sofia` | AI conversation (tab ID is legacy "sofia" — do not change until Emergent does a full rename pass) |
+| Milo | `milo` | AI conversation |
 | Trans | `translate` | DeepL translator — BROKEN |
 | Plaza | `plaza` | Community chat |
 | Top | `leaderboard` | XP rankings |
@@ -333,7 +333,7 @@ Learn · Words · Drills · Milo · Plaza · Log
 | Output | Text + Speech Synthesis (Spanish voice preferred) |
 | Mute toggle | 🔊/🔇 |
 | History window | Last 10 messages only |
-| Tab name | "Milo" (tab ID is still legacy `sofia` — leave until Emergent does full rename pass) |
+| Tab name | "Milo" (tab ID: `milo`) |
 | System prompt location | `FRONTEND > api > chat.js` — test changes in Google AI Studio first |
 
 **System prompt behaviour (current):**

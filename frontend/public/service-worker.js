@@ -58,6 +58,7 @@ self.addEventListener('fetch', (event) => {
       const fetchPromise = fetch(req).then((res) => {
         if (res && res.status === 200 && res.type !== 'opaque') {
           const copy = res.clone();
+          if (!req.url.startsWith('http')) return;
           caches.open(RUNTIME_CACHE).then((cache) => cache.put(req, copy));
         }
         return res;

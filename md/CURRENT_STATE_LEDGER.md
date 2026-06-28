@@ -1,5 +1,57 @@
 # Current State Ledger — Milo Speaks Spanish
-# Last updated: 2026-06-21
+# Last updated: 2026-06-27
+
+## Session Notes — 2026-06-27 (second entry)
+
+### Completed
+- **Stage 4 closed — all items complete:**
+  - contextSentence populated on all 414 words (42 stubs filled this session)
+  - imageUrl scaffolded on all words
+  - lessonText and furtherStudy generated and added to all 13 Paths in paths.js
+  - Stage 4 items 4.4 and 4.5 marked obsolete (architecture changed — Stops contain word arrays, not drill sequences)
+- **Stage 5 open** — Pre-Emergent State Ledger phase begun
+- Audio toggle spec defined and wired to Emergent July 1st session
+- strictMode wired to FillBlankDrill — was the only gap; now fully wired across all typing drills
+- Two dead profile toggles resolved:
+  - audioListenEnabled: kept, specced for wiring in Emergent session (gate speak() calls in drills)
+  - audioSpeakEnabled: marked for removal (no mic/speech-recognition feature planned)
+- Lesson card UI spec defined (lessonText, furtherStudy, Skip button, Further Study button, persistent Path screen button) — Emergent build pending
+
+### Stage Status
+- Stage 0: CLOSED
+- Stage 1: CLOSED
+- Stage 2: CLOSED
+- Stage 3: CLOSED (2026-06-27)
+- Stage 4: CLOSED (2026-06-27)
+- Stage 5: OPEN
+
+---
+
+## Session Notes — 2026-06-27 (first entry)
+
+### Completed
+- Contextual Binding removed everywhere (PathsTab.jsx — component, bindingWord state, render block, both handler branches)
+- All Stage 0 tasks closed
+- Vocab Fill in the Blank drill built and deployed (typed + choice modes) — VocabFillBlankDrill.jsx
+- DrillsGrid lock gates removed for testing (path2/path3 gates gone, Word Sort unlocked)
+- DrillsGrid words filtered to completed Stops only, articles/particles/conjunctions/prepositions excluded
+- contextSentence array handling fixed in VocabFillBlankDrill (pool filter + buildBlank call)
+- Stage 3 audit complete — ALL ITEMS CLOSED 2026-06-27:
+  - Type It drill — no bug, working fine
+  - Listen & Type — no issues observed
+  - Log tab — already resolved (one month ago)
+  - Translator tab error — fixed (chrome-extension guard added to service-worker.js before cache.put())
+  - Word Sort component — deferred to dedicated Emergent session (~2026-07-01, next token reset)
+  - Sentence Builder word tile gender color — deferred to same Emergent session
+  - debug console.log removed from DrillsGrid (committed 2026-06-27)
+- **Stage 3 fully closed.**
+
+### Decisions Made
+- DrillsGrid draws from completed Stops only — not full MASTER list
+- Excluded types from DrillsGrid words: article, particle, conjunction, preposition
+- Lock gates removed — will restore just before beta
+
+---
 
 ## Session Notes — 2026-06-19
 
@@ -578,8 +630,8 @@ chatUsage/{uid}: count, date (rate limit: 30/day)
 1. Pre-existing ESLint error SpanishHub.jsx line 242 (if isGuest / react-hooks/immutability) — do not touch.
 
 Follow-up tasks (not bugs):
-- Word Sort — no component built, button disabled in DrillsGrid. Standalone Emergent task when Stage 4 opens.
-- Sentence Builder word tiles: gender color requires MASTER lookup per token — separate Emergent task, not blocking.
+- Word Sort — no component built, button currently unlocked in DrillsGrid (tappable, no-op). Dedicated Emergent session scheduled ~2026-07-01 (next token reset).
+- Sentence Builder word tiles: gender color requires MASTER lookup per token — same Emergent session as Word Sort (~2026-07-01).
 
 RESOLVED:
 - contextSentence audit RESOLVED 2026-06-19: 583 sentences regenerated against curriculum vocabulary floor. Malformed/truncated responses cleaned up (first-line strip + last-punctuation trim added to generator). Two truncated sentences manually corrected (me, se). 115 minor remaining violations are adjective inflections and orphaned-word companions — all linguistically correct, not flagged for fixing.
