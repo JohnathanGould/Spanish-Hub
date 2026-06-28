@@ -399,6 +399,7 @@ function StopView({
   const [pathFetchWrongWords, setPathFetchWrongWords] = useState([]);
   const [finalScore, setFinalScore] = useState(null);
   const [finalTotal, setFinalTotal] = useState(null);
+  const hasFiredRef = useRef(false);
 
   // ── Initial word list (for preview screen, before Begin reorders by FSRS weakness) ──
   const initialWordStrings = getStopWords(stopId);
@@ -407,6 +408,15 @@ function StopView({
     return entry || { es, en: es };
   });
   const [words, setWords] = useState(initialWords);
+
+  const stopFetchPassed = fetchQueue.length > 0 && (fetchCorrect / fetchQueue.length) >= PASS_THRESHOLD;
+
+  useEffect(() => {
+    if (phase === 'results' && stopFetchPassed && !hasFiredRef.current) {
+      hasFiredRef.current = true;
+      if (onAwardBones) onAwardBones(2);
+    }
+  }, [phase, stopFetchPassed, onAwardBones]);
 
   if (!stop || !path) {
     return (
@@ -589,7 +599,6 @@ function StopView({
       setFinalScore(fetchCorrect);
       setFinalTotal(fetchQueue.length);
       if (onCompleteStop) onCompleteStop(stopId);
-      if (onAwardBones) onAwardBones(2);
       setPhase('stop-complete');
       return null;
     }
