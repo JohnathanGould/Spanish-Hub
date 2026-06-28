@@ -1857,13 +1857,12 @@ Each session is independent enough to run cleanly. Break Free goes last — high
 - [ ] **Sentence Builder distractors bug**
   Claude Code fix — investigate and repair.
 
-- [ ] **saber orphaned conjugation forms**
-  sabes/sabe/sabemos/saben not assigned to any Path/Stop in paths.js.
-  Noted 2026-06-15 — confirm whether swept into curriculum rebuild or still open.
+- [x] **saber orphaned conjugation forms** — CLOSED 2026-06-28. Forms live correctly in the conjugation table in words.js and feed ConjugationDrill. Never were MASTER entries. Not orphaned — confirmed non-issue.
 
-- [ ] **Security cleanup**
-  firebase-admin, node-fetch, next-themes flagged for removal from frontend/package.json.
-  Claude Code — one command.
+- [ ] **Security cleanup** — run after Session B completes
+  firebase-admin: keep — live in api/chat.js (Vercel serverless, not browser bundle)
+  node-fetch: keep — pinned transitive dep of firebase-admin, not directly imported
+  next-themes + sonner: remove after Session B deletes sonner.jsx — run `npm uninstall next-themes sonner` in frontend/
 
 ### 🟢 Nice to have — not blocking
 
@@ -1960,8 +1959,8 @@ Each session is independent enough to run cleanly. Break Free goes last — high
 ### This week (June 27 – July 1)
 - Firebase emulator full journey test — document every bug found
 - Fix ChoiceDrill sounds (Claude Code, 15 min)
-- Security cleanup — remove firebase-admin, node-fetch, next-themes
-- Confirm saber orphaned conjugation forms open or closed
+- ~~Security cleanup~~ — firebase-admin and node-fetch must stay. Run `npm uninstall next-themes sonner` in frontend/ after Session B deletes sonner.jsx
+- ~~Confirm saber orphaned conjugation forms~~ — CLOSED 2026-06-28, non-issue
 - Generate 5 Milo poses in Google Flow
 - Run Pre-Emergent Cleanup Session (~July 1, 15–20 tokens)
 

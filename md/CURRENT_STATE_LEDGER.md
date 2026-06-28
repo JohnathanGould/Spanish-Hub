@@ -1,5 +1,40 @@
 # Current State Ledger — Milo Speaks Spanish
-# Last updated: 2026-06-27
+# Last updated: 2026-06-28
+
+## Session Notes — 2026-06-28
+
+### Completed
+- Session A spec written — 103 badges, evaluateBadges wiring, 5 new Firestore fields
+- Session B spec written — toaster mount, newlyEarned consumed, first_friend fix, sonner.jsx deleted
+- Session C spec written — Streak Shield toggle, per-day consumption, word skip, spendBones
+- Session D spec written — learnerContext computed, passed to MiloChat, injected into Gemini
+- Session E spec written — FetchTab with config screen, filters, session flow, results
+- Session F spec written — BreakFreeDrill, animation FSM, 60s timer, XP gate, bones reward
+- BottomNav updated — HOME → PATHS → STUDY → FETCH → MILO → FRIENDS, words tab removed
+- TAB_ORDER updated — ['home', 'paths', 'study', 'fetch']
+- Dead audio code removed — playCorrect, playAlmost, correctBuffer, almostBuffer, playBuffer
+- saber orphaned forms — confirmed closed, non-issue
+- Security cleanup — firebase-admin and node-fetch must stay, next-themes + sonner removed after Session B
+- Session plan table updated — 64–83 token estimate, all 6 sessions described accurately
+
+### Bugs Added
+None
+
+### Decisions Made
+- Bones economy locked — freeze 20/day, skip 10, Break Free +10, DrillsGrid 0
+- Streak Shield — per-day consumption, 7-day cap, partial coverage
+- BottomNav order locked — HOME → PATHS → STUDY → FETCH → MILO → FRIENDS
+- Words tab accessible via Home screen only pending Session E
+- firebase-admin and node-fetch stay in package.json
+- next-themes + sonner removed after Session B
+
+### First Task Next Session
+Firebase emulator setup and full journey test — document every bug before Emergent month starts.
+
+### Notes
+Tokens reset in 3 days — Emergent month starts then. All 6 session specs (A–F) are written and locked in NEXT_EMERGENT_SESSION_LEDGER.md.
+
+---
 
 ## Session Notes — 2026-06-27 (second entry)
 
