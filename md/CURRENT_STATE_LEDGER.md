@@ -4,18 +4,28 @@
 ## Session Notes — 2026-06-27 (second entry)
 
 ### Completed
-- **Stage 4 closed — all items complete:**
+- **Stage 3 fully closed** — all items resolved (see first entry for detail)
+- **Stage 4 fully closed:**
   - contextSentence populated on all 414 words (42 stubs filled this session)
-  - imageUrl scaffolded on all words
   - lessonText and furtherStudy generated and added to all 13 Paths in paths.js
+  - imageUrl scaffolded on all words
   - Stage 4 items 4.4 and 4.5 marked obsolete (architecture changed — Stops contain word arrays, not drill sequences)
 - **Stage 5 open** — Pre-Emergent State Ledger phase begun
+- Contextual Binding removed everywhere (PathsTab.jsx — component, bindingWord state, render block, both handler branches)
+- VocabFillBlankDrill built and deployed (typed + choice modes)
+- DrillsGrid lock gates removed for testing (path2/path3 gates gone, Word Sort unlocked)
+- DrillsGrid words filtered to completed Stops only, articles/particles/conjunctions/prepositions excluded
+- strictMode wired to FillBlankDrill — now fully wired across all typing drills
+- audioSpeakEnabled marked for removal (no mic/speech-recognition planned); audioListenEnabled specced for Emergent wiring (gate speak() calls in drills)
+- console.log audit — production code confirmed clean
+- Bones render body refactor — onAwardBones(2) moved from render body to useEffect with hasFiredRef guard (prevents double-fire in React Strict Mode)
+- Stop preview two-button row — ← Paths (red/destructive) + Continue → (green #16a34a) replacing single Begin button; back button removed from top of preview
+- All forward-progress buttons changed to green #16a34a (Let's Go, Try Again, Start Path Challenge, Continue to Next Stop, Next / Ready to Practice)
+- service-worker chrome-extension guard added (cache.put() guard — fixes Translator tab error)
+- Ledgers updated: CURRENT_STATE_LEDGER.md, NEXT_EMERGENT_SESSION_LEDGER.md, MILO-MASTER-REFERENCE.md
+- Pre-Emergent July 1st session specced — 3 tasks: Word Sort component, Sentence Builder gender color tiles, lesson card Emergent build
+- Lesson card fully specced and content generated (lessonText + furtherStudy for all 13 Paths in paths.js; UI: Skip + Further Study buttons, persistent Path screen access)
 - Audio toggle spec defined and wired to Emergent July 1st session
-- strictMode wired to FillBlankDrill — was the only gap; now fully wired across all typing drills
-- Two dead profile toggles resolved:
-  - audioListenEnabled: kept, specced for wiring in Emergent session (gate speak() calls in drills)
-  - audioSpeakEnabled: marked for removal (no mic/speech-recognition feature planned)
-- Lesson card UI spec defined (lessonText, furtherStudy, Skip button, Further Study button, persistent Path screen button) — Emergent build pending
 
 ### Stage Status
 - Stage 0: CLOSED
