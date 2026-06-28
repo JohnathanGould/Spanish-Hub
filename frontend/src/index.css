@@ -26,6 +26,17 @@
   --input: 8 28% 22%;
   --ring: 352 75% 51%;
   --radius: 0.75rem;
+  --color-bg: #F5F0E8;
+  --color-primary: #3B6D11;
+  --color-primary-light: #C0DD97;
+  --color-accent: #D85A30;
+  --color-teal: #1D9E75;
+  --color-navy: #26215C;
+  --color-muted: #888780;
+  --color-card: #FFFFFF;
+  --color-pill-bg: #EAF3DE;
+  --font-spanish: 'Fraunces', serif;
+  --font-ui: 'Nunito', sans-serif;
 }
 
 @layer base {

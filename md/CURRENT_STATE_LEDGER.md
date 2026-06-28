@@ -1,6 +1,35 @@
 # Current State Ledger — Milo Speaks Spanish
 # Last updated: 2026-06-28
 
+## Session Notes — 2026-06-28 (second entry — Milo UI Design)
+
+### Completed
+- milo_straining.gif — generated in Flow, approved and saved to frontend/public/animations/
+- milo_breaking.gif — generated in Flow, approved and saved to frontend/public/animations/
+- milo_free.gif — generated in Flow, approved and saved to frontend/public/animations/
+- Animation pipeline established — Google Flow → PNG white background → MP4 → EZGif → GIF
+- Character anchor locked — senior black lab, white muzzle, purple collar, MILO bone tag
+- Colour palette locked — 9 colours with rules (saved in MILO_UI_DESIGN_SPEC.md)
+- Typography locked — Fraunces (display/serif) + Nunito (body/UI)
+- Milo presence map locked — which screens Milo appears on and in what pose
+- UI Design Spec written — md/MILO_UI_DESIGN_SPEC.md
+- Tool assignment decided — Claude Code for CSS variables/fonts/pose logic; v0 for Home screen and Word card redesigns
+
+### Bugs Added
+None
+
+### Decisions Made
+- Style B locked — realistic painterly senior Milo (no cartoon, no puppy)
+- v0 handles Home screen and Word card redesigns
+- Claude Code handles CSS variables, fonts, and pose logic
+- UI redesign is Stage 4 work — Stage 4 not closed until UI matches vision
+
+### First Task Next Session
+Open Flow and generate milo_celebrate.gif. Prompt:
+"Milo is celebrating joyfully. Senior black Labrador with white and grey fur on his chin and muzzle. Tail wagging fast, whole body wiggling, mouth open in a huge happy grin, eyes bright and excited. Purple collar with gold MILO bone tag. Realistic painterly illustration. No anatomical details. Appropriate for children. White background."
+
+---
+
 ## Session Notes — 2026-06-28
 
 ### Completed
