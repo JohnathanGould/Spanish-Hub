@@ -1,14 +1,14 @@
-import { Map, BookMarked, Dumbbell, Home, Bot, Users } from 'lucide-react';
+import { Map, Dumbbell, Home, Bot, Users, PawPrint } from 'lucide-react';
 
 const cn = (...classes) => classes.filter(Boolean).join(' ');
 
 const tabs = [
-  { id: 'home', label: 'Home', icon: Home },
-  { id: 'paths', label: 'Paths', icon: Map },
-  { id: 'words', label: 'My Words', icon: BookMarked },
-  { id: 'study', label: 'Study', icon: Dumbbell },
+  { id: 'home',    label: 'Home',    icon: Home },
+  { id: 'paths',   label: 'Paths',   icon: Map },
+  { id: 'study',   label: 'Study',   icon: Dumbbell },
+  { id: 'fetch',   label: 'Fetch',   icon: PawPrint },
+  { id: 'milo',    label: 'Milo',    icon: Bot },
   { id: 'friends', label: 'Friends', icon: Users },
-  { id: 'milo', label: 'Milo', icon: Bot },
 ];
 
 export default function BottomNav({ activeTab, onTabChange }) {

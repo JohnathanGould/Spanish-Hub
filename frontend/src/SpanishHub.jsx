@@ -145,7 +145,7 @@ function maybeRunStreakReminder(data) {
   } catch (e) { console.error(e); }
 }
 
-const TAB_ORDER = ['home', 'paths', 'words', 'study'];
+const TAB_ORDER = ['home', 'paths', 'study', 'fetch'];
 
 export default function SpanishHub() {
   const [user, setUser] = useState(null);
@@ -899,6 +899,7 @@ export default function SpanishHub() {
               />
             </div>
           )}
+          {/* Words tab — entry point removed from BottomNav. WordList preserved here pending Fetch tab build in Session E. Do not delete. */}
           {tab === 'words' && (
             <div className="pb-[76px]">
             <WordList

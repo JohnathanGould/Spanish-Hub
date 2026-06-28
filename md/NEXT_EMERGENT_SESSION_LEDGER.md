@@ -497,15 +497,17 @@ return newData;
 
 ### Task 4 — Add 3 new fields to default userData and wire their counters in frontend/src/SpanishHub.jsx
 
-**4a.** Find the default userData object (around line 121 where earnedBadges: [] lives). Add these three fields:
+**4a.** Find the default userData object (around line 121 where earnedBadges: [] lives). Add these five fields:
 
 ```js
 totalDrills: 0,
 totalBonesEarned: 0,
 perfectStreak: 0,
+dailyGoalStreak: 0,
+dailyGoalStreakDate: null,
 ```
 
-**4b.** In onDrillDone, after the sessions array is built, increment totalDrills and perfectStreak. Find the line that builds the sessions array:
+**4b.** In onDrillDone, after the sessions array is built, increment totalDrills, perfectStreak, and dailyGoalStreak. Find the line that builds the sessions array:
 
 ```js
 const sessions = [{ drillId: sessionDrillId, correct, total, date: today, ts: Date.now() }, ...(prev.sessions || []).slice(0, 49)];
@@ -517,9 +519,21 @@ Immediately after that line, add:
 const totalDrills = (prev.totalDrills || 0) + 1;
 const isPerfect = total > 0 && correct === total;
 const perfectStreak = isPerfect ? (prev.perfectStreak || 0) + 1 : 0;
+
+// Daily goal streak — increment if user hit their daily goal today, reset if they missed yesterday
+const today2 = new Date().toDateString();
+const yesterday2 = new Date(Date.now() - 86400000).toDateString();
+const dailyCount = (prev.dailyProgress?.date === today2 ? prev.dailyProgress.count : 0) + 1;
+const dailyGoal = prev.dailyGoal || 10;
+const hitGoalToday = dailyCount >= dailyGoal;
+const prevGoalDate = prev.dailyGoalStreakDate;
+const dailyGoalStreak = hitGoalToday
+  ? (prevGoalDate === yesterday2 ? (prev.dailyGoalStreak || 0) + 1 : prevGoalDate === today2 ? (prev.dailyGoalStreak || 0) : 1)
+  : (prev.dailyGoalStreak || 0);
+const dailyGoalStreakDate = hitGoalToday ? today2 : (prev.dailyGoalStreakDate || null);
 ```
 
-Then include totalDrills and perfectStreak in newData before evaluateBadges is called.
+Then include totalDrills, perfectStreak, dailyGoalStreak, and dailyGoalStreakDate in newData before evaluateBadges is called.
 
 **4c.** Find the onAwardBones function. Add totalBonesEarned increment alongside the bones increment:
 
@@ -561,23 +575,1232 @@ Three files touched. No new components. Largest cost is the file replacements �
 
 ---
 
-## Emergent Session Plan (~100 tokens)
+---
+
+## Emergent Session B — Toast Notifications + Friend Badge Fix
+
+### Classification
+- **Type:** Wiring + mount
+- **Risk:** Low. Toast infrastructure is fully installed, just never mounted. One new mount, three consumption points, one badge fix.
+- **Stage:** 3 — stabilization
+- **Affected files:** SpanishHub.jsx, frontend/src/components/FriendsList.jsx
+- **Pattern:** Parent Fan-Out — SpanishHub owns all state mutations and toast triggers
+
+---
+
+### What the problem is
+
+1. `evaluateBadges()` returns `newlyEarned` at every call site. It is discarded every time. Users earn badges silently — no feedback.
+2. `<Toaster />` from `frontend/src/components/ui/toaster.jsx` is installed but never mounted. No toast can appear anywhere in the app.
+3. `first_friend` badge checks `friends.length` on `login` event only — never fires when a friend is actually added.
+4. `sonner.jsx` imports `next-themes` (on security cleanup list) and is never used.
+
+---
+
+### Pre-flight confirmation — Emergent must report first 3 lines of each file before touching anything
+frontend/src/SpanishHub.jsx
+
+frontend/src/components/ui/toaster.jsx
+
+frontend/src/hooks/use-toast.js
+
+frontend/src/components/FriendsList.jsx
+
+---
+
+### Task 1 — Mount the toaster in frontend/src/SpanishHub.jsx
+
+Import `Toaster` at the top of SpanishHub.jsx:
+
+```js
+import { Toaster } from './components/ui/toaster';
+```
+
+Add `<Toaster />` once inside the return, at the root level alongside the existing modal stack. It must be outside all conditional renders so it is always present.
+
+---
+
+### Task 2 — Import toast and consume newlyEarned at all three evaluateBadges call sites
+
+Import at the top of SpanishHub.jsx:
+
+```js
+import { useToast } from './hooks/use-toast';
+```
+
+Add inside the component function, near the top with other hooks:
+
+```js
+const { toast } = useToast();
+```
+
+**Call site 1 — login (line ~251)**
+
+Find:
+```js
+const { updatedBadges } = evaluateBadges({}, merged, 'login', {});
+```
+
+Replace with:
+```js
+const { updatedBadges, newlyEarned: loginBadges } = evaluateBadges({}, merged, 'login', {});
+loginBadges.forEach(id => {
+  const def = BADGES.find(b => b.id === id);
+  if (def) toast({ title: `${def.emoji} Badge Earned`, description: def.name });
+});
+```
+
+Note: `toast` is not available inside `setUserData` callbacks (they run outside React render). The login call site already runs outside `setUserData` so toast is safe to call here directly.
+
+**Call site 2 — answer (line ~466, inside updateWordProgress → setUserData)**
+
+The answer call site runs inside `setUserData`. Toasts cannot be called inside `setUserData`. Use a ref to queue badges and fire after the state update settles.
+
+Add near the top of the component:
+
+```js
+const pendingBadgeToasts = useRef([]);
+```
+
+Find:
+```js
+const { updatedBadges } = evaluateBadges(prev, newData, 'answer', {});
+```
+
+Replace with:
+```js
+const { updatedBadges, newlyEarned: answerBadges } = evaluateBadges(prev, newData, 'answer', {});
+if (answerBadges.length > 0) pendingBadgeToasts.current = [...pendingBadgeToasts.current, ...answerBadges];
+```
+
+Then after the `setUserData` call in `updateWordProgress`, add:
+
+```js
+if (pendingBadgeToasts.current.length > 0) {
+  pendingBadgeToasts.current.forEach(id => {
+    const def = BADGES.find(b => b.id === id);
+    if (def) toast({ title: `${def.emoji} Badge Earned`, description: def.name });
+  });
+  pendingBadgeToasts.current = [];
+}
+```
+
+**Call site 3 — drill_complete (line ~531, inside onDrillDone → setUserData)**
+
+Same pattern as call site 2 — inside `setUserData`, use the same `pendingBadgeToasts` ref.
+
+Find:
+```js
+const { updatedBadges } = evaluateBadges(prev, newData, 'drill_complete', { drillId, correct, total, ts: Date.now() });
+```
+
+Replace with:
+```js
+const { updatedBadges, newlyEarned: drillBadges } = evaluateBadges(prev, newData, 'drill_complete', { drillId, correct, total, ts: Date.now() });
+if (drillBadges.length > 0) pendingBadgeToasts.current = [...pendingBadgeToasts.current, ...drillBadges];
+```
+
+Then after the `setUserData` call in `onDrillDone`, flush the same way as call site 2.
+
+---
+
+### Task 3 — Friend toast + first_friend badge fix in frontend/src/SpanishHub.jsx
+
+The `addFriend` function never calls `evaluateBadges`, so `first_friend` never triggers. Fix both the badge and add a toast.
+
+Find:
+```js
+const addFriend = useCallback((fid) => {
+  setUserData(prev => {
+    if ((prev.friends || []).includes(fid)) return prev;
+    const newData = { ...prev, friends: [...(prev.friends || []), fid] };
+    persistData(newData);
+    return newData;
+  });
+}, [persistData]);
+```
+
+Replace with:
+```js
+const addFriend = useCallback((fid) => {
+  let friendBadges = [];
+  setUserData(prev => {
+    if ((prev.friends || []).includes(fid)) return prev;
+    let newData = { ...prev, friends: [...(prev.friends || []), fid] };
+    const { updatedBadges, newlyEarned } = evaluateBadges(prev, newData, 'login', {});
+    newData = { ...newData, earnedBadges: updatedBadges };
+    friendBadges = newlyEarned;
+    persistData(newData);
+    return newData;
+  });
+  setTimeout(() => {
+    toast({ title: '🐾 Friend Added', description: 'Your pack is growing!' });
+    friendBadges.forEach(id => {
+      const def = BADGES.find(b => b.id === id);
+      if (def) toast({ title: `${def.emoji} Badge Earned`, description: def.name });
+    });
+  }, 0);
+}, [persistData, toast]);
+```
+
+Note: `setTimeout(..., 0)` defers the toast until after the `setUserData` callback completes. This is the same pattern as `pendingBadgeToasts` but scoped locally since this is a one-off callback rather than a hot path.
+
+---
+
+### Task 4 — Delete frontend/src/components/ui/sonner.jsx
+
+This file imports `next-themes` (flagged for security cleanup) and is never used anywhere in the app. Delete it. Confirm no import of sonner exists in any other file before deleting.
+
+---
+
+### What Emergent must NOT do
+
+- Do not build a notification bell, notification drawer, or notification history UI — that is a future session
+- Do not build admin alerts — no admin system exists yet
+- Do not modify the toast component files (toaster.jsx, toast.jsx, use-toast.js) — use them as-is
+- Do not touch Firebase Auth logic, Firestore security rules, or api/chat.js
+- Do not add any new Firestore collections or documents
+
+---
+
+### Verification steps
+
+1. Complete a drill → toast appears with badge name and emoji if badge earned
+2. Complete Stop p1s1 → stop_1_1 badge toast appears
+3. Complete Path 1 → path_1 badge toast appears
+4. Add a friend → "Your pack is growing!" toast appears
+5. Add first friend ever → first_friend badge toast also appears
+6. Log in with founding_paw flag set → founding_paw badge toast appears on login
+7. Open BadgeGrid → earned badges show correctly, not duplicated
+8. Confirm sonner.jsx is deleted and no import errors in build
+
+---
+
+### Estimated tokens: 6–8
+
+No new components. One mount, three wiring changes, one badge fix, one file deletion. Pre-flight check mandatory.
+
+---
+
+---
+
+## Emergent Session C — Bones & Streak Shield System
+
+### Classification
+- **Type:** Feature build — new toggle UI, new spending logic, new streak intercept
+- **Risk:** Medium. Touches streak logic (high consequence if broken), bones balance, and ProfileSheet UI.
+- **Stage:** 3 — stabilization
+- **Affected files:** SpanishHub.jsx, frontend/src/components/ProfileSheet.jsx, frontend/src/components/PathsTab.jsx
+- **Pattern:** Parent Fan-Out — SpanishHub owns all bones and streak state. Children receive callbacks.
+
+---
+
+### What gets built
+
+1. **Streak Shield toggle** in ProfileSheet — user enables automatic bone spending to protect streak
+2. **Streak Shield consumption logic** in SpanishHub — intercepts missed days on app open, spends 20 bones per missed day, partial coverage if bones run short
+3. **Word Skip button** in PathsTab Fetch rounds only — costs 10 bones, skips current word in queue
+4. **`spendBones(n)`** function in SpanishHub — guarded spend with balance check, returns success/failure
+
+---
+
+### Pre-flight confirmation — Emergent must report first 3 lines of each file before touching anything
+frontend/src/SpanishHub.jsx
+
+frontend/src/components/ProfileSheet.jsx
+
+frontend/src/components/PathsTab.jsx
+
+---
+
+### New Firestore fields — add to default userData in SpanishHub.jsx
+
+```js
+streakShieldActive: false,   // user's toggle state — persists across sessions
+shieldEventPending: null,    // { bonesSpent, daysCovered, daysTotal } — read on next open, cleared after toast
+```
+
+---
+
+### Task 1 — Add spendBones function to SpanishHub.jsx
+
+Add alongside `awardBones`:
+
+```js
+const spendBones = useCallback((n) => {
+  let success = false;
+  setUserData(prev => {
+    if ((prev.bones || 0) < n) return prev;
+    const newData = { ...prev, bones: (prev.bones || 0) - n };
+    persistData(newData);
+    success = true;
+    return newData;
+  });
+  return success;
+}, [persistData]);
+```
+
+Pass as prop wherever needed: `onSpendBones={spendBones}`
+
+---
+
+### Task 2 — Streak Shield consumption logic in SpanishHub.jsx
+
+This runs on app open, immediately after user data is loaded and merged — same location as `maybeRunStreakReminder` calls (lines ~230 and ~257).
+
+Add a new function `maybeApplyStreakShield(data, uid)`:
+
+```js
+function maybeApplyStreakShield(data, uid) {
+  if (!data?.streakShieldActive) return data;
+  if (!data?.streak?.lastDate) return data;
+  if ((data.streak?.count || 0) === 0) return data;
+
+  const today = new Date().toDateString();
+  const lastDate = new Date(data.streak.lastDate);
+  const now = new Date();
+  const daysDiff = Math.floor((now - lastDate) / 86400000);
+
+  // Already played today or only missed yesterday (streak logic handles this) — no shield needed
+  if (daysDiff <= 1) return data;
+
+  // Gone more than 7 days — shield gives up, reset streak
+  if (daysDiff > 7) {
+    return {
+      ...data,
+      streak: { count: 0, lastDate: null },
+      shieldEventPending: { bonesSpent: 0, daysCovered: 0, daysTotal: daysDiff - 1, shieldFailed: true },
+    };
+  }
+
+  const daysMissed = daysDiff - 1;
+  const costPerDay = 20;
+  const totalCost = daysMissed * costPerDay;
+  const availableBones = data.bones || 0;
+  const daysCovered = Math.min(daysMissed, Math.floor(availableBones / costPerDay));
+  const bonesSpent = daysCovered * costPerDay;
+  const daysNotCovered = daysMissed - daysCovered;
+
+  const newStreakCount = Math.max(0, (data.streak?.count || 0) - daysNotCovered);
+  const newBones = availableBones - bonesSpent;
+
+  return {
+    ...data,
+    bones: newBones,
+    streak: { count: newStreakCount, lastDate: today },
+    shieldEventPending: {
+      bonesSpent,
+      daysCovered,
+      daysTotal: daysMissed,
+      daysNotCovered,
+      shieldFailed: bonesSpent === 0,
+    },
+  };
+}
+```
+
+Call this function after data is merged on login, before `setUserData` is called. If it returns modified data, write back to Firestore via `setDoc`.
+
+---
+
+### Task 3 — Shield event toast on app open
+
+After `maybeApplyStreakShield` runs and `setUserData` is called, check for `shieldEventPending` and fire the appropriate toast:
+
+```js
+if (mergedData.shieldEventPending) {
+  const { bonesSpent, daysCovered, daysTotal, daysNotCovered, shieldFailed } = mergedData.shieldEventPending;
+
+  if (shieldFailed && daysTotal > 7) {
+    toast({ title: '💔 Streak Lost', description: 'You were gone too long — even the Shield couldn\'t help.' });
+  } else if (shieldFailed) {
+    toast({ title: '💔 Not enough bones', description: `Streak Shield couldn\'t cover ${daysTotal} missed day${daysTotal > 1 ? 's' : ''}. Streak reset.` });
+  } else if (daysNotCovered > 0) {
+    toast({ title: '🦴 Partial Shield', description: `${daysCovered} day${daysCovered > 1 ? 's' : ''} covered (${bonesSpent} bones). Streak reduced by ${daysNotCovered}.` });
+  } else {
+    toast({ title: '🦴 Streak Shield Used', description: `${daysCovered} day${daysCovered > 1 ? 's' : ''} protected — ${bonesSpent} bones spent.` });
+  }
+
+  // Clear the pending event
+  setUserData(prev => {
+    const newData = { ...prev, shieldEventPending: null };
+    persistData(newData);
+    return newData;
+  });
+}
+```
+
+---
+
+### Task 4 — Streak Shield toggle in ProfileSheet.jsx
+
+Add a toggle row in ProfileSheet, in the settings section alongside the existing reminder toggle. Prop contract:
+
+```js
+// Props passed from SpanishHub
+streakShieldActive={userData.streakShieldActive || false}
+onStreakShieldToggle={(val) => setUserData(prev => {
+  const newData = { ...prev, streakShieldActive: val };
+  persistData(newData);
+  return newData;
+})}
+```
+
+Toggle label: **Streak Shield 🦴**
+Toggle sublabel: *Spends 20 bones per missed day to protect your streak*
+
+If `userData.bones < 20`, show the sublabel in amber: *Not enough bones to activate*. Toggle remains functional — user can enable it for when they earn more bones.
+
+---
+
+### Task 5 — Word Skip button in PathsTab.jsx (Fetch rounds only)
+
+The skip button appears during Fetch rounds (Stop fetch and Path fetch) only — not in DrillsGrid standalone drills.
+
+Add a Skip button inside the Fetch question UI. Position: below the answer area, above the progress bar. Style: subtle, small, not competing with the answer UI.
+
+```js
+// Only render during fetch phase, not intro or results
+{phase === 'fetch' && (
+  <button
+    onClick={() => {
+      if ((userData?.bones || 0) >= 10) {
+        onSpendBones(10);
+        onSkipWord(); // advances to next question without scoring
+      }
+    }}
+    disabled={(userData?.bones || 0) < 10}
+    className="text-sm text-amber-600 underline disabled:opacity-40"
+  >
+    Skip word 🦴 (10 bones)
+  </button>
+)}
+```
+
+`onSkipWord` prop: advances the fetch queue index without recording an answer. Does not count as correct or incorrect. Does not affect pass threshold calculation — total questions asked increases by 0, correct stays the same.
+
+Prop contract additions to PathsTab:
+```js
+onSpendBones={spendBones}
+onSkipWord={() => { /* advance queue index */ }}
+```
+
+Note: `onSkipWord` implementation lives inside PathsTab's fetch queue logic. Emergent must wire it without breaking the existing `FETCH_LENGTH` and `PASS_THRESHOLD` mechanics.
+
+---
+
+### Bones economy — authoritative numbers (resolve md/MILO_BONES_LOGIC_SPEC.md conflict)
+
+| Action | Bones |
+|---|---|
+| Complete a Stop | +2 |
+| Complete a Path | +15 |
+| Complete Break Free | +10 |
+| Streak Shield | −20 per missed day |
+| Word Skip (Fetch only) | −10 |
+| DrillsGrid drills | 0 |
+
+The older md/MILO_BONES_LOGIC_SPEC.md numbers are superseded by this table. Do not reference that document.
+
+---
+
+### What Emergent must NOT do
+
+- Do not add bones rewards to DrillsGrid drills
+- Do not build a bones purchase flow or monetisation UI
+- Do not add random loot drops
+- Do not touch Firebase Auth logic, Firestore security rules, or api/chat.js
+- Do not modify the streak write logic inside onDrillDone — the shield intercepts on login only
+- Do not build Break Free — that is Session G
+
+---
+
+### Edge cases Emergent must handle
+
+1. **Shield on, bones = 0** — shield fires, covers 0 days, streak resets normally. Toast: "Not enough bones."
+2. **Shield on, partial bones** — covers as many days as bones allow, streak reduced by remainder
+3. **Gone > 7 days** — shield gives up regardless of bones balance, streak resets to 0
+4. **lastDate === today** — shield does not run, user already played today
+5. **daysDiff === 1** — shield does not run, streak logic in onDrillDone handles this normally
+6. **Skip button, bones < 10** — button disabled, no spend attempted
+7. **Skip on last question** — advancing past the final question should trigger results phase normally
+
+---
+
+### Verification steps
+
+1. Enable Streak Shield in ProfileSheet — toggle saves to Firestore
+2. Simulate 1 missed day (set lastDate to 2 days ago in Firestore) → open app → toast fires, 20 bones deducted, streak preserved
+3. Simulate 2 missed days, 30 bones available → open app → toast fires "Partial Shield — 1 day covered", streak reduced by 1, 20 bones spent
+4. Simulate 2 missed days, 40 bones available → open app → toast fires "2 days protected — 40 bones spent", streak preserved
+5. Simulate 8 missed days → open app → toast fires "gone too long", streak resets to 0, no bones spent
+6. Skip a word in Fetch round → question advances, 10 bones deducted, pass threshold unaffected
+7. Skip with 0 bones → button disabled, no action
+8. Disable shield → missed day → streak resets normally, no toast, no bones spent
+
+---
+
+### Estimated tokens: 12–15
+
+New function, new toggle UI, new skip button, new Firestore fields. Medium complexity. Pre-flight check mandatory. Write State Ledger spec in Claude before opening Emergent.
+
+---
+
+---
+
+## Emergent Session D — Milo Vocabulary Awareness
+
+### Classification
+- **Type:** Wiring + prompt engineering
+- **Risk:** Low-medium. Two files touched. No new components. API payload change is additive — existing fields unchanged.
+- **Stage:** 3 — stabilization
+- **Affected files:** SpanishHub.jsx, MiloChat.jsx, frontend/api/chat.js
+- **Pattern:** Serverless Proxy — secrets stay in api/chat.js, context flows from SpanishHub → MiloChat → api/chat.js
+
+---
+
+### What the problem is
+
+Milo receives only three fields per message: the user's message, conversation history, and UID. He has no knowledge of:
+- The user's name
+- Which words they have learned or mastered
+- Which Paths they have completed
+- Their streak or XP
+- Their weakest words
+
+Every user gets the same generic beginner experience regardless of how far they've progressed.
+
+---
+
+### Pre-flight confirmation — Emergent must report first 3 lines of each file before touching anything
+frontend/src/SpanishHub.jsx
+
+frontend/src/MiloChat.jsx
+
+frontend/api/chat.js
+
+---
+
+### Task 1 — Compute learnerContext in SpanishHub.jsx and pass to MiloChat
+
+Import at the top of SpanishHub.jsx if not already present:
+```js
+import { MASTER } from './content/es-en/words';
+import { masteryLevel } from './utils/helpers';
+```
+
+Compute `learnerContext` as a derived value inside the component, after `userData` is available. Do not use `useMemo` — compute inline where MiloChat is rendered:
+
+```js
+const learnedWords = MASTER
+  .filter(w => (userData.progress?.[w.es]?.c || 0) > 0)
+  .map(w => ({
+    es: w.es,
+    en: w.en,
+    level: masteryLevel(userData.progress, w.es),
+  }));
+
+const weakestWords = [...learnedWords]
+  .filter(w => w.level === 'learning' || w.level === 'new')
+  .sort((a, b) => {
+    const sA = userData.progress?.[a.es]?.s || 0;
+    const sB = userData.progress?.[b.es]?.s || 0;
+    return sA - sB;
+  })
+  .slice(0, 10)
+  .map(w => ({ es: w.es, en: w.en }));
+
+const learnerContext = {
+  displayName: userData.displayName || 'Estudiante',
+  streak: userData.streak?.count || 0,
+  xp: userData.xp || 0,
+  completedPaths: userData.completedPaths || [],
+  totalWordsLearned: learnedWords.length,
+  masteredWords: learnedWords.filter(w => w.level === 'mastered').map(w => ({ es: w.es, en: w.en })),
+  weakestWords,
+};
+```
+
+Update the MiloChat mount in SpanishHub.jsx from:
+```jsx
+<MiloChat userUid={effectiveUser.uid} />
+```
+
+To:
+```jsx
+<MiloChat userUid={effectiveUser.uid} learnerContext={learnerContext} />
+```
+
+---
+
+### Task 2 — Include learnerContext in the API request body in MiloChat.jsx
+
+Find the request body in MiloChat.jsx:
+```js
+body: JSON.stringify({
+  message: userMessage.content,
+  conversationHistory: messages.slice(-10).map((m) => ({
+    role: m.role === "user" ? "user" : "assistant",
+    content: m.content,
+  })),
+  userUid: userUid || "anonymous",
+})
+```
+
+Replace with:
+```js
+body: JSON.stringify({
+  message: userMessage.content,
+  conversationHistory: messages.slice(-10).map((m) => ({
+    role: m.role === "user" ? "user" : "assistant",
+    content: m.content,
+  })),
+  userUid: userUid || "anonymous",
+  learnerContext: learnerContext || null,
+})
+```
+
+Add `learnerContext` to MiloChat's prop definition:
+```js
+function MiloChat({ userUid, learnerContext }) {
+```
+
+---
+
+### Task 3 — Inject learnerContext into the system prompt in frontend/api/chat.js
+
+In `api/chat.js`, read `learnerContext` from the request body:
+```js
+const { message, conversationHistory, userUid, learnerContext } = req.body;
+```
+
+Build a context block to inject into the Gemini contents array, immediately after the system prompt and before the conversation history:
+
+```js
+const contextBlock = learnerContext ? `
+LEARNER PROFILE — read this before every response:
+- Name: ${learnerContext.displayName}
+- Current streak: ${learnerContext.streak} day${learnerContext.streak !== 1 ? 's' : ''}
+- Total XP: ${learnerContext.xp}
+- Paths completed: ${learnerContext.completedPaths.length > 0 ? learnerContext.completedPaths.join(', ') : 'none yet'}
+- Words learned: ${learnerContext.totalWordsLearned}
+- Words mastered: ${learnerContext.masteredWords.length}
+
+WEAKEST WORDS (prioritise these in practice suggestions):
+${learnerContext.weakestWords.length > 0
+  ? learnerContext.weakestWords.map(w => `- ${w.es} (${w.en})`).join('\n')
+  : '- None yet — learner is just getting started'}
+
+MASTERED WORDS (use freely in conversation — learner knows these well):
+${learnerContext.masteredWords.length > 0
+  ? learnerContext.masteredWords.map(w => w.es).join(', ')
+  : 'none yet'}
+
+Use the learner's name naturally in conversation. Celebrate streak milestones. When suggesting practice, prioritise the weakest words listed above. Use mastered words freely in Spanish without translation. Always translate words the learner has not yet learned.
+` : '';
+```
+
+Inject `contextBlock` into the Gemini `contents` array as a user turn immediately before the conversation history, if `contextBlock` is non-empty:
+
+```js
+const contents = [
+  // existing system prompt turn
+  { role: 'user', parts: [{ text: systemPrompt }] },
+  { role: 'model', parts: [{ text: miloGreeting }] },
+  // inject learner context if available
+  ...(contextBlock ? [{ role: 'user', parts: [{ text: contextBlock }] }, { role: 'model', parts: [{ text: '¡Entendido! I know who I\'m talking to.' }] }] : []),
+  // existing conversation history
+  ...conversationHistory.map(m => ({
+    role: m.role === 'user' ? 'user' : 'model',
+    parts: [{ text: m.content }],
+  })),
+  // current message
+  { role: 'user', parts: [{ text: message }] },
+];
+```
+
+---
+
+### What Emergent must NOT do
+
+- Do not read `users/{uid}` from Firestore in api/chat.js — context comes from the client
+- Do not pass the raw `progress` object to MiloChat — use the slimmed `learnerContext` only
+- Do not modify the rate limiting logic in api/chat.js
+- Do not modify the child safety guardrails in the system prompt
+- Do not touch Firebase Auth logic or Firestore security rules
+- Do not add new Firestore collections or fields
+
+---
+
+### Edge cases Emergent must handle
+
+1. **Guest user** — `learnerContext` may be null or have empty arrays. `contextBlock` handles this gracefully with fallback strings.
+2. **No words learned yet** — `weakestWords` and `masteredWords` will be empty arrays. Fallback strings already handle this.
+3. **Very long masteredWords list** — at 500 mastered words, the mastered list becomes large. Cap `masteredWords` sent to API at 50 most recent — sort by `userData.progress[w.es].s` descending, slice to 50.
+4. **displayName empty** — falls back to 'Estudiante' in learnerContext computation.
+5. **learnerContext null in api/chat.js** — contextBlock is empty string, contents array skips the context turns entirely. Existing behaviour preserved.
+
+---
+
+### Verification steps
+
+1. Open Milo chat — Milo greets user by name on first message
+2. Ask Milo "what should I practice?" — Milo references weakest words by name
+3. Ask Milo "how am I doing?" — Milo mentions streak count, XP, paths completed
+4. Complete a new word, reopen chat — Milo's context reflects updated progress
+5. Guest user opens chat — Milo behaves normally, no crash, no name reference
+6. User with 0 words learned opens chat — Milo encourages starting, no crash
+
+---
+
+### Estimated tokens: 6–8
+
+Three files, all additive changes. No new components. Largest cost is prompt engineering iteration if Gemini needs tuning. Pre-flight check mandatory.
+
+---
+
+---
+
+## Emergent Session E — Fetch Standalone Mode
+
+### Classification
+- **Type:** Feature build — new tab UI, configurable word pool, session flow
+- **Risk:** Medium-high. New tab render block, reuses existing fetch algorithm, touches TAB_ORDER and BottomNav already updated by Claude Code pre-session.
+- **Stage:** 4 — retention and UX
+- **Affected files:** SpanishHub.jsx, frontend/src/components/FetchTab.jsx (new), frontend/src/components/PathsTab.jsx (reuse fetch algorithm)
+- **Pattern:** Parent Fan-Out — SpanishHub owns all state. FetchTab receives words, progress, and callbacks as props. Never queries Firestore directly.
+
+---
+
+### What the problem is
+
+Fetch is currently locked inside PathsTab — only accessible by completing a Stop or Path. Users with learned vocabulary across multiple Paths have no way to run a cross-Path review session. The Fetch tab is in BottomNav but renders nothing. `fetchHistory` field exists in userData but is never written to.
+
+---
+
+### Pre-flight confirmation — Emergent must report first 3 lines of each file before touching anything
+frontend/src/SpanishHub.jsx
+
+frontend/src/components/PathsTab.jsx
+
+frontend/src/components/BottomNav.jsx
+
+---
+
+### What gets built
+
+A new `FetchTab.jsx` component with two screens:
+
+**Screen 1 — Configuration**
+User selects what to fetch before starting. Milo idle animation shown. Options:
+
+**Filter by mastery level** (multi-select pills, any combination, default = Learning + Strong):
+- 🌱 New
+- 📖 Learning
+- 💪 Strong
+- ⭐ Mastered
+
+**Filter by source** (single select, default = All completed Paths):
+- All completed Paths
+- Specific Path (shows dropdown of completed Path names only)
+- My Words (customWords[])
+- Community Packs (shows dropdown of importedPacks[] by title — only shown if user has imported packs)
+
+**Session length** (single select, default = Standard):
+- Quick — 10 questions
+- Standard — 20 questions
+- Long — 40 questions
+
+"Start Fetch 🐾" button — disabled if word pool resolves to 0 words, shows "No words match your filters" message below button if so.
+
+**Screen 2 — Fetch session**
+Reuses the existing fetch queue algorithm from PathsTab.jsx. Same DrillShell/DrillRouter render pattern as PathsTab fetch phase. Progress bar at top. Back button returns to configuration screen (confirms exit if mid-session). On completion — shows results screen with score, bones awarded if score ≥ 80%, option to run again with same config or reconfigure.
+
+---
+
+### Word pool resolution logic
+
+Compute `fetchWordPool` from selected filters before building the queue:
+
+```js
+function resolveFetchWordPool(config, userData, progress) {
+  let words = [];
+
+  if (config.source === 'all-paths') {
+    // All words from completed Paths only
+    words = (userData.completedPaths || []).flatMap(pathId => {
+      const path = getPath(pathId);
+      if (!path) return [];
+      return path.stops.flatMap(stop => getStopWords(stop.id))
+        .map(es => MASTER.find(w => w.es === es))
+        .filter(Boolean);
+    });
+  } else if (config.source === 'path' && config.selectedPathId) {
+    // Single Path
+    const path = getPath(config.selectedPathId);
+    if (path) {
+      words = path.stops.flatMap(stop => getStopWords(stop.id))
+        .map(es => MASTER.find(w => w.es === es))
+        .filter(Boolean);
+    }
+  } else if (config.source === 'custom') {
+    // customWords[] — shape: { es, en, type, group }
+    words = userData.customWords || [];
+  } else if (config.source === 'pack' && config.selectedPackId) {
+    // Single imported pack
+    const pack = (userData.importedPacks || []).find(p => p.id === config.selectedPackId);
+    words = pack ? pack.words : [];
+  }
+
+  // Deduplicate by es field
+  const seen = new Set();
+  words = words.filter(w => {
+    if (seen.has(w.es)) return false;
+    seen.add(w.es);
+    return true;
+  });
+
+  // Apply mastery level filter
+  words = words.filter(w => {
+    const level = masteryLevel(progress, w.es);
+    return config.masteryLevels.includes(level);
+  });
+
+  return words;
+}
+```
+
+---
+
+### Fetch session flow inside FetchTab
+
+Reuse `buildFetchQueue` from PathsTab.jsx — import it directly. Do not copy or rewrite it.
+
+Session length maps to queue length:
+- Quick → 10
+- Standard → 20
+- Long → 40
+
+Pass `onDrillAnswer` callback to DrillRouter for per-answer progress updates — same pattern as PathsTab fetch phase. On session complete:
+
+1. Calculate score (correct / total)
+2. If score ≥ 0.80 → award bones: Quick = +1, Standard = +2, Long = +3
+3. Write to `fetchHistory`:
+```js
+fetchHistory: {
+  totalSessions: (prev.totalBonesEarned || 0) + 1,
+  totalCorrect: (prev.fetchHistory?.totalCorrect || 0) + correct,
+  totalQuestions: (prev.fetchHistory?.totalQuestions || 0) + total,
+}
+```
+4. Fire `evaluateBadges` with `'drill_complete'` event, `drillId: 'fetch'`
+5. Show results screen
+
+---
+
+### Props passed from SpanishHub.jsx to FetchTab
+
+```js
+<FetchTab
+  userData={userData}
+  progress={userData.progress}
+  completedPaths={userData.completedPaths || []}
+  customWords={userData.customWords || []}
+  importedPacks={userData.importedPacks || []}
+  onDrillAnswer={updateWordProgress}
+  onAwardBones={awardBones}
+  onUpdateFetchHistory={(correct, total) => {
+    setUserData(prev => {
+      const newData = {
+        ...prev,
+        fetchHistory: {
+          totalSessions: (prev.fetchHistory?.totalSessions || 0) + 1,
+          totalCorrect: (prev.fetchHistory?.totalCorrect || 0) + correct,
+          totalQuestions: (prev.fetchHistory?.totalQuestions || 0) + total,
+        }
+      };
+      persistData(newData);
+      return newData;
+    });
+  }}
+  onEvaluateBadges={evaluateBadges}
+  onToast={toast}
+/>
+```
+
+---
+
+### Tab render block — add to SpanishHub.jsx
+
+Add immediately after the study tab render block:
+
+```jsx
+{tab === 'fetch' && (
+  <div className="pb-[76px]">
+    <FetchTab
+      userData={userData}
+      progress={userData.progress}
+      completedPaths={userData.completedPaths || []}
+      customWords={userData.customWords || []}
+      importedPacks={userData.importedPacks || []}
+      onDrillAnswer={updateWordProgress}
+      onAwardBones={awardBones}
+      onUpdateFetchHistory={(correct, total) => {
+        setUserData(prev => {
+          const newData = {
+            ...prev,
+            fetchHistory: {
+              totalSessions: (prev.fetchHistory?.totalSessions || 0) + 1,
+              totalCorrect: (prev.fetchHistory?.totalCorrect || 0) + correct,
+              totalQuestions: (prev.fetchHistory?.totalQuestions || 0) + total,
+            }
+          };
+          persistData(newData);
+          return newData;
+        });
+      }}
+      onEvaluateBadges={(prev, next, event, payload) => evaluateBadges(prev, next, event, payload)}
+      onToast={toast}
+    />
+  </div>
+)}
+```
+
+---
+
+### New Firestore fields — none
+
+`fetchHistory` already exists in DEFAULT_DATA. No schema changes required.
+
+---
+
+### What Emergent must NOT do
+
+- Do not copy or rewrite `buildFetchQueue` — import it from PathsTab.jsx
+- Do not add bones to Quick/Standard/Long unless score ≥ 80%
+- Do not add a Fetch entry point inside PathsTab — that flow is unchanged
+- Do not modify the PathsTab fetch phase in any way
+- Do not touch Firebase Auth logic, Firestore security rules, or api/chat.js
+- Do not build Break Free inside this session — that is Session F
+- Do not remove the words tab render block from SpanishHub.jsx
+
+---
+
+### Edge cases Emergent must handle
+
+1. **No completed Paths** — "All completed Paths" pool is empty. Disable Start button, show "Complete your first Path to unlock Fetch" message.
+2. **No imported packs** — hide Community Packs source option entirely.
+3. **No custom words** — hide My Words source option if `customWords[]` is empty.
+4. **Mastery filter returns 0 words** — disable Start button, show "No words match your filters."
+5. **Mid-session back tap** — confirm dialog: "Leave this session? Progress won't be saved." Cancel returns to session. Confirm returns to config screen.
+6. **Quick session, only 3 words in pool** — queue repeats words to fill 10 questions, same as PathsTab behaviour.
+7. **Pack words have no FSRS progress** — `masteryLevel` returns 'new' for words with no progress entry. These appear under the New filter.
+8. **buildFetchQueue expects MASTER-shaped word objects** — pack words and customWords have `{ es, en, type, group }` only, missing `gender`, `imageUrl`, `contextSentence`. Guard drill type selection — if word is missing `gender` field, fall back to `en-es` drill type (same guard already in buildFetchQueue).
+
+---
+
+### Verification steps
+
+1. Tap Fetch tab — configuration screen renders, Milo idle shown
+2. Select Learning + Strong, All Paths, Standard → Start → 20-question session runs
+3. Complete session ≥ 80% → +2 bones awarded, fetchHistory updated in Firestore
+4. Complete session < 80% → no bones awarded
+5. Select specific Path → only that Path's words appear
+6. Select Community Pack → only pack words appear
+7. Select New only, user has no New words → Start button disabled
+8. Tap back mid-session → confirm dialog appears
+9. Complete 1 Fetch session → fetch_first badge fires
+10. Complete 10 Fetch sessions → fetch_10 badge fires
+11. No completed Paths → "Complete your first Path" message shown
+
+---
+
+### Estimated tokens: 12–15
+
+New component, configurable word pool, reused algorithm, results screen. Medium-high complexity. State Ledger spec mandatory before opening Emergent. Pre-flight check mandatory.
+
+---
+
+## Emergent Session F — Break Free / ¡Libre!
+
+### Classification
+- **Type:** Feature build — new drill mode, animation state machine, XP-gated trigger, bones reward
+- **Risk:** High. New animated UI, new state field, touches PathsTab fetch phase, depends on Milo poses existing before session opens.
+- **Stage:** 4 — retention and UX
+- **Affected files:** SpanishHub.jsx, frontend/src/components/PathsTab.jsx, frontend/src/components/BreakFreeDrill.jsx (new)
+- **Pattern:** Finite State Machine — explicit states: idle → available → active → success → fail. Parent Fan-Out — SpanishHub owns all state.
+
+---
+
+### Hard prerequisite — do not open this session without confirming
+
+All five Milo poses must exist in `frontend/public/animations/` before this session opens:
+- `milo_straining.gif` — Milo pulling at chain, urgency
+- `milo_free.gif` — Milo running free, joyful
+- `milo_celebrating.gif` — celebration pose
+- `milo_wrong_tilt.gif` — head tilt, uncertain
+- `milo_encouraging.gif` — warm, supportive
+
+Emergent must confirm these files exist at session start. If any are missing, stop and report — do not proceed.
+
+---
+
+### Pre-flight confirmation — Emergent must report first 3 lines of each file before touching anything
+frontend/src/SpanishHub.jsx
+
+frontend/src/components/PathsTab.jsx
+
+---
+
+### What gets built
+
+Break Free is a timed speed round — 10 questions in 60 seconds. Triggered automatically when the user accumulates 50 XP since their last Break Free attempt. Milo strains at his chain throughout. Success: chain snaps, Milo runs free, +10 bones awarded. Failure: Milo slumps, gentle message, no penalty.
+
+---
+
+### New Firestore field — add to DEFAULT_DATA in SpanishHub.jsx
+
+```js
+breakFreeXP: 0,   // XP accumulated since last Break Free trigger. Resets to 0 on trigger.
+```
+
+---
+
+### Task 1 — breakFreeXP counter in SpanishHub.jsx
+
+In `updateWordProgress`, wherever XP is added to `newData`, also increment `breakFreeXP`:
+
+```js
+breakFreeXP: (prev.breakFreeXP || 0) + xpGain,
+```
+
+Break Free becomes AVAILABLE (not auto-triggered) when `breakFreeXP >= 50`. The user chooses when to engage — consistent with the no-interruption principle.
+
+When Break Free is triggered (user taps the available indicator), reset the counter:
+
+```js
+breakFreeXP: 0,
+```
+
+---
+
+### Task 2 — Break Free availability indicator
+
+When `userData.breakFreeXP >= 50`, show a pulsing indicator on the Fetch tab in BottomNav — a small animated dot on the PawPrint icon, same visual pattern as notification badges. This signals Break Free is available without interrupting the user.
+
+Also show a Break Free entry card at the top of the FetchTab configuration screen when available:
+
+```jsx
+{breakFreeAvailable && (
+  <div className="bg-amber-50 border border-amber-300 rounded-xl p-4 mb-4 flex items-center justify-between">
+    <div>
+      <div className="font-bold text-amber-800">¡Libre! is ready 🔗</div>
+      <div className="text-sm text-amber-600">Milo is straining at his chain...</div>
+    </div>
+    <button
+      onClick={onStartBreakFree}
+      className="bg-amber-500 text-white px-4 py-2 rounded-lg font-bold"
+    >
+      Break Free
+    </button>
+  </div>
+)}
+```
+
+`breakFreeAvailable` = `userData.breakFreeXP >= 50`
+
+---
+
+### Task 3 — Build BreakFreeDrill.jsx
+
+New component. Full-screen overlay, renders on top of FetchTab.
+
+**State machine:**
+idle → countdown (3-2-1) → active → success | fail
+
+**Props:**
+```js
+{
+  words,              // word pool — same pool as current FetchTab config, or all learned words if launched from BottomNav indicator
+  progress,           // userData.progress
+  onSuccess,          // callback — awards +10 bones, resets breakFreeXP, fires badge, fires toast
+  onFail,             // callback — resets breakFreeXP only (no penalty)
+  onBack,             // callback — exits without triggering (breakFreeXP preserved)
+}
+```
+
+**Active phase UI:**
+- `milo_straining.gif` displayed prominently — fills top third of screen
+- Countdown timer: 60 seconds, large, prominent, turns red at 10 seconds
+- Current question rendered using same drill dispatch pattern as PathsTab fetch phase
+- 10 questions total (`BREAK_FREE_LENGTH = 10`)
+- No skip button — Break Free has no bones spending
+- Progress: `3 / 10` counter, no pass threshold shown during session
+
+**Drill type selection:**
+- Same `buildDrillDeck` + `buildFetchQueue` pattern as PathsTab
+- Import `buildFetchQueue` from PathsTab.jsx — do not duplicate
+
+**Success condition:** All 10 questions answered before timer reaches 0, regardless of correct/incorrect count. Speed is the challenge, not accuracy.
+
+**Success screen:**
+- `milo_free.gif` — Milo running free, full celebration
+- Large `¡Libre!` text in Spanish green
+- Confetti (reuse existing `confettiBuffer` pattern from SpanishHub)
+- "+10 bones" displayed prominently
+- "Fetch unlocked" message — tapping continues to FetchTab session
+- Auto-advances to FetchTab after 3 seconds if user doesn't tap
+
+**Fail screen:**
+- `milo_wrong_tilt.gif` — head tilt
+- "So close! Milo believes in you 🐾" message
+- `milo_encouraging.gif` shown after 1.5 seconds
+- "Try again later" — returns to FetchTab config
+- No penalty, no bones lost, breakFreeXP resets to 0
+
+**Timer logic:**
+```js
+useEffect(() => {
+  if (phase !== 'active') return;
+  if (timeLeft <= 0) {
+    setPhase('fail');
+    onFail();
+    return;
+  }
+  const t = setTimeout(() => setTimeLeft(prev => prev - 1), 1000);
+  return () => clearTimeout(t);
+}, [timeLeft, phase]);
+```
+
+---
+
+### Task 4 — Wire Break Free callbacks in SpanishHub.jsx
+
+**`startBreakFree` function:**
+```js
+const startBreakFree = useCallback(() => {
+  setUserData(prev => {
+    const newData = { ...prev, breakFreeXP: 0 };
+    persistData(newData);
+    return newData;
+  });
+  setView({ page: 'break-free' });
+}, [persistData]);
+```
+
+**`onBreakFreeSuccess` callback:**
+```js
+const onBreakFreeSuccess = useCallback(() => {
+  setUserData(prev => {
+    let newData = { ...prev, bones: (prev.bones || 0) + 10, totalBonesEarned: (prev.totalBonesEarned || 0) + 10 };
+    const { updatedBadges, newlyEarned } = evaluateBadges(prev, newData, 'drill_complete', { drillId: 'break-free', correct: 10, total: 10, ts: Date.now() });
+    newData = { ...newData, earnedBadges: updatedBadges };
+    persistData(newData);
+    if (newlyEarned.length > 0) {
+      newlyEarned.forEach(id => {
+        const def = BADGES.find(b => b.id === id);
+        if (def) toast({ title: `${def.emoji} Badge Earned`, description: def.name });
+      });
+    }
+    toast({ title: '¡Libre! 🔗', description: 'Milo broke free — +10 bones earned!' });
+    return newData;
+  });
+}, [persistData, toast]);
+```
+
+**`onBreakFreeFail` callback:**
+```js
+const onBreakFreeFail = useCallback(() => {
+  setUserData(prev => {
+    const newData = { ...prev, breakFreeXP: 0 };
+    persistData(newData);
+    return newData;
+  });
+}, [persistData]);
+```
+
+---
+
+### Task 5 — Pass Break Free props to FetchTab in SpanishHub.jsx
+
+Add to FetchTab mount:
+```jsx
+breakFreeAvailable={userData.breakFreeXP >= 50}
+onStartBreakFree={startBreakFree}
+onBreakFreeSuccess={onBreakFreeSuccess}
+onBreakFreeFail={onBreakFreeFail}
+```
+
+---
+
+### Bones economy — Break Free
+
+| Event | Bones |
+|---|---|
+| Break Free success | +10 |
+| Break Free fail | 0 |
+| Break Free — no penalty ever | — |
+
+---
+
+### What Emergent must NOT do
+
+- Do not auto-trigger Break Free mid-session — available indicator only, user chooses when
+- Do not add a penalty for failing Break Free
+- Do not build a chain animation from scratch — use `milo_straining.gif` and `milo_free.gif`
+- Do not modify the PathsTab fetch phase in any way
+- Do not touch Firebase Auth logic, Firestore security rules, or api/chat.js
+- Do not add Break Free to DrillsGrid — it lives in FetchTab only
+- Do not proceed if Milo pose files are missing — stop and report
+
+---
+
+### Edge cases Emergent must handle
+
+1. **Word pool empty** — if `breakFreeAvailable` but FetchTab has no words configured yet, use all learned words as fallback pool
+2. **Timer reaches 0 on final question** — fail triggers even if 9/10 answered, timer is authoritative
+3. **User taps Back during countdown** — exits cleanly, `breakFreeXP` preserved (they didn't start, no reset)
+4. **User taps Back during active phase** — confirm dialog, if confirmed: `onFail()` fires (resets counter), returns to FetchTab config
+5. **Success screen auto-advance** — if user doesn't tap within 3 seconds, FetchTab config screen shows automatically
+6. **Confetti** — reuse existing confetti trigger pattern from SpanishHub, do not add a new audio or animation library
+
+---
+
+### Verification steps
+
+1. Earn 50 XP — Break Free indicator appears on Fetch tab BottomNav icon
+2. Open Fetch tab — Break Free card appears at top of config screen
+3. Tap Break Free — countdown 3-2-1, then 10-question timed session, `milo_straining.gif` shown
+4. Complete all 10 questions before timer — success screen, `milo_free.gif`, ¡Libre! text, +10 bones, confetti
+5. Let timer run out — fail screen, `milo_wrong_tilt.gif`, encouraging message, no bones lost
+6. Check Firestore — `breakFreeXP` reset to 0 on both success and fail
+7. First Break Free success — `break_free` badge fires, Unchained toast appears
+8. Tap Back during countdown — exits, `breakFreeXP` unchanged
+9. Tap Back during active phase — confirm dialog, confirms → fail callback fires, counter resets
+
+---
+
+### Estimated tokens: 15–20
+
+New component, animation state machine, timer logic, success/fail screens, XP counter, bones award, badge trigger. Highest complexity session in the plan. State Ledger spec mandatory before opening Emergent. Milo poses mandatory before opening Emergent. Pre-flight check mandatory.
+
+---
+
+## Emergent Session Plan (~64–83 tokens)
 
 | # | Session | What Gets Built | Est. Tokens |
 |---|---|---|---|
-| A | Badge triggers | earnedBadges[] wired across drill complete, Stop complete, Path complete, streak milestones | 8–12 |
-| B | Friend + Admin notifications | Friend added notification, admin alert notification (community pack submissions) | 10–15 |
-| C | Bones & streak freeze system | Freeze purchase UI, freeze logic, streak protection, Firestore writes | 10–15 |
-| D | YouTube player in Stop UI | DEFERRED — v3. videoUrl field already in paths.js, ready when needed | — |
-| E | Milo vocabulary awareness | Milo AI chat knows user's learned words, progress, references them in conversation | 8–12 |
-| F | Fetch standalone mode | Full Fetch session experience separate from Paths, FSRS-driven across all completed Stops | 10–15 |
-| G | Break Free / ¡Libre! | Animation state machine, chain-snap celebration, Milo pose integration, Fetch unlock trigger | 15–20 |
+| A | Badge triggers | 103 badges in badges.js, evaluateBadges wired to completeStop + completePathFetch, 5 new Firestore fields | 8–12 |
+| B | Toast notifications + friend badge fix | Mount toaster, consume newlyEarned at all 3 call sites, first_friend badge fix, sonner.jsx deleted | 6–8 |
+| C | Bones & streak shield system | Shield toggle, per-day consumption logic, word skip button in Fetch, spendBones function | 12–15 |
+| D | Milo vocabulary awareness | learnerContext computed in SpanishHub, passed to MiloChat, injected into Gemini system prompt | 6–8 |
+| E | Fetch standalone mode | FetchTab.jsx with config screen, mastery filters, source filters, session length, results screen | 12–15 |
+| F | Break Free / ¡Libre! | BreakFreeDrill.jsx, animation FSM, 60s timer, XP gate, +10 bones, milo_straining + milo_free poses | 15–20 |
 | — | Setup waste budget | Pre-flight repo checks, brief corrections | 5 |
-| **Total** | | | **66–79** |
+| **Total** | | | **64–83** |
 
 **Session order is locked — do not reorder:**
-A → B → C → E → F → G
-Session D deferred to v3. All other sessions unchanged.
+A → B → C → D → E → F
 Each session is independent enough to run cleanly. Break Free goes last — highest risk, depends on Milo poses existing.
 
 ---
