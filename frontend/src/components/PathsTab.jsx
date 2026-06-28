@@ -1068,16 +1068,6 @@ function StopView({
   return (
     <>
     <div className="p-4 pb-[140px]" data-testid={`stop-view-${stopId}`}>
-      <button
-        type="button"
-        data-testid="stop-view-back-btn"
-        onClick={onBack}
-        className="inline-flex items-center gap-1 text-sm font-medium mb-4"
-        style={{ color: 'hsl(var(--primary))' }}
-      >
-        ← Back to Paths
-      </button>
-
       {/* Header card — matches Path header gradient style */}
       <div
         className="rounded-2xl p-2 mb-3 text-white relative overflow-hidden"
@@ -1153,15 +1143,30 @@ function StopView({
       </div>
     </div>
     <div style={{ position: 'fixed', bottom: '72px', left: 0, right: 0, padding: '8px 16px', zIndex: 50 }}>
-      <button
-        type="button"
-        data-testid="stop-view-begin-btn"
-        onClick={startIntro}
-        className="w-full rounded-full py-3 text-white font-bold transition-transform active:scale-95"
-        style={{ background: 'hsl(var(--primary))' }}
-      >
-        Begin →
-      </button>
+      <div className="flex gap-2">
+        <button
+          type="button"
+          data-testid="stop-view-back-btn"
+          onClick={onBack}
+          className="flex-1 rounded-full py-3 font-bold transition-transform active:scale-95"
+          style={{
+            background: 'transparent',
+            color: 'hsl(var(--foreground))',
+            border: '1px solid hsl(var(--border))',
+          }}
+        >
+          ← Paths
+        </button>
+        <button
+          type="button"
+          data-testid="stop-view-begin-btn"
+          onClick={startIntro}
+          className="flex-1 rounded-full py-3 text-white font-bold transition-transform active:scale-95"
+          style={{ background: 'hsl(var(--primary))' }}
+        >
+          Continue →
+        </button>
+      </div>
     </div>
     </>
   );
