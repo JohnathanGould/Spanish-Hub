@@ -242,18 +242,18 @@ function MyWordsCard({ progress, onOpenMyWords }) {
       <div style={{ display: 'flex', alignItems: 'center', height: 24, marginBottom: 8 }}>
         <p style={secLabel}>📚 My Words</p>
       </div>
-      {/* Stat row — fixed height, baseline-aligned */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', height: 44, marginBottom: 8 }}>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontFamily: 'Fraunces, serif', fontSize: 24, color: C.green, lineHeight: 1, fontWeight: 700 }}>{learned}</p>
+      {/* Stat row */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <div style={{ textAlign: 'center', flex: 1 }}>
+          <p style={{ fontFamily: 'Fraunces, serif', fontSize: 20, color: C.green, lineHeight: 1, fontWeight: 700 }}>{learned}</p>
           <p style={{ fontSize: 9, color: C.grey, marginTop: 3, fontFamily: 'Nunito, sans-serif' }}>learned</p>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontFamily: 'Fraunces, serif', fontSize: 24, color: C.terra, lineHeight: 1, fontWeight: 700 }}>{needsReview}</p>
+        <div style={{ textAlign: 'center', flex: 1 }}>
+          <p style={{ fontFamily: 'Fraunces, serif', fontSize: 20, color: C.terra, lineHeight: 1, fontWeight: 700 }}>{needsReview}</p>
           <p style={{ fontSize: 9, color: C.terra, marginTop: 3, fontWeight: 700, fontFamily: 'Nunito, sans-serif' }}>needs<br />review</p>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontFamily: 'Fraunces, serif', fontSize: 24, color: C.teal, lineHeight: 1, fontWeight: 700 }}>{mastered}</p>
+        <div style={{ textAlign: 'center', flex: 1 }}>
+          <p style={{ fontFamily: 'Fraunces, serif', fontSize: 20, color: C.teal, lineHeight: 1, fontWeight: 700 }}>{mastered}</p>
           <p style={{ fontSize: 9, color: C.grey, marginTop: 3, fontFamily: 'Nunito, sans-serif' }}>mastered</p>
         </div>
       </div>
