@@ -24,6 +24,7 @@
  */
 
 import { useEffect, useRef } from 'react';
+import DailyChallenge from './DailyChallenge';
 
 // ─── Colour tokens (mirror CSS variables in index.css) ───────────────────────
 const C = {
@@ -340,98 +341,6 @@ function WordOfTheDayCard({ wordOfTheDay, onPractice }) {
   );
 }
 
-function DailyChallengesCard({ onStartFetch, dailyTheme, onStartTheme }) {
-  return (
-    <div style={card}>
-      <p style={{ ...secLabel, marginBottom: 10 }}>🎯 Daily challenges</p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 }}>
-
-        {/* Fetch — weakest 5 */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          textAlign: 'center',
-          gap: 8,
-          padding: 12,
-          background: C.cream,
-          borderRadius: 12,
-        }}>
-          <div style={{
-            width: 32, height: 32, borderRadius: '50%',
-            background: '#FAECE7',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 16,
-          }}>🐕</div>
-          <p style={{ fontSize: 11, fontWeight: 700, color: C.navy, fontFamily: 'Nunito, sans-serif' }}>
-            Fetch — weakest 5 words
-          </p>
-          <button
-            onClick={() => onStartFetch({ mode: 'weakest5' })}
-            style={{
-              background: C.terra,
-              color: C.white,
-              border: 'none',
-              borderRadius: 20,
-              padding: '7px 12px',
-              fontFamily: 'Nunito, sans-serif',
-              fontSize: 11,
-              fontWeight: 700,
-              cursor: 'pointer',
-              width: '100%',
-            }}
-          >
-            Go 🐾
-          </button>
-        </div>
-
-        {/* Today's theme */}
-        {dailyTheme && (
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            textAlign: 'center',
-            gap: 8,
-            padding: 12,
-            background: C.cream,
-            borderRadius: 12,
-          }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: '50%',
-              background: '#E1F5EE',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 16,
-            }}>
-              {dailyTheme.emoji || '🗂️'}
-            </div>
-            <p style={{ fontSize: 11, fontWeight: 700, color: C.navy, fontFamily: 'Nunito, sans-serif' }}>
-              Today's theme — {dailyTheme.name}
-            </p>
-            <button
-              onClick={() => onStartTheme(dailyTheme.themeId)}
-              style={{
-                background: C.teal,
-                color: C.white,
-                border: 'none',
-                borderRadius: 20,
-                padding: '7px 12px',
-                fontFamily: 'Nunito, sans-serif',
-                fontSize: 11,
-                fontWeight: 700,
-                cursor: 'pointer',
-                width: '100%',
-              }}
-            >
-              Go 🐾
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
 function KofiCard() {
   return (
     <div style={{ ...card, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', justifyContent: 'center', gap: 8 }}>
@@ -520,6 +429,8 @@ export default function HomeTab({
   currentStop = null,
   wordOfTheDay = null,
   dailyTheme = null,
+  dailyChallenges = null,
+  onStartDailyChallenge = () => {},
   recentBadges = [],
   streakDays = 0,
   weekBits = [false, false, false, false, false, false, false],
@@ -564,10 +475,9 @@ export default function HomeTab({
 
       {/* Daily challenges */}
       <div style={gutter}>
-        <DailyChallengesCard
-          onStartFetch={onStartFetch}
-          dailyTheme={dailyTheme}
-          onStartTheme={onStartTheme}
+        <DailyChallenge
+          challenges={dailyChallenges}
+          onStart={onStartDailyChallenge}
         />
       </div>
 
