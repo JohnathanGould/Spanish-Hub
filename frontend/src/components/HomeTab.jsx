@@ -108,7 +108,7 @@ function HeroCard({ currentStop, streakDays, onContinue }) {
           <img
             src="/animations/milo_idle.gif"
             alt="Milo"
-            style={{ width: 100, height: 100, objectFit: 'contain' }}
+            style={{ width: 110, height: 110, objectFit: 'cover' }}
           />
         </div>
       </div>
