@@ -96,8 +96,23 @@ Tokens reset in 3 days — Emergent month starts then. All 6 session specs (A–
 - Stage 1: CLOSED
 - Stage 2: CLOSED
 - Stage 3: CLOSED (2026-06-27)
-- Stage 4: CLOSED (2026-06-27)
+- Stage 4: OPEN — reopened 2026-06-28. UI overhaul incomplete. See session notes.
 - Stage 5: OPEN
+
+### Stage 4 Remaining Tasks
+
+| Task | Stage | Why |
+|------|-------|-----|
+| Remaining GIFs — celebrate, encourage, fetch | 4 | Retention & UX — emotional reward assets |
+| Cursor colour class sweep — fix hardcoded bg-white etc. | 4 | UX — visual identity |
+| v0 Home screen redesign | 4 | Retention & UX — first impression, emotional hook |
+| v0 Word card redesign | 4 | Retention & UX — core learning moment |
+| My Words access from Home screen | 4 | UX — navigation |
+| Milo pose swap logic in SpanishHub.jsx | 4 | Retention — emotional feedback |
+| Emergent Sessions A–F (badges, Fetch, Break Free etc.) | 4 | Retention & UX — all achievement and reward systems |
+| Firebase emulator setup + journey test | 4 | Stability gate before beta |
+| Cursor token replenishment | — | Just waiting |
+| Flow daily limit reset | — | Just waiting |
 
 ---
 

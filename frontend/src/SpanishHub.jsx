@@ -45,6 +45,18 @@ function getWeekStartStr() {
   return new Date(d.setDate(diff)).toDateString();
 }
 
+function getWeekBits(activeDays = []) {
+  const now = new Date();
+  const dayOfWeek = now.getDay(); // 0=Sun
+  return [1,2,3,4,5,6,0].map(d => {
+    const diff = (dayOfWeek - d + 7) % 7;
+    const date = new Date(now);
+    date.setDate(now.getDate() - diff);
+    const key = date.toISOString().slice(0, 10);
+    return activeDays.includes(key);
+  });
+}
+
 async function syncLeaderboard(user, data) {
   if (!user) return;
   try {
@@ -570,6 +582,15 @@ export default function SpanishHub() {
     return MASTER.filter(w => esKeys.has(w.es));
   }, [userData.completedStops]);
 
+  const wordOfTheDay = useMemo(() => {
+    if (!MASTER || MASTER.length === 0) return null;
+    const seed = new Date().toISOString().slice(0, 10);
+    const index = seed.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % MASTER.length;
+    return MASTER[index];
+  }, []);
+
+  const dailyTheme = null;
+
   const startDailyChallenge = useCallback((kind) => {
     const today = new Date().toDateString();
     if (kind === 'weak') {
@@ -588,6 +609,14 @@ export default function SpanishHub() {
       setView({ page: 'drill', drillId: 'flashcard', overrideWords: words, dailyKind: 'theme', xpMultiplier: 1.5, today });
     }
   }, [userData, pathWords]);
+
+  const handleStartFetch = useCallback((config = {}) => {
+    if (config.mode === 'weakest5') startDailyChallenge('weak');
+  }, [startDailyChallenge]);
+
+  function handleStartTheme(themeId) {
+    console.log('Theme session not yet implemented:', themeId);
+  }
 
   const openLesson = useCallback((lessonId) => setView({ page: 'lesson', lessonId }), []);
 
@@ -851,17 +880,20 @@ export default function SpanishHub() {
           {tab === 'home' && (
             <div className="pb-[76px]">
             <HomeTab
-              onNavigate={setTab}
               userData={userData}
-              streak={userData.streak}
-              dailyProgress={userData.dailyProgress}
-              dailyGoal={userData.dailyGoal}
-              masteredCount={masteredCount}
-              onStartDailyChallenge={startDailyChallenge}
-              onStartDrill={startDrill}
-              onShowMastery={() => setShowMasteryModal(true)}
+              progress={userData.progress}
+              completedStops={userData.completedStops || []}
+              completedPaths={userData.completedPaths || []}
               onContinue={continueToCurrentStop}
-              currentStopId={getCurrentStop()}
+              onOpenMyWords={() => setTab('words')}
+              onStartFetch={handleStartFetch}
+              onStartTheme={handleStartTheme}
+              currentStop={getCurrentStop()}
+              wordOfTheDay={wordOfTheDay}
+              dailyTheme={dailyTheme}
+              recentBadges={(userData.earnedBadges || []).slice(-3).reverse()}
+              streakDays={userData.streak || 0}
+              weekBits={getWeekBits(userData.activeDays || [])}
             />
             </div>
           )}

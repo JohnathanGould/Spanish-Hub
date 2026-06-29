@@ -1,167 +1,607 @@
-import { languageConfig } from '../config/languageConfig';
-import React from 'react';
-import { MASTER } from '../content/es-en/words';
-import { getStop } from '../content/es-en/paths';
-import { speak } from '../utils/helpers';
-import DailyChallenge from './DailyChallenge';
-import { KofiSupport } from './KofiSupport';
+/**
+ * HomeTab.jsx
+ * Home screen component for Milo Speaks Spanish.
+ *
+ * WRAPPER PATTERN — this component receives all data as props from SpanishHub.jsx.
+ * It never queries Firestore directly.
+ *
+ * Props:
+ *   userData        {object}  — Firestore user document (xp, bones, streak, earnedBadges, etc.)
+ *   progress        {object}  — word progress map keyed by word.es
+ *   completedStops  {array}   — array of completed stop IDs
+ *   completedPaths  {array}   — array of completed path IDs
+ *   onNavigate      {fn}      — (tabId) => void — navigate to a tab
+ *   onContinue      {fn}      — () => void — navigate to current stop in Paths
+ *   onOpenMyWords   {fn}      — () => void — navigate to My Words
+ *   onStartFetch    {fn}      — (config) => void — launch Fetch with config
+ *   onStartTheme    {fn}      — (themeId) => void — launch themed session
+ *   currentStop     {object}  — { pathName, stopName, stopIndex, pathIndex, progress } | null
+ *   wordOfTheDay    {object}  — { es, en, type, gender, contextSentence, emoji } | null
+ *   dailyTheme      {object}  — { name, emoji, wordCount, description, themeId } | null
+ *   recentBadges    {array}   — last 3 earned badges [{ id, name, description, emoji, bg, earnedAt }]
+ *   streakDays      {number}  — current streak
+ *   weekBits        {array}   — 7 booleans [Mon..Sun] — true = completed
+ */
 
-function capitalize(str) {
-  if (!str) return '';
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
+import { useEffect, useRef } from 'react';
 
-function drillLabel(drillId) {
-  return capitalize(drillId.replace(/-/g, ' '));
-}
+// ─── Colour tokens (mirror CSS variables in index.css) ───────────────────────
+const C = {
+  bg:          '#1a1a1a',
+  cream:       '#F5F0E8',
+  hero:        '#C8A96E',
+  green:       '#3B6D11',
+  greenLight:  '#EAF3DE',
+  greenSage:   '#C0DD97',
+  terra:       '#D85A30',
+  teal:        '#1D9E75',
+  navy:        '#26215C',
+  grey:        '#888780',
+  amber:       '#4A3B00',
+  white:       '#ffffff',
+};
 
-function getWeekDates() {
-  const now = new Date();
-  const day = now.getDay();
-  const diff = day === 0 ? -6 : 1 - day;
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + diff);
-  return Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(monday);
-    d.setDate(monday.getDate() + i);
-    return d.toDateString();
+// ─── Shared style helpers ─────────────────────────────────────────────────────
+const card = {
+  background: C.white,
+  borderRadius: 14,
+  padding: '14px 12px',
+};
+
+const secLabel = {
+  fontSize: 9,
+  fontWeight: 700,
+  color: C.teal,
+  textTransform: 'uppercase',
+  letterSpacing: '0.06em',
+  margin: 0,
+};
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+function HeroCard({ currentStop, streakDays, onContinue }) {
+  const today = new Date().toLocaleDateString('es-ES', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
   });
-}
-
-export default function HomeTab({ onNavigate, userData, streak, dailyProgress, dailyGoal, masteredCount, onStartDailyChallenge, onStartDrill, onShowMastery, onContinue, currentStopId }) {
-  const today = new Date().toDateString();
-  const firstName = userData?.displayName?.split(' ')[0] || 'Estudiante';
-  const dateStr = capitalize(
-    new Date().toLocaleDateString(languageConfig.dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
-  );
-
-  // Word of the day — seeded by date hash, from unmastered words
-  const hashSeed = [...today].reduce((a, c) => a + c.charCodeAt(0), 0);
-  const wotd = MASTER[hashSeed % MASTER.length];
-  const wotdSentence = wotd?.contextSentence?.[Math.floor(Math.random() * wotd.contextSentence.length)] ?? '';
-
-  const lastSession = userData?.sessions?.[0];
+  // Capitalise first letter
+  const dateStr = today.charAt(0).toUpperCase() + today.slice(1);
 
   return (
-    <div className="flex flex-col gap-2 pt-1 pb-20">
+    <div style={{
+      margin: '12px 12px 0',
+      borderRadius: 14,
+      overflow: 'hidden',
+      position: 'relative',
+      padding: '18px 16px 16px',
+      minHeight: 175,
+      background: C.hero,
+    }}>
+      {/* Warm ochre gradient overlay */}
+      <div style={{
+        position: 'absolute',
+        inset: 0,
+        background: 'radial-gradient(ellipse at 80% 110%, #8B6914 0%, #C8A96E 45%, #E8C97A 100%)',
+      }} />
 
-      {/* Section 1 — Milo hero */}
-      <div
-        className="rounded-3xl p-5 flex items-center justify-between"
-        style={{ background: 'linear-gradient(135deg, #7a6000, #a07c00)' }}
-      >
-        <div className="flex-1 min-w-0 pr-3">
-          <div className="font-serif font-bold text-2xl leading-tight" style={{ color: '#F5C518' }}>
-            ¡Hola, {firstName}! 🐾
-          </div>
-          <div className="text-sm font-medium mt-0.5" style={{ color: '#FDE68A' }}>
-            ¡Vamos! ¡Tú puedes!
-          </div>
-          <div className="text-xs mt-1.5 font-medium" style={{ color: '#FDE68A' }}>
-            {dateStr}
-          </div>
+      {/* Milo circle — vertically centred right */}
+      <div style={{
+        position: 'absolute',
+        top: '50%',
+        right: 16,
+        transform: 'translateY(-50%)',
+        zIndex: 2,
+      }}>
+        <div style={{
+          width: 110,
+          height: 110,
+          borderRadius: '50%',
+          background: 'rgba(255,255,255,0.88)',
+          border: '3px solid rgba(255,255,255,0.95)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <img
+            src="/animations/milo_idle.gif"
+            alt="Milo"
+            style={{ width: 80, height: 80, objectFit: 'contain' }}
+          />
+          <span style={{ fontSize: 8, color: C.grey, marginTop: 2, fontFamily: 'Nunito, sans-serif' }}>MILO</span>
         </div>
-        <img
-          src="/animations/milo_idle.gif"
-          alt="Milo"
-          style={{
-            width: 120,
-            height: 120,
-            objectFit: 'cover',
-            borderRadius: '50%',
-            border: '3px solid #F5C518',
-            flexShrink: 0,
-          }}
-        />
       </div>
 
-      {/* Section 2 — Two stat cards */}
-      <div className="grid grid-cols-2 gap-2">
-
-        {/* Card 1 — Continue */}
+      {/* Left content */}
+      <div style={{ position: 'relative', zIndex: 2, maxWidth: 190 }}>
+        <p style={{
+          fontSize: 20,
+          fontWeight: 800,
+          color: C.navy,
+          lineHeight: 1.1,
+          marginBottom: 4,
+          fontFamily: 'Nunito, sans-serif',
+        }}>
+          ¡Hola, Estudiante! 🐾
+        </p>
+        <p style={{
+          fontSize: 12,
+          fontWeight: 600,
+          color: C.green,
+          marginBottom: 3,
+          fontFamily: 'Nunito, sans-serif',
+        }}>
+          ¡Vamos! ¡Tú puedes!
+        </p>
+        <p style={{
+          fontSize: 10,
+          color: C.amber,
+          marginBottom: 14,
+          fontFamily: 'Nunito, sans-serif',
+        }}>
+          {dateStr}
+        </p>
         <button
-          data-testid="home-continue-btn"
-          onClick={() => (onContinue ? onContinue() : onNavigate('study'))}
-          className="rounded-2xl border px-3 py-2.5 text-left flex items-center gap-2"
-          style={{ background: '#DCFCE7', borderColor: '#86EFAC' }}
+          onClick={onContinue}
+          style={{
+            background: C.green,
+            color: C.cream,
+            border: 'none',
+            borderRadius: 24,
+            padding: '10px 18px',
+            fontFamily: 'Nunito, sans-serif',
+            fontSize: 13,
+            fontWeight: 700,
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+          }}
         >
-          <span className="text-lg" style={{ lineHeight: 1 }}>▶️</span>
-          <div className="min-w-0">
-            <div className="text-xs font-bold uppercase tracking-wide" style={{ color: '#14532D' }}>
-              {currentStopId ? 'Continue' : (lastSession ? 'Continue' : 'Start')}
-            </div>
-            <div className="text-xs font-bold truncate" style={{ color: '#166534' }}>
-              {currentStopId
-                ? (getStop(currentStopId)?.title || 'Next Stop 🐾')
-                : (lastSession ? drillLabel(lastSession.drillId) : 'First drill 🐾')}
-            </div>
-          </div>
+          🐾 Continue learning
         </button>
+      </div>
+    </div>
+  );
+}
 
-        {/* Card 2 — Words Mastered */}
-        <div
-          onClick={() => onShowMastery()}
-          className="rounded-2xl border px-3 py-2.5 flex items-center gap-2 cursor-pointer"
-          style={{ background: '#EDE9FE', borderColor: '#DDD6FE' }}
-        >
-          <span className="text-xl font-bold leading-none" style={{ color: '#4C1D95' }}>
-            {masteredCount}
-          </span>
-          <div>
-            <div className="text-xs font-bold uppercase tracking-wide" style={{ color: 'hsl(var(--muted-foreground))' }}>Words</div>
-            <div className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>mastered 🐾</div>
+function StreakCard({ streakDays, weekBits }) {
+  const days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+  return (
+    <div style={{ ...card, display: 'flex', flexDirection: 'column' }}>
+      {/* Header row — fixed height */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 24, marginBottom: 8 }}>
+        <p style={secLabel}>Streak</p>
+        <FlameIcon />
+      </div>
+      {/* Stat row — fixed height */}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, height: 44, marginBottom: 8 }}>
+        <span style={{ fontFamily: 'Fraunces, serif', fontSize: 38, color: C.navy, fontWeight: 700, lineHeight: 1 }}>
+          {streakDays}
+        </span>
+        <span style={{ fontSize: 11, color: C.grey, alignSelf: 'flex-end', paddingBottom: 4, fontFamily: 'Nunito, sans-serif' }}>
+          days
+        </span>
+      </div>
+      {/* Week dots */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 6 }}>
+        {days.map((d, i) => (
+          <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <div style={{
+              width: 14,
+              height: 14,
+              borderRadius: '50%',
+              background: weekBits[i] ? C.green : C.greenLight,
+            }} />
+            <span style={{ fontSize: 7, color: C.grey, fontFamily: 'Nunito, sans-serif' }}>{d}</span>
           </div>
+        ))}
+      </div>
+      <p style={{ fontSize: 9, color: C.terra, fontWeight: 700, fontFamily: 'Nunito, sans-serif' }}>
+        Keep it up!
+      </p>
+    </div>
+  );
+}
+
+function FlameIcon() {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    let scale = 1;
+    let growing = true;
+    let frame;
+    const animate = () => {
+      scale += growing ? 0.012 : -0.012;
+      if (scale >= 1.2) growing = false;
+      if (scale <= 1.0) growing = true;
+      if (ref.current) ref.current.style.transform = `scale(${scale})`;
+      frame = requestAnimationFrame(animate);
+    };
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  return <span ref={ref} style={{ display: 'inline-block', fontSize: 20 }}>🔥</span>;
+}
+
+function MyWordsCard({ progress, onOpenMyWords }) {
+  // Derive counts from progress map
+  const words = Object.values(progress || {});
+  const learned   = words.filter(w => w.c > 0).length;
+  const needsReview = words.filter(w => {
+    if (!w.due) return false;
+    return new Date(w.due) <= new Date();
+  }).length;
+  const mastered  = words.filter(w => w.outputCorrect >= 3 && w.s >= 4).length;
+
+  return (
+    <div style={{ ...card, display: 'flex', flexDirection: 'column' }}>
+      {/* Header row — fixed height */}
+      <div style={{ display: 'flex', alignItems: 'center', height: 24, marginBottom: 8 }}>
+        <p style={secLabel}>📚 My Words</p>
+      </div>
+      {/* Stat row — fixed height, baseline-aligned */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', height: 44, marginBottom: 8 }}>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontFamily: 'Fraunces, serif', fontSize: 24, color: C.green, lineHeight: 1, fontWeight: 700 }}>{learned}</p>
+          <p style={{ fontSize: 9, color: C.grey, marginTop: 3, fontFamily: 'Nunito, sans-serif' }}>learned</p>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontFamily: 'Fraunces, serif', fontSize: 24, color: C.terra, lineHeight: 1, fontWeight: 700 }}>{needsReview}</p>
+          <p style={{ fontSize: 9, color: C.terra, marginTop: 3, fontWeight: 700, fontFamily: 'Nunito, sans-serif' }}>needs review</p>
+        </div>
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontFamily: 'Fraunces, serif', fontSize: 24, color: C.teal, lineHeight: 1, fontWeight: 700 }}>{mastered}</p>
+          <p style={{ fontSize: 9, color: C.grey, marginTop: 3, fontFamily: 'Nunito, sans-serif' }}>mastered</p>
+        </div>
+      </div>
+      <div style={{ marginTop: 'auto' }}>
+        <button
+          onClick={onOpenMyWords}
+          style={{
+            background: C.greenLight,
+            color: C.green,
+            border: 'none',
+            borderRadius: 20,
+            padding: '7px 12px',
+            fontFamily: 'Nunito, sans-serif',
+            fontSize: 11,
+            fontWeight: 700,
+            cursor: 'pointer',
+            width: '100%',
+          }}
+        >
+          View all words →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function WordOfTheDayCard({ wordOfTheDay, onPractice }) {
+  if (!wordOfTheDay) return null;
+  const { es, en, type, gender, contextSentence, emoji } = wordOfTheDay;
+  const typeLabel = [type, gender].filter(Boolean).join(' · ');
+
+  return (
+    <div style={{
+      background: `linear-gradient(135deg, ${C.green} 0%, ${C.teal} 100%)`,
+      borderRadius: 14,
+      padding: 16,
+    }}>
+      <p style={{ ...secLabel, color: 'rgba(255,255,255,0.7)', marginBottom: 8 }}>⭐ Word of the day</p>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <p style={{ fontFamily: 'Fraunces, serif', fontSize: 32, color: C.white, marginBottom: 2, fontWeight: 700 }}>{es}</p>
+          <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)', marginBottom: 6, fontFamily: 'Nunito, sans-serif' }}>
+            {en}{typeLabel ? ` · ${typeLabel}` : ''}
+          </p>
+          {contextSentence && (
+            <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.85)', fontStyle: 'italic', fontFamily: 'Nunito, sans-serif' }}>
+              {contextSentence}
+            </p>
+          )}
+        </div>
+        <div style={{
+          width: 56,
+          height: 56,
+          borderRadius: '50%',
+          background: 'rgba(255,255,255,0.15)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 28,
+          flexShrink: 0,
+          marginLeft: 12,
+        }}>
+          {emoji || '📖'}
+        </div>
+      </div>
+      <button
+        onClick={() => onPractice(wordOfTheDay)}
+        style={{
+          background: 'rgba(255,255,255,0.2)',
+          color: C.white,
+          border: '1px solid rgba(255,255,255,0.4)',
+          borderRadius: 20,
+          padding: '7px 14px',
+          fontFamily: 'Nunito, sans-serif',
+          fontSize: 11,
+          fontWeight: 700,
+          cursor: 'pointer',
+          marginTop: 12,
+        }}
+      >
+        Practice this word →
+      </button>
+    </div>
+  );
+}
+
+function DailyChallengesCard({ onStartFetch, dailyTheme, onStartTheme }) {
+  return (
+    <div style={card}>
+      <p style={{ ...secLabel, marginBottom: 10 }}>🎯 Daily challenges</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+
+        {/* Fetch — weakest 5 */}
+        <div style={{
+          background: C.cream,
+          borderRadius: 12,
+          padding: 12,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 12,
+        }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: '50%',
+            background: '#FAECE7',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 20, flexShrink: 0,
+          }}>🐕</div>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontSize: 12, fontWeight: 700, color: C.navy, marginBottom: 2, fontFamily: 'Nunito, sans-serif' }}>
+              Fetch — weakest 5 words
+            </p>
+            <p style={{ fontSize: 10, color: C.grey, fontFamily: 'Nunito, sans-serif' }}>
+              Milo's found the words that need the most work.
+            </p>
+          </div>
+          <button
+            onClick={() => onStartFetch({ mode: 'weakest5' })}
+            style={{
+              background: C.terra,
+              color: C.white,
+              border: 'none',
+              borderRadius: 20,
+              padding: '7px 12px',
+              fontFamily: 'Nunito, sans-serif',
+              fontSize: 11,
+              fontWeight: 700,
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
+          >
+            Go 🐾
+          </button>
         </div>
 
-      </div>
-
-      {/* Section 3 — Daily challenges */}
-      <DailyChallenge challenges={userData?.dailyChallenges} onStart={onStartDailyChallenge} />
-
-      {/* Section 4 — Word of the day */}
-      {wotd && (
-        <div className="rounded-2xl border px-3 py-2.5" style={{ background: '#F0FDF4', borderColor: '#86EFAC' }}>
-          <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0">
-              <div className="text-xs font-bold uppercase tracking-wide" style={{ color: 'hsl(var(--muted-foreground))', letterSpacing: '0.08em' }}>
-                Palabra del día
-              </div>
-              <div className="font-serif font-bold text-xl leading-tight" style={{ color: '#14532D' }}>
-                {wotd.es}
-              </div>
-              <div className="text-xs" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                {wotd.en}
-              </div>
-              {wotdSentence && (
-                <div className="flex items-center gap-1 mt-0.5">
-                  <span className="text-xs italic" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                    {wotdSentence}
-                  </span>
-                  <button
-                    onClick={() => speak(wotdSentence, languageConfig.sourceLanguage)}
-                    className="rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ width: 18, height: 18, background: '#DCFCE7', border: '1px solid #86EFAC', fontSize: 10 }}
-                    aria-label="Pronounce sentence"
-                  >
-                    🔊
-                  </button>
-                </div>
-              )}
+        {/* Today's theme */}
+        {dailyTheme && (
+          <div style={{
+            background: C.cream,
+            borderRadius: 12,
+            padding: 12,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+          }}>
+            <div style={{
+              width: 40, height: 40, borderRadius: '50%',
+              background: '#E1F5EE',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 20, flexShrink: 0,
+            }}>
+              {dailyTheme.emoji || '🗂️'}
+            </div>
+            <div style={{ flex: 1 }}>
+              <p style={{ fontSize: 12, fontWeight: 700, color: C.navy, marginBottom: 2, fontFamily: 'Nunito, sans-serif' }}>
+                Today's theme — {dailyTheme.name}
+              </p>
+              <p style={{ fontSize: 10, color: C.grey, fontFamily: 'Nunito, sans-serif' }}>
+                {dailyTheme.wordCount} words · {dailyTheme.description}
+              </p>
             </div>
             <button
-              onClick={() => speak(wotd.es, languageConfig.sourceLanguage)}
-              className="rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ width: 26, height: 26, background: '#DCFCE7', border: '1px solid #86EFAC', fontSize: 13 }}
-              aria-label="Pronounce"
+              onClick={() => onStartTheme(dailyTheme.themeId)}
+              style={{
+                background: C.teal,
+                color: C.white,
+                border: 'none',
+                borderRadius: 20,
+                padding: '7px 12px',
+                fontFamily: 'Nunito, sans-serif',
+                fontSize: 11,
+                fontWeight: 700,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                flexShrink: 0,
+              }}
             >
-              🔊
+              Go 🐾
             </button>
           </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function KofiCard() {
+  return (
+    <div style={{ ...card, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', justifyContent: 'center', gap: 8 }}>
+      <div style={{
+        width: 40, height: 40, borderRadius: '50%',
+        background: '#FAECE7',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 20,
+      }}>🐾</div>
+      <p style={{ fontSize: 12, fontWeight: 700, color: C.navy, fontFamily: 'Nunito, sans-serif' }}>
+        Milo learns free.
+      </p>
+      <p style={{ fontSize: 10, color: C.grey, lineHeight: 1.4, fontFamily: 'Nunito, sans-serif' }}>
+        Enjoy the app? Support Milo on Ko-fi.
+      </p>
+      <a
+        href="https://ko-fi.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          background: C.terra,
+          color: C.white,
+          border: 'none',
+          borderRadius: 20,
+          padding: '7px 12px',
+          fontFamily: 'Nunito, sans-serif',
+          fontSize: 11,
+          fontWeight: 700,
+          cursor: 'pointer',
+          textDecoration: 'none',
+          display: 'inline-block',
+        }}
+      >
+        ☕ Buy a treat
+      </a>
+    </div>
+  );
+}
+
+function AchievementsCard({ recentBadges }) {
+  if (!recentBadges || recentBadges.length === 0) return null;
+  return (
+    <div style={card}>
+      <p style={{ ...secLabel, marginBottom: 10 }}>🏆 Achievements</p>
+      {recentBadges.map((badge, i) => (
+        <div
+          key={badge.id}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            marginBottom: i < recentBadges.length - 1 ? 8 : 0,
+          }}
+        >
+          <div style={{
+            width: 28, height: 28,
+            borderRadius: 8,
+            background: badge.bg || C.greenLight,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 14, flexShrink: 0,
+          }}>
+            {badge.emoji}
+          </div>
+          <div>
+            <p style={{ fontSize: 11, fontWeight: 700, color: C.navy, fontFamily: 'Nunito, sans-serif' }}>{badge.name}</p>
+            <p style={{ fontSize: 9, color: C.grey, fontFamily: 'Nunito, sans-serif' }}>{badge.description}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Main export ──────────────────────────────────────────────────────────────
+
+export default function HomeTab({
+  userData = {},
+  progress = {},
+  completedStops = [],
+  completedPaths = [],
+  onNavigate = () => {},
+  onContinue = () => {},
+  onOpenMyWords = () => {},
+  onStartFetch = () => {},
+  onStartTheme = () => {},
+  currentStop = null,
+  wordOfTheDay = null,
+  dailyTheme = null,
+  recentBadges = [],
+  streakDays = 0,
+  weekBits = [false, false, false, false, false, false, false],
+}) {
+  const gutter = { padding: '8px 12px 0' };
+  const twoCol = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    gap: 8,
+    alignItems: 'stretch',
+  };
+
+  return (
+    <div style={{
+      background: C.bg,
+      fontFamily: 'Nunito, sans-serif',
+      maxWidth: 390,
+      minHeight: '100vh',
+      paddingBottom: 80, // BottomNav clearance
+    }}>
+
+      <HeroCard
+        currentStop={currentStop}
+        streakDays={streakDays}
+        onContinue={onContinue}
+      />
+
+      {/* Streak + My Words */}
+      <div style={{ ...gutter }}>
+        <div style={twoCol}>
+          <StreakCard streakDays={streakDays} weekBits={weekBits} />
+          <MyWordsCard progress={progress} onOpenMyWords={onOpenMyWords} />
+        </div>
+      </div>
+
+      {/* Word of the day */}
+      {wordOfTheDay && (
+        <div style={gutter}>
+          <WordOfTheDayCard
+            wordOfTheDay={wordOfTheDay}
+            onPractice={(word) => onStartFetch({ mode: 'single', word })}
+          />
         </div>
       )}
 
-      {/* Section 5 — Ko-fi */}
-      <KofiSupport />
+      {/* Daily challenges */}
+      <div style={gutter}>
+        <DailyChallengesCard
+          onStartFetch={onStartFetch}
+          dailyTheme={dailyTheme}
+          onStartTheme={onStartTheme}
+        />
+      </div>
+
+      {/* Ko-fi + Achievements */}
+      <div style={gutter}>
+        <div style={twoCol}>
+          <KofiCard />
+          <AchievementsCard recentBadges={recentBadges} />
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ padding: '12px 12px', textAlign: 'center' }}>
+        <p style={{
+          fontSize: 12,
+          color: C.grey,
+          fontStyle: 'italic',
+          lineHeight: 1.6,
+          fontFamily: 'Nunito, sans-serif',
+        }}>
+          🐾 Every word you learn is an adventure we share together. 🐾
+        </p>
+      </div>
 
     </div>
   );
