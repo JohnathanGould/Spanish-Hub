@@ -357,7 +357,7 @@ function KofiCard() {
         Enjoy the app? Support Milo on Ko-fi.
       </p>
       <a
-        href="https://ko-fi.com"
+        href="https://ko-fi.com/milospeaks"
         target="_blank"
         rel="noopener noreferrer"
         style={{
