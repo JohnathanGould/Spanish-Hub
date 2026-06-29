@@ -348,27 +348,24 @@ function DailyChallengesCard({ onStartFetch, dailyTheme, onStartTheme }) {
 
         {/* Fetch — weakest 5 */}
         <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          textAlign: 'center',
+          gap: 8,
+          padding: 12,
           background: C.cream,
           borderRadius: 12,
-          padding: 12,
-          display: 'flex',
-          alignItems: 'center',
-          gap: 12,
         }}>
           <div style={{
-            width: 40, height: 40, borderRadius: '50%',
+            width: 32, height: 32, borderRadius: '50%',
             background: '#FAECE7',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 20, flexShrink: 0,
+            fontSize: 16,
           }}>🐕</div>
-          <div style={{ flex: 1 }}>
-            <p style={{ fontSize: 12, fontWeight: 700, color: C.navy, marginBottom: 2, fontFamily: 'Nunito, sans-serif' }}>
-              Fetch — weakest 5 words
-            </p>
-            <p style={{ fontSize: 10, color: C.grey, fontFamily: 'Nunito, sans-serif' }}>
-              Milo's found the words that need the most work.
-            </p>
-          </div>
+          <p style={{ fontSize: 11, fontWeight: 700, color: C.navy, fontFamily: 'Nunito, sans-serif' }}>
+            Fetch — weakest 5 words
+          </p>
           <button
             onClick={() => onStartFetch({ mode: 'weakest5' })}
             style={{
@@ -381,8 +378,7 @@ function DailyChallengesCard({ onStartFetch, dailyTheme, onStartTheme }) {
               fontSize: 11,
               fontWeight: 700,
               cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              flexShrink: 0,
+              width: '100%',
             }}
           >
             Go 🐾
@@ -392,29 +388,26 @@ function DailyChallengesCard({ onStartFetch, dailyTheme, onStartTheme }) {
         {/* Today's theme */}
         {dailyTheme && (
           <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            textAlign: 'center',
+            gap: 8,
+            padding: 12,
             background: C.cream,
             borderRadius: 12,
-            padding: 12,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
           }}>
             <div style={{
-              width: 40, height: 40, borderRadius: '50%',
+              width: 32, height: 32, borderRadius: '50%',
               background: '#E1F5EE',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 20, flexShrink: 0,
+              fontSize: 16,
             }}>
               {dailyTheme.emoji || '🗂️'}
             </div>
-            <div style={{ flex: 1 }}>
-              <p style={{ fontSize: 12, fontWeight: 700, color: C.navy, marginBottom: 2, fontFamily: 'Nunito, sans-serif' }}>
-                Today's theme — {dailyTheme.name}
-              </p>
-              <p style={{ fontSize: 10, color: C.grey, fontFamily: 'Nunito, sans-serif' }}>
-                {dailyTheme.wordCount} words · {dailyTheme.description}
-              </p>
-            </div>
+            <p style={{ fontSize: 11, fontWeight: 700, color: C.navy, fontFamily: 'Nunito, sans-serif' }}>
+              Today's theme — {dailyTheme.name}
+            </p>
             <button
               onClick={() => onStartTheme(dailyTheme.themeId)}
               style={{
@@ -427,8 +420,7 @@ function DailyChallengesCard({ onStartFetch, dailyTheme, onStartTheme }) {
                 fontSize: 11,
                 fontWeight: 700,
                 cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                flexShrink: 0,
+                width: '100%',
               }}
             >
               Go 🐾
