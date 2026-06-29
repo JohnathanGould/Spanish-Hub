@@ -250,7 +250,7 @@ function MyWordsCard({ progress, onOpenMyWords }) {
         </div>
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontFamily: 'Fraunces, serif', fontSize: 24, color: C.terra, lineHeight: 1, fontWeight: 700 }}>{needsReview}</p>
-          <p style={{ fontSize: 9, color: C.terra, marginTop: 3, fontWeight: 700, fontFamily: 'Nunito, sans-serif' }}>needs review</p>
+          <p style={{ fontSize: 9, color: C.terra, marginTop: 3, fontWeight: 700, fontFamily: 'Nunito, sans-serif' }}>needs<br />review</p>
         </div>
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontFamily: 'Fraunces, serif', fontSize: 24, color: C.teal, lineHeight: 1, fontWeight: 700 }}>{mastered}</p>
