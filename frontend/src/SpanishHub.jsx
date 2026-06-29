@@ -892,7 +892,7 @@ export default function SpanishHub() {
               wordOfTheDay={wordOfTheDay}
               dailyTheme={dailyTheme}
               recentBadges={(userData.earnedBadges || []).slice(-3).reverse()}
-              streakDays={userData.streak || 0}
+              streakDays={typeof userData.streak === 'object' ? (userData.streak?.count || 0) : (userData.streak || 0)}
               weekBits={getWeekBits(userData.activeDays || [])}
             />
             </div>
