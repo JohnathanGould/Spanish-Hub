@@ -108,9 +108,8 @@ function HeroCard({ currentStop, streakDays, onContinue }) {
           <img
             src="/animations/milo_idle.gif"
             alt="Milo"
-            style={{ width: 80, height: 80, objectFit: 'contain' }}
+            style={{ width: 100, height: 100, objectFit: 'contain' }}
           />
-          <span style={{ fontSize: 8, color: C.grey, marginTop: 2, fontFamily: 'Nunito, sans-serif' }}>MILO</span>
         </div>
       </div>
 
@@ -344,7 +343,7 @@ function DailyChallengesCard({ onStartFetch, dailyTheme, onStartTheme }) {
   return (
     <div style={card}>
       <p style={{ ...secLabel, marginBottom: 10 }}>🎯 Daily challenges</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 8 }}>
 
         {/* Fetch — weakest 5 */}
         <div style={{
@@ -555,11 +554,11 @@ export default function HomeTab({
         onContinue={onContinue}
       />
 
-      {/* Streak + My Words */}
+      {/* My Words + Achievements */}
       <div style={{ ...gutter }}>
         <div style={twoCol}>
-          <StreakCard streakDays={streakDays} weekBits={weekBits} />
           <MyWordsCard progress={progress} onOpenMyWords={onOpenMyWords} />
+          <AchievementsCard recentBadges={recentBadges} />
         </div>
       </div>
 
@@ -582,12 +581,9 @@ export default function HomeTab({
         />
       </div>
 
-      {/* Ko-fi + Achievements */}
+      {/* Ko-fi */}
       <div style={gutter}>
-        <div style={twoCol}>
-          <KofiCard />
-          <AchievementsCard recentBadges={recentBadges} />
-        </div>
+        <KofiCard />
       </div>
 
       {/* Footer */}

@@ -74,7 +74,7 @@ export default function Header({ user, streak, xp, bones, dailyGoal, dailyProgre
                   style={{ transformOrigin: '17px 17px', transform: 'rotate(-90deg)' }}
                 />
                 <text x="17" y="21" textAnchor="middle" fontSize="9" fontWeight="700"
-                  fill={goalReached ? '#16A34A' : 'hsl(var(--foreground))'}>
+                  fill={goalReached ? '#16A34A' : '#FFFFFF'}>
                   {todayCount >= 99 ? '99+' : todayCount}
                 </text>
               </svg>
