@@ -95,10 +95,10 @@ function HeroCard({ currentStop, streakDays, onContinue }) {
         zIndex: 2,
       }}>
         <div style={{
-          width: 110,
-          height: 110,
+          width: 120,
+          height: 120,
           borderRadius: '50%',
-          background: 'rgba(255,255,255,0.88)',
+          background: '#FFFFFF',
           border: '3px solid rgba(255,255,255,0.95)',
           display: 'flex',
           flexDirection: 'column',
@@ -108,7 +108,7 @@ function HeroCard({ currentStop, streakDays, onContinue }) {
           <img
             src="/animations/milo_idle.gif"
             alt="Milo"
-            style={{ width: 110, height: 110, objectFit: 'cover' }}
+            style={{ width: 115, height: 115, objectFit: 'contain' }}
           />
         </div>
       </div>
