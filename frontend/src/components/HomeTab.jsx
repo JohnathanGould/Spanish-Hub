@@ -100,6 +100,7 @@ function HeroCard({ currentStop, streakDays, onContinue }) {
           borderRadius: '50%',
           background: '#FFFFFF',
           border: '3px solid rgba(255,255,255,0.95)',
+          overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
