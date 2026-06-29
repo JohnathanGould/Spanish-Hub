@@ -555,12 +555,9 @@ export default function HomeTab({
         onContinue={onContinue}
       />
 
-      {/* My Words + Achievements */}
+      {/* My Words */}
       <div style={{ ...gutter }}>
-        <div style={twoCol}>
-          <MyWordsCard progress={progress} onOpenMyWords={onOpenMyWords} />
-          <AchievementsCard recentBadges={recentBadges} />
-        </div>
+        <MyWordsCard progress={progress} onOpenMyWords={onOpenMyWords} />
       </div>
 
       {/* Word of the day */}
