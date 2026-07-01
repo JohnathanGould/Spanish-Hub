@@ -122,6 +122,11 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
           )}{' '}
           {item.after}
         </div>
+        {mode === 'typed' && !picked && (
+          <div className="mt-3">
+            <SpecialCharBar inputRef={inputRef} value={typedValue} onChange={setTypedValue} />
+          </div>
+        )}
         {item.hint && (
           <div className="text-xs italic mt-3" style={{ color: 'hsl(var(--muted-foreground))' }}>
             {item.hint}
@@ -144,7 +149,6 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          <SpecialCharBar inputRef={inputRef} value={typedValue} onChange={setTypedValue} />
           {!picked && (
             <button
               onClick={handleTypedSubmit}
