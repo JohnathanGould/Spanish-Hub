@@ -102,7 +102,7 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
                 background: blankBg,
                 color: 'hsl(var(--foreground))',
                 minWidth: 80,
-                width: Math.max(80, typedValue.length * 16) + 'px',
+                width: Math.max(80, (typedValue.length + 2) * 20) + 'px',
                 fontSize: '0.95em',
                 fontFamily: 'inherit',
                 fontWeight: 700,
