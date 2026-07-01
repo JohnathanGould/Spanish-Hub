@@ -89,10 +89,37 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 4px 16px rgba(0,0,0,0.06)' }}>
         <div className="font-serif text-xl sm:text-2xl font-bold leading-relaxed" data-testid="fitb-prompt" style={{ color: 'hsl(var(--foreground))' }}>
           {item.before}{' '}
-          <span className="inline-block px-3 py-0.5 rounded-lg mx-1 align-middle"
-            style={{ background: blankBg, color: blankColor, minWidth: 80, fontSize: '0.95em' }}>
-            {picked ? (mode === 'typed' ? picked : item.blank) : '____'}
-          </span>{' '}
+          {mode === 'typed' && !picked ? (
+            <input
+              ref={inputRef}
+              type="text"
+              value={typedValue}
+              onChange={e => setTypedValue(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleTypedSubmit(); }}
+              data-testid="fitb-typed-input"
+              style={{
+                display: 'inline-block',
+                background: blankBg,
+                color: 'hsl(var(--foreground))',
+                minWidth: 80,
+                width: Math.max(80, typedValue.length * 12) + 'px',
+                fontSize: '0.95em',
+                fontFamily: 'inherit',
+                fontWeight: 700,
+                textAlign: 'center',
+                border: '2px solid hsl(var(--primary))',
+                borderRadius: 8,
+                padding: '2px 8px',
+                outline: 'none',
+                verticalAlign: 'middle',
+              }}
+            />
+          ) : (
+            <span className="inline-block px-3 py-0.5 rounded-lg mx-1 align-middle"
+              style={{ background: blankBg, color: blankColor, minWidth: 80, fontSize: '0.95em' }}>
+              {picked ? (mode === 'typed' ? picked : item.blank) : '____'}
+            </span>
+          )}{' '}
           {item.after}
         </div>
         {item.hint && (
@@ -118,18 +145,6 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
       ) : (
         <div className="flex flex-col gap-2">
           <SpecialCharBar inputRef={inputRef} value={typedValue} onChange={setTypedValue} />
-          <input
-            ref={inputRef}
-            type="text"
-            value={typedValue}
-            onChange={e => setTypedValue(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') handleTypedSubmit(); }}
-            disabled={!!picked}
-            placeholder="Type the missing word…"
-            data-testid="fitb-typed-input"
-            className="w-full px-4 py-3 rounded-xl border text-center text-lg font-semibold"
-            style={{ background: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }}
-          />
           {!picked && (
             <button
               onClick={handleTypedSubmit}
