@@ -1361,32 +1361,35 @@ export default function PathsTab({
     );
   }
 
-  const getTierState = (tier, allTiers) => {
+  const getTierState = (tier, allTiers, isStageUnlocked) => {
+    if (!isStageUnlocked) return 'locked';
     if (tier.pathIds.every(id => completedPaths.includes(id))) return 'complete';
     const hasProgress = tier.pathIds.some(id => {
       const p = getPath(id);
       return p && p.stops.some(s => completedStops.includes(s.id));
     });
     if (hasProgress) return 'current';
-    // Unlock if previous tier in same stage is complete
     const tierIndex = allTiers.findIndex(t => t.id === tier.id);
-    if (tierIndex === 0) return 'current'; // first tier always unlocked
+    if (tierIndex === 0) return 'current';
     const prevTier = allTiers[tierIndex - 1];
     if (prevTier.pathIds.every(id => completedPaths.includes(id))) return 'current';
     return 'locked';
   };
 
   const getStageState = (stage, allStages) => {
-    const tierStates = stage.tiers.map((t) => getTierState(t, stage.tiers));
-    if (tierStates.every(s => s === 'complete')) return 'complete';
-    if (tierStates.some(s => s === 'current' || s === 'complete')) return 'current';
-    // Unlock if previous stage is complete
     const stageIndex = allStages.findIndex(s => s.id === stage.id);
-    if (stageIndex === 0) return 'current'; // first stage always unlocked
-    const prevStage = allStages[stageIndex - 1];
-    const prevTierStates = prevStage.tiers.map((t) => getTierState(t, prevStage.tiers));
-    if (prevTierStates.every(s => s === 'complete')) return 'current';
-    return 'locked';
+    let isStageUnlocked = false;
+    if (stageIndex === 0) {
+      isStageUnlocked = true;
+    } else {
+      const prevStage = allStages[stageIndex - 1];
+      const prevTierStates = prevStage.tiers.map((t) => getTierState(t, prevStage.tiers, true));
+      isStageUnlocked = prevTierStates.every(s => s === 'complete');
+    }
+    if (!isStageUnlocked) return 'locked';
+    const tierStates = stage.tiers.map((t) => getTierState(t, stage.tiers, true));
+    if (tierStates.every(s => s === 'complete')) return 'complete';
+    return 'current';
   };
 
   const pillBg = (state) => {
@@ -1411,7 +1414,7 @@ export default function PathsTab({
               type="button"
               onClick={() => setSelectedStage(stage)}
               className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
-              style={{ ...pillBg(getStageState(stage, PATH_STAGES)), cursor: 'pointer' }}
+              style={{ ...pillBg(getStageState(stage)), cursor: 'pointer' }}
             >
               <p className="text-xl font-semibold">{stage.emoji} {stage.label}</p>
             </button>
@@ -1440,7 +1443,7 @@ export default function PathsTab({
         </div>
         <div className="flex flex-col gap-3">
           {selectedStage.tiers.map((tier) => {
-            const tierState = getTierState(tier, selectedStage.tiers);
+            const tierState = getTierState(tier, selectedStage.tiers, true);
             return (
               <div key={tier.id}>
                 <button
