@@ -829,7 +829,7 @@ export default function SpanishHub() {
           <DrillRouter
             drillId={view.drillId}
             drillLength={view.drillLength || 10}
-            words={activeWords}
+            words={pathWords}
             progress={userData.progress}
             onAnswer={view.drillId.includes('flashcard') ? recordAnswerNoXP : recordAnswer}
             onDone={(c, t) => onDrillDone(view.drillId, c, t)}
@@ -901,7 +901,7 @@ export default function SpanishHub() {
           )}
           {tab === 'study' && (
             <div className="pb-[76px]">
-              <DrillsGrid words={activeWords} stats={stats} drillMode={drillMode}
+              <DrillsGrid words={pathWords} stats={stats} drillMode={drillMode}
                 setDrillMode={setDrillMode} onStartDrill={startDrill}
                 completedPaths={userData.completedPaths || []} />
               <KofiSupport />
