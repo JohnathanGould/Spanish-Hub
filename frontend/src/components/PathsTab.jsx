@@ -1361,17 +1361,23 @@ export default function PathsTab({
     );
   }
 
-  const getTierState = (tier) => {
+  const getTierState = (tier, allTiers) => {
     if (tier.pathIds.every(id => completedPaths.includes(id))) return 'complete';
     const hasProgress = tier.pathIds.some(id => {
       const p = getPath(id);
       return p && p.stops.some(s => completedStops.includes(s.id));
     });
-    return hasProgress ? 'current' : 'locked';
+    if (hasProgress) return 'current';
+    // Unlock if previous tier in same stage is complete
+    const tierIndex = allTiers.findIndex(t => t.id === tier.id);
+    if (tierIndex === 0) return 'current'; // first tier always unlocked
+    const prevTier = allTiers[tierIndex - 1];
+    if (prevTier.pathIds.every(id => completedPaths.includes(id))) return 'current';
+    return 'locked';
   };
 
   const getStageState = (stage) => {
-    const tierStates = stage.tiers.map(getTierState);
+    const tierStates = stage.tiers.map((t) => getTierState(t, stage.tiers));
     if (tierStates.every(s => s === 'complete')) return 'complete';
     if (tierStates.some(s => s === 'current' || s === 'complete')) return 'current';
     return 'locked';
@@ -1428,7 +1434,7 @@ export default function PathsTab({
         </div>
         <div className="flex flex-col gap-3">
           {selectedStage.tiers.map((tier) => {
-            const tierState = getTierState(tier);
+            const tierState = getTierState(tier, selectedStage.tiers);
             return (
               <div key={tier.id}>
                 <button
