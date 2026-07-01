@@ -1414,7 +1414,7 @@ export default function PathsTab({
               type="button"
               onClick={() => setSelectedStage(stage)}
               className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
-              style={{ ...pillBg(getStageState(stage)), cursor: 'pointer' }}
+              style={{ ...pillBg(getStageState(stage, PATH_STAGES)), cursor: 'pointer' }}
             >
               <p className="text-xl font-semibold">{stage.emoji} {stage.label}</p>
             </button>
