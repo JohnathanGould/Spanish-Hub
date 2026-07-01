@@ -1376,10 +1376,16 @@ export default function PathsTab({
     return 'locked';
   };
 
-  const getStageState = (stage) => {
+  const getStageState = (stage, allStages) => {
     const tierStates = stage.tiers.map((t) => getTierState(t, stage.tiers));
     if (tierStates.every(s => s === 'complete')) return 'complete';
     if (tierStates.some(s => s === 'current' || s === 'complete')) return 'current';
+    // Unlock if previous stage is complete
+    const stageIndex = allStages.findIndex(s => s.id === stage.id);
+    if (stageIndex === 0) return 'current'; // first stage always unlocked
+    const prevStage = allStages[stageIndex - 1];
+    const prevTierStates = prevStage.tiers.map((t) => getTierState(t, prevStage.tiers));
+    if (prevTierStates.every(s => s === 'complete')) return 'current';
     return 'locked';
   };
 
@@ -1405,7 +1411,7 @@ export default function PathsTab({
               type="button"
               onClick={() => setSelectedStage(stage)}
               className="rounded-2xl p-5 mb-2 text-white relative overflow-hidden w-full text-left transition-opacity"
-              style={{ ...pillBg(getStageState(stage)), cursor: 'pointer' }}
+              style={{ ...pillBg(getStageState(stage, PATH_STAGES)), cursor: 'pointer' }}
             >
               <p className="text-xl font-semibold">{stage.emoji} {stage.label}</p>
             </button>
