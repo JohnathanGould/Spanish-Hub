@@ -1442,8 +1442,11 @@ export default function PathsTab({
           </h1>
         </div>
         <div className="flex flex-col gap-3">
-          {selectedStage.tiers.map((tier) => {
-            const tierState = getTierState(tier, selectedStage.tiers, true);
+          {(() => {
+            const selectedStageState = getStageState(selectedStage, PATH_STAGES);
+            const isSelectedStageUnlocked = selectedStageState !== 'locked';
+            return selectedStage.tiers.map((tier) => {
+            const tierState = getTierState(tier, selectedStage.tiers, isSelectedStageUnlocked);
             return (
               <div key={tier.id}>
                 <button
@@ -1470,7 +1473,8 @@ export default function PathsTab({
                 )}
               </div>
             );
-          })}
+          });
+          })()}
         </div>
       </div>
     );
