@@ -127,9 +127,40 @@ export default function VocabFillBlankDrill({
           {parts.kind === 'blank' ? (
             <>
               <span>{parts.before}</span>
-              <span className="px-2 rounded-md" style={{ background: blankBg, color: blankColor }}>
-                {answered ? word.es : BLANK}
-              </span>
+              {isTyped && !answered ? (
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={val}
+                  onChange={e => setVal(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') submit(); }}
+                  disabled={!!feedback}
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  data-testid="vfb-input"
+                  style={{
+                    display: 'inline-block',
+                    background: 'hsl(var(--card))',
+                    color: 'hsl(var(--foreground))',
+                    minWidth: 80,
+                    width: Math.max(80, (val.length + 2) * 20) + 'px',
+                    fontSize: '0.95em',
+                    fontFamily: 'inherit',
+                    fontWeight: 700,
+                    textAlign: 'center',
+                    border: '2px solid hsl(var(--primary))',
+                    borderRadius: 8,
+                    padding: '2px 8px',
+                    outline: 'none',
+                    verticalAlign: 'middle',
+                  }}
+                />
+              ) : (
+                <span className="px-2 rounded-md" style={{ background: blankBg, color: blankColor }}>
+                  {answered ? word.es : BLANK}
+                </span>
+              )}
               <span>{parts.after}</span>
             </>
           ) : (
@@ -142,6 +173,11 @@ export default function VocabFillBlankDrill({
             {answered ? word.es : '???'}
           </div>
         )}
+        {isTyped && !feedback && (
+          <div className="mt-3">
+            <SpecialCharBar inputRef={inputRef} value={val} onChange={setVal} />
+          </div>
+        )}
         <div className="text-xs mt-2" style={{ color: 'hsl(var(--muted-foreground))' }} data-testid="vfb-hint">
           {word.en}
         </div>
@@ -149,15 +185,6 @@ export default function VocabFillBlankDrill({
 
       {isTyped ? (
         <>
-          {!feedback && <SpecialCharBar inputRef={inputRef} value={val} onChange={setVal} />}
-          <input ref={inputRef} data-testid="vfb-input"
-            value={val} onChange={e => setVal(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') feedback ? next() : submit(); }}
-            placeholder="Type Spanish…"
-            disabled={!!feedback} autoCapitalize="none" autoCorrect="off" spellCheck={false}
-            className="w-full p-3 rounded-xl border-2 text-center text-lg font-bold mb-3 transition-colors"
-            style={{ background: 'hsl(var(--card))', color: 'hsl(var(--foreground))',
-              borderColor: feedback ? (feedback.ok ? '#86EFAC' : '#FCA5A5') : 'hsl(var(--border))' }} />
           {feedback ? (
             <div className="text-center py-2.5 rounded-xl mb-1"
               style={{ background: feedback.ok ? '#DCFCE7' : '#FEE2E2', color: feedback.ok ? '#14532D' : '#991B1B' }}>
