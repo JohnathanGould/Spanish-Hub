@@ -297,12 +297,12 @@ const enforceMinGap = (queue, minGap = 3) => {
   return result;
 };
 
-function buildFetchQueue(words, progress = {}) {
+export function buildFetchQueue(words, progress = {}, length = FETCH_LENGTH) {
   // Deduplicate words by es field to prevent repeats from duplicate entries
   const uniqueWords = words.filter((w, i, arr) => arr.findIndex(x => x.es === w.es) === i);
 
-  const maxPerWord = Math.ceil(FETCH_LENGTH / uniqueWords.length);
-  const cappedWordPool = uniqueWords.flatMap(word => Array(maxPerWord).fill(word)).slice(0, FETCH_LENGTH);
+  const maxPerWord = Math.ceil(length / uniqueWords.length);
+  const cappedWordPool = uniqueWords.flatMap(word => Array(maxPerWord).fill(word)).slice(0, length);
   const shuffledWordPool = shuffle(cappedWordPool);
 
   let drillDeck = buildDrillDeck(progress, uniqueWords);

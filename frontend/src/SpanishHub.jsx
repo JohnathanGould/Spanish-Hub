@@ -27,6 +27,11 @@ import DrillRouter from './components/DrillRouter';
 import LessonsList from './components/LessonsList';
 import LessonView from './components/LessonView';
 import PathsTab from './components/PathsTab';
+import FetchTab from './components/FetchTab';
+import BreakFreeDrill from './components/BreakFreeDrill';
+import { Toaster } from './components/ui/toaster';
+import { toast } from './hooks/use-toast';
+import { BADGES } from './data/badges';
 import LoginScreen from './components/LoginScreen';
 import GoalModal from './components/GoalModal';
 import StreakModal from './components/StreakModal';
@@ -333,6 +338,84 @@ export default function SpanishHub() {
     });
   }, [persistData]);
 
+  // ── Fetch Standalone session completion ──
+  // Awards bones on 80%+, records a 'fetch' session (drives fetch badges),
+  // updates fetchHistory, evaluates badges. Returns { passed, bonesAward }.
+  const onFetchComplete = useCallback((correct, total, sessionLength) => {
+    const score = total > 0 ? correct / total : 0;
+    const passed = score >= 0.80;
+    const bonesAward = passed ? (sessionLength === 10 ? 1 : sessionLength === 40 ? 3 : 2) : 0;
+    setUserData(prev => {
+      const today = new Date().toDateString();
+      const sessions = [{ drillId: 'fetch', correct, total, date: today, ts: Date.now() }, ...(prev.sessions || []).slice(0, 49)];
+      let newData = {
+        ...prev,
+        bones: (prev.bones || 0) + bonesAward,
+        totalBonesEarned: (prev.totalBonesEarned || 0) + bonesAward,
+        sessions,
+        fetchHistory: {
+          totalSessions: (prev.fetchHistory?.totalSessions || 0) + 1,
+          totalCorrect: (prev.fetchHistory?.totalCorrect || 0) + correct,
+          totalQuestions: (prev.fetchHistory?.totalQuestions || 0) + total,
+        },
+      };
+      const { updatedBadges, newlyEarned } = evaluateBadges(prev, newData, 'drill_complete', { drillId: 'fetch', correct, total, ts: Date.now() });
+      newData = { ...newData, earnedBadges: updatedBadges };
+      persistData(newData);
+      if (newlyEarned.length > 0) {
+        newlyEarned.forEach(id => {
+          const def = BADGES.find(b => b.id === id);
+          if (def) toast({ title: `${def.emoji} Badge Earned`, description: def.name });
+        });
+      }
+      return newData;
+    });
+    if (bonesAward > 0) {
+      toast({ title: 'Fetch complete 🐾', description: `+${bonesAward} bones earned!` });
+    }
+    return { passed, bonesAward, correct, total };
+  }, [persistData]);
+
+  // ── Break Free (Session F) — open overlay (no reset until attempt happens) ──
+  const startBreakFree = useCallback(() => {
+    setView({ page: 'break-free' });
+  }, []);
+
+  const exitBreakFree = useCallback(() => {
+    setView({ page: 'home' });
+    setTab('fetch');
+  }, []);
+
+  const onBreakFreeSuccess = useCallback(() => {
+    setUserData(prev => {
+      let newData = {
+        ...prev,
+        bones: (prev.bones || 0) + 10,
+        totalBonesEarned: (prev.totalBonesEarned || 0) + 10,
+        breakFreeXP: 0,
+      };
+      const { updatedBadges, newlyEarned } = evaluateBadges(prev, newData, 'drill_complete', { drillId: 'break-free', correct: 10, total: 10, ts: Date.now() });
+      newData = { ...newData, earnedBadges: updatedBadges };
+      persistData(newData);
+      if (newlyEarned.length > 0) {
+        newlyEarned.forEach(id => {
+          const def = BADGES.find(b => b.id === id);
+          if (def) toast({ title: `${def.emoji} Badge Earned`, description: def.name });
+        });
+      }
+      return newData;
+    });
+    toast({ title: '¡Libre! 🔗', description: 'Milo broke free — +10 bones earned!' });
+  }, [persistData]);
+
+  const onBreakFreeFail = useCallback(() => {
+    setUserData(prev => {
+      const newData = { ...prev, breakFreeXP: 0 };
+      persistData(newData);
+      return newData;
+    });
+  }, [persistData]);
+
   const setStrictTyping = useCallback((value) => {
     setUserData(prev => {
       const newData = { ...prev, strictTyping: value };
@@ -489,6 +572,7 @@ export default function SpanishHub() {
       const newData = {
         ...prev,
         progress: { ...prev.progress, [wordEs]: updatedProgress },
+        breakFreeXP: (prev.breakFreeXP || 0) + (isCorrect ? 1 : 0),
       };
       persistData(newData);
       return newData;
@@ -622,6 +706,17 @@ export default function SpanishHub() {
     );
     return MASTER.filter(w => esKeys.has(w.es));
   }, [userData.completedStops]);
+
+  // Break Free word pool — learned words, falling back to completed-path words, then MASTER
+  const breakFreeWords = useMemo(() => {
+    const learned = MASTER.filter(w => userData.progress && userData.progress[w.es]);
+    if (learned.length >= 10) return learned;
+    const combined = [...learned, ...pathWords];
+    const seen = new Set();
+    const deduped = combined.filter(w => (seen.has(w.es) ? false : seen.add(w.es)));
+    if (deduped.length >= 5) return deduped;
+    return MASTER.slice(0, 30);
+  }, [userData.progress, pathWords]);
 
   const wordOfTheDay = useMemo(() => {
     if (!MASTER || MASTER.length === 0) return null;
@@ -847,6 +942,19 @@ export default function SpanishHub() {
     return 0;
   })();
 
+  if (view.page === 'break-free') {
+    return (
+      <BreakFreeDrill
+        words={breakFreeWords}
+        progress={userData.progress}
+        strictTyping={userData.strictTyping}
+        onSuccess={onBreakFreeSuccess}
+        onFail={onBreakFreeFail}
+        onExit={exitBreakFree}
+      />
+    );
+  }
+
   if (view.page === 'lesson') {
     return (
       <div className="app-outer">
@@ -953,6 +1061,22 @@ export default function SpanishHub() {
               <KofiSupport />
             </div>
           )}
+          {tab === 'fetch' && (
+            <div className="pb-[76px]">
+              <FetchTab
+                userData={userData}
+                progress={userData.progress}
+                completedPaths={userData.completedPaths || []}
+                customWords={userData.customWords || []}
+                importedPacks={userData.importedPacks || []}
+                onDrillAnswer={updateWordProgress}
+                onFetchComplete={onFetchComplete}
+                strictTyping={userData.strictTyping}
+                breakFreeAvailable={(userData.breakFreeXP || 0) >= 50}
+                onStartBreakFree={startBreakFree}
+              />
+            </div>
+          )}
           {tab === 'learn' && (
             <div className="pb-[76px]">
             <LessonsList lessonsCompleted={userData.lessonsCompleted || []}
@@ -1057,7 +1181,7 @@ export default function SpanishHub() {
             onClose={() => { setShowSharedPacks(false); setSharedPacksAnchorY(null); }} />
         )}
       </div>
-      <BottomNav activeTab={tab} onTabChange={setTab} />
+      <BottomNav activeTab={tab} onTabChange={setTab} breakFreeReady={(userData.breakFreeXP || 0) >= 50} />
       {showBadgeGrid && (
         <BadgeGrid
           earnedBadges={userData.earnedBadges || []}
@@ -1136,6 +1260,7 @@ export default function SpanishHub() {
         onClose={() => setStreakModalOpen(false)}
       />
     )}
+    <Toaster />
     </>
   );
 }
