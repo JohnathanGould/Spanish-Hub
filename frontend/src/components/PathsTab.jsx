@@ -371,6 +371,8 @@ function StopView({
   onNextStop,
   onUpdateWordProgress,
   onAwardBones,
+  onSpendBones,
+  bones = 0,
   onCompleteStop,
   onCompletePathFetch,
   fetchStopWords,
@@ -530,6 +532,22 @@ function StopView({
       }
     };
 
+    // ── Word Skip: costs 10 bones, removes current word from queue without scoring.
+    // Removing (not just advancing) keeps the pass ratio fair: the skipped word is
+    // not counted toward correct or total. ──
+    const handleSkip = () => {
+      if ((bones || 0) < 10) return;
+      const ok = onSpendBones ? onSpendBones(10) : false;
+      if (!ok) return;
+      const newQueue = fetchQueueRef.current.filter((_, i) => i !== fetchIndex);
+      fetchQueueRef.current = newQueue;
+      setFetchQueue(newQueue);
+      if (fetchIndex >= newQueue.length) {
+        setPhase('results');
+      }
+      // else: fetchIndex unchanged, now points at the next item; drillKey change remounts drill
+    };
+
     // drillWords: target word first, then distractors for choice display
     const drillWords = [currentItem.word, ...words.filter(w => w.es !== currentItem.word.es)];
 
@@ -557,37 +575,60 @@ function StopView({
       strictMode: strictTyping,
     };
 
-    if (drillType === 'type-en-es') {
-      return <TypeDrill key={drillKey} mode="type-en-es" {...sharedWordProps} headerOffset={90} />;
-    }
-    if (drillType === 'listen-type-es') {
-      return <TypeDrill key={drillKey} mode="listen-type" {...sharedWordProps} headerOffset={90} />;
-    }
-    if (drillType === 'listen-type-en') {
-      return <TypeDrill key={drillKey} mode="listen-type-en-es" {...sharedWordProps} headerOffset={90} />;
-    }
-    if (drillType === 'listen-type-sentence-es') {
-      return <TypeDrill key={drillKey} mode="listen-type-sentence" {...sharedWordProps} headerOffset={90} />;
-    }
-    if (drillType === 'listen-type-sentence-en') {
-      return <TypeDrill key={drillKey} mode="listen-type-sentence-en-es" {...sharedWordProps} headerOffset={90} />;
-    }
-    if (drillType === 'hear-choose-es') {
-      return <ChoiceDrill key={drillKey} mode="hear-choose" {...sharedWordProps} headerOffset={80} />;
-    }
-    if (drillType === 'hear-choose-en') {
-      return <ChoiceDrill key={drillKey} mode="hear-choose-en-es" {...sharedWordProps} headerOffset={80} />;
-    }
-    if (drillType === 'gender') {
-      if (!(currentItem.word.type === 'noun' && (currentItem.word.gender === 'm' || currentItem.word.gender === 'f'))) {
-        return <ChoiceDrill key={drillKey} mode="en-es" {...sharedWordProps} headerOffset={80} />;
+    const renderDrill = () => {
+      if (drillType === 'type-en-es') {
+        return <TypeDrill key={drillKey} mode="type-en-es" {...sharedWordProps} headerOffset={90} />;
       }
-      return <GenderDrill key={drillKey} {...sharedWordProps} />;
-    }
-    if (drillType === 'vocab-fill-blank-typed' || drillType === 'vocab-fill-blank-choice') {
-      return <VocabFillBlankDrill key={drillKey} mode={drillType === 'vocab-fill-blank-typed' ? 'typed' : 'choice'} {...sharedWordProps} headerOffset={90} />;
-    }
-    return <ChoiceDrill key={drillKey} mode={drillType} {...sharedWordProps} headerOffset={80} />;
+      if (drillType === 'listen-type-es') {
+        return <TypeDrill key={drillKey} mode="listen-type" {...sharedWordProps} headerOffset={90} />;
+      }
+      if (drillType === 'listen-type-en') {
+        return <TypeDrill key={drillKey} mode="listen-type-en-es" {...sharedWordProps} headerOffset={90} />;
+      }
+      if (drillType === 'listen-type-sentence-es') {
+        return <TypeDrill key={drillKey} mode="listen-type-sentence" {...sharedWordProps} headerOffset={90} />;
+      }
+      if (drillType === 'listen-type-sentence-en') {
+        return <TypeDrill key={drillKey} mode="listen-type-sentence-en-es" {...sharedWordProps} headerOffset={90} />;
+      }
+      if (drillType === 'hear-choose-es') {
+        return <ChoiceDrill key={drillKey} mode="hear-choose" {...sharedWordProps} headerOffset={80} />;
+      }
+      if (drillType === 'hear-choose-en') {
+        return <ChoiceDrill key={drillKey} mode="hear-choose-en-es" {...sharedWordProps} headerOffset={80} />;
+      }
+      if (drillType === 'gender') {
+        if (!(currentItem.word.type === 'noun' && (currentItem.word.gender === 'm' || currentItem.word.gender === 'f'))) {
+          return <ChoiceDrill key={drillKey} mode="en-es" {...sharedWordProps} headerOffset={80} />;
+        }
+        return <GenderDrill key={drillKey} {...sharedWordProps} />;
+      }
+      if (drillType === 'vocab-fill-blank-typed' || drillType === 'vocab-fill-blank-choice') {
+        return <VocabFillBlankDrill key={drillKey} mode={drillType === 'vocab-fill-blank-typed' ? 'typed' : 'choice'} {...sharedWordProps} headerOffset={90} />;
+      }
+      return <ChoiceDrill key={drillKey} mode={drillType} {...sharedWordProps} headerOffset={80} />;
+    };
+
+    return (
+      <>
+        {renderDrill()}
+        {/* Word Skip — Fetch rounds only. Subtle pill, fixed just above the bottom nav. */}
+        <div
+          style={{ position: 'fixed', bottom: 88, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 40, pointerEvents: 'none' }}
+        >
+          <button
+            type="button"
+            data-testid="fetch-skip-word-btn"
+            onClick={handleSkip}
+            disabled={(bones || 0) < 10}
+            className="text-sm text-amber-600 underline disabled:opacity-40"
+            style={{ pointerEvents: 'auto', background: 'hsl(var(--card))', padding: '6px 14px', borderRadius: 9999, border: '1px solid hsl(var(--border))' }}
+          >
+            Skip word 🦴 (10 bones)
+          </button>
+        </div>
+      </>
+    );
   }
 
   // ── Phase: results ─────────────────────────────────────────────────
@@ -1179,6 +1220,8 @@ export default function PathsTab({
   onSelectStop,
   onUpdateWordProgress,
   onAwardBones,
+  onSpendBones,
+  bones = 0,
   onCompleteStop,
   onCompletePathFetch,
   fetchStopWords,
@@ -1223,6 +1266,8 @@ export default function PathsTab({
         }}
         onUpdateWordProgress={onUpdateWordProgress}
         onAwardBones={onAwardBones}
+        onSpendBones={onSpendBones}
+        bones={bones}
         onCompleteStop={onCompleteStop}
         onCompletePathFetch={onCompletePathFetch}
         fetchStopWords={fetchStopWords}

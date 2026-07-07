@@ -6,7 +6,7 @@ import { BADGES } from '../data/badges';
 
 const ADMIN_UID = 'BEeiVtpSVWZuHYbo97InnqmI1DC2';
 
-export default function ProfileSheet({ open, onClose, user, userData, masteredCount, totalWords, onSignOut, onGoalClick, onNotificationsToggle, onAudioListenToggle, onAudioSpeakToggle, onStrictTypingToggle, onViewAllBadges }) {
+export default function ProfileSheet({ open, onClose, user, userData, masteredCount, totalWords, onSignOut, onGoalClick, onNotificationsToggle, onAudioListenToggle, onAudioSpeakToggle, onStrictTypingToggle, onViewAllBadges, streakShieldActive = false, onStreakShieldToggle }) {
   const navigate = useNavigate();
 
   const memberSince = (() => {
@@ -205,6 +205,43 @@ export default function ProfileSheet({ open, onClose, user, userData, masteredCo
                   position: 'absolute',
                   top: 2,
                   left: userData?.reminderEnabled ? 22 : 2,
+                  width: 20, height: 20,
+                  borderRadius: '50%',
+                  background: 'white',
+                  transition: 'left 200ms',
+                  display: 'block',
+                }} />
+              </button>
+            </div>
+
+            {/* Streak Shield */}
+            <div className="flex items-center justify-between px-4 py-3 gap-3" style={{ borderBottom: '1px solid hsl(var(--border))' }}>
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>Streak Shield 🦴</span>
+                {(userData?.bones || 0) < 20 ? (
+                  <span className="text-xs mt-0.5" style={{ color: '#d97706' }}>Not enough bones to activate</span>
+                ) : (
+                  <span className="text-xs mt-0.5" style={{ color: 'hsl(var(--muted-foreground))' }}>Spends 20 bones per missed day to protect your streak</span>
+                )}
+              </div>
+              <button
+                onClick={() => onStreakShieldToggle && onStreakShieldToggle(!streakShieldActive)}
+                aria-label="Toggle streak shield"
+                style={{
+                  width: 44, height: 24,
+                  borderRadius: 12,
+                  background: streakShieldActive ? '#7C3AED' : 'hsl(var(--muted))',
+                  position: 'relative',
+                  transition: 'background 200ms',
+                  border: 'none',
+                  cursor: 'pointer',
+                  flexShrink: 0,
+                }}
+              >
+                <span style={{
+                  position: 'absolute',
+                  top: 2,
+                  left: streakShieldActive ? 22 : 2,
                   width: 20, height: 20,
                   borderRadius: '50%',
                   background: 'white',

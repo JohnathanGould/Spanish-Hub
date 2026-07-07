@@ -144,6 +144,8 @@ const DEFAULT_DATA = {
   dailyGoalStreakDate: null,
   patternProgress: { ...DEFAULT_PATTERN_PROGRESS },
   breakFreeXP: 0,
+  streakShieldActive: false,   // user's toggle state — persists across sessions
+  shieldEventPending: null,    // { bonesSpent, daysCovered, daysTotal } — read on next open, cleared after toast
 };
 
 
@@ -168,6 +170,67 @@ function maybeRunStreakReminder(data) {
       });
     }
   } catch (e) { console.error(e); }
+}
+
+// ── Streak Shield: intercept missed days on app open, spend 20 bones/day ──
+function maybeApplyStreakShield(data, uid) {
+  if (!data?.streakShieldActive) return data;
+  if (!data?.streak?.lastDate) return data;
+  if ((data.streak?.count || 0) === 0) return data;
+
+  const today = new Date().toDateString();
+  const lastDate = new Date(data.streak.lastDate);
+  const now = new Date();
+  const daysDiff = Math.floor((now - lastDate) / 86400000);
+
+  // Already played today or only missed yesterday (streak logic handles this) — no shield needed
+  if (daysDiff <= 1) return data;
+
+  // Gone more than 7 days — shield gives up, reset streak
+  if (daysDiff > 7) {
+    return {
+      ...data,
+      streak: { count: 0, lastDate: null },
+      shieldEventPending: { bonesSpent: 0, daysCovered: 0, daysTotal: daysDiff - 1, shieldFailed: true },
+    };
+  }
+
+  const daysMissed = daysDiff - 1;
+  const costPerDay = 20;
+  const availableBones = data.bones || 0;
+  const daysCovered = Math.min(daysMissed, Math.floor(availableBones / costPerDay));
+  const bonesSpent = daysCovered * costPerDay;
+  const daysNotCovered = daysMissed - daysCovered;
+
+  const newStreakCount = Math.max(0, (data.streak?.count || 0) - daysNotCovered);
+  const newBones = availableBones - bonesSpent;
+
+  return {
+    ...data,
+    bones: newBones,
+    streak: { count: newStreakCount, lastDate: today },
+    shieldEventPending: {
+      bonesSpent,
+      daysCovered,
+      daysTotal: daysMissed,
+      daysNotCovered,
+      shieldFailed: bonesSpent === 0,
+    },
+  };
+}
+
+function fireShieldToast(pending) {
+  if (!pending) return;
+  const { bonesSpent, daysCovered, daysTotal, daysNotCovered, shieldFailed } = pending;
+  if (shieldFailed && daysTotal > 7) {
+    toast({ title: '💔 Streak Lost', description: "You were gone too long — even the Shield couldn't help." });
+  } else if (shieldFailed) {
+    toast({ title: '💔 Not enough bones', description: `Streak Shield couldn't cover ${daysTotal} missed day${daysTotal > 1 ? 's' : ''}. Streak reset.` });
+  } else if (daysNotCovered > 0) {
+    toast({ title: '🦴 Partial Shield', description: `${daysCovered} day${daysCovered > 1 ? 's' : ''} covered (${bonesSpent} bones). Streak reduced by ${daysNotCovered}.` });
+  } else {
+    toast({ title: '🦴 Streak Shield Used', description: `${daysCovered} day${daysCovered > 1 ? 's' : ''} protected — ${bonesSpent} bones spent.` });
+  }
 }
 
 const TAB_ORDER = ['home', 'paths', 'study', 'fetch'];
@@ -247,13 +310,20 @@ export default function SpanishHub() {
       const raw = localStorage.getItem(`${languageConfig.appId}-guest`);
       if (raw) {
         const data = JSON.parse(raw);
-        const merged = {
+        let merged = {
           ...DEFAULT_DATA, ...data,
           categoryEnabled: { ...DEFAULT_DATA.categoryEnabled, ...(data.categoryEnabled || {}) },
           patternProgress: { ...DEFAULT_PATTERN_PROGRESS, ...(data.patternProgress || {}) },
         };
+        merged = maybeApplyStreakShield(merged, null);
         setUserData(merged);
         maybeRunStreakReminder(merged);
+        if (merged.shieldEventPending) {
+          fireShieldToast(merged.shieldEventPending);
+          const cleared = { ...merged, shieldEventPending: null };
+          setUserData(cleared);
+          try { localStorage.setItem(`${languageConfig.appId}-guest`, JSON.stringify(cleared)); } catch (e) { console.error(e); }
+        }
       } else {
         setUserData({ ...DEFAULT_DATA, displayName: 'Guest' });
       }
@@ -284,8 +354,17 @@ export default function SpanishHub() {
         const def = BADGES.find(b => b.id === id);
         if (def) toast({ title: `${def.emoji} Badge Earned`, description: def.name });
       });
+      // ── Streak Shield: intercept missed days on open ──
+      merged = maybeApplyStreakShield(merged, u.uid);
       setUserData(merged);
       maybeRunStreakReminder(merged);
+      if (merged.shieldEventPending) {
+        setDoc(doc(db, 'users', u.uid), merged).catch(console.error);
+        fireShieldToast(merged.shieldEventPending);
+        const cleared = { ...merged, shieldEventPending: null };
+        setUserData(cleared);
+        setDoc(doc(db, 'users', u.uid), cleared).catch(console.error);
+      }
     } catch (e) { console.error('Load error:', e); }
   };
 
@@ -309,6 +388,19 @@ export default function SpanishHub() {
       persistData(newData);
       return newData;
     });
+  }, [persistData]);
+
+  // ── Guarded bones spend — returns true on success, false if insufficient balance ──
+  const spendBones = useCallback((n) => {
+    let success = false;
+    setUserData(prev => {
+      if ((prev.bones || 0) < n) return prev;
+      const newData = { ...prev, bones: (prev.bones || 0) - n };
+      persistData(newData);
+      success = true;
+      return newData;
+    });
+    return success;
   }, [persistData]);
 
   // ── Cognate pattern progress (batched update at end of a session) ──
@@ -1149,6 +1241,8 @@ export default function SpanishHub() {
                 onSelectStop={(stopId) => setActiveStop(stopId)}
                 onUpdateWordProgress={updateWordProgress}
                 onAwardBones={awardBones}
+                onSpendBones={spendBones}
+                bones={userData.bones || 0}
                 onCompleteStop={completeStop}
                 onCompletePathFetch={completePathFetch}
                 fetchStopWords={fetchStopWords}
@@ -1277,6 +1371,12 @@ export default function SpanishHub() {
           });
         }}
         onStrictTypingToggle={setStrictTyping}
+        streakShieldActive={userData.streakShieldActive || false}
+        onStreakShieldToggle={(val) => setUserData(prev => {
+          const newData = { ...prev, streakShieldActive: val };
+          persistData(newData);
+          return newData;
+        })}
       />
       {showCategoryModal && (
         <>
