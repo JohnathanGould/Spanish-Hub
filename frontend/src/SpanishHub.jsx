@@ -1072,7 +1072,7 @@ export default function SpanishHub() {
                 onDrillAnswer={updateWordProgress}
                 onFetchComplete={onFetchComplete}
                 strictTyping={userData.strictTyping}
-                breakFreeAvailable={(userData.breakFreeXP || 0) >= 50}
+                breakFreeAvailable={(userData.breakFreeXP || 0) >= 1}
                 onStartBreakFree={startBreakFree}
               />
             </div>
@@ -1181,7 +1181,7 @@ export default function SpanishHub() {
             onClose={() => { setShowSharedPacks(false); setSharedPacksAnchorY(null); }} />
         )}
       </div>
-      <BottomNav activeTab={tab} onTabChange={setTab} breakFreeReady={(userData.breakFreeXP || 0) >= 50} />
+      <BottomNav activeTab={tab} onTabChange={setTab} breakFreeReady={(userData.breakFreeXP || 0) >= 1} />
       {showBadgeGrid && (
         <BadgeGrid
           earnedBadges={userData.earnedBadges || []}
