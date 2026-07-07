@@ -1,5 +1,35 @@
 # Current State Ledger — Milo Speaks Spanish
-# Last updated: 2026-06-28
+# Last updated: 2026-06-29
+
+## Session Notes — 2026-06-29
+
+### Completed
+- Header daily goal number — white fill, now readable
+- Milo hero GIF — 120px circle, overflow: hidden, scale(1.4) transform
+- Streak card removed, My Words full width
+- Achievements card removed from layout
+- Ko-fi full width, link fixed to https://ko-fi.com/milospeaks
+- Daily challenges — replaced DailyChallengesCard with DailyChallenge.jsx, wired userData.dailyChallenges and startDailyChallenge
+- My Words stats — all three on one line
+- Fill in the Blank typed mode — inline blank input, grows with typing, SpecialCharBar inside card
+- Vocab Fill in the Blank typed mode — same inline blank input treatment
+- Stage locking — Advanced Beginner and Intermediate correctly locked until previous stage complete
+- Tier locking — tiers respect parent stage lock state
+- getStageState / getTierState — full unlock chain corrected
+- Drills now use pathWords instead of activeWords — words filtered to completed Stops only
+
+### Bugs Added
+None
+
+### Decisions Made
+- DailyChallengesCard deleted — DailyChallenge.jsx is canonical going forward
+- Achievements card hidden — definition preserved for future use
+- DrillRouter and DrillsGrid use pathWords — WordList stays on activeWords
+
+### First Task Next Session
+Generate milo_celebrate.gif in Google Flow — blocks Sessions A–F celebration animations
+
+---
 
 ## Session Notes — 2026-06-28 (second entry — Milo UI Design)
 
