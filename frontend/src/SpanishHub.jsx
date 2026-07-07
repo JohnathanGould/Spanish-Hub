@@ -275,11 +275,15 @@ export default function SpanishHub() {
         merged = { ...DEFAULT_DATA, displayName: u.displayName || 'Learner', photoURL: u.photoURL || null, foundingPaw: true };
         await setDoc(doc(db, 'users', u.uid), merged);
       }
-      const { updatedBadges } = evaluateBadges({}, merged, 'login', {});
+      const { updatedBadges, newlyEarned: loginBadges } = evaluateBadges({}, merged, 'login', {});
       if (updatedBadges.length !== (merged.earnedBadges || []).length) {
         merged = { ...merged, earnedBadges: updatedBadges };
         setDoc(doc(db, 'users', u.uid), merged).catch(console.error);
       }
+      loginBadges.forEach(id => {
+        const def = BADGES.find(b => b.id === id);
+        if (def) toast({ title: `${def.emoji} Badge Earned`, description: def.name });
+      });
       setUserData(merged);
       maybeRunStreakReminder(merged);
     } catch (e) { console.error('Load error:', e); }
@@ -450,9 +454,13 @@ export default function SpanishHub() {
       if (already) return prev;
       const completedStops = [...(prev.completedStops || []), stopId];
       let newData = { ...prev, completedStops };
-      const { updatedBadges: stopBadges } = evaluateBadges(prev, newData, 'stop_complete', { stopId });
+      const { updatedBadges: stopBadges, newlyEarned: stopEarned } = evaluateBadges(prev, newData, 'stop_complete', { stopId });
       newData = { ...newData, earnedBadges: stopBadges };
       persistData(newData);
+      stopEarned.forEach(id => {
+        const def = BADGES.find(b => b.id === id);
+        if (def) toast({ title: `${def.emoji} Badge Earned`, description: def.name });
+      });
       return newData;
     });
   }, [persistData]);
@@ -474,9 +482,13 @@ export default function SpanishHub() {
         weeklyXP: (sameWeek ? (prev.weeklyXP || 0) : 0) + 75,
         weekStart: ws,
       };
-      const { updatedBadges: pathBadges } = evaluateBadges(prev, newData, 'path_complete', { pathId });
+      const { updatedBadges: pathBadges, newlyEarned: pathEarned } = evaluateBadges(prev, newData, 'path_complete', { pathId });
       newData = { ...newData, earnedBadges: pathBadges };
       persistData(newData);
+      pathEarned.forEach(id => {
+        const def = BADGES.find(b => b.id === id);
+        if (def) toast({ title: `${def.emoji} Badge Earned`, description: def.name });
+      });
       return newData;
     });
   }, [persistData]);
@@ -609,9 +621,13 @@ export default function SpanishHub() {
         weekStart: ws,
         dailyProgress: { count: dailyCount, date: today },
       };
-      const { updatedBadges } = evaluateBadges(prev, newData, 'answer', {});
+      const { updatedBadges, newlyEarned: answerBadges } = evaluateBadges(prev, newData, 'answer', {});
       newData = { ...newData, earnedBadges: updatedBadges };
       persistData(newData);
+      answerBadges.forEach(id => {
+        const def = BADGES.find(b => b.id === id);
+        if (def) toast({ title: `${def.emoji} Badge Earned`, description: def.name });
+      });
       return newData;
     });
   }, [persistData]);
@@ -693,8 +709,12 @@ export default function SpanishHub() {
         dailyGoalStreak,
         dailyGoalStreakDate,
       };
-      const { updatedBadges } = evaluateBadges(prev, newData, 'drill_complete', { drillId, correct, total, ts: Date.now() });
+      const { updatedBadges, newlyEarned: drillBadges } = evaluateBadges(prev, newData, 'drill_complete', { drillId, correct, total, ts: Date.now() });
       newData = { ...newData, earnedBadges: updatedBadges };
+      drillBadges.forEach(id => {
+        const def = BADGES.find(b => b.id === id);
+        if (def) toast({ title: `${def.emoji} Badge Earned`, description: def.name });
+      });
       if (isGuest) {
         try { localStorage.setItem(`${languageConfig.appId}-guest`, JSON.stringify(newData)); } catch (e) { console.error(e); }
       } else if (user) {
@@ -892,8 +912,15 @@ export default function SpanishHub() {
   const addFriend = useCallback((fid) => {
     setUserData(prev => {
       if ((prev.friends || []).includes(fid)) return prev;
-      const newData = { ...prev, friends: [...(prev.friends || []), fid] };
+      let newData = { ...prev, friends: [...(prev.friends || []), fid] };
+      const { updatedBadges, newlyEarned } = evaluateBadges(prev, newData, 'login', {});
+      newData = { ...newData, earnedBadges: updatedBadges };
       persistData(newData);
+      toast({ title: '🐾 Friend Added', description: 'Your pack is growing!' });
+      newlyEarned.forEach(id => {
+        const def = BADGES.find(b => b.id === id);
+        if (def) toast({ title: `${def.emoji} Badge Earned`, description: def.name });
+      });
       return newData;
     });
   }, [persistData]);
