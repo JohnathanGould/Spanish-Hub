@@ -110,11 +110,14 @@ export const MASTER = [
   // ─────────────────────────────────────────────
   // PATH 3 — Estar
   // ─────────────────────────────────────────────
+  { es: 'mercado', en: 'market', type: 'noun', group: 'Places', gender: 'm', cognate: false, contextSentence: ["El mercado está cerca del parque.", "Voy al mercado todos los sábados.", "En el mercado hay frutas y verduras frescas.", "Mi madre compra comida en el mercado.", "El mercado abre a las ocho de la mañana."], imageUrl: "https://picsum.photos/seed/mercado/400/400", theme: "shopping" },
+  { es: 'farmacia', en: 'pharmacy', type: 'noun', group: 'Places', gender: 'f', cognate: false, contextSentence: ["La farmacia está cerca del hospital.", "Necesito ir a la farmacia por medicina.", "La farmacia está abierta hasta las diez.", "¿Dónde está la farmacia más cercana?", "Mi madre trabaja en una farmacia grande."], imageUrl: "https://picsum.photos/seed/farmacia/400/400", theme: "health" },
+  { es: 'iglesia', en: 'church', type: 'noun', group: 'Places', gender: 'f', cognate: false, contextSentence: ["La iglesia está cerca del parque.", "Hay una iglesia grande en la ciudad.", "Mi familia va a la iglesia los domingos.", "La boda es en la iglesia del barrio.", "La iglesia vieja es muy bonita."], imageUrl: "https://picsum.photos/seed/iglesia/400/400", theme: "travel" },
   { es: 'casa', en: 'house / home', type: 'noun', group: 'Places', gender: 'f', contextSentence: ["Mi casa es grande."], imageUrl: "https://picsum.photos/seed/house/400/400", theme: "home" },
-  { es: 'hotel', en: 'hotel', type: 'noun', group: 'Travel', gender: 'm', contextSentence: ["El hotel es muy grande."], imageUrl: "https://picsum.photos/seed/hotel/400/400", theme: "travel" },
+  { es: 'hotel', en: 'hotel', type: 'noun', group: 'Travel', gender: 'm', cognate: true, cognatePattern: 'al-same', cognateGroup: 1, contextSentence: ["El hotel es muy grande."], imageUrl: "https://picsum.photos/seed/hotel/400/400", theme: "travel" },
   { es: 'escuela', en: 'school', type: 'noun', group: 'Places', gender: 'f', contextSentence: ["La escuela es grande y nueva."], imageUrl: "https://picsum.photos/seed/school/400/400", theme: "descriptions" },
   { es: 'restaurante', en: 'restaurant', type: 'noun', group: 'Places', gender: 'm', contextSentence: ["El restaurante está aquí."], imageUrl: "https://picsum.photos/seed/restaurant/400/400", theme: "restaurant" },
-  { es: 'hospital', en: 'hospital', type: 'noun', group: 'Places', gender: 'm', contextSentence: ["El hospital está aquí."], imageUrl: "https://picsum.photos/seed/hospital/400/400", theme: "health" },
+  { es: 'hospital', en: 'hospital', type: 'noun', group: 'Places', gender: 'm', cognate: true, cognatePattern: 'al-same', cognateGroup: 1, contextSentence: ["El hospital está aquí."], imageUrl: "https://picsum.photos/seed/hospital/400/400", theme: "health" },
   { es: 'banco', en: 'bank', type: 'noun', group: 'Places', gender: 'm', contextSentence: ["El banco está aquí."], imageUrl: "https://picsum.photos/seed/bank/400/400", theme: "shopping" },
   { es: 'estoy', en: 'i am (location)', type: 'verb', group: 'Core', contextSentence: ["Yo estoy en el hospital."], imageUrl: "https://picsum.photos/seed/am/400/400", theme: "travel" },
   { es: 'estás', en: 'you are (location)', type: 'verb', group: 'Core', contextSentence: ["¿Dónde estás tú?"], imageUrl: "https://picsum.photos/seed/are/400/400", theme: "home" },
@@ -129,7 +132,7 @@ export const MASTER = [
   { es: 'nuevo', en: 'new', type: 'adj', group: 'Adjectives', contextSentence: ["El hotel nuevo es muy grande."], imageUrl: "https://picsum.photos/seed/new/400/400", theme: "shopping" },
   { es: 'viejo', en: 'old', type: 'adj', group: 'Adjectives', contextSentence: ["El hotel es viejo pero grande."], imageUrl: "https://picsum.photos/seed/old/400/400", theme: "descriptions" },
   { es: 'cerrado', en: 'closed', type: 'adj', group: 'Adjectives', contextSentence: ["El restaurante está cerrado hoy."], imageUrl: "https://picsum.photos/seed/closed/400/400", theme: "shopping" },
-  { es: 'aeropuerto', en: 'airport', type: 'noun', group: 'Travel', gender: 'm', contextSentence: ["El aeropuerto es muy grande."], imageUrl: "https://picsum.photos/seed/airport/400/400", theme: "travel" },
+  { es: 'aeropuerto', en: 'airport', type: 'noun', group: 'Travel', gender: 'm', cognate: true, cognatePattern: 'near-perfect', cognateGroup: 1, contextSentence: ["El aeropuerto es muy grande."], imageUrl: "https://picsum.photos/seed/airport/400/400", theme: "travel" },
   { es: 'tienda', en: 'store / shop', type: 'noun', group: 'Places', gender: 'f', contextSentence: ["La tienda está aquí."], imageUrl: "https://picsum.photos/seed/store/400/400", theme: "shopping" },
   { es: 'parque', en: 'park', type: 'noun', group: 'Places', gender: 'm', contextSentence: ["Hay un parque grande en la ciudad."], imageUrl: "https://picsum.photos/seed/park/400/400", theme: "nature" },
   { es: 'playa', en: 'beach', type: 'noun', group: 'Places', gender: 'f', contextSentence: ["La playa está aquí."], imageUrl: "https://picsum.photos/seed/beach/400/400", theme: "nature" },
@@ -145,17 +148,22 @@ export const MASTER = [
   // ─────────────────────────────────────────────
   // PATH 4 — Tener y El Tiempo
   // ─────────────────────────────────────────────
-  { es: 'pasaporte', en: 'passport', type: 'noun', group: 'Travel', gender: 'm', contextSentence: ["Necesito mi pasaporte para el hotel."], imageUrl: "https://picsum.photos/seed/passport/400/400", theme: "travel" },
+  { es: 'equipaje', en: 'luggage', type: 'noun', group: 'Travel', gender: 'm', cognate: false, contextSentence: ["Tengo mucho equipaje para el vuelo.", "Mi equipaje está en el hotel.", "¿Dónde está el equipaje del aeropuerto?", "Ella tiene dos maletas en su equipaje.", "El equipaje cuesta dinero extra en el vuelo."], imageUrl: "https://picsum.photos/seed/equipaje/400/400", theme: "travel" },
+  { es: 'seguro', en: 'insurance / safe', type: 'noun', group: 'Travel', gender: 'm', cognate: false, contextSentence: ["Necesito un seguro para el viaje.", "¿Tienes seguro médico?", "El seguro del carro es importante.", "No tengo seguro y estoy preocupado.", "El hotel pide seguro de viaje."], imageUrl: "https://picsum.photos/seed/seguro/400/400", theme: "travel" },
+  { es: 'recibo', en: 'receipt', type: 'noun', group: 'Core', gender: 'm', cognate: false, contextSentence: ["Necesito el recibo de la compra.", "¿Puedes darme el recibo, por favor?", "El recibo está en mi bolsa.", "Guardo el recibo para el cambio.", "La tienda no tiene recibo para mí."], imageUrl: "https://picsum.photos/seed/recibo/400/400", theme: "shopping" },
+  { es: 'supermercado', en: 'supermarket', type: 'noun', group: 'Places', gender: 'm', cognate: false, contextSentence: ["Voy al supermercado a comprar comida.", "El supermercado está cerca de mi casa.", "Hay un supermercado grande en el barrio.", "Mi madre compra fruta en el supermercado.", "El supermercado abre a las ocho."], imageUrl: "https://picsum.photos/seed/supermercado/400/400", theme: "shopping" },
+  { es: 'formulario', en: 'form / paperwork', type: 'noun', group: 'Travel', gender: 'm', cognate: false, contextSentence: ["Necesito el formulario del hotel.", "¿Tienes el formulario de inmigración?", "El formulario está en la mesa.", "Necesito ayuda con este formulario.", "El médico necesita el formulario completo."], imageUrl: "https://picsum.photos/seed/formulario/400/400", theme: "travel" },
+  { es: 'pasaporte', en: 'passport', type: 'noun', group: 'Travel', gender: 'm', cognate: true, cognatePattern: 'near-perfect', cognateGroup: 1, contextSentence: ["Necesito mi pasaporte para el hotel."], imageUrl: "https://picsum.photos/seed/passport/400/400", theme: "travel" },
   { es: 'dinero', en: 'money', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Necesito dinero para el hotel."], imageUrl: "https://picsum.photos/seed/dinero/400/400", theme: "travel" },
   { es: 'teléfono', en: 'telephone', type: 'noun', group: 'Travel', gender: 'm', contextSentence: ["Mi teléfono es nuevo."], imageUrl: "https://picsum.photos/seed/telephone/400/400", theme: "shopping" },
-  { es: 'taxi', en: 'taxi', type: 'noun', group: 'Travel', gender: 'm', contextSentence: ["Hay un taxi en el aeropuerto."], imageUrl: "https://picsum.photos/seed/taxi/400/400", theme: "travel" },
+  { es: 'taxi', en: 'taxi', type: 'noun', group: 'Travel', gender: 'm', cognate: true, cognatePattern: 'identical', cognateGroup: 1, contextSentence: ["Hay un taxi en el aeropuerto."], imageUrl: "https://picsum.photos/seed/taxi/400/400", theme: "travel" },
   { es: 'reserva', en: 'reservation', type: 'noun', group: 'Travel', gender: 'f', contextSentence: ["Tengo una reserva en el hotel."], imageUrl: "https://picsum.photos/seed/reservation/400/400", theme: "travel" },
   { es: 'ayuda', en: 'help', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Necesito ayuda con mi pasaporte."], imageUrl: "https://picsum.photos/seed/help/400/400", theme: "greetings" },
   { es: 'tengo', en: 'i have', type: 'verb', group: 'Core', contextSentence: ["Yo tengo un problema con mi pasaporte."], imageUrl: "https://picsum.photos/seed/have/400/400", theme: "travel" },
   { es: 'tienes', en: 'you have', type: 'verb', group: 'Core', contextSentence: ["¿Tienes el pasaporte?"], imageUrl: "https://picsum.photos/seed/have/400/400", theme: "travel" },
   { es: 'problema', en: 'problem', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Yo tengo un problema con mi pasaporte."], imageUrl: "https://picsum.photos/seed/problema/400/400", theme: "descriptions" },
-  { es: 'idea', en: 'idea', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Yo tengo una idea para el plan."], imageUrl: "https://picsum.photos/seed/idea/400/400", theme: "descriptions" },
-  { es: 'plan', en: 'plan', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Tengo un plan para la reserva."], imageUrl: "https://picsum.photos/seed/plan/400/400", theme: "descriptions" },
+  { es: 'idea', en: 'idea', type: 'noun', group: 'Core', gender: 'f', cognate: true, cognatePattern: 'identical', cognateGroup: 1, contextSentence: ["Yo tengo una idea para el plan."], imageUrl: "https://picsum.photos/seed/idea/400/400", theme: "descriptions" },
+  { es: 'plan', en: 'plan', type: 'noun', group: 'Core', gender: 'm', cognate: true, cognatePattern: 'identical', cognateGroup: 1, contextSentence: ["Tengo un plan para la reserva."], imageUrl: "https://picsum.photos/seed/plan/400/400", theme: "descriptions" },
   { es: 'llave', en: 'key', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Yo tengo la llave de la casa."], imageUrl: "https://picsum.photos/seed/llave/400/400", theme: "travel" },
   { es: 'tiene', en: 'he/she has', type: 'verb', group: 'Core', contextSentence: ["Ella tiene un problema con su pasaporte."], imageUrl: "https://picsum.photos/seed/he/400/400", theme: "travel" },
   // NEW
@@ -167,7 +175,7 @@ export const MASTER = [
   { es: 'necesito', en: 'i need', type: 'verb', group: 'Core', contextSentence: ["Necesito ayuda con mi pasaporte, por favor."], imageUrl: "https://picsum.photos/seed/need/400/400", theme: "travel" },
   { es: 'necesitas', en: 'you need', type: 'verb', group: 'Core', contextSentence: ["¿Necesitas ayuda con el formulario?"], imageUrl: "https://picsum.photos/seed/need/400/400", theme: "greetings" },
   { es: 'cita', en: 'appointment / date', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Yo tengo una cita en el hospital."], imageUrl: "https://picsum.photos/seed/cita/400/400", theme: "health" },
-  { es: 'documento', en: 'document', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Necesito el documento por favor."], imageUrl: "https://picsum.photos/seed/documento/400/400", theme: "travel" },
+  { es: 'documento', en: 'document', type: 'noun', group: 'Core', gender: 'm', cognate: true, cognatePattern: 'near-perfect', cognateGroup: 1, contextSentence: ["Necesito el documento por favor."], imageUrl: "https://picsum.photos/seed/documento/400/400", theme: "travel" },
   { es: 'agua', en: 'water', type: 'noun', group: 'Food & Drink', gender: 'f', contextSentence: ["Yo quiero agua, por favor."], imageUrl: "https://picsum.photos/seed/water/400/400", theme: "restaurant" },
   { es: 'comida', en: 'food', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["La comida está muy rica."], imageUrl: "https://picsum.photos/seed/comida/400/400", theme: "restaurant" },
   { es: 'semana', en: 'week', type: 'noun', group: 'Time', gender: 'f', contextSentence: ["Tengo una cita esta semana."], imageUrl: "https://picsum.photos/seed/week/400/400", theme: "time" },
@@ -180,6 +188,7 @@ export const MASTER = [
   // ─────────────────────────────────────────────
   // PATH 5 — Querer y Poder
   // ─────────────────────────────────────────────
+  { es: 'picante', en: 'spicy', type: 'adj', group: 'Adjectives', cognate: false, contextSentence: ["La sopa está muy picante hoy.", "¿La comida es picante o no?", "El pollo picante es muy rico.", "No quiero comida picante, por favor.", "La salsa está muy picante y deliciosa."], imageUrl: "https://picsum.photos/seed/picante/400/400", theme: "restaurant" },
   // NEW
   { es: 'bebida', en: 'drink (general)', type: 'noun', group: 'Food & Drink', gender: 'f', contextSentence: ["¿Qué bebida quieres con la comida?"], imageUrl: "https://picsum.photos/seed/bebida/400/400", theme: "restaurant" },
   { es: 'café', en: 'coffee', type: 'noun', group: 'Food & Drink', gender: 'm', contextSentence: ["Yo quiero un café, por favor."], imageUrl: "https://picsum.photos/seed/coffee/400/400", theme: "restaurant" },
@@ -200,7 +209,7 @@ export const MASTER = [
   { es: 'ensalada', en: 'salad', type: 'noun', group: 'Food & Drink', gender: 'f', contextSentence: ["La ensalada es muy rica."], imageUrl: "https://picsum.photos/seed/salad/400/400", theme: "restaurant" },
   { es: 'postre', en: 'dessert', type: 'noun', group: 'Food & Drink', gender: 'm', contextSentence: ["El postre es muy rico."], imageUrl: "https://picsum.photos/seed/dessert/400/400", theme: "restaurant" },
   { es: 'rico', en: 'delicious / rich', type: 'adj', group: 'Core', contextSentence: ["El pollo es muy rico."], imageUrl: "https://picsum.photos/seed/rico/400/400", theme: "restaurant" },
-  { es: 'delicioso', en: 'delicious', type: 'adj', group: 'Core', contextSentence: ["El pollo es delicioso."], imageUrl: "https://picsum.photos/seed/delicioso/400/400", theme: "restaurant" },
+  { es: 'delicioso', en: 'delicious', type: 'adj', group: 'Core', cognate: true, cognatePattern: 'oso', cognateGroup: 2, contextSentence: ["El pollo es delicioso."], imageUrl: "https://picsum.photos/seed/delicioso/400/400", theme: "restaurant" },
   { es: 'puedo', en: 'i can', type: 'verb', group: 'Core', contextSentence: ["Yo puedo pagar la cuenta por favor."], imageUrl: "https://picsum.photos/seed/can/400/400", theme: "descriptions" },
   { es: 'puedes', en: 'you can', type: 'verb', group: 'Core', contextSentence: ["¿Puedes ver el menú, por favor?"], imageUrl: "https://picsum.photos/seed/can/400/400", theme: "greetings" },
   { es: 'menú', en: 'menu', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["¿Me puede dar el menú, por favor?"], imageUrl: "https://picsum.photos/seed/menu/400/400", theme: "restaurant" },
@@ -254,6 +263,8 @@ export const MASTER = [
   // ─────────────────────────────────────────────
   // PATH 7 — Hablar y Saber
   // ─────────────────────────────────────────────
+  { es: 'pantalla', en: 'screen', type: 'noun', group: 'Core', gender: 'f', cognate: false, contextSentence: ["La pantalla del teléfono está rota.", "Veo la película en una pantalla grande.", "La pantalla del televisor es muy grande.", "Mi pantalla nueva es muy buena.", "Hay una imagen en la pantalla."], imageUrl: "https://picsum.photos/seed/pantalla/400/400", theme: "communication" },
+  { es: 'red social', en: 'social network', type: 'noun', group: 'Core', gender: 'f', cognate: false, contextSentence: ["Veo las noticias en la red social.", "Mi hermana pasa mucho tiempo en la red social.", "La red social es muy popular aquí.", "Hay muchas fotos en mi red social.", "No me gusta usar la red social."], imageUrl: "https://picsum.photos/seed/redsocial/400/400", theme: "communication" },
   { es: 'mensaje', en: 'message', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Yo tengo un mensaje para ti."], imageUrl: "https://picsum.photos/seed/mensaje/400/400", theme: "communication" },
   { es: 'llamada', en: 'phone call', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Tengo una llamada importante."], imageUrl: "https://picsum.photos/seed/llamada/400/400", theme: "communication" },
   { es: 'correo', en: 'mail / email', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Tengo un correo nuevo."], imageUrl: "https://picsum.photos/seed/correo/400/400", theme: "communication" },
@@ -280,8 +291,8 @@ export const MASTER = [
   { es: 'televisión', en: 'television', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Yo veo la televisión con mi familia."], imageUrl: "https://picsum.photos/seed/television/400/400", theme: "communication" },
   { es: 'música', en: 'music', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Me gusta la música y el baile."], imageUrl: "https://picsum.photos/seed/musica/400/400", theme: "descriptions" },
   { es: 'película', en: 'movie', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Yo veo una película en casa."], imageUrl: "https://picsum.photos/seed/pelicula/400/400", theme: "communication" },
-  { es: 'foto', en: 'photo', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Yo tengo una foto de mi familia."], imageUrl: "https://picsum.photos/seed/foto/400/400", theme: "communication" },
-  { es: 'video', en: 'video', type: 'noun', group: 'Core', gender: 'm', contextSentence: ["Veo un video en la televisión."], imageUrl: "https://picsum.photos/seed/video/400/400", theme: "communication" },
+  { es: 'foto', en: 'photo', type: 'noun', group: 'Core', gender: 'f', cognate: true, cognatePattern: 'near-perfect', cognateGroup: 1, contextSentence: ["Yo tengo una foto de mi familia."], imageUrl: "https://picsum.photos/seed/foto/400/400", theme: "communication" },
+  { es: 'video', en: 'video', type: 'noun', group: 'Core', gender: 'm', cognate: true, cognatePattern: 'identical', cognateGroup: 1, contextSentence: ["Veo un video en la televisión."], imageUrl: "https://picsum.photos/seed/video/400/400", theme: "communication" },
   { es: 'imagen', en: 'image', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Yo veo una imagen en la televisión."], imageUrl: "https://picsum.photos/seed/imagen/400/400", theme: "communication" },
   { es: 'noticias', en: 'news', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Veo las noticias en la televisión."], imageUrl: "https://picsum.photos/seed/noticias/400/400", theme: "communication" },
   { es: 'canción', en: 'song', type: 'noun', group: 'Core', gender: 'f', contextSentence: ["Me gusta esta canción."], imageUrl: "https://picsum.photos/seed/cancion/400/400", theme: "descriptions" },
@@ -429,6 +440,7 @@ export const MASTER = [
   // ─────────────────────────────────────────────
   // PATH 12 — El Mundo
   // ─────────────────────────────────────────────
+  { es: 'enojado', en: 'angry', type: 'adj', group: 'Core', cognate: false, contextSentence: ["Él está muy enojado hoy.", "Estoy enojado porque el restaurante está cerrado.", "Mi madre está enojada conmigo.", "El niño está enojado y no habla.", "¿Por qué estás enojado con ella?"], imageUrl: "https://picsum.photos/seed/enojado/400/400", theme: "feelings" },
   { es: 'rojo', en: 'red', type: 'adj', group: 'Colours', contextSentence: ["El carro es rojo."], imageUrl: "https://picsum.photos/seed/red/400/400", theme: "descriptions" },
   { es: 'azul', en: 'blue', type: 'adj', group: 'Colours', contextSentence: ["El cielo es muy azul hoy."], imageUrl: "https://picsum.photos/seed/blue/400/400", theme: "nature" },
   { es: 'verde', en: 'green', type: 'adj', group: 'Colours', contextSentence: ["La manzana es verde."], imageUrl: "https://picsum.photos/seed/green/400/400", theme: "nature" },
@@ -453,7 +465,7 @@ export const MASTER = [
   { es: 'caballo', en: 'horse', type: 'noun', group: 'Animals', gender: 'm', contextSentence: ["El caballo es grande y rápido."], imageUrl: "https://picsum.photos/seed/horse/400/400", theme: "animals" },
   { es: 'vaca', en: 'cow', type: 'noun', group: 'Animals', gender: 'f', contextSentence: ["La vaca es grande."], imageUrl: "https://picsum.photos/seed/cow/400/400", theme: "animals" },
   { es: 'pez', en: 'fish (alive)', type: 'noun', group: 'Animals', gender: 'm', contextSentence: ["Hay un pez en el agua."], imageUrl: "https://picsum.photos/seed/fish/400/400", theme: "animals" },
-  { es: 'emocionado', en: 'excited', type: 'adj', group: 'Core', contextSentence: ["Estoy emocionado porque tengo un plan."], imageUrl: "https://picsum.photos/seed/emocionado/400/400", theme: "feelings" },
+  { es: 'emocionado', en: 'excited', type: 'adj', group: 'Core', cognate: true, cognatePattern: 'ado', cognateGroup: 2, contextSentence: ["Estoy emocionado porque tengo un plan."], imageUrl: "https://picsum.photos/seed/emocionado/400/400", theme: "feelings" },
   { es: 'nervioso', en: 'nervous', type: 'adj', group: 'Core', contextSentence: ["El niño está nervioso hoy."], imageUrl: "https://picsum.photos/seed/nervioso/400/400", theme: "feelings" },
   { es: 'sorprendido', en: 'surprised', type: 'adj', group: 'Core', contextSentence: ["Él está sorprendido por la noticia."], imageUrl: "https://picsum.photos/seed/sorprendido/400/400", theme: "feelings" },
   { es: 'aburrido', en: 'bored', type: 'adj', group: 'Core', contextSentence: ["Yo estoy aburrido en casa hoy."], imageUrl: "https://picsum.photos/seed/aburrido/400/400", theme: "feelings" },
