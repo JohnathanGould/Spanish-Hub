@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import FlashcardDrill from './drills/FlashcardDrill';
 import VocabFillBlankDrill from './drills/VocabFillBlankDrill';
+import CognateFetch from './CognateFetch';
+import { getUnlockedPatterns } from '../utils/cognateQueue';
 
 const PILL_CLASS = 'rounded-full border px-4 py-2 font-semibold text-sm transition-all hover:opacity-90 active:scale-95';
 const PILL_STYLE = {
@@ -43,10 +45,26 @@ const TABS = [
 
 export default function DrillsGrid({
   words, stats, drillMode, setDrillMode, onStartDrill, completedPaths = [], studyCategory,
+  allWords = [], patternProgress = {}, onUpdatePatternProgress, onAwardXp, strictTyping = false,
 }) {
   const [activeSection, setActiveSection] = useState('practice');
   const [activeFlashcard, setActiveFlashcard] = useState(null);
   const [activeVocabFB, setActiveVocabFB] = useState(null);
+  const [showCognate, setShowCognate] = useState(false);
+
+  if (showCognate) {
+    return (
+      <CognateFetch
+        allWords={allWords}
+        patternProgress={patternProgress}
+        completedPaths={completedPaths}
+        onUpdatePatternProgress={onUpdatePatternProgress}
+        onAwardXp={onAwardXp}
+        strictTyping={strictTyping}
+        onExit={() => setShowCognate(false)}
+      />
+    );
+  }
 
   if (activeFlashcard) {
     return (
@@ -172,6 +190,20 @@ return (
             </div>
           </div>
         </>
+      )}
+
+      {getUnlockedPatterns(completedPaths).length > 0 && (
+        <div className="mt-4 pt-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+          <SectionHeader title="Pattern Practice" sub="Recognition drills · +1 XP per correct · No bones" />
+          <button
+            onClick={() => setShowCognate(true)}
+            data-testid="cognate-patterns-entry"
+            className={`w-full ${PILL_CLASS}`}
+            style={PILL_STYLE}
+          >
+            Cognate Patterns 🔤
+          </button>
+        </div>
       )}
 
     </div>

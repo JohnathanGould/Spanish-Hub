@@ -7,6 +7,7 @@ import { MASTER, DEFAULT_CATEGORIES, PRESET_PACKS } from './content/es-en/words'
 import { LESSONS, DAILY_THEMES } from './content/es-en/lessons';
 import { PATHS, getStopWords } from './content/es-en/paths';
 import { masteryLevel, getStats, initVoice, initAudio, spacedRepetitionSort, playConfetti } from './utils/helpers';
+import { DEFAULT_PATTERN_PROGRESS, computePatternMastery } from './utils/cognateQueue';
 import { evaluateBadges } from './utils/evaluateBadges';
 import BadgeGrid from './components/BadgeGrid';
 import MasteryModal from './components/MasteryModal';
@@ -131,6 +132,8 @@ const DEFAULT_DATA = {
   audioListenEnabled: true,
   audioSpeakEnabled: true,
   earnedBadges: [],
+  patternProgress: { ...DEFAULT_PATTERN_PROGRESS },
+  breakFreeXP: 0,
 };
 
 
@@ -237,6 +240,7 @@ export default function SpanishHub() {
         const merged = {
           ...DEFAULT_DATA, ...data,
           categoryEnabled: { ...DEFAULT_DATA.categoryEnabled, ...(data.categoryEnabled || {}) },
+          patternProgress: { ...DEFAULT_PATTERN_PROGRESS, ...(data.patternProgress || {}) },
         };
         setUserData(merged);
         maybeRunStreakReminder(merged);
@@ -255,6 +259,7 @@ export default function SpanishHub() {
         merged = {
           ...DEFAULT_DATA, ...data,
           categoryEnabled: { ...DEFAULT_DATA.categoryEnabled, ...(data.categoryEnabled || {}) },
+          patternProgress: { ...DEFAULT_PATTERN_PROGRESS, ...(data.patternProgress || {}) },
         };
       } else {
         merged = { ...DEFAULT_DATA, displayName: u.displayName || 'Learner', photoURL: u.photoURL || null, foundingPaw: true };
@@ -287,6 +292,42 @@ export default function SpanishHub() {
   const awardBones = useCallback((n) => {
     setUserData(prev => {
       const newData = { ...prev, bones: (prev.bones || 0) + n };
+      persistData(newData);
+      return newData;
+    });
+  }, [persistData]);
+
+  // ── Cognate pattern progress (batched update at end of a session) ──
+  const onUpdatePatternProgress = useCallback((pattern, seenDelta, correctDelta) => {
+    if (!pattern) return;
+    setUserData(prev => {
+      const prevPatterns = { ...DEFAULT_PATTERN_PROGRESS, ...(prev.patternProgress || {}) };
+      const cur = prevPatterns[pattern] || { seen: 0, correct: 0, mastery: 'new' };
+      const seen = (cur.seen || 0) + (seenDelta || 0);
+      const correct = (cur.correct || 0) + (correctDelta || 0);
+      const mastery = computePatternMastery(seen, correct);
+      const newData = {
+        ...prev,
+        patternProgress: { ...prevPatterns, [pattern]: { seen, correct, mastery } },
+      };
+      persistData(newData);
+      return newData;
+    });
+  }, [persistData]);
+
+  // ── Award XP (+ accumulate breakFreeXP) — used by recognition drills ──
+  const onAwardXp = useCallback((n) => {
+    if (!n) return;
+    setUserData(prev => {
+      const ws = getWeekStartStr();
+      const sameWeek = prev.weekStart === ws;
+      const newData = {
+        ...prev,
+        xp: (prev.xp || 0) + n,
+        weeklyXP: (sameWeek ? (prev.weeklyXP || 0) : 0) + n,
+        weekStart: ws,
+        breakFreeXP: (prev.breakFreeXP || 0) + n,
+      };
       persistData(newData);
       return newData;
     });
@@ -903,7 +944,12 @@ export default function SpanishHub() {
             <div className="pb-[76px]">
               <DrillsGrid words={pathWords} stats={stats} drillMode={drillMode}
                 setDrillMode={setDrillMode} onStartDrill={startDrill}
-                completedPaths={userData.completedPaths || []} />
+                completedPaths={userData.completedPaths || []}
+                allWords={allWords}
+                patternProgress={userData.patternProgress || {}}
+                onUpdatePatternProgress={onUpdatePatternProgress}
+                onAwardXp={onAwardXp}
+                strictTyping={userData.strictTyping} />
               <KofiSupport />
             </div>
           )}
