@@ -137,6 +137,11 @@ const DEFAULT_DATA = {
   audioListenEnabled: true,
   audioSpeakEnabled: true,
   earnedBadges: [],
+  totalDrills: 0,
+  totalBonesEarned: 0,
+  perfectStreak: 0,
+  dailyGoalStreak: 0,
+  dailyGoalStreakDate: null,
   patternProgress: { ...DEFAULT_PATTERN_PROGRESS },
   breakFreeXP: 0,
 };
@@ -296,7 +301,7 @@ export default function SpanishHub() {
   // ── Paths bones reward (Phase 3 only) ──
   const awardBones = useCallback((n) => {
     setUserData(prev => {
-      const newData = { ...prev, bones: (prev.bones || 0) + n };
+      const newData = { ...prev, bones: (prev.bones || 0) + n, totalBonesEarned: (prev.totalBonesEarned || 0) + n };
       persistData(newData);
       return newData;
     });
@@ -444,7 +449,9 @@ export default function SpanishHub() {
       const already = (prev.completedStops || []).includes(stopId);
       if (already) return prev;
       const completedStops = [...(prev.completedStops || []), stopId];
-      const newData = { ...prev, completedStops };
+      let newData = { ...prev, completedStops };
+      const { updatedBadges: stopBadges } = evaluateBadges(prev, newData, 'stop_complete', { stopId });
+      newData = { ...newData, earnedBadges: stopBadges };
       persistData(newData);
       return newData;
     });
@@ -459,7 +466,7 @@ export default function SpanishHub() {
       const completedPaths = [...(prev.completedPaths || []), pathId];
       const ws = getWeekStartStr();
       const sameWeek = prev.weekStart === ws;
-      const newData = {
+      let newData = {
         ...prev,
         completedPaths,
         bones: (prev.bones || 0) + 15,
@@ -467,6 +474,8 @@ export default function SpanishHub() {
         weeklyXP: (sameWeek ? (prev.weeklyXP || 0) : 0) + 75,
         weekStart: ws,
       };
+      const { updatedBadges: pathBadges } = evaluateBadges(prev, newData, 'path_complete', { pathId });
+      newData = { ...newData, earnedBadges: pathBadges };
       persistData(newData);
       return newData;
     });
@@ -641,6 +650,21 @@ export default function SpanishHub() {
       if (dailyKind === 'weak') sessionDrillId = 'daily-weak';
       else if (dailyKind === 'theme') sessionDrillId = 'daily-theme';
       const sessions = [{ drillId: sessionDrillId, correct, total, date: today, ts: Date.now() }, ...(prev.sessions || []).slice(0, 49)];
+      const totalDrills = (prev.totalDrills || 0) + 1;
+      const isPerfect = total > 0 && correct === total;
+      const perfectStreak = isPerfect ? (prev.perfectStreak || 0) + 1 : 0;
+
+      // Daily goal streak — increment if user hit their daily goal today, reset if they missed yesterday
+      const today2 = new Date().toDateString();
+      const yesterday2 = new Date(Date.now() - 86400000).toDateString();
+      const dailyCount = (prev.dailyProgress?.date === today2 ? prev.dailyProgress.count : 0) + 1;
+      const dailyGoal = prev.dailyGoal || 10;
+      const hitGoalToday = dailyCount >= dailyGoal;
+      const prevGoalDate = prev.dailyGoalStreakDate;
+      const dailyGoalStreak = hitGoalToday
+        ? (prevGoalDate === yesterday2 ? (prev.dailyGoalStreak || 0) + 1 : prevGoalDate === today2 ? (prev.dailyGoalStreak || 0) : 1)
+        : (prev.dailyGoalStreak || 0);
+      const dailyGoalStreakDate = hitGoalToday ? today2 : (prev.dailyGoalStreakDate || null);
       const todayISO = new Date().toISOString().split('T')[0];
       const updatedActiveDays = prev.activeDays || [];
       const newActiveDays = updatedActiveDays.includes(todayISO)
@@ -664,6 +688,10 @@ export default function SpanishHub() {
         sessions,
         activeDays: newActiveDays,
         dailyChallenges: updatedChallenges,
+        totalDrills,
+        perfectStreak,
+        dailyGoalStreak,
+        dailyGoalStreakDate,
       };
       const { updatedBadges } = evaluateBadges(prev, newData, 'drill_complete', { drillId, correct, total, ts: Date.now() });
       newData = { ...newData, earnedBadges: updatedBadges };
