@@ -91,7 +91,7 @@ module.exports = async (req, res) => {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { message, conversationHistory, userUid } = req.body;
+  const { message, conversationHistory, userUid, learnerContext } = req.body;
 
   if (!message || !userUid) {
     return res.status(400).json({ error: "Missing message or userUid" });
@@ -112,9 +112,37 @@ module.exports = async (req, res) => {
 
     const history = Array.isArray(conversationHistory) ? conversationHistory.slice(-10) : [];
 
+    const contextBlock = learnerContext ? `
+LEARNER PROFILE — read this before every response:
+- Name: ${learnerContext.displayName}
+- Current streak: ${learnerContext.streak} day${learnerContext.streak !== 1 ? 's' : ''}
+- Total XP: ${learnerContext.xp}
+- Paths completed: ${learnerContext.completedPaths.length > 0 ? learnerContext.completedPaths.join(', ') : 'none yet'}
+- Words learned: ${learnerContext.totalWordsLearned}
+- Words mastered: ${learnerContext.masteredWords.length}
+
+WEAKEST WORDS (prioritise these in practice suggestions):
+${learnerContext.weakestWords.length > 0
+  ? learnerContext.weakestWords.map(w => `- ${w.es} (${w.en})`).join('\n')
+  : '- None yet — learner is just getting started'}
+
+MASTERED WORDS (use freely in conversation — learner knows these well):
+${learnerContext.masteredWords.length > 0
+  ? learnerContext.masteredWords.map(w => w.es).join(', ')
+  : 'none yet'}
+
+Use the learner's name naturally in conversation. Celebrate streak milestones. When suggesting practice, prioritise the weakest words listed above. Use mastered words freely in Spanish without translation. Always translate words the learner has not yet learned.
+` : '';
+
     const contents = [
       { role: "user", parts: [{ text: SYSTEM_PROMPT }] },
       { role: "model", parts: [{ text: "Hola! Soy Milo, tu tutor de espanol. Como estas hoy?" }] },
+      ...(contextBlock
+        ? [
+            { role: "user", parts: [{ text: contextBlock }] },
+            { role: "model", parts: [{ text: "¡Entendido! I know who I'm talking to." }] },
+          ]
+        : []),
       ...history.map((msg) => ({
         role: msg.role === "user" ? "user" : "model",
         parts: [{ text: msg.content }],

@@ -1274,11 +1274,51 @@ export default function SpanishHub() {
             </div>
           )}
 
-          {tab === 'milo' && (
-            <div style={{ height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-            <MiloChat userUid={effectiveUser.uid} />
-            </div>
-          )}
+          {tab === 'milo' && (() => {
+            const learnedWords = MASTER
+              .filter(w => (userData.progress?.[w.es]?.c || 0) > 0)
+              .map(w => ({
+                es: w.es,
+                en: w.en,
+                level: masteryLevel(userData.progress, w.es),
+              }));
+
+            const weakestWords = [...learnedWords]
+              .filter(w => w.level === 'learning' || w.level === 'new')
+              .sort((a, b) => {
+                const sA = userData.progress?.[a.es]?.s || 0;
+                const sB = userData.progress?.[b.es]?.s || 0;
+                return sA - sB;
+              })
+              .slice(0, 10)
+              .map(w => ({ es: w.es, en: w.en }));
+
+            const masteredWords = learnedWords
+              .filter(w => w.level === 'mastered')
+              .sort((a, b) => {
+                const sA = userData.progress?.[a.es]?.s || 0;
+                const sB = userData.progress?.[b.es]?.s || 0;
+                return sB - sA;
+              })
+              .slice(0, 50)
+              .map(w => ({ es: w.es, en: w.en }));
+
+            const learnerContext = {
+              displayName: userData.displayName || 'Estudiante',
+              streak: userData.streak?.count || 0,
+              xp: userData.xp || 0,
+              completedPaths: userData.completedPaths || [],
+              totalWordsLearned: learnedWords.length,
+              masteredWords,
+              weakestWords,
+            };
+
+            return (
+              <div style={{ height: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                <MiloChat userUid={effectiveUser.uid} learnerContext={learnerContext} />
+              </div>
+            );
+          })()}
           {tab === 'friends' && (
             <div className="pb-[76px]">
               <FriendsList

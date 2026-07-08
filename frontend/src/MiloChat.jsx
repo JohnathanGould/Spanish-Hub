@@ -8,7 +8,7 @@ const initialMessages = [
   },
 ]
 
-export function MiloChat({ userUid }) {
+export function MiloChat({ userUid, learnerContext }) {
   const [messages, setMessages] = useState(initialMessages)
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -82,6 +82,7 @@ export function MiloChat({ userUid }) {
             content: m.content,
           })),
           userUid: userUid || "anonymous",
+          learnerContext: learnerContext || null,
         }),
       })
 
