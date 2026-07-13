@@ -1,5 +1,108 @@
 # Current State Ledger — Milo Speaks Spanish
-# Last updated: 2026-06-29
+# Last updated: 2026-07-07
+
+## Session Notes — 2026-07-07 (third entry — Sessions A-D + Vercel deploy)
+
+### Completed — 2026-07-07
+- 7 Emergent sessions complete in one day
+- Cognate System — cognateQueue.js, CognateFetch.jsx, patternProgress in Firestore
+- Fetch Standalone — FetchTab.jsx, word pool filters, wired to fetch tab
+- Break Free — BreakFreeDrill.jsx, FSM, 60s timer, ¡Libre! card on Home
+- Badge Triggers — 110 badges, evaluateBadges fully wired
+- Toast Notifications — all call sites wired, first_friend fixed, sonner.jsx deleted
+- Bones & Streak Shield — spendBones, shield toggle, word skip in fetch rounds
+- Milo Vocabulary Awareness — learnerContext computed, injected into Gemini system prompt
+- All sessions saved to GitHub, yarn build green on all
+- Deployed to Vercel — spanish-hub-zeta.vercel.app live
+
+### Bugs Added
+- VocabFillBlankDrill ??? placeholder not resolving — pre-existing, fix before beta
+
+### Decisions Made
+- breakFreeAvailable hardcoded true — Break Free always visible,
+  no XP gate currently. Restore XP gate (>= 50) before beta.
+- Sentence Builder braided reinforcement deferred to Cursor session
+- Frontend testing agent skipped all sessions — manual verification preferred
+
+### Token Budget
+- Started: 112.5 tokens
+- Used: ~87 tokens across 7 sessions
+- Remaining: 25.51 tokens
+
+### First Task Next Session
+- Generate milo_celebrate.gif in Google Flow
+- Fix VocabFillBlankDrill ??? bug in Cursor Composer
+- Manual verification of Milo chat on live Vercel deployment
+
+---
+
+## Session Notes — 2026-07-07 (second entry — Emergent Build E-2)
+
+### Completed
+- Emergent session opened (milo-cognates, E-2), pre-flight 5/5 passed
+- Session 1 — Cognate System built and verified: utils/cognateQueue.js, components/CognateFetch.jsx, patternProgress in Firestore schema, onUpdatePatternProgress callback, Pattern Practice section in DrillsGrid
+- Session 2 — Fetch Standalone built and verified: components/FetchTab.jsx, word pool filters (All/Working On/Output Weak/By Path), reuses buildFetchQueue, wired to fetch tab in SpanishHub, fetchHistory written, fetch badges fire
+- Session 3 — Break Free built and verified: components/BreakFreeDrill.jsx, FSM idle→countdown→active→success/fail, 60s timer 10Q, pulsing ¡Libre! indicator on Home, +10 bones +50 XP on success, breakFreeXP resets on completion, break_free badge fires, milo_idle.gif placeholder for missing poses
+- Save to Github confirmed, git pull confirmed (26 objects, 1285 insertions, 10 files)
+- Local yarn build green — 476KB, no errors
+
+### Bugs Added
+- VocabFillBlankDrill — ??? placeholder not resolving to input field. Target word not being extracted from contextSentence. Visible in Fetch tab at question 18/20. Pre-existing — hub-es-en session (June 27) was mid-fix on this when session was abandoned. Fix before beta. Tool: Cursor Composer.
+- None confirmed from this session's new work — Emergent noted 3 pragmatic deviations from brief (all acceptable)
+- Sentence Builder braided reinforcement deferred — not a bug, flagged as next action
+
+### Decisions Made
+- Emergent Deploy panel dismissed — app deploys to Vercel not Emergent hosting
+- milo_idle.gif confirmed as placeholder for milo_celebrating, milo_wrong_tilt, milo_encouraging
+- Sentence Builder braided reinforcement deferred to dedicated Cursor session
+- onFetchComplete consolidated in SpanishHub (Emergent's call — cleaner than brief specified)
+- breakFreeXP resets on success AND fail (correct edge case handling)
+
+### Tools Assessed
+Emergent E-2 — 49 tokens for 3 sessions. Strong performance. Pre-brief format worked perfectly. 5-check pre-flight prevented wasted tokens on wrong repo/state.
+
+### Token Budget
+- Started: 112.5 tokens
+- Used this session: 49 tokens
+- Remaining: 63.5 tokens
+- Sessions A-F (badges, notifications, bones/freeze, Milo awareness) still to run — estimated 40-55 tokens
+
+### First Task Next Session
+- Generate milo_celebrate.gif in Google Flow — still the blocking task for Sessions A-F celebration animations
+- Then deploy to Vercel: vercel --prod from frontend/ to push new features live
+
+---
+
+## Session Notes — 2026-07-07
+
+### Completed
+- Full cognate meta-rule research and taxonomy (4 groups, 25 rules)
+- Tier mapping locked — Group 1/Beginner I, Group 2/Beginner II, Group 3/Beginner III, Group 4/Intermediate
+- Parallel system architecture designed — shadow curriculum, Fetch selection, braided Sentence Builder reinforcement, false friends flagging
+- Full Action List entry written and placed in Downloads/MILO-ACTION-LIST (3).md
+- Complete words.js classification pass — all 583 words reviewed against 4 groups
+- 12 cognate words identified for removal from Paths
+- 12 replacement words selected, cross-checked against all 65 Stops, confirmed clean
+- Claude Code prompt executed — all edits applied, build green, 5/5 verification checks passed
+- cognate, cognatePattern, cognateGroup fields now live in words.js for the first time
+
+### Bugs Added
+None
+
+### Decisions Made
+- Cognate system is front-and-center priority, same tier as Fetch and Break Free
+- Words safe to remove from Paths: identical/near-identical cognates with no gender trap, accent production issue, or false-friend risk
+- Words kept in Paths despite being cognates: survival-critical words, gender traps, adjective agreement requirements
+- cognate: false added explicitly to all 12 replacement words
+- Build verified green before session close
+
+### Tools Assessed
+Claude Code — used for dual-file edit with self-verification. Performed perfectly. Pre-verification prompt pattern confirmed as the right approach for multi-file content edits.
+
+### First Task Next Session
+Commit and push the words.js and paths.js changes to GitHub, then generate milo_celebrate.gif in Google Flow — still the blocking task for Emergent Sessions A–F
+
+---
 
 ## Session Notes — 2026-06-29
 

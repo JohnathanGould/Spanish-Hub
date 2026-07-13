@@ -145,7 +145,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
         )}
       </div>
 
-      {!feedback && <SpecialCharBar inputRef={inputRef} value={val} onChange={setVal} />}
+      {!feedback && strictMode && <SpecialCharBar inputRef={inputRef} value={val} onChange={setVal} />}
 
       {/* Input — compact for mobile */}
       <input ref={inputRef} data-testid="type-input"
