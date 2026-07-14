@@ -300,6 +300,7 @@ const enforceMinGap = (queue, minGap = 3) => {
 export function buildFetchQueue(words, progress = {}, length = FETCH_LENGTH) {
   // Deduplicate words by es field to prevent repeats from duplicate entries
   const uniqueWords = words.filter((w, i, arr) => arr.findIndex(x => x.es === w.es) === i);
+  if (uniqueWords.length === 0) return [];
 
   const maxPerWord = Math.ceil(length / uniqueWords.length);
   const cappedWordPool = uniqueWords.flatMap(word => Array(maxPerWord).fill(word)).slice(0, length);
