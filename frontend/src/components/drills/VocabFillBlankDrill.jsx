@@ -173,7 +173,7 @@ export default function VocabFillBlankDrill({
             {answered ? word.es : '???'}
           </div>
         )}
-        {isTyped && !feedback && (
+        {isTyped && !feedback && strictMode && (
           <div className="mt-3">
             <SpecialCharBar inputRef={inputRef} value={val} onChange={setVal} />
           </div>

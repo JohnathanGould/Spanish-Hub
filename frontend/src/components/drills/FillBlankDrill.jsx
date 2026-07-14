@@ -122,7 +122,7 @@ export default function FillBlankDrill({ onAnswer, onDone, onBack, drillLength =
           )}{' '}
           {item.after}
         </div>
-        {mode === 'typed' && !picked && (
+        {mode === 'typed' && !picked && strictMode && (
           <div className="mt-3">
             <SpecialCharBar inputRef={inputRef} value={typedValue} onChange={setTypedValue} />
           </div>
