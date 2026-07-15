@@ -1199,6 +1199,7 @@ export default function SpanishHub() {
           )}
           {tab === 'fetch' && (
             <div className="pb-[76px]">
+              {/* TODO: AND with real XP gate when restored (see known bug: breakFreeXP hardcode) */}
               <FetchTab
                 userData={userData}
                 progress={userData.progress}
@@ -1208,7 +1209,6 @@ export default function SpanishHub() {
                 onDrillAnswer={updateWordProgress}
                 onFetchComplete={onFetchComplete}
                 strictTyping={userData.strictTyping}
-                {/* TODO: AND with real XP gate when restored (see known bug: breakFreeXP hardcode) */}
                 breakFreeAvailable={pathWords.length >= 5}
                 onStartBreakFree={startBreakFree}
               />
