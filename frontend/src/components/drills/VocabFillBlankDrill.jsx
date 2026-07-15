@@ -11,12 +11,21 @@ function buildBlank(sentence, targetEs) {
   if (typeof sentence !== 'string' || !sentence.trim()) return null;
   const target = (targetEs || '').trim();
   if (!target) return { kind: 'plain', sentence };
-  const i = sentence.toLowerCase().indexOf(target.toLowerCase());
+  const lowerSentence = sentence.toLowerCase();
+  let i = lowerSentence.indexOf(target.toLowerCase());
+  let matchLength = target.length;
+  // Regular Spanish adjectives alternate -o/-a for gender agreement — the dictionary
+  // form may not match the sentence's agreeing form (e.g. "frío" vs "está fría").
+  if (i === -1 && /[oa]$/i.test(target)) {
+    const altTarget = target.slice(0, -1) + (target.slice(-1).toLowerCase() === 'o' ? 'a' : 'o');
+    i = lowerSentence.indexOf(altTarget.toLowerCase());
+    matchLength = altTarget.length;
+  }
   if (i === -1) return { kind: 'plain', sentence };
   return {
     kind: 'blank',
     before: sentence.slice(0, i),
-    after: sentence.slice(i + target.length),
+    after: sentence.slice(i + matchLength),
   };
 }
 
@@ -106,6 +115,45 @@ export default function VocabFillBlankDrill({
   const blankBg = !answered ? 'hsl(var(--muted))' : (wasCorrect ? '#DCFCE7' : '#FEE2E2');
   const blankColor = !answered ? 'hsl(var(--muted-foreground))' : (wasCorrect ? '#14532D' : '#991B1B');
 
+  // The blank itself — a typeable input while unanswered in typed mode, otherwise a
+  // colored pill. Shared between the inline blank (parts.kind === 'blank') and the
+  // plain-sentence fallback (parts.kind === 'plain', when the target word couldn't be
+  // located in the sentence) so typed mode always has an interactive input either way.
+  const blankSlot = isTyped && !answered ? (
+    <input
+      ref={inputRef}
+      type="text"
+      value={val}
+      onChange={e => setVal(e.target.value)}
+      onKeyDown={e => { if (e.key === 'Enter') submit(); }}
+      disabled={!!feedback}
+      autoCapitalize="none"
+      autoCorrect="off"
+      spellCheck={false}
+      data-testid="vfb-input"
+      style={{
+        display: 'inline-block',
+        background: 'hsl(var(--card))',
+        color: 'hsl(var(--foreground))',
+        minWidth: 80,
+        width: Math.max(80, (val.length + 2) * 20) + 'px',
+        fontSize: '0.95em',
+        fontFamily: 'inherit',
+        fontWeight: 700,
+        textAlign: 'center',
+        border: '2px solid hsl(var(--primary))',
+        borderRadius: 8,
+        padding: '2px 8px',
+        outline: 'none',
+        verticalAlign: 'middle',
+      }}
+    />
+  ) : (
+    <span className="px-2 rounded-md" style={{ background: blankBg, color: blankColor }}>
+      {answered ? word.es : BLANK}
+    </span>
+  );
+
   return (
     <DrillShell
       title="Vocab Fill in the Blank"
@@ -127,40 +175,7 @@ export default function VocabFillBlankDrill({
           {parts.kind === 'blank' ? (
             <>
               <span>{parts.before}</span>
-              {isTyped && !answered ? (
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={val}
-                  onChange={e => setVal(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter') submit(); }}
-                  disabled={!!feedback}
-                  autoCapitalize="none"
-                  autoCorrect="off"
-                  spellCheck={false}
-                  data-testid="vfb-input"
-                  style={{
-                    display: 'inline-block',
-                    background: 'hsl(var(--card))',
-                    color: 'hsl(var(--foreground))',
-                    minWidth: 80,
-                    width: Math.max(80, (val.length + 2) * 20) + 'px',
-                    fontSize: '0.95em',
-                    fontFamily: 'inherit',
-                    fontWeight: 700,
-                    textAlign: 'center',
-                    border: '2px solid hsl(var(--primary))',
-                    borderRadius: 8,
-                    padding: '2px 8px',
-                    outline: 'none',
-                    verticalAlign: 'middle',
-                  }}
-                />
-              ) : (
-                <span className="px-2 rounded-md" style={{ background: blankBg, color: blankColor }}>
-                  {answered ? word.es : BLANK}
-                </span>
-              )}
+              {blankSlot}
               <span>{parts.after}</span>
             </>
           ) : (
@@ -168,9 +183,8 @@ export default function VocabFillBlankDrill({
           )}
         </div>
         {parts.kind === 'plain' && (
-          <div className="mt-2 inline-block text-sm font-bold px-2 py-0.5 rounded-full"
-            style={{ background: blankBg, color: blankColor }}>
-            {answered ? word.es : '???'}
+          <div className="mt-2 inline-flex items-center justify-center">
+            {blankSlot}
           </div>
         )}
         {isTyped && !feedback && strictMode && (
