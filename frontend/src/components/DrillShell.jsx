@@ -5,22 +5,24 @@ export default function DrillShell({ title, subtitle, current, total, onBack, ch
   const pct = total > 0 ? Math.min((current / total) * 100, 100) : 0;
   return (
     <div className="flex flex-col" style={{ height: `calc(100dvh - ${60 + headerOffset}px)` }}>
-      <div className="flex-shrink-0 px-4 py-3 border-b backdrop-blur-xl"
+      <div className="flex-shrink-0 px-4 py-2 border-b backdrop-blur-xl"
         style={{ background: 'hsl(var(--background) / 0.92)', borderColor: 'hsl(var(--border))' }}>
-        <div className="flex items-center gap-2 mb-2">
+        <div className="flex items-center gap-2 mb-1.5">
           <button data-testid="drill-back-btn" onClick={onBack}
             className="p-1.5 rounded-lg transition-colors hover:bg-muted"
             style={{ color: 'hsl(var(--muted-foreground))' }}>
             <ArrowLeft size={16} />
           </button>
           <div className="flex-1 min-w-0">
-            <div className="font-serif font-bold text-sm leading-tight truncate"
-              style={{ color: 'hsl(var(--foreground))' }}>{title}</div>
-            {subtitle && (
-              <div className="text-xs truncate" style={{ color: 'hsl(var(--muted-foreground))' }}>
-                {subtitle}
-              </div>
-            )}
+            <div className="font-serif font-bold text-xs leading-tight truncate"
+              style={{ color: 'hsl(var(--foreground))' }}>
+              {title}
+              {subtitle && (
+                <span className="font-sans font-normal ml-1" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                  · {subtitle}
+                </span>
+              )}
+            </div>
           </div>
           <div className="text-xs font-bold tabular-nums" style={{ color: 'hsl(var(--muted-foreground))' }}>
             {counterOverride ?? `${current}/${total}`}
