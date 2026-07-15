@@ -611,24 +611,20 @@ function StopView({
     };
 
     return (
-      <>
+      <div style={{ position: 'relative' }}>
         {renderDrill()}
-        {/* Word Skip — Fetch rounds only. Subtle pill, fixed just above the bottom nav. */}
-        <div
-          style={{ position: 'fixed', bottom: 88, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 40, pointerEvents: 'none' }}
+        {/* Word Skip — Fetch rounds only. Small pill anchored to the bottom-right corner, clear of the Finish button. */}
+        <button
+          type="button"
+          data-testid="fetch-skip-word-btn"
+          onClick={handleSkip}
+          disabled={(bones || 0) < 10}
+          className="speak-btn disabled:opacity-40"
+          style={{ position: 'absolute', bottom: 14, right: 20, zIndex: 40, color: '#b45309' }}
         >
-          <button
-            type="button"
-            data-testid="fetch-skip-word-btn"
-            onClick={handleSkip}
-            disabled={(bones || 0) < 10}
-            className="text-sm text-amber-600 underline disabled:opacity-40"
-            style={{ pointerEvents: 'auto', background: 'hsl(var(--card))', padding: '6px 14px', borderRadius: 9999, border: '1px solid hsl(var(--border))' }}
-          >
-            Skip word 🦴 (10 bones)
-          </button>
-        </div>
-      </>
+          Skip word 🦴 (10 bones)
+        </button>
+      </div>
     );
   }
 
