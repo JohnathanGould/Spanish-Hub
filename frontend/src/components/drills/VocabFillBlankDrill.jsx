@@ -31,7 +31,7 @@ function buildBlank(sentence, targetEs) {
 
 export default function VocabFillBlankDrill({
   mode = 'typed', words, progress, onAnswer, onDone, onBack,
-  drillLength = 10, headerOffset = 0, counterOverride, strictMode = false,
+  drillLength = 10, headerOffset = 0, counterOverride, strictMode = false, skipControl,
 }) {
   const isTyped = mode === 'typed';
 
@@ -160,11 +160,18 @@ export default function VocabFillBlankDrill({
       subtitle={isTyped ? 'Read the sentence — type the missing word' : 'Read the sentence — pick the missing word'}
       current={idx + 1} total={queue.length} onBack={onBack}
       headerOffset={headerOffset} counterOverride={counterOverride}
-      footer={answered && (
+      skipControl={skipControl}
+      footer={answered ? (
         <button onClick={next} data-testid="vfb-continue"
           className="w-full py-3 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2"
           style={{ background: 'hsl(var(--primary))' }}>
           {idx + 1 >= queue.length ? 'Finish ✓' : 'Continue →'} <ArrowRight size={16} />
+        </button>
+      ) : isTyped && (
+        <button data-testid="vfb-check" onClick={submit} disabled={!val.trim()}
+          className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50"
+          style={{ background: 'hsl(var(--primary))' }}>
+          Check
         </button>
       )}>
 
@@ -198,27 +205,19 @@ export default function VocabFillBlankDrill({
       </div>
 
       {isTyped ? (
-        <>
-          {feedback ? (
-            <div className="text-center py-2.5 rounded-xl mb-1"
-              style={{ background: feedback.ok ? '#DCFCE7' : '#FEE2E2', color: feedback.ok ? '#14532D' : '#991B1B' }}>
-              <div className="font-bold text-sm" data-testid="vfb-feedback">
-                {feedback.ok ? (feedback.closeEnough ? 'Almost! ✓' : 'Correct! ✓') : 'Answer:'}
-              </div>
-              <div className="text-base font-black mt-1 flex items-center justify-center gap-2">
-                {feedback.target}
-                <button onClick={() => speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage)}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
-              </div>
+        feedback && (
+          <div className="text-center py-2.5 rounded-xl mb-1"
+            style={{ background: feedback.ok ? '#DCFCE7' : '#FEE2E2', color: feedback.ok ? '#14532D' : '#991B1B' }}>
+            <div className="font-bold text-sm" data-testid="vfb-feedback">
+              {feedback.ok ? (feedback.closeEnough ? 'Almost! ✓' : 'Correct! ✓') : 'Answer:'}
             </div>
-          ) : (
-            <button data-testid="vfb-check" onClick={submit} disabled={!val.trim()}
-              className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50"
-              style={{ background: 'hsl(var(--primary))' }}>
-              Check
-            </button>
-          )}
-        </>
+            <div className="text-base font-black mt-1 flex items-center justify-center gap-2">
+              {feedback.target}
+              <button onClick={() => speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>🔊</button>
+            </div>
+          </div>
+        )
       ) : (
         <div className="grid grid-cols-2 gap-2.5">
           {choices.map((c, i) => {

@@ -6,7 +6,7 @@ import SpecialCharBar from '../SpecialCharBar';
 import { buildNoRepeatQueue, speak, stripAccents, gradeTypedAnswer, sanitiseForTTS } from '../../utils/helpers';
 
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
-export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, counterOverride, strictMode = false }) {
+export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, counterOverride, strictMode = false, skipControl }) {
   const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
@@ -105,7 +105,21 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
       total={queue.length}
       onBack={onBack}
       headerOffset={headerOffset}
-      counterOverride={counterOverride}>
+      counterOverride={counterOverride}
+      skipControl={skipControl}
+      footer={feedback ? (
+        <button data-testid="type-next" onClick={next}
+          className="w-full py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all"
+          style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 14px rgba(198,11,30,0.3)' }}>
+          Continue → <ArrowRight size={16} />
+        </button>
+      ) : (
+        <button data-testid="type-submit" onClick={submit} disabled={!val.trim()}
+          className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50"
+          style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 14px rgba(198,11,30,0.3)' }}>
+          Check
+        </button>
+      )}>
 
       {/* Word card — compact padding for mobile */}
       <div className="rounded-2xl p-4 mb-2 text-center"
@@ -160,8 +174,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
           borderColor: inputBorderColor,
         }} />
 
-      {feedback ? (
-        <div className="space-y-2">
+      {feedback && (
           <div className="text-center py-2.5 rounded-xl"
             style={{
               background: feedbackBg,
@@ -234,18 +247,6 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
               </div>
             )}
           </div>
-          <button data-testid="type-next" onClick={next}
-            className="w-full py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all"
-            style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 14px rgba(198,11,30,0.3)' }}>
-            Continue → <ArrowRight size={16} />
-          </button>
-        </div>
-      ) : (
-        <button data-testid="type-submit" onClick={submit} disabled={!val.trim()}
-          className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50"
-          style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 14px rgba(198,11,30,0.3)' }}>
-          Check
-        </button>
       )}
     </DrillShell>
   );

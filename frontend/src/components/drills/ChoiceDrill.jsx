@@ -5,7 +5,7 @@ import DrillShell from '../DrillShell';
 import { buildNoRepeatQueue, shuffle, speak, sanitiseForTTS } from '../../utils/helpers';
 
 // mode: languageConfig.drillDirectionId | languageConfig.reverseDrillDirectionId | 'hear-choose'
-export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, counterOverride }) {
+export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, counterOverride, skipControl }) {
   const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
@@ -66,6 +66,7 @@ export default function ChoiceDrill({ mode, words, progress, onAnswer, onDone, o
 
   return (
     <DrillShell title={titles[mode].title} subtitle={titles[mode].sub} current={idx + 1} total={queue.length} onBack={onBack} headerOffset={headerOffset} counterOverride={counterOverride}
+      skipControl={skipControl}
       footer={picked && (
         <button onClick={handleContinue} data-testid="choice-continue"
           className="w-full py-3 rounded-xl font-bold text-white text-sm"

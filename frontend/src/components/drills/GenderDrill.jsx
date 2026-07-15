@@ -4,7 +4,7 @@ import { Volume2 } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { buildNoRepeatQueue, speak } from '../../utils/helpers';
 
-export default function GenderDrill({ words, progress, onAnswer, onDone, onBack, drillLength = 10 }) {
+export default function GenderDrill({ words, progress, onAnswer, onDone, onBack, drillLength = 10, skipControl }) {
   const total = drillLength;
   const nounsRef = useRef(null);
   if (!nounsRef.current) {
@@ -68,6 +68,7 @@ export default function GenderDrill({ words, progress, onAnswer, onDone, onBack,
 
   return (
     <DrillShell title="Gender Drill" subtitle="el (masculine) or la (feminine)?" current={idx + 1} total={nouns.length} onBack={onBack}
+      skipControl={skipControl}
       footer={picked && (
         <button onClick={handleContinue} data-testid="gender-continue"
           className="w-full py-3 rounded-xl font-bold text-white text-sm"

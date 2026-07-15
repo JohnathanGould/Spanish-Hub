@@ -570,6 +570,21 @@ function StopView({
         : { s: 6, c: 99, w: 0 };   // distractor: weight 0.5, never drawn first
     });
 
+    // Word Skip — rendered in the same row as the drill's Check/Continue button via
+    // DrillShell's skipControl slot, so it stays visible above the keyboard on typing drills.
+    const skipControl = (
+      <button
+        type="button"
+        data-testid="fetch-skip-word-btn"
+        onClick={handleSkip}
+        disabled={(bones || 0) < 10}
+        className="speak-btn disabled:opacity-40 flex-shrink-0"
+        style={{ color: '#b45309' }}
+      >
+        Skip word 🦴 (10 bones)
+      </button>
+    );
+
     const drillKey = `fetch-${fetchIndex}-${currentItem.word.es}`;
     const drillType = currentItem.drillType;
     const sharedWordProps = {
@@ -577,6 +592,7 @@ function StopView({
       progress: forcedProgress,
       drillLength: 1,
       counterOverride: `${fetchIndex + 1} / ${FETCH_LENGTH}`,
+      skipControl,
       onAnswer: handleFetchAnswer,
       onDone: handleFetchDone,
       onBack: handleFetchBack,
@@ -617,24 +633,7 @@ function StopView({
       return <ChoiceDrill key={drillKey} mode={drillType} {...sharedWordProps} headerOffset={80} />;
     };
 
-    return (
-      <div>
-        {renderDrill()}
-        {/* Word Skip — Fetch rounds only. Normal flow, centered below the drill's Check/Finish button. */}
-        <div className="flex justify-center mt-2">
-          <button
-            type="button"
-            data-testid="fetch-skip-word-btn"
-            onClick={handleSkip}
-            disabled={(bones || 0) < 10}
-            className="speak-btn disabled:opacity-40"
-            style={{ color: '#b45309' }}
-          >
-            Skip word 🦴 (10 bones)
-          </button>
-        </div>
-      </div>
-    );
+    return renderDrill();
   }
 
   // ── Phase: results ─────────────────────────────────────────────────
