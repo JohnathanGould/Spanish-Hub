@@ -847,17 +847,6 @@ export default function SpanishHub() {
     return MASTER.filter(w => esKeys.has(w.es));
   }, [userData.completedStops]);
 
-  // Break Free word pool — learned words, falling back to completed-path words, then MASTER
-  const breakFreeWords = useMemo(() => {
-    const learned = MASTER.filter(w => userData.progress && userData.progress[w.es]);
-    if (learned.length >= 10) return learned;
-    const combined = [...learned, ...pathWords];
-    const seen = new Set();
-    const deduped = combined.filter(w => (seen.has(w.es) ? false : seen.add(w.es)));
-    if (deduped.length >= 5) return deduped;
-    return MASTER.slice(0, 30);
-  }, [userData.progress, pathWords]);
-
   const wordOfTheDay = useMemo(() => {
     if (!MASTER || MASTER.length === 0) return null;
     const seed = new Date().toISOString().slice(0, 10);
@@ -1092,7 +1081,7 @@ export default function SpanishHub() {
   if (view.page === 'break-free') {
     return (
       <BreakFreeDrill
-        words={breakFreeWords}
+        words={pathWords}
         progress={userData.progress}
         strictTyping={userData.strictTyping}
         onSuccess={onBreakFreeSuccess}
@@ -1219,7 +1208,8 @@ export default function SpanishHub() {
                 onDrillAnswer={updateWordProgress}
                 onFetchComplete={onFetchComplete}
                 strictTyping={userData.strictTyping}
-                breakFreeAvailable={true}
+                {/* TODO: AND with real XP gate when restored (see known bug: breakFreeXP hardcode) */}
+                breakFreeAvailable={pathWords.length >= 5}
                 onStartBreakFree={startBreakFree}
               />
             </div>
