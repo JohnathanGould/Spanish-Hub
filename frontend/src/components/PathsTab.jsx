@@ -383,6 +383,7 @@ function StopView({
   onShowCertificate,
   onDrillAnswer,
   strictTyping,
+  onDrillActiveChange,
 }) {
   const stop = getStop(stopId);
   const pathId = getPathIdForStop(stopId);
@@ -420,6 +421,12 @@ function StopView({
       if (onAwardBones) onAwardBones(2);
     }
   }, [phase, stopFetchPassed, onAwardBones]);
+
+  // ── Signal active-drill state up to SpanishHub so the top Header can hide during Fetch ──
+  useEffect(() => {
+    onDrillActiveChange?.(phase === 'fetch');
+    return () => onDrillActiveChange?.(false);
+  }, [phase, onDrillActiveChange]);
 
   if (!stop || !path) {
     return (
@@ -611,19 +618,21 @@ function StopView({
     };
 
     return (
-      <div style={{ position: 'relative' }}>
+      <div>
         {renderDrill()}
-        {/* Word Skip — Fetch rounds only. Small pill anchored to the bottom-right corner, clear of the Finish button. */}
-        <button
-          type="button"
-          data-testid="fetch-skip-word-btn"
-          onClick={handleSkip}
-          disabled={(bones || 0) < 10}
-          className="speak-btn disabled:opacity-40"
-          style={{ position: 'absolute', bottom: 14, right: 20, zIndex: 40, color: '#b45309' }}
-        >
-          Skip word 🦴 (10 bones)
-        </button>
+        {/* Word Skip — Fetch rounds only. Normal flow, centered below the drill's Check/Finish button. */}
+        <div className="flex justify-center mt-2">
+          <button
+            type="button"
+            data-testid="fetch-skip-word-btn"
+            onClick={handleSkip}
+            disabled={(bones || 0) < 10}
+            className="speak-btn disabled:opacity-40"
+            style={{ color: '#b45309' }}
+          >
+            Skip word 🦴 (10 bones)
+          </button>
+        </div>
       </div>
     );
   }
@@ -1225,6 +1234,7 @@ export default function PathsTab({
   onShowCertificate,
   onDrillAnswer,
   strictTyping,
+  onDrillActiveChange,
 }) {
   const [selectedPathId, setSelectedPathId] = useState(null);
   // Auto-open Stop on mount when parent passes initialStopId (e.g. Home → Continue)
@@ -1274,6 +1284,7 @@ export default function PathsTab({
         onShowCertificate={onShowCertificate}
         onDrillAnswer={onDrillAnswer}
         strictTyping={strictTyping}
+        onDrillActiveChange={onDrillActiveChange}
       />
     );
   }
