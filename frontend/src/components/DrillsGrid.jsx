@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FlashcardDrill from './drills/FlashcardDrill';
 import VocabFillBlankDrill from './drills/VocabFillBlankDrill';
 import CognateFetch from './CognateFetch';
@@ -46,11 +46,18 @@ const TABS = [
 export default function DrillsGrid({
   words, stats, drillMode, setDrillMode, onStartDrill, completedPaths = [], studyCategory,
   allWords = [], patternProgress = {}, onUpdatePatternProgress, onAwardXp, strictTyping = false,
+  onDrillActiveChange,
 }) {
   const [activeSection, setActiveSection] = useState('practice');
   const [activeFlashcard, setActiveFlashcard] = useState(null);
   const [activeVocabFB, setActiveVocabFB] = useState(null);
   const [showCognate, setShowCognate] = useState(false);
+
+  // ── Signal active-drill state up to SpanishHub so the top Header can hide during Flashcards/Vocab FB ──
+  useEffect(() => {
+    onDrillActiveChange?.(!!(activeFlashcard || activeVocabFB));
+    return () => onDrillActiveChange?.(false);
+  }, [activeFlashcard, activeVocabFB, onDrillActiveChange]);
 
   if (showCognate) {
     return (

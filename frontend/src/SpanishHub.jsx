@@ -256,6 +256,7 @@ export default function SpanishHub() {
   const [streakModalOpen, setStreakModalOpen] = useState(false);
   const [activeStop, setActiveStop] = useState(null);
   const [showPathCertificate, setShowPathCertificate] = useState(null); // stores pathId or null
+  const [drillActive, setDrillActive] = useState(false); // true while PathsTab/FetchTab/DrillsGrid has an active drill running — hides the top Header
   const saveTimerRef = useRef(null);
   const contentRef = useRef(null);
   const touchStartX = useRef(null);
@@ -1147,20 +1148,22 @@ export default function SpanishHub() {
     <>
     <div className="app-outer overflow-visible">
       <div className="app-container overflow-visible">
-        <Header
-          user={effectiveUser}
-          streak={userData.streak}
-          xp={userData.xp}
-          bones={userData.bones || 0}
-          dailyGoal={userData.dailyGoal}
-          dailyProgress={userData.dailyProgress}
-          onAvatarClick={() => setShowProfile(true)}
-          onGoalClick={() => setShowGoalModal(true)}
-          onHomeClick={() => setTab('home')}
-          onXpClick={() => setTab('leaderboard')}
-          onStreakClick={() => setStreakModalOpen(true)}
-          streakRiskLevel={streakRiskLevel}
-        />
+        {!drillActive && (
+          <Header
+            user={effectiveUser}
+            streak={userData.streak}
+            xp={userData.xp}
+            bones={userData.bones || 0}
+            dailyGoal={userData.dailyGoal}
+            dailyProgress={userData.dailyProgress}
+            onAvatarClick={() => setShowProfile(true)}
+            onGoalClick={() => setShowGoalModal(true)}
+            onHomeClick={() => setTab('home')}
+            onXpClick={() => setTab('leaderboard')}
+            onStreakClick={() => setStreakModalOpen(true)}
+            streakRiskLevel={streakRiskLevel}
+          />
+        )}
         <div ref={contentRef} className="px-4">
           {tab === 'home' && (
             <div className="pb-[76px]">
@@ -1193,7 +1196,8 @@ export default function SpanishHub() {
                 patternProgress={userData.patternProgress || {}}
                 onUpdatePatternProgress={onUpdatePatternProgress}
                 onAwardXp={onAwardXp}
-                strictTyping={userData.strictTyping} />
+                strictTyping={userData.strictTyping}
+                onDrillActiveChange={setDrillActive} />
               <KofiSupport />
             </div>
           )}
@@ -1211,6 +1215,7 @@ export default function SpanishHub() {
                 strictTyping={userData.strictTyping}
                 breakFreeAvailable={pathWords.length >= 5}
                 onStartBreakFree={startBreakFree}
+                onDrillActiveChange={setDrillActive}
               />
             </div>
           )}
@@ -1239,6 +1244,7 @@ export default function SpanishHub() {
                 onShowCertificate={(pathId) => setShowPathCertificate(pathId)}
                 onDrillAnswer={onDrillAnswer}
                 strictTyping={userData.strictTyping}
+                onDrillActiveChange={setDrillActive}
               />
             </div>
           )}

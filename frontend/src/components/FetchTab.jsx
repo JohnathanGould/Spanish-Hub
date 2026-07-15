@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { getPath, getStopWords } from '../content/es-en/paths';
 import { MASTER } from '../content/es-en/words';
 import { masteryLevel, shuffle } from '../utils/helpers';
@@ -76,6 +76,7 @@ export default function FetchTab({
   // Break Free (Session F)
   breakFreeAvailable = false,
   onStartBreakFree,
+  onDrillActiveChange,
 }) {
   const completedPathObjs = completedPaths.map((id) => getPath(id)).filter(Boolean);
   const hasPacks = (importedPacks || []).length > 0;
@@ -97,6 +98,12 @@ export default function FetchTab({
 
   const queueRef = useRef([]);
   const correctRef = useRef(0);
+
+  // ── Signal active-drill state up to SpanishHub so the top Header can hide during a session ──
+  useEffect(() => {
+    onDrillActiveChange?.(screen === 'session');
+    return () => onDrillActiveChange?.(false);
+  }, [screen, onDrillActiveChange]);
 
   const pool = resolveFetchWordPool(config, userData, progress);
   const poolEmpty = pool.length === 0;
