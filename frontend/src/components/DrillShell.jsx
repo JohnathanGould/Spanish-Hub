@@ -33,7 +33,7 @@ export default function DrillShell({ title, subtitle, current, total, onBack, ch
             style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#C60B1E,#F5C518)' }} />
         </div>
       </div>
-      <div className="overflow-y-auto px-4 py-5 pb-4">
+      <div className="px-4 py-5 pb-4">
         {children}
       </div>
       <div className="flex-shrink-0 px-4 pb-10 pt-2 flex items-center gap-2">
