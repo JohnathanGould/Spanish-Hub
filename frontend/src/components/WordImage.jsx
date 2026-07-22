@@ -2,23 +2,36 @@ import React, { useEffect, useState } from 'react';
 import { ImageOff } from 'lucide-react';
 import { getWordImage } from '../utils/wikiImage';
 
-// Lazy-loads a Wikipedia thumbnail for a word.
+// Displays a word's own image (word.imageUrl) when present.
+// Falls back to a Wikipedia thumbnail lookup only when word.imageUrl is missing.
 // variant: 'card' (full width, ~120px tall) | 'modal' (full width, ~180px tall) | 'inline' (small)
 export default function WordImage({ word, variant = 'card', onLoaded, eager = true }) {
   const [data, setData] = useState(undefined); // undefined = loading, null = none, object = found
   const [err, setErr] = useState(false);
 
+  const ownImage = word?.imageUrl || null;
+
   useEffect(() => {
     if (!eager) return;
+    setErr(false);
+
+    // Own image present — use it directly, skip Wikipedia entirely.
+    if (ownImage) {
+      setData({ thumb: ownImage, source: null, title: word.es, own: true });
+      if (onLoaded) onLoaded(true);
+      return;
+    }
+
+    // No own image — fall back to Wikipedia lookup.
     let cancelled = false;
-    setData(undefined); setErr(false);
+    setData(undefined);
     getWordImage(word).then(res => {
       if (cancelled) return;
       setData(res);
       if (onLoaded) onLoaded(!!res);
     });
     return () => { cancelled = true; };
-  }, [word.es, eager]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [word.es, word.imageUrl, eager]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (data === undefined && eager) {
     return (
@@ -39,6 +52,20 @@ export default function WordImage({ word, variant = 'card', onLoaded, eager = tr
       </div>
     );
   }
+
+  // Own image — no Wikipedia attribution, not a link.
+  if (data.own) {
+    return (
+      <div data-testid="word-image-own"
+        className="block w-full rounded-xl overflow-hidden relative group"
+        style={{ background: 'hsl(var(--muted))' }}>
+        <img src={data.thumb} alt={word.es} onError={() => setErr(true)}
+          className={`w-full object-cover transition-transform group-hover:scale-105 ${variant === 'modal' ? 'h-44' : 'h-28'}`} />
+      </div>
+    );
+  }
+
+  // Wikipedia fallback — keep attribution + link, as before.
   return (
     <a data-testid="word-image-link" href={data.source} target="_blank" rel="noopener noreferrer"
       className="block w-full rounded-xl overflow-hidden relative group"
