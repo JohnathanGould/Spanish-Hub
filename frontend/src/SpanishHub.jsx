@@ -1366,7 +1366,9 @@ export default function SpanishHub() {
             onClose={() => { setShowSharedPacks(false); setSharedPacksAnchorY(null); }} />
         )}
       </div>
-      <BottomNav activeTab={tab} onTabChange={setTab} breakFreeReady={true} />
+      {!drillActive && (
+        <BottomNav activeTab={tab} onTabChange={setTab} breakFreeReady={true} />
+      )}
       {showBadgeGrid && (
         <BadgeGrid
           earnedBadges={userData.earnedBadges || []}
