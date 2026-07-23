@@ -36,8 +36,8 @@ export default function WordImage({ word, variant = 'card', onLoaded, eager = tr
   if (data === undefined && eager) {
     return (
       <div data-testid="word-image-loading"
-        className={`w-full rounded-xl ${variant === 'modal' ? 'h-44' : 'h-28'} animate-pulse`}
-        style={{ background: 'hsl(var(--muted))' }} />
+        className="w-full rounded-xl animate-pulse"
+        style={{ aspectRatio: '1 / 1', background: 'hsl(var(--muted))' }} />
     );
   }
   if (!data || err) {
@@ -60,7 +60,8 @@ export default function WordImage({ word, variant = 'card', onLoaded, eager = tr
         className="block w-full rounded-xl overflow-hidden relative group"
         style={{ background: 'hsl(var(--muted))' }}>
         <img src={data.thumb} alt={word.es} onError={() => setErr(true)}
-          className={`w-full object-cover transition-transform group-hover:scale-105 ${variant === 'modal' ? 'h-44' : 'h-28'}`} />
+          className="w-full object-cover transition-transform group-hover:scale-105"
+          style={{ aspectRatio: '1 / 1' }} />
       </div>
     );
   }
