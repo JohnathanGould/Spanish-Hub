@@ -4,7 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import DrillShell from '../DrillShell';
 import { DrillKeyboardContext } from '../DrillShell';
 import SpecialCharBar from '../SpecialCharBar';
-import { shuffle, speak, stripAccents, gradeTypedAnswer, sanitiseForTTS } from '../../utils/helpers';
+import { speak, stripAccents, gradeTypedAnswer, sanitiseForTTS } from '../../utils/helpers';
 import { VERB_TABLE } from '../../content/es-en/words';
 
 // Field order matches the requested table layout:
@@ -20,13 +20,53 @@ const FIELD_DEFS = [
 
 const EMPTY_VALUES = FIELD_DEFS.reduce((acc, f) => ({ ...acc, [f.key]: '' }), {});
 
+// Same weighting formula as spacedRepetitionSort in helpers.js — kept in sync
+// intentionally rather than imported, since it scores a single word's progress
+// and here we need the MAX across all 6 forms (worst-form-wins), not a single word.
+function getWordWeight(es, progress) {
+  const p = progress?.[es];
+  if (!p || p.c === 0) return 3;
+  if (p.s >= 6) return 0.5;
+  if (p.s >= 3) return 1.5;
+  if (p.w > p.c * 0.5) return 5;
+  return 2.5;
+}
+
+function verbWeight(verb, progress) {
+  const forms = [verb.inf, ...verb.conj.map(c => c.es)];
+  return Math.max(...forms.map(es => getWordWeight(es, progress)));
+}
+
+// No-repeat cycling through all verbs, worst-form-weighted (mirrors
+// buildNoRepeatQueue + spacedRepetitionSort's pattern, adapted to
+// verb-level scoring instead of single-word scoring).
+function buildVerbQueue(progress, total) {
+  if (VERB_TABLE.length === 0 || total === 0) return [];
+  const queue = [];
+  const seen = new Set();
+  while (queue.length < total) {
+    if (seen.size >= VERB_TABLE.length) seen.clear();
+    const pool = VERB_TABLE.filter(v => !seen.has(v.inf));
+    const sorted = pool
+      .map(v => ({ v, score: verbWeight(v, progress) * Math.random() }))
+      .sort((a, b) => b.score - a.score)
+      .map(x => x.v);
+    for (const v of sorted) {
+      if (queue.length >= total) break;
+      queue.push(v);
+      seen.add(v.inf);
+    }
+  }
+  return queue;
+}
+
 export default function ConjugationTableDrill({
-  onAnswer, onDone, onBack, drillLength = 6,
+  onAnswer, onDone, onBack, drillLength = 6, progress,
   headerOffset = 0, bottomOffset = 60, counterOverride, strictMode = false, skipControl,
 }) {
   const total = drillLength;
   const queueRef = useRef(null);
-  if (!queueRef.current) queueRef.current = shuffle(VERB_TABLE).slice(0, total);
+  if (!queueRef.current) queueRef.current = buildVerbQueue(progress, total);
   const queue = queueRef.current;
 
   const [idx, setIdx] = useState(0);
