@@ -23,9 +23,19 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
 
   useEffect(() => {
     inputRef.current?.focus();
-    requestAnimationFrame(() => {
+
+    const resetScroll = () => {
       if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0;
-    });
+    };
+
+    const vv = window.visualViewport;
+    if (vv) {
+      vv.addEventListener('resize', resetScroll);
+    }
+
+    return () => {
+      if (vv) vv.removeEventListener('resize', resetScroll);
+    };
   }, [idx]);
 
   useEffect(() => {
