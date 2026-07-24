@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 
 export default function DrillShell({ title, subtitle, current, total, onBack, children, footer, skipControl, headerOffset = 0, counterOverride, contentRef }) {
   const pct = total > 0 ? Math.min((current / total) * 100, 100) : 0;
+
+  const [viewportHeight, setViewportHeight] = useState(
+    typeof window !== 'undefined' && window.visualViewport
+      ? window.visualViewport.height
+      : window.innerHeight
+  );
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const updateHeight = () => setViewportHeight(vv.height);
+    vv.addEventListener('resize', updateHeight);
+    return () => vv.removeEventListener('resize', updateHeight);
+  }, []);
+
   return (
-    <div className="flex flex-col" style={{ maxHeight: `calc(100dvh - ${60 + headerOffset}px)` }}>
+    <div className="flex flex-col" style={{ maxHeight: `${viewportHeight - 60 - headerOffset}px` }}>
       <div className="flex-shrink-0 px-4 py-2 border-b backdrop-blur-xl"
         style={{ background: 'hsl(var(--background) / 0.92)', borderColor: 'hsl(var(--border))' }}>
         <div className="flex items-center gap-2 mb-1.5">
@@ -33,7 +48,7 @@ export default function DrillShell({ title, subtitle, current, total, onBack, ch
             style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#C60B1E,#F5C518)' }} />
         </div>
       </div>
-      <div ref={contentRef} className="px-4 py-5 pb-4 overflow-y-auto" style={{ maxHeight: '46dvh' }}>
+      <div ref={contentRef} className="px-4 py-5 pb-4 overflow-y-auto" style={{ maxHeight: `${viewportHeight * 0.46}px` }}>
         {children}
       </div>
       <div className="flex-shrink-0 px-4 pb-10 pt-2 flex items-center gap-2">
