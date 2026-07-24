@@ -20,6 +20,9 @@ export default function DrillShell({ title, subtitle, current, total, onBack, ch
 
   return (
     <div className="flex flex-col" style={{ maxHeight: `${viewportHeight - 60 - headerOffset}px` }}>
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999, background: 'yellow', color: 'black', fontSize: '10px', padding: '2px 4px', fontFamily: 'monospace' }}>
+        vvH:{viewportHeight} innerH:{window.innerHeight} outerCap:{viewportHeight - 60 - headerOffset}
+      </div>
       <div className="flex-shrink-0 px-4 py-2 border-b backdrop-blur-xl"
         style={{ background: 'hsl(var(--background) / 0.92)', borderColor: 'hsl(var(--border))' }}>
         <div className="flex items-center gap-2 mb-1.5">
