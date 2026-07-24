@@ -1,7 +1,8 @@
 import { languageConfig } from '../../config/languageConfig';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Volume2, ArrowRight } from 'lucide-react';
 import DrillShell from '../DrillShell';
+import { DrillKeyboardContext } from '../DrillShell';
 import SpecialCharBar from '../SpecialCharBar';
 import { buildNoRepeatQueue, speak, stripAccents, gradeTypedAnswer, sanitiseForTTS } from '../../utils/helpers';
 
@@ -20,6 +21,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   const inputRef = useRef(null);
   const hasSpokenRef = useRef(false);
   const scrollContainerRef = useRef(null);
+  const keyboardOpen = useContext(DrillKeyboardContext);
 
   useEffect(() => {
     inputRef.current?.focus({ preventScroll: true });
@@ -113,29 +115,29 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
       contentRef={scrollContainerRef}
       footer={feedback ? (
         <button data-testid="type-next" onClick={next}
-          className="w-full py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all"
+          className={`w-full ${keyboardOpen ? 'py-2' : 'py-3'} rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all`}
           style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 14px rgba(198,11,30,0.3)' }}>
           Continue → <ArrowRight size={16} />
         </button>
       ) : (
         <button data-testid="type-submit" onClick={submit} disabled={!val.trim()}
-          className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50"
+          className={`w-full ${keyboardOpen ? 'py-2' : 'py-3'} rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50`}
           style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 14px rgba(198,11,30,0.3)' }}>
           Check
         </button>
       )}>
 
       {/* Word card — compact padding for mobile */}
-      <div className="rounded-2xl p-4 mb-2 text-center"
+      <div className={`rounded-2xl ${keyboardOpen ? 'p-2 mb-1' : 'p-4 mb-2'} text-center`}
         style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
         {isListenMode ? (
           <button data-testid="listen-type-replay"
             onClick={() => (mode === 'listen-type-en-es' || mode === 'listen-type-sentence-en-es')
               ? speak(sanitiseForTTS(word.en), languageConfig.targetLanguage)
               : speak(sanitiseForTTS(word.es), languageConfig.sourceLanguage)}
-            className="mx-auto rounded-full w-16 h-16 flex items-center justify-center text-white"
+            className={`mx-auto rounded-full ${keyboardOpen ? 'w-10 h-10' : 'w-16 h-16'} flex items-center justify-center text-white`}
             style={{ background: 'hsl(var(--primary))', boxShadow: '0 4px 14px rgba(198,11,30,0.35)' }}>
-            <Volume2 size={24} />
+            <Volume2 size={keyboardOpen ? 16 : 24} />
           </button>
         ) : (
           <>
@@ -145,7 +147,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
             <div className="flex items-center justify-center gap-2 flex-wrap"
               data-testid="type-prompt">
               {isPromptEs && word.gender ? (
-                <div className="font-serif text-2xl font-black px-2 py-0.5 rounded-full"
+                <div className={`font-serif ${keyboardOpen ? 'text-lg' : 'text-2xl'} font-black px-2 py-0.5 rounded-full`}
                   style={{
                     background: word.gender === 'm' ? '#DBEAFE' : '#FCE7F3',
                     color: word.gender === 'm' ? '#1E40AF' : '#9D174D',
@@ -153,7 +155,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
                   {word.gender === 'm' ? 'el' : 'la'} {promptText}
                 </div>
               ) : (
-                <div className="font-serif text-2xl font-black"
+                <div className={`font-serif ${keyboardOpen ? 'text-lg' : 'text-2xl'} font-black`}
                   style={{ color: 'hsl(var(--foreground))' }}>
                   {promptText}
                 </div>
@@ -171,7 +173,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
         onKeyDown={e => { if (e.key === 'Enter') feedback ? next() : submit(); }}
         placeholder={mode === 'type-es-en' ? `Type ${languageConfig.targetLanguageName}…` : `Type ${languageConfig.sourceLanguageName}…`}
         disabled={!!feedback} autoCapitalize="none" autoCorrect="off" spellCheck={false}
-        className="w-full p-3 rounded-xl border-2 text-center text-lg font-bold mb-3 transition-colors"
+        className={`w-full ${keyboardOpen ? 'p-2 mb-1' : 'p-3 mb-3'} rounded-xl border-2 text-center text-lg font-bold transition-colors`}
         style={{
           background: 'hsl(var(--card))',
           color: 'hsl(var(--foreground))',

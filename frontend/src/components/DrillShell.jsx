@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import { ArrowLeft } from 'lucide-react';
+
+export const DrillKeyboardContext = createContext(false);
 
 export default function DrillShell({ title, subtitle, current, total, onBack, children, footer, skipControl, headerOffset = 0, counterOverride, contentRef }) {
   const pct = total > 0 ? Math.min((current / total) * 100, 100) : 0;
@@ -10,6 +12,10 @@ export default function DrillShell({ title, subtitle, current, total, onBack, ch
       : window.innerHeight
   );
 
+  const [fullHeight] = useState(
+    typeof window !== 'undefined' ? window.innerHeight : 800
+  );
+
   useEffect(() => {
     const vv = window.visualViewport;
     if (!vv) return;
@@ -18,7 +24,10 @@ export default function DrillShell({ title, subtitle, current, total, onBack, ch
     return () => vv.removeEventListener('resize', updateHeight);
   }, []);
 
+  const keyboardOpen = fullHeight - viewportHeight > 150;
+
   return (
+    <DrillKeyboardContext.Provider value={keyboardOpen}>
     <div className="flex flex-col" style={{ maxHeight: `${viewportHeight - 60 - headerOffset}px` }}>
       <div className="flex-shrink-0 px-4 py-2 border-b backdrop-blur-xl"
         style={{ background: 'hsl(var(--background) / 0.92)', borderColor: 'hsl(var(--border))' }}>
@@ -56,5 +65,6 @@ export default function DrillShell({ title, subtitle, current, total, onBack, ch
         {footer && <div className="flex-1">{footer}</div>}
       </div>
     </div>
+    </DrillKeyboardContext.Provider>
   );
 }
