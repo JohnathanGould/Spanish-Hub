@@ -19,8 +19,14 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   const [correct, setCorrect] = useState(0);
   const inputRef = useRef(null);
   const hasSpokenRef = useRef(false);
+  const scrollContainerRef = useRef(null);
 
-  useEffect(() => { inputRef.current?.focus(); }, [idx]);
+  useEffect(() => {
+    inputRef.current?.focus();
+    requestAnimationFrame(() => {
+      if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0;
+    });
+  }, [idx]);
 
   useEffect(() => {
     if (!feedback) return;
@@ -107,6 +113,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
       headerOffset={headerOffset}
       counterOverride={counterOverride}
       skipControl={skipControl}
+      contentRef={scrollContainerRef}
       footer={feedback ? (
         <button data-testid="type-next" onClick={next}
           className="w-full py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all"
