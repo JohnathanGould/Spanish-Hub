@@ -124,9 +124,10 @@ return (
       {activeSection === 'warmup' && (
         <>
           <SectionHeader title="Warm Up" sub="No XP · No bones · Low stakes practice" muted />
-          <button onClick={() => onStartDrill('matching', 10)} className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>Matching</button>
+          <button onClick={() => onStartDrill('warmup-matching', 10)} className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>Matching</button>
           <button onClick={() => onStartDrill('word-sort', 10)} className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>Word Sort</button>
-          <button onClick={() => onStartDrill('gender', 10)} className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>Gender el/la</button>
+          <button onClick={() => onStartDrill('warmup-gender', 10)} className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>Gender el/la</button>
+          <button onClick={() => onStartDrill('warmup-conjugation', 10)} className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>Conjugation — Present Tense</button>
         </>
       )}
 
@@ -170,8 +171,8 @@ return (
             </div>
           </div>
           <div>
-            <RowLabel label="Conjugation" />
-            <button onClick={() => onStartDrill('conjugation', 10)} className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>Present Tense</button>
+            <RowLabel label="Conjugation Table" />
+            <button onClick={() => onStartDrill('conjugation-table', 6)} className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>Full Paradigm — Typed</button>
           </div>
           <button onClick={() => onStartDrill('sent-build', 10)} className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>Sentence Builder</button>
           <button onClick={() => onStartDrill('fill-blank', 10)} className={`w-full ${PILL_CLASS}`} style={PILL_STYLE}>Conjugation Fill in the Blank — Multiple Choice</button>

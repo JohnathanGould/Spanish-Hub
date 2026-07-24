@@ -4,6 +4,7 @@ import FlashcardDrill from './drills/FlashcardDrill';
 import ChoiceDrill from './drills/ChoiceDrill';
 import TypeDrill from './drills/TypeDrill';
 import ConjugationDrill from './drills/ConjugationDrill';
+import ConjugationTableDrill from './drills/ConjugationTableDrill';
 import GenderDrill from './drills/GenderDrill';
 import MatchingDrill from './drills/MatchingDrill';
 
@@ -37,6 +38,7 @@ export default function DrillRouter(props) {
     case 'listen-type-sentence-en-es':   return <TypeDrill mode="listen-type-sentence-en-es" bottomOffset={0} {...drillProps} />;
     case 'conjugation':          return <ConjugationDrill mode="present" {...drillProps} />;
     case 'past-tense':           return <ConjugationDrill mode="past" {...drillProps} />;
+    case 'conjugation-table':    return <ConjugationTableDrill {...drillProps} />;
     case 'gender':               return <GenderDrill {...drillProps} />;
     case 'matching':             return <MatchingDrill {...drillProps} />;
     case 'sent-build':           return <SentenceBuilderDrill {...drillProps} />;

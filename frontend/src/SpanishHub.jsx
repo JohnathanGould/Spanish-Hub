@@ -1117,7 +1117,11 @@ export default function SpanishHub() {
             drillLength={view.drillLength || 10}
             words={pathWords}
             progress={userData.progress}
-            onAnswer={view.drillId.includes('flashcard') ? recordAnswerNoXP : recordAnswer}
+            onAnswer={
+              (view.drillId.startsWith('warmup-') || view.drillId.startsWith('review-') || view.drillId.includes('flashcard'))
+                ? recordAnswerNoXP
+                : recordAnswer
+            }
             onDone={(c, t) => onDrillDone(view.drillId, c, t)}
             onBack={goHome}
             strictMode={userData.strictTyping}
