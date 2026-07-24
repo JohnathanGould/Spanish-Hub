@@ -63,7 +63,7 @@ export default function DrillShell({ title, subtitle, current, total, onBack, ch
       <div ref={contentRef} className="px-4 py-5 pb-4 overflow-y-auto flex-1" style={{ minHeight: 0 }}>
         {children}
       </div>
-      <div className="flex-shrink-0 px-4 pb-10 pt-2 flex items-center gap-2">
+      <div className={`flex-shrink-0 px-4 pt-2 flex items-center gap-2 ${keyboardOpen ? 'pb-2' : 'pb-10'}`}>
         {skipControl}
         {footer && <div className="flex-1">{footer}</div>}
       </div>
