@@ -601,19 +601,19 @@ function StopView({
 
     const renderDrill = () => {
       if (drillType === 'type-en-es') {
-        return <TypeDrill key={drillKey} mode="type-en-es" {...sharedWordProps} headerOffset={90} />;
+        return <TypeDrill key={drillKey} mode="type-en-es" {...sharedWordProps} headerOffset={0} />;
       }
       if (drillType === 'listen-type-es') {
-        return <TypeDrill key={drillKey} mode="listen-type" {...sharedWordProps} headerOffset={90} />;
+        return <TypeDrill key={drillKey} mode="listen-type" {...sharedWordProps} headerOffset={0} />;
       }
       if (drillType === 'listen-type-en') {
-        return <TypeDrill key={drillKey} mode="listen-type-en-es" {...sharedWordProps} headerOffset={90} />;
+        return <TypeDrill key={drillKey} mode="listen-type-en-es" {...sharedWordProps} headerOffset={0} />;
       }
       if (drillType === 'listen-type-sentence-es') {
-        return <TypeDrill key={drillKey} mode="listen-type-sentence" {...sharedWordProps} headerOffset={90} />;
+        return <TypeDrill key={drillKey} mode="listen-type-sentence" {...sharedWordProps} headerOffset={0} />;
       }
       if (drillType === 'listen-type-sentence-en') {
-        return <TypeDrill key={drillKey} mode="listen-type-sentence-en-es" {...sharedWordProps} headerOffset={90} />;
+        return <TypeDrill key={drillKey} mode="listen-type-sentence-en-es" {...sharedWordProps} headerOffset={0} />;
       }
       if (drillType === 'hear-choose-es') {
         return <ChoiceDrill key={drillKey} mode="hear-choose" {...sharedWordProps} headerOffset={80} />;
