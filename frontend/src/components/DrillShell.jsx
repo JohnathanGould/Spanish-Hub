@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 
 export const DrillKeyboardContext = createContext(false);
 
-export default function DrillShell({ title, subtitle, current, total, onBack, children, footer, skipControl, headerOffset = 0, counterOverride, contentRef }) {
+export default function DrillShell({ title, subtitle, current, total, onBack, children, footer, skipControl, headerOffset = 0, bottomOffset = 60, counterOverride, contentRef }) {
   const pct = total > 0 ? Math.min((current / total) * 100, 100) : 0;
 
   const [viewportHeight, setViewportHeight] = useState(
@@ -28,7 +28,7 @@ export default function DrillShell({ title, subtitle, current, total, onBack, ch
 
   return (
     <DrillKeyboardContext.Provider value={keyboardOpen}>
-    <div className="flex flex-col" style={{ maxHeight: `${viewportHeight - 60 - headerOffset}px` }}>
+    <div className="flex flex-col" style={{ maxHeight: `${viewportHeight - bottomOffset - headerOffset}px` }}>
       <div className="flex-shrink-0 px-4 py-2 border-b backdrop-blur-xl"
         style={{ background: 'hsl(var(--background) / 0.92)', borderColor: 'hsl(var(--border))' }}>
         <div className="flex items-center gap-2 mb-1.5">

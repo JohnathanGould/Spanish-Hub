@@ -7,7 +7,7 @@ import SpecialCharBar from '../SpecialCharBar';
 import { buildNoRepeatQueue, speak, stripAccents, gradeTypedAnswer, sanitiseForTTS } from '../../utils/helpers';
 
 // mode: 'type-es-en' | 'type-en-es' | 'listen-type'
-export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, counterOverride, strictMode = false, skipControl }) {
+export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onBack, drillLength = 10, headerOffset = 0, bottomOffset = 60, counterOverride, strictMode = false, skipControl }) {
   const total = drillLength;
   const queueRef = useRef(null);
   if (!queueRef.current) {
@@ -110,6 +110,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
       total={queue.length}
       onBack={onBack}
       headerOffset={headerOffset}
+      bottomOffset={bottomOffset}
       counterOverride={counterOverride}
       skipControl={skipControl}
       contentRef={scrollContainerRef}
