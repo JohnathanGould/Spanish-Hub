@@ -22,7 +22,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
   const scrollContainerRef = useRef(null);
 
   useEffect(() => {
-    inputRef.current?.focus();
+    inputRef.current?.focus({ preventScroll: true });
   }, [idx]);
 
   useEffect(() => {
@@ -127,7 +127,7 @@ export default function TypeDrill({ mode, words, progress, onAnswer, onDone, onB
 
       {/* Word card — compact padding for mobile */}
       <div className="rounded-2xl p-4 mb-2 text-center"
-        style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', position: 'sticky', top: 0, zIndex: 5 }}>
+        style={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
         {isListenMode ? (
           <button data-testid="listen-type-replay"
             onClick={() => (mode === 'listen-type-en-es' || mode === 'listen-type-sentence-en-es')
